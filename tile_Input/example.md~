@@ -1,0 +1,39 @@
+/*! \file example.md
+   \brief This is an example tile information input.
+
+   I like call it an 'andy file'. It is used by people modifying Andiamo
+ *to create any number of tiles. */
+Format is
+background_tile_name
+background_tile_image
+andy
+tile name
+tile image name
+tile height
+tile width
+list of parameter types implemented later
+andy separator for tiles - last line of file must be andy
+
+background
+background.png
+andy
+HF2002_input_example
+base_tile.png
+150
+300
+andy
+HF2002_input_example_2
+base_tile_2.png
+150
+300
+andy
+new_row_one
+base_tile.png
+150
+300
+andy
+new_row_two
+base_tile_2.png
+150
+300
+andy
