@@ -1,6 +1,14 @@
 	Welcome to Andiamo's Manual! Andiamo is the graphical front end to Ohio University's Hauser-
 Feshbach fomula implementing HF???? fortran code.
 
+
+ANDIAMO IS VERY EARLY IN DEVELOPMENT. I wouldn't suggest building it or using it as a coding example, I'm
+learning graphics programming as I go. The code also has many 'cout' statements that are there for my debugging
+and will eventually be removed. Also some implementations are likely inefficient and will be optimized later.
+
+
+
+
 Andiamo allows for users to graphically enter inputs to be used in the HF???? fortran code, as 
 opposed to preparing an input file beforehand.
 
@@ -17,3 +25,12 @@ Compatability wise, c++11 and gcc 4.9 or greater is required to build this sourc
 because <regex> is very handy for processing the text files. I'm not yet quite sure how developing for 
 Windows and Linux simultaneously is done, but I'd eventually like it to be able to run
 on both. We are developing for Linux for now.
+
+The tools in use thus far are Doxygen http://www.stack.nl/~dimitri/doxygen/
+and SDL2 https://www.libsdl.org/
+If these tributes are not to the liking of these tool's respective creators please email me about how I can go 
+about fixing it. I believe people deserve credit when it is do, but I'm not sure how copyrights and licences 
+work.
+
+Matt Brooks
+mb577513@ohio.edu

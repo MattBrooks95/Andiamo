@@ -23,11 +23,14 @@ sdl_help::sdl_help(string name_in){
 		cout << "Get current display mode error" << endl;
 		cout << SDL_GetError();
         };
+
 	//cout << display.w << " " << display.h << endl;;
-	window = SDL_CreateWindow(window_name.c_str(), 0, 0, display.w / 2, display.h, 0);
+	window = SDL_CreateWindow(window_name.c_str(), 0, 0, display.w / 2, display.h/2, 0);
 	renderer = SDL_CreateRenderer(window,-1,0);
-        if(sdl_test) cout << "Enacting tile_bag update with values: " << display.w / 2 << " " << display.h / 2<< endl;
-	tile_bag.update_win(display.w/2,display.h/2);
+        if(sdl_test) cout << "Enacting tile_bag update with values: " << display.w / 2 << " "
+                          << display.h / 2<< endl;
+
+	tile_bag.update_win(display.w/2,display.h/2);//make sure manager also knows window dims
 	tile_bag.init();
 }
 
@@ -58,6 +61,7 @@ sdl_help::sdl_help(std::string name_in, int width, int height){
   window = SDL_CreateWindow(window_name.c_str(), 0, 0, display.w, display.h, 0);
   renderer = SDL_CreateRenderer(window,-1,0);
 
+  tile_bag.init();
 }
 
 void sdl_help::window_update(int width_in, int height_in){

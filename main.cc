@@ -1,7 +1,6 @@
 //! \file main.cc
 //! \brief main.cc is where the big loop happens.
 
-
 #include<string>
 #include<vector>
 #include<iostream>
@@ -22,12 +21,14 @@ int main(){
 
   sdl_help sdl_helper("Andiamo!");
 
-  sdl_helper.get_mgr().print_all(cout);
+  //sdl_helper.get_mgr().print_all(cout);
   sdl_helper.draw_all();
   sdl_helper.present();
 
 
   SDL_Event big_event;
+  SDL_SetEventFilter(filter_mouse_move,NULL);
+
   bool done = false; //this will need to be changed to true when the user clicks on the 'x'
   while(!done){
 	SDL_PollEvent(&big_event);//grab input from user
@@ -39,20 +40,25 @@ int main(){
 			done = true;
 			break;
 
-		case SDL_MOUSEMOTION:
+		//case SDL_MOUSEMOTION: //I don't think anything will care about the mouse moving,
+					//only clicks. Unless we get fancy with reactive animations
 			//cout << big_event.motion.x << " " << big_event.motion.y << endl;
 
-			break;
+			//break;
 		case SDL_MOUSEBUTTONDOWN:
 			//this function handles left/right mouse button down clicks, and mousewheel clicks
 			handle_mouseb_down(big_event,sdl_helper); 
+			break;
+		case SDL_MOUSEBUTTONUP:
+			handle_mouseb_up(big_event,sdl_helper);
 			break;
 
 		default:
 			break;
 	}
 	
-	SDL_Delay(5);
+	SDL_Delay(5);//this is an arbitrary number to slow down the loop speed
+		     //eventually this will vary intelligently based on desired framerate
   }
 
 

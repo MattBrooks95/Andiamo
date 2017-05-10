@@ -18,8 +18,6 @@ void field::print(ostream& outs){
 	cout << "\n\n" << endl;
 }
 
-
-
 field::~field(){
 
 }
