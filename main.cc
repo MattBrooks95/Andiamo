@@ -22,11 +22,11 @@ int main(){
   sdl_help sdl_helper("Andiamo!");
 
   //sdl_helper.get_mgr().print_all(cout);
+
   sdl_helper.draw_all();
   sdl_helper.present();
 
-
-  SDL_Event big_event;
+  SDL_Event big_event; //pre-loop drawing commands, so screen comes up near instantly
   SDL_SetEventFilter(filter_mouse_move,NULL);
 
   bool done = false; //this will need to be changed to true when the user clicks on the 'x'
@@ -39,7 +39,8 @@ int main(){
 			cout << "quitting...." << endl;
 			done = true;
 			break;
-
+		//as of right now 5/11/17, this section is definitely moot because mouse motion is filtered
+		//out of the input queue
 		//case SDL_MOUSEMOTION: //I don't think anything will care about the mouse moving,
 					//only clicks. Unless we get fancy with reactive animations
 			//cout << big_event.motion.x << " " << big_event.motion.y << endl;
@@ -55,12 +56,23 @@ int main(){
 
 		default:
 			break;
-	}
-	
-	SDL_Delay(5);//this is an arbitrary number to slow down the loop speed
-		     //eventually this will vary intelligently based on desired framerate
-  }
+	}//event handling loop
 
+	//sdl_helper.get_mgr().print_all(cout);
+	//sdl_helper.draw_all(); //re-draw the screen once all events have been handled
+	//sdl_helper.print_tile_locs(cout);
+	sdl_helper.present();  //and all positions have been calculated
+
+	//sdl_helper.get_win_size()->print(); //testing
+
+	SDL_Delay(50);//this is an arbitrary number to slow down the loop speed
+		     //eventually this will vary intelligently based on desired framerate
+  }//end of while loop
+
+  //make sure that infinitely re-adding fields to location manager stopped happening
+  //these numbers should be exactly equal
+  cout << "Tile v size: " << sdl_helper.get_mgr().tiles.size() << " Tile loc v size: "
+       << sdl_helper.get_locations().size() << endl;
 
   //SDL_Delay(5000);
 

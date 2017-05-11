@@ -33,6 +33,10 @@ class field{
 	//! this constructor requires 2 more arguments: tile height and width
 	field(std::string tile_name_in,std::string image_name_in, int width, int height);
 	~field();
+	
+	//! this member prints a message if the user clicks on this tile
+	void clicked(std::ostream& outs) const;
+
 
 	//! this void member prints the field's info to a given stream
 	void print(std::ostream& outs);

@@ -17,7 +17,9 @@ void field::print(ostream& outs){
 	size.print(outs);
 	cout << "\n\n" << endl;
 }
-
+void field::clicked(ostream& outs) const{
+	outs << "Tile " << tile_name << " says: That tickles!" << endl;
+}
 field::~field(){
 
 }

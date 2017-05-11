@@ -1,6 +1,7 @@
 SDL_inc = -lSDL2 -lSDL2_image
 c_flg = -std=c++11 -Wall
-
+vtool = --tool=memcheck
+vopt = --log-file="memory_check.txt" --leak-check=full
 browser = firefox
 
 andiamo: main.o handlers.o sdl_help.o manager.o field.o 
@@ -21,12 +22,18 @@ field.o: field.cc field.h
 manager.o: manager.cc manager.h
 	g++ $(c_flg) -c manager.cc
 
+valgrind:
+	valgrind $(vtool) $(vopt) ./andiamo
+
+gdb:
+	g++ -g -o debug $(c_flg) *.cc $(SDL_inc)
+
 tar:
 	tar -czvf andiamo.tar.gz *.cc *.h Makefile doxyfile readme.md tile_Input HF_Input Assets sandbox
 
-doxy:
+doxy: doxyfile
 	doxygen doxyfile
 	$(browser) ./doxyout/html/index.html
 
 clean:
-	rm *~ *.o andiamo
+	rm *~ *.o andiamo debug memory_check.txt

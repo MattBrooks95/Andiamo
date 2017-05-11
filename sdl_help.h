@@ -5,7 +5,6 @@
 #include<SDL2/SDL.h>
 #include<SDL2/SDL_image.h>
 
-
 #include "manager.h"
 //! this structure is used to store the dimensions of the window itself
 /*! eventually the user will be able to change this to a variety of sizes */
@@ -14,6 +13,8 @@ struct win_size{
 	/*! it initializes the window width and height to -1, these must be set by sdl helper and later by
 	 *the user */
 	win_size();
+	//! print() print() prints this fields width and height fields, and a newline
+	void print();
 
 	int width; //! < holds the width of the window, which is different than the screen info in display
 	int height; //! < holds the height of the window, which is different than the info in display
@@ -53,11 +54,30 @@ class sdl_help{
 	 *using some sort of greedy algorithm to make sure they don't conflict with each other */
 	void draw_all();
 
+	//! This member traverses the tile_locations vector and prints all of their SDL_Rect fields
+	/*! sdl_help has this functionality right now because it's using SDL_Rect structures. I may
+	 *make the manager do this book keeping, but I'd have to make my own struct*/
+	void print_tile_locs(std::ostream& outs);
+
+	//! This member traverses the tile location vector and sees if the user clicked on a tile or not
+	/*! it walks linearly through the tile_locations vector and enacts the clicked() member
+	 *of the tile that the user clicked on. For now this means cute cout statements*/
+	void click_detection(std::ostream& outs,int click_x, int click_y) const;
+
+	//! this is a boolean helper for click_detection()
+	bool in(int click_x, int click_y,const SDL_Rect& rect) const;
+
 	//! This member merely calls the destructor at the programmer's discretion
 	void quit();
 
 	/**********GETTERS AND SETTERS*********************************/
+	//! This member returns a pointer to window_s field
+	win_size* get_win_size();
 
+	//!this member is a const getter for the tile_locations vector
+	const std::vector<SDL_Rect>& get_locations() const { return tile_locations;}
+	//!this member is non-const getter for the tile_locations vector
+	std::vector<SDL_Rect>& get_locations(){ return tile_locations;}
         //! This member is a const getter for the tile/card manager
 	const manager& get_mgr() const{ return tile_bag;}
 	//! This member is a non-const getter for the tile/card manager
@@ -68,7 +88,13 @@ class sdl_help{
 	std::string image_p; //!<  \brief a string that points to the resource image directory 
 	std::string hf_input_p; //!< \brief a path string to the algorithm's input file folder 
 
-	win_size window_s;
+	//! allows sdl_help to keep track of where tiles are
+	/* the SDL_Rect's indices in this vector should line up with manager's tiles vector so 
+	 *the members of the correct field can be invoked */
+	std::vector<SDL_Rect> tile_locations;//!< allows sdl to keep track of where tiles are
+	
+
+	win_size window_s; //!< \brief a win_size struct that contains the window's current width and height
 
 	SDL_DisplayMode display; //!< contains screen information
 	SDL_Event big_event; //!< queue that updates with user input
