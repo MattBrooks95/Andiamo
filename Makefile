@@ -23,7 +23,7 @@ manager.o: manager.cc manager.h
 	g++ $(c_flg) -c manager.cc
 
 valgrind:
-	valgrind $(vtool) $(vopt) ./andiamo
+	valgrind $(vtool) $(vopt) ./debug
 
 gdb:
 	g++ -g -o debug $(c_flg) *.cc $(SDL_inc)

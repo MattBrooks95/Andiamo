@@ -26,15 +26,20 @@ int main(){
   sdl_helper.draw_all();
   sdl_helper.present();
 
+
   SDL_Event big_event; //pre-loop drawing commands, so screen comes up near instantly
   SDL_SetEventFilter(filter_mouse_move,NULL);
 
+
   bool done = false; //this will need to be changed to true when the user clicks on the 'x'
   while(!done){
-	SDL_PollEvent(&big_event);//grab input from user
+	if(!SDL_PollEvent(&big_event));
 
+	else
 	switch(big_event.type){ //switch controlled by the 'type' of input given, like the mouse moving
 				//or key presses
+
+
 		case SDL_QUIT:
 			cout << "quitting...." << endl;
 			done = true;
@@ -46,10 +51,22 @@ int main(){
 			//cout << big_event.motion.x << " " << big_event.motion.y << endl;
 
 			//break;
+
+		case SDL_KEYDOWN:
+			handle_key_down(big_event,sdl_helper);
+			SDL_FlushEvent(SDL_KEYDOWN);//prevents queue flooding when key is held down
+			break;
+
+		case SDL_KEYUP:
+			handle_key_up(big_event,sdl_helper);
+			//SDL_FlushEvent(SDL_KEYUP);
+			break;
+
 		case SDL_MOUSEBUTTONDOWN:
 			//this function handles left/right mouse button down clicks, and mousewheel clicks
 			handle_mouseb_down(big_event,sdl_helper); 
 			break;
+
 		case SDL_MOUSEBUTTONUP:
 			handle_mouseb_up(big_event,sdl_helper);
 			break;
@@ -59,7 +76,7 @@ int main(){
 	}//event handling loop
 
 	//sdl_helper.get_mgr().print_all(cout);
-	//sdl_helper.draw_all(); //re-draw the screen once all events have been handled
+	sdl_helper.draw_all(); //re-draw the screen once all events have been handled
 	//sdl_helper.print_tile_locs(cout);
 	sdl_helper.present();  //and all positions have been calculated
 
@@ -73,6 +90,8 @@ int main(){
   //these numbers should be exactly equal
   cout << "Tile v size: " << sdl_helper.get_mgr().tiles.size() << " Tile loc v size: "
        << sdl_helper.get_locations().size() << endl;
+
+  sdl_helper.print_size_info(cout);
 
   //SDL_Delay(5000);
 

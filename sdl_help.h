@@ -14,7 +14,7 @@ struct win_size{
 	 *the user */
 	win_size();
 	//! print() print() prints this fields width and height fields, and a newline
-	void print();
+	void print(std::ostream& outs);
 
 	int width; //! < holds the width of the window, which is different than the screen info in display
 	int height; //! < holds the height of the window, which is different than the info in display
@@ -54,6 +54,19 @@ class sdl_help{
 	 *using some sort of greedy algorithm to make sure they don't conflict with each other */
 	void draw_all();
 
+	//! This member changes this class's x_scroll and y_scroll values to the given parameters
+	/*! This is being called from the handlers.cc implementations most of the time. */
+	void update_scroll(int x_scroll_in,int y_scroll_in);
+
+	//! This member prints the sizes of the three important size variables: area, window, and display
+	/*! Where display is the dimensions of the physical monitor the user has. window_s keeps track of
+	 *the size of the window in which things can be seen - this is usually less than the actual area.
+	 *area is the total size needed to render all objects - this is usually bigger than the actual area.
+	 *Scrolling will be implemented to allow the user to see different sections of whole area using the
+	 *limited window. */
+	void print_size_info(std::ostream& outs);
+
+
 	//! This member traverses the tile_locations vector and prints all of their SDL_Rect fields
 	/*! sdl_help has this functionality right now because it's using SDL_Rect structures. I may
 	 *make the manager do this book keeping, but I'd have to make my own struct*/
@@ -83,6 +96,8 @@ class sdl_help{
 	//! This member is a non-const getter for the tile/card manager
 	manager& get_mgr(){ return tile_bag;}
 
+	SDL_Renderer* renderer; //!< pointer to the renderer object
+
   private:
 	std::string window_name; //!<  \brief A string that contains the window name, usually Andiamo."
 	std::string image_p; //!<  \brief a string that points to the resource image directory 
@@ -93,14 +108,23 @@ class sdl_help{
 	 *the members of the correct field can be invoked */
 	std::vector<SDL_Rect> tile_locations;//!< allows sdl to keep track of where tiles are
 	
+	int y_scroll;//!< \brief this integer controls how far up or down we've scrolled
+	int x_scroll;//!< \brief this integer controls how far right or left we've scrolled
 
-	win_size window_s; //!< \brief a win_size struct that contains the window's current width and height
+	bool area_size_set; /*!< \brief false on the onset of the program, set to true after draw_all() has
+			     *been invoked once
+			     *
+			     * this logic will need to be changed if we allow tile loading at run time */ 
+	win_size area;/*!< \brief a win_size struct that contains the dimensions for the entire area,
+		       *not just what is seen */
+	win_size window_s; /*!< \brief a win_size struct that contains the window's current width and 
+			    *height, this window limits what the user can see */
 
 	SDL_DisplayMode display; //!< contains screen information
 	SDL_Event big_event; //!< queue that updates with user input
 
 	SDL_Window* window; //!< pointer to the window object
-	SDL_Renderer* renderer; //!< pointer to the renderer object
+
 
 	manager tile_bag; //!< manager object that contains all the field objects
 };

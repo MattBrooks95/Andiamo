@@ -5,18 +5,30 @@
  *objects so that it can enact the functions that it needs to
  */
 #pragma once
-
+#include<string>
 
 #include "sdl_help.h"
 
+//void plus_two(int num_in,const sdl_help& sdl_helper);//this was used to test compilation
 
-//void plus_two(int num_in,const sdl_help& sdl_helper);
+//! this is a filter function meant to prevent the sdl event queue from pushing mouse location updates
+int filter_mouse_move(void* userdata, SDL_Event* event);
 
+
+//############################## JERRY STUFF ##################################################################
 //! handle_mouseb_down implements the sub-switch statement that handles mouse buttons being pressed down
 void handle_mouseb_down(const SDL_Event& big_event, const sdl_help& sdl_help);
 
 //! handle_mouseb_up implements the sub-switch statement that handles mouse buttons being released
 void handle_mouseb_up(const SDL_Event& big_event, const sdl_help& sdl_help);
+//############################## JERRY STUFF ##################################################################
 
-//! this is a filter function meant to prevent the sdl event queue from pushing mouse location updates
-int filter_mouse_move(void* userdata, SDL_Event* event);
+//############################## KEYBOARD STUFF ###############################################################
+//! handle_key_down impelements a sub-switch statement that handles keys being pressed down
+void handle_key_down(const SDL_Event& big_event, const sdl_help& sdl_help);
+
+//! handle_key_up implements a sub-switch statement that handles keys being released
+void handle_key_up(const SDL_Event& big_event, const sdl_help& sdl_help);
+//#############################################################################################################
+
+

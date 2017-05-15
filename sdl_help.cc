@@ -7,14 +7,23 @@ using namespace std;
 
 bool sdl_test = false;
 
+
+//######################### WIN SIZE STRUCT ################################################################
 win_size::win_size(){//initialize window dimensions to bad values so they must be initialized elsewhere
 	width = -1;
 	height = -1;
 }
-void win_size::print(){
-	cout << width << ":" << height << endl;
+void win_size::print(ostream& outs){
+	outs << width << "x" << height << endl;
 }
 
+win_size* sdl_help::get_win_size(){
+	win_size* return_me = &window_s;
+	return return_me;
+}
+//######################### WIN SIZE STRUCT ################################################################
+
+//######################### SDL_HELP CONSTRUCTORS/DESTRUCTORS ##############################################
 sdl_help::sdl_help(string name_in){
 	SDL_Init(SDL_INIT_TIMER | SDL_INIT_EVENTS|SDL_INIT_VIDEO);//for now, timer,video and keyboard
 	IMG_Init(IMG_INIT_PNG);//allows use of .png files
@@ -36,6 +45,9 @@ sdl_help::sdl_help(string name_in){
 
 	window_update(display.w/2,display.h * .75);//this call updates sdl_help and manager's
 					           // dimension window fields
+	x_scroll = 0; y_scroll = 0; //set scrolling variables to 0
+
+	area_size_set = false; //this should be changed to run after the first inner loop run in draw_all()
 
 	tile_bag.init();
 }
@@ -67,24 +79,52 @@ sdl_help::sdl_help(std::string name_in, int width, int height){
   window = SDL_CreateWindow(window_name.c_str(), 0, 0, display.w, display.h, 0);
   renderer = SDL_CreateRenderer(window,-1,0);
 
+  x_scroll = 0; y_scroll = 0; //set scrolling values to 0
+
+  area_size_set = false; //this should be changed to run after the first inner loop run in draw_all()
+
   tile_bag.init();
 }
 
+sdl_help::~sdl_help(){
+	SDL_DestroyRenderer(renderer);//stops memory leaks
+	SDL_DestroyWindow(window);
+
+	IMG_Quit();
+	SDL_Quit();
+}
+
+void sdl_help::quit(){
+	this->~sdl_help();  
+}
+//######################### SDL_HELP CONSTRUCTORS/DESTRUCTORS ##############################################
 void sdl_help::window_update(int width_in, int height_in){
 	window_s.width = width_in; //update sdl class's window size variables
 	window_s.height = height_in;
 
 	tile_bag.update_win(width_in,height_in);
 }
+//prints area window size and display 
+void sdl_help::print_size_info(std::ostream& outs){
+
+	outs << "Printing window size: "; window_s.print(outs);
+	outs << "Printing actual size: "; area.print(outs);
+	outs << "Printing display info: " << display.w << "x" << display.h << endl;
+}
 
 void sdl_help::present(){
 	SDL_RenderPresent(renderer);
 }
-
+//arrange the tiles and draw their textures, for now just doing two tiles per row, with their locations
+//being just a fraction of the screen size for testing
 void sdl_help::draw_all(){
-	SDL_Texture* tex;//seeing if putting these up here will help stop the memory leak
-	SDL_Surface* surf;//it seems to have worked. It runs better and valgrind says hardly any
+	SDL_Texture* tex = NULL;//seeing if putting these up here will help stop the memory leak
+	SDL_Surface* surf = NULL;//it seems to have worked. It runs better and valgrind says hardly any
 			  //memory leaks
+
+	int max_y = -1; //keep track of highest y+texture height value we've seen
+				   //so that sdl_help can keep track of what can't fit on the screen
+	int max_x = -1; //similarly keep track of highest x+texture width value we've seen
 
 
 	int row = 0; //keep track of what row we're on
@@ -92,6 +132,8 @@ void sdl_help::draw_all(){
 		string path = image_p + tile_bag.tiles[c].get_img_name(); //combine folder and image path
 
 		surf = IMG_Load(path.c_str()); //load the image to a sdl surface
+
+
 		if(surf == NULL) cout << SDL_GetError() << endl; //get useful error messages
 
 
@@ -119,7 +161,7 @@ void sdl_help::draw_all(){
 
 		//use the base location + and the size info stored in the field to tell rendercopy where
 		//to draw each tile
-		SDL_Rect dest = {xloc,yloc,tile_bag.tiles[c].get_size().width,
+		SDL_Rect dest = {xloc+x_scroll,yloc+y_scroll,tile_bag.tiles[c].get_size().width,
 					tile_bag.tiles[c].get_size().height};
 		if(c == 0){ //special logic for the background tile
 			SDL_RenderCopy(renderer,tex,NULL,NULL);//background should fill whole window
@@ -157,11 +199,29 @@ void sdl_help::draw_all(){
 			     << " | " << renderer << endl;
 
 			cout << "Image path: " << path << endl;
-
 		}
+		if(sdl_test) cout << "xloc: " << xloc << " yloc: " << yloc << endl;
+		if(!area_size_set){
+			if(yloc > max_y) max_y = yloc;//save value if it's higher than previous record
+			if(xloc > max_x) max_x = xloc;//save value if it's higher than previous record
+		}
+		SDL_DestroyTexture(tex);
+		SDL_FreeSurface(surf); //this stops memory leaking?
+		surf = NULL;
+		tex = NULL;
 	}//end of for loop
-	delete surf; //I think these statements stopped the memory leak?
-	delete tex;
+	if(!area_size_set){
+		cout << "Set area size's dimensions." << max_x << "x" << max_y << endl;
+		area.width = max_x;   //update sdl_help's area struct 
+		area.height = max_y;  //with the maximum coords needed for all items,
+		area_size_set = true;
+	}
+			   //even those that may be off screen
+}//end of draw_all
+
+void sdl_help::update_scroll(int x_scroll_in, int y_scroll_in){
+	x_scroll = x_scroll + x_scroll_in;
+	y_scroll = y_scroll + y_scroll_in;
 }
 
 void sdl_help::print_tile_locs(ostream& outs){
@@ -184,15 +244,7 @@ bool sdl_help::in(int click_x, int click_y,const SDL_Rect& rect) const{
 	return false; //return false otherwise
 }
 
-win_size* sdl_help::get_win_size(){
-	win_size* return_me = &window_s;
-	return return_me;
-}
-sdl_help::~sdl_help(){
-	SDL_Quit();
-	IMG_Quit();
-}
 
-void sdl_help::quit(){
-	this->~sdl_help();  
-}
+
+
+
