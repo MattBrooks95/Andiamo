@@ -50,6 +50,15 @@ sdl_help::sdl_help(string name_in){
 	area_size_set = false; //this should be changed to run after the first inner loop run in draw_all()
 
 	tile_bag.init();
+	//give vertical scroll bar the addresses of the info it needs from the sdl_help object
+	vert_bar.init(&x_scroll,&y_scroll,&area.width,&area.height,
+		      &window_s.width,&window_s.height, renderer);
+	//give horizontal scroll bar the address of the info it needs from the sdl_help object
+	horiz_bar.init(&x_scroll,&y_scroll,&area.width,&area.height,
+		      &window_s.width,&window_s.height, renderer);
+
+	vert_bar.print(cout);
+	horiz_bar.print(cout);
 }
 
 sdl_help::sdl_help(std::string name_in, int width, int height){
@@ -67,23 +76,33 @@ sdl_help::sdl_help(std::string name_in, int width, int height){
 		cout << "Get current display mode error" << endl;
 		cout << SDL_GetError();
 	}
-  //initializing them twice is an obvious waste of time, consider a more elegant solution
+	//initializing them twice is an obvious waste of time, consider a more elegant solution
 
-  //init displaymode values
-  display.w = width;
-  display.h = height; //overrite previous height and width values to the user's preference
+	//init displaymode values
+	display.w = width;
+	display.h = height; //overrite previous height and width values to the user's preference
 
-  window_update(display.w/2,display.h);//this call updates sdl_help and manager's window dimension fields
-  //tile_bag.update_win(display.w,display.h);
+	window_update(display.w/2,display.h);//this call updates sdl_help and manager's window dimension 
+                                             //fields tile_bag.update_win(display.w,display.h);
 
-  window = SDL_CreateWindow(window_name.c_str(), 0, 0, display.w, display.h, 0);
-  renderer = SDL_CreateRenderer(window,-1,0);
+	window = SDL_CreateWindow(window_name.c_str(), 0, 0, display.w, display.h, 0);
+	renderer = SDL_CreateRenderer(window,-1,0);
 
-  x_scroll = 0; y_scroll = 0; //set scrolling values to 0
+	x_scroll = 0; y_scroll = 0; //set scrolling values to 0
 
-  area_size_set = false; //this should be changed to run after the first inner loop run in draw_all()
+	area_size_set = false; //this should be changed to run after the first inner loop run in draw_all()
 
-  tile_bag.init();
+	tile_bag.init();
+
+	//give vertical scroll bar the addresses of the info it needs from the sdl_help object
+	vert_bar.init(&x_scroll,&y_scroll,&area.width,&area.height,
+		      &window_s.width,&window_s.height, renderer);
+	//give horizontal scroll bar the address of the info it needs from the sdl_help object
+	horiz_bar.init(&x_scroll,&y_scroll,&area.width,&area.height,
+		      &window_s.width,&window_s.height, renderer);
+
+	vert_bar.print(cout);
+	horiz_bar.print(cout);
 }
 
 sdl_help::~sdl_help(){
@@ -227,7 +246,7 @@ void sdl_help::draw_all(){
 		tex = NULL;
 	}//end of for loop
 	if(!area_size_set){
-		cout << "Set area size's dimensions." << max_x << "x" << max_y << endl;
+		cout << "Set area size's dimensions. " << max_x << "x" << max_y << endl;
 		area.width = max_x;   //update sdl_help's area struct 
 		area.height = max_y;  //with the maximum coords needed for all items,
 		area_size_set = true; //even those that may be off screen
@@ -244,6 +263,11 @@ void sdl_help::draw_all(){
 }//end of draw_all
 
 //**********************SCROLLING FUNCTIONS ***************************************************/
+
+// walk the tile locations vector, and keep track of the rightmost, leftmost, bottommost, and upmost
+// edges of all the tiles. This is used to make sure the user can't scroll in any direction past the point
+// where no objects are visible, or are just barely visible - might fiddle with constants to make it stop
+// scrolling a bit sooner or later
 void sdl_help::most(int& rightmost,int& leftmost,int& upmost,int& downmost){
 	for(unsigned int c = 0; c < tile_locations.size(); c++){
 		if(tile_locations[c].y < upmost){ //highest tile corner means LEAST Y value
@@ -294,7 +318,7 @@ void sdl_help::update_scroll(int x_scroll_in, int y_scroll_in){
 		y_scroll = y_scroll + y_scroll_in;
 	
 }
-//return user to the top of the page
+//return user to the top of the page -currently called from a spacebar press
 void sdl_help::reset_scroll(){
 	x_scroll = 0; y_scroll = 0;
 }

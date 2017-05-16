@@ -6,7 +6,6 @@
 #include<iostream>
 
 #include "sdl_help.h"
-
 #include "handlers.h"
 
 using namespace std;
@@ -102,6 +101,8 @@ int main(){
 
   //sdl_helper.print_tile_locs(cout);
   sdl_helper.print_size_info(cout);
+  sdl_helper.get_h_bar().print(cout);//make sure that these values are updating in the bars as
+  sdl_helper.get_v_bar().print(cout);//they are updated in the sdl_helper object
 
   //SDL_Delay(5000);
 

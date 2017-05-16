@@ -9,8 +9,8 @@ vopt = --log-file="memory_check.txt" --leak-check=full
 #controls which browser the makefile opens to view doxygen html manual
 browser = firefox
 
-andiamo: main.o handlers.o sdl_help.o manager.o field.o 
-	g++  -o andiamo main.o handlers.o manager.o field.o sdl_help.o $(SDL_inc)
+andiamo: main.o handlers.o sdl_help.o scroll_bar.o manager.o field.o 
+	g++  -o andiamo main.o handlers.o manager.o field.o sdl_help.o scroll_bar.o $(SDL_inc)
 
 main.o: main.cc sdl_help.h handlers.h
 	g++ $(c_flg) -c main.cc
@@ -18,8 +18,11 @@ main.o: main.cc sdl_help.h handlers.h
 handlers.o: handlers.cc handlers.h sdl_help.h
 	g++ $(c_flg) -c handlers.cc
 
-sdl_help.o: sdl_help.cc sdl_help.h manager.h
+sdl_help.o: sdl_help.cc sdl_help.h manager.h scroll_bar.h
 	g++ $(c_flg) -c sdl_help.cc
+
+scroll_bar.o: scroll_bar.cc scroll_bar.h
+	g++ $(c_flg) -c scroll_bar.cc
 
 field.o: field.cc field.h
 	g++ $(c_flg) -c field.cc
