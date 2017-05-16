@@ -37,7 +37,6 @@ class field{
 	//! this member prints a message if the user clicks on this tile
 	void clicked(std::ostream& outs) const;
 
-
 	//! this void member prints the field's info to a given stream
 	void print(std::ostream& outs);
 

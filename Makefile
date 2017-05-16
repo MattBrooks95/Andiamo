@@ -1,7 +1,12 @@
+#compilation flags
 SDL_inc = -lSDL2 -lSDL2_image
 c_flg = -std=c++11 -Wall
+
+#valgrind flags
 vtool = --tool=memcheck
 vopt = --log-file="memory_check.txt" --leak-check=full
+
+#controls which browser the makefile opens to view doxygen html manual
 browser = firefox
 
 andiamo: main.o handlers.o sdl_help.o manager.o field.o 
@@ -21,19 +26,19 @@ field.o: field.cc field.h
 
 manager.o: manager.cc manager.h
 	g++ $(c_flg) -c manager.cc
-
+#runs valgrind on the debug executable created by make gdb
 valgrind:
 	valgrind $(vtool) $(vopt) ./debug
-
+#compile for debugging, or when includes have gotten messed up
 gdb:
 	g++ -g -o debug $(c_flg) *.cc $(SDL_inc)
-
+#pack useful files up for an email or storage
 tar:
 	tar -czvf andiamo.tar.gz *.cc *.h Makefile doxyfile readme.md tile_Input HF_Input Assets sandbox
-
+#have doxygen run and create a manual from source comments and the configuration settings in doxyfile
 doxy: doxyfile
 	doxygen doxyfile
 	$(browser) ./doxyout/html/index.html
-
+#remove compiled things, text editor saves, memory check output
 clean:
 	rm *~ *.o andiamo debug memory_check.txt

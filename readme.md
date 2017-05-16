@@ -5,7 +5,6 @@ Feshbach fomula implementing HF???? fortran code.
 ANDIAMO IS VERY EARLY IN DEVELOPMENT. I wouldn't suggest building it or using it as a coding example, I'm
 learning graphics programming as I go. The code also has many 'cout' statements that are there for my debugging
 and will eventually be removed. Also some implementations are likely inefficient and will be optimized later.
-As of May 14th, 2017 Andiamo is hemorrhaging memory.
 
 
 
@@ -27,7 +26,7 @@ Windows and Linux simultaneously is done, but I'd eventually like it to be able 
 on both. We are developing for Linux for now.
 
 The tools in use thus far are Doxygen http://www.stack.nl/~dimitri/doxygen/
-, SDL2 https://www.libsdl.org/ and Valgrind http://valgrind.org/
+, SDL2 https://www.libsdl.org/ , SDL_Image https://www.libsdl.org/projects/SDL_image/ and Valgrind http://valgrind.org/
 If these tributes are not to the liking of these tool's respective creators please email me about how I can go 
 about fixing it. I believe people deserve credit when it is do, but I'm not sure how copyrights and licences 
 work.

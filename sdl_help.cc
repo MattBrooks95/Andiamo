@@ -2,7 +2,7 @@
 #include "sdl_help.h"
 #include<iostream>
 #include<string>
-
+#include<cmath>
 using namespace std;
 
 bool sdl_test = false;
@@ -38,12 +38,12 @@ sdl_help::sdl_help(string name_in){
         };
 
 	//cout << display.w << " " << display.h << endl;;
-	window = SDL_CreateWindow(window_name.c_str(), 0, 0, display.w / 2, display.h * .75, 0);
+	window = SDL_CreateWindow(window_name.c_str(), 0, 0, display.w * .5, display.h * .75, 0);
 	renderer = SDL_CreateRenderer(window,-1,0);
         if(sdl_test) cout << "Enacting tile_bag update with values: " << display.w / 2 << " "
                           << display.h << endl;
 
-	window_update(display.w/2,display.h * .75);//this call updates sdl_help and manager's
+	window_update(display.w / 2,display.h * .75);//this call updates sdl_help and manager's
 					           // dimension window fields
 	x_scroll = 0; y_scroll = 0; //set scrolling variables to 0
 
@@ -159,10 +159,17 @@ void sdl_help::draw_all(){
 			row++;//increment row counter every other tile
 		}
 
+
 		//use the base location + and the size info stored in the field to tell rendercopy where
-		//to draw each tile
-		SDL_Rect dest = {xloc+x_scroll,yloc+y_scroll,tile_bag.tiles[c].get_size().width,
+		//to draw each tile - now also a function of x_scroll and y_scroll
+		SDL_Rect dest = {xloc + x_scroll,yloc + y_scroll,tile_bag.tiles[c].get_size().width,
 					tile_bag.tiles[c].get_size().height};
+		/*if( (dest.x > area.width || dest.y  > area.height) ){
+			//cout << "We may be out of bounds there Jimbo." << endl;
+		}*/
+
+
+
 		if(c == 0){ //special logic for the background tile
 			SDL_RenderCopy(renderer,tex,NULL,NULL);//background should fill whole window
 
@@ -190,21 +197,30 @@ void sdl_help::draw_all(){
                                                          //fault and double positives now
 			}
 			SDL_RenderCopy(renderer,tex,NULL,&dest);
-                }
+                }//end big if/else
 
 		if( surf == NULL || tex == NULL || renderer == NULL){
 			cout << "Error in draw_all(), an SDL pointer is null." << endl;
-
 			cout << "surface | texture | renderer: " << surf << " | " << tex
 			     << " | " << renderer << endl;
-
 			cout << "Image path: " << path << endl;
 		}
+
 		if(sdl_test) cout << "xloc: " << xloc << " yloc: " << yloc << endl;
 		if(!area_size_set){
-			if(yloc > max_y) max_y = yloc;//save value if it's higher than previous record
-			if(xloc > max_x) max_x = xloc;//save value if it's higher than previous record
+			//do the math here and save it in an int variable, that way the math isn't re-done
+			//in the boolean checkks AND the assignments. The compiler might fix that for me
+			//but I'm not sure so I'll make sure it only does that addition once
+			int area_width = xloc + tile_bag.tiles[c].get_size().width;
+			int area_height = yloc + tile_bag.tiles[c].get_size().height;
+			//save value if it's higher than previous record
+			if(area_width > max_x) max_x = area_width;
+			//save value if it's higher than previous record
+			if(area_height > max_y) max_y = area_height;
+
 		}
+
+
 		SDL_DestroyTexture(tex);
 		SDL_FreeSurface(surf); //this stops memory leaking?
 		surf = NULL;
@@ -214,15 +230,75 @@ void sdl_help::draw_all(){
 		cout << "Set area size's dimensions." << max_x << "x" << max_y << endl;
 		area.width = max_x;   //update sdl_help's area struct 
 		area.height = max_y;  //with the maximum coords needed for all items,
-		area_size_set = true;
-	}
-			   //even those that may be off screen
+		area_size_set = true; //even those that may be off screen
+	}/* else {
+				//make a semi-transparent gray square to check this
+		SDL_Rect area_dest = {0,0,area.width,area.height};
+		SDL_Surface* area_surf = IMG_Load("./Assets/Images/area_test.png");
+		SDL_Texture* area_tex = SDL_CreateTextureFromSurface(renderer,area_surf);
+		SDL_RenderCopy(renderer,area_tex,NULL,&area_dest);
+		SDL_DestroyTexture(area_tex);
+		SDL_FreeSurface(area_surf);
+	  }*/
+
 }//end of draw_all
 
-void sdl_help::update_scroll(int x_scroll_in, int y_scroll_in){
-	x_scroll = x_scroll + x_scroll_in;
-	y_scroll = y_scroll + y_scroll_in;
+//**********************SCROLLING FUNCTIONS ***************************************************/
+void sdl_help::most(int& rightmost,int& leftmost,int& upmost,int& downmost){
+	for(unsigned int c = 0; c < tile_locations.size(); c++){
+		if(tile_locations[c].y < upmost){ //highest tile corner means LEAST Y value
+			upmost = tile_locations[c].y;
+		}
+		if(tile_locations[c].y + tile_locations[c].h > downmost){
+			//save lowest tile corner + that texture's height
+			downmost = tile_locations[c].y + tile_locations[c].h;
+		}
+		if(tile_locations[c].x < leftmost){// save leftmost tile corner
+			leftmost = tile_locations[c].x;
+		}
+		if(tile_locations[c].x + tile_locations[c].w > rightmost){
+			//save rightmost tile corner + texture width
+			rightmost = tile_locations[c].x + tile_locations[c].w;
+		}
+	}//for loop
+	cout << "Highest values found [upmost,downmost,leftmost,rightmost]: \n"
+	     << "[" << upmost << "," << downmost << "," << leftmost << "," << rightmost << "]" << endl;
 }
+//can detect when we should stop scrolling, but allows no scrolling afterwards, not even in the opposite
+//direction - fixed, but is there a better way?
+void sdl_help::update_scroll(int x_scroll_in, int y_scroll_in){
+	int rightmost = -2048, leftmost = 2048, upmost = 2048, downmost = -2048;
+	most(rightmost,leftmost,upmost,downmost);
+	if( (rightmost + x_scroll_in) <= 0){
+		x_scroll = x_scroll + abs(0-rightmost);
+		cout << "Hit right scrolling barrier." << endl;
+	}
+	if( (leftmost + x_scroll_in) >= window_s.width){
+		x_scroll = x_scroll - (window_s.width - leftmost);
+		cout << "Hit left scrolling barrier." << endl;
+	}
+	if( (upmost + y_scroll_in) >= window_s.height){
+		y_scroll = y_scroll - (window_s.height - upmost);
+		cout << "Hit up scrolling barrier." << endl;
+	}
+	if( (downmost + y_scroll_in) <= 0){
+		y_scroll = y_scroll + abs(0-downmost);
+		cout << "Hit down scrolling barrier." << endl;
+	}
+	//it would make sense to be able to scroll like this 
+		cout << "x_scroll increased by " << x_scroll_in << "| " << x_scroll << "-> "
+		     << x_scroll + x_scroll_in << endl;
+		cout << "y_scroll increased by " << y_scroll_in << "| " << y_scroll << "-> "
+		     << y_scroll + y_scroll_in << endl;
+		x_scroll = x_scroll + x_scroll_in;
+		y_scroll = y_scroll + y_scroll_in;
+	
+}
+//return user to the top of the page
+void sdl_help::reset_scroll(){
+	x_scroll = 0; y_scroll = 0;
+}
+//********************************************************************************************/
 
 void sdl_help::print_tile_locs(ostream& outs){
 	for(unsigned int c = 0; c < tile_locations.size();c++){
@@ -244,7 +320,7 @@ bool sdl_help::in(int click_x, int click_y,const SDL_Rect& rect) const{
 	return false; //return false otherwise
 }
 
-
+//############################ NON-MEMBER HELPERS ##########################################################
 
 
 

@@ -31,8 +31,10 @@ int main(){
   SDL_SetEventFilter(filter_mouse_move,NULL);
 
 
+
   bool done = false; //this will need to be changed to true when the user clicks on the 'x'
   while(!done){
+
 	if(!SDL_PollEvent(&big_event));
 
 	else
@@ -71,6 +73,11 @@ int main(){
 			handle_mouseb_up(big_event,sdl_helper);
 			break;
 
+		case SDL_MOUSEWHEEL:
+			handle_mouse_wheel(big_event,sdl_helper);
+			SDL_FlushEvent(SDL_MOUSEWHEEL);//make it not get flooded with scroll commands
+			break;
+
 		default:
 			break;
 	}//event handling loop
@@ -88,9 +95,12 @@ int main(){
 
   //make sure that infinitely re-adding fields to location manager stopped happening
   //these numbers should be exactly equal
-  cout << "Tile v size: " << sdl_helper.get_mgr().tiles.size() << " Tile loc v size: "
-       << sdl_helper.get_locations().size() << endl;
+  //cout << "Tile vector size: " << sdl_helper.get_mgr().tiles.size() << " Tile location vector size: "
+  //     << sdl_helper.get_locations().size() << endl;
 
+  //sdl_helper.get_mgr().print_all(cout);
+
+  //sdl_helper.print_tile_locs(cout);
   sdl_helper.print_size_info(cout);
 
   //SDL_Delay(5000);

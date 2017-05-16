@@ -54,10 +54,24 @@ class sdl_help{
 	 *using some sort of greedy algorithm to make sure they don't conflict with each other */
 	void draw_all();
 
+	/**************************SCROLLING FUNCTIONS ************************************************/
+
 	//! This member changes this class's x_scroll and y_scroll values to the given parameters
-	/*! This is being called from the handlers.cc implementations most of the time. */
+	/*! This is being called from the handlers.cc implementations most of the time. If x or y params
+	 *are 0, that dimension is not scrolled */
 	void update_scroll(int x_scroll_in,int y_scroll_in);
 
+	//! This member changes this class's x_scroll and y_scroll values back to 0
+	/*!This pretty much returns the user back to the top of the page. I think I'll make this
+	 *a spacebar action */
+	void reset_scroll();
+
+	//! this member traverses the tile_loc vector and returns the greatest and least values
+	/*! it requires four integers by reference, which will be filled with the mininum and maximum
+	 *tile location for each cardinal direction */
+	void most(int& rightmost,int& leftmost,int& upmost,int& downmost);
+
+	/**********************************************************************************************/
 	//! This member prints the sizes of the three important size variables: area, window, and display
 	/*! Where display is the dimensions of the physical monitor the user has. window_s keeps track of
 	 *the size of the window in which things can be seen - this is usually less than the actual area.
@@ -98,6 +112,9 @@ class sdl_help{
 
 	SDL_Renderer* renderer; //!< pointer to the renderer object
 
+	/********* FRIENDS *******************************************/
+	//I have no friends
+
   private:
 	std::string window_name; //!<  \brief A string that contains the window name, usually Andiamo."
 	std::string image_p; //!<  \brief a string that points to the resource image directory 
@@ -106,7 +123,7 @@ class sdl_help{
 	//! allows sdl_help to keep track of where tiles are
 	/* the SDL_Rect's indices in this vector should line up with manager's tiles vector so 
 	 *the members of the correct field can be invoked */
-	std::vector<SDL_Rect> tile_locations;//!< allows sdl to keep track of where tiles are
+	std::vector<SDL_Rect> tile_locations;
 	
 	int y_scroll;//!< \brief this integer controls how far up or down we've scrolled
 	int x_scroll;//!< \brief this integer controls how far right or left we've scrolled
@@ -128,4 +145,6 @@ class sdl_help{
 
 	manager tile_bag; //!< manager object that contains all the field objects
 };
+
+
 

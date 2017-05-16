@@ -3,9 +3,16 @@
 
 #include "handlers.h"
 
+#define x_scroll_rate = 15
+#define y_scroll_rate = 30
+
+
 using namespace std;
 
 bool handle_test = true;
+
+
+
 
 //example to make sure linking worked
 //void plus_two(int num_in,const sdl_help& sdl_helper){
@@ -60,26 +67,38 @@ void handle_mouseb_up(const SDL_Event& big_event, const sdl_help& sdl_help){
 			break;
 	}
 }
+
+void handle_mouse_wheel(const SDL_Event& big_event, sdl_help& sdl_help){
+		sdl_help.update_scroll(big_event.wheel.x * 15,big_event.wheel.y * 60);
+}
 //############################# JERRY STUFF ################################################################
 
 //############################# KEYBOARD STUFF #############################################################
-void handle_key_down(const SDL_Event& big_event, const sdl_help& sdl_help){
+void handle_key_down(const SDL_Event& big_event, sdl_help& sdl_help){
 	switch(big_event.key.keysym.sym){
 		case SDLK_DOWN: //literal down arrow key
 			cout << SDL_GetKeyName(SDLK_DOWN) << " pressed down" << endl;
-			break;
-		case SDLK_RIGHT:
-			cout << SDL_GetKeyName(SDLK_RIGHT) << " pressed down" << endl;
-			break;
-
-		case SDLK_LEFT:
-			cout << SDL_GetKeyName(SDLK_LEFT) << " pressed down" << endl;
+			sdl_help.update_scroll(0,-30); //scroll down
 			break;
 
 		case SDLK_UP:
 			cout << SDL_GetKeyName(SDLK_UP) << " pressed down" << endl;
+			sdl_help.update_scroll(0,30); //scroll down
 			break;
 
+		case SDLK_RIGHT:
+			cout << SDL_GetKeyName(SDLK_RIGHT) << " pressed down" << endl;
+			sdl_help.update_scroll(-15,0); //scroll down
+			break;
+
+		case SDLK_LEFT:
+			cout << SDL_GetKeyName(SDLK_LEFT) << " pressed down" << endl;
+			sdl_help.update_scroll(15,0); //scroll down
+			break;
+		case SDLK_SPACE:
+			cout << "Spacebar pressed, resetting scroll values." << endl;
+			sdl_help.reset_scroll();
+			break;
 		default:
 			if(handle_test) cout << "Unknown key pressed down." << endl;
 			break;
@@ -104,7 +123,9 @@ void handle_key_up(const SDL_Event& big_event, const sdl_help& sdl_help){
 		case SDLK_UP:
 			cout << SDL_GetKeyName(SDLK_UP) << " released." << endl;
 			break;
-
+		case SDLK_SPACE:
+			cout << "Spacebar released." << endl;
+			break;
 		default:
 			if(handle_test) cout << "Unknown key released. " << endl;
 			break;
