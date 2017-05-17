@@ -51,12 +51,14 @@ class sdl_help{
 	//! This member presents the renderer and all of it's current textures to the screen
 	void present();
 
-	//! This member traverses manager's vector and loads all of the SDL Surfaces
+	//! This member traverses manager's vector and loads all of the tile's SDL Surfaces
 	/*! For now, this function is assuming that only two tile cards are going to happen per row
 	 * and that the tiles are the same size. It will be improved to allow for different tile sizes
 	 *using some sort of greedy algorithm to make sure they don't conflict with each other */
-	void draw_all();
-
+	void draw_tiles();
+	//! This member enacts the draw members of vert_bar and horiz_bar
+	/* This should likely be called directly below every call to draw_tiles() */ 
+	void draw_sbars();
 	/**************************SCROLLING FUNCTIONS ************************************************/
 
 	//! This member changes this class's x_scroll and y_scroll values to the given parameters
@@ -99,13 +101,21 @@ class sdl_help{
          *logging features*/
 	void print_tile_locs(std::ostream& outs);
 
+	//! this member calls the scroll bars's scroll_bar::clicked() function (click detection)
+	/*! this doesn't do any logic besides return boolean values from the scroll bars's clicked member
+	 *\param outs is the stream that messages should be sent to
+	 *\param click_x is the xcoord of the mouse click
+	 *\param click_y is the ycoord of the mouse click
+	 *\return returns true if a scroll bar was clicked, and false elsewise */
+	bool scroll_clicked(std::ostream& outs, int click_x, int click_y) const;
+
 	//! This member traverses the tile location vector and sees if the user clicked on a tile or not
 	/*! it walks linearly through the tile_locations vector and enacts the clicked() member
 	 *of the tile that the user clicked on. For now this means cute cout statements
 	 *\param outs output stream to send messages to
 	 *\param click_x mouse click's x value (distance horizontaly from left side of window)
 	 *\param click_y mouse click's y value (distance vertically from top of window) */
-	void click_detection(std::ostream& outs,int click_x, int click_y) const;
+	void click_detection(std::ostream& outs, int click_x, int click_y) const;
 
 	//! this is a boolean helper for click_detection()
 	/* this member just takes in a mouse click's x or y values, and calculates whether or not
@@ -163,7 +173,7 @@ class sdl_help{
 
 	/************************************************************************************/
 
-	bool area_size_set; /*!< \brief false on the onset of the program, set to true after draw_all() has
+	bool area_size_set; /*!< \brief false on the onset of the program, set to true after draw_tiles() has
 			     *been invoked once
 			     *
 			     * this logic will need to be changed if we allow tile loading at run time */ 

@@ -47,15 +47,15 @@ sdl_help::sdl_help(string name_in){
 					           // dimension window fields
 	x_scroll = 0; y_scroll = 0; //set scrolling variables to 0
 
-	area_size_set = false; //this should be changed to run after the first inner loop run in draw_all()
+	area_size_set = false;//this should be changed to run after the first inner loop run in draw_tiles()
 
 	tile_bag.init();
 	//give vertical scroll bar the addresses of the info it needs from the sdl_help object
 	vert_bar.init(&x_scroll,&y_scroll,&area.width,&area.height,
-		      &window_s.width,&window_s.height, renderer);
+		      &window_s.width,&window_s.height, renderer,"v_ou_dark_green_quarter.png");
 	//give horizontal scroll bar the address of the info it needs from the sdl_help object
 	horiz_bar.init(&x_scroll,&y_scroll,&area.width,&area.height,
-		      &window_s.width,&window_s.height, renderer);
+		      &window_s.width,&window_s.height, renderer,"h_ou_grey_quarter.png");
 
 	vert_bar.print(cout);
 	horiz_bar.print(cout);
@@ -90,16 +90,16 @@ sdl_help::sdl_help(std::string name_in, int width, int height){
 
 	x_scroll = 0; y_scroll = 0; //set scrolling values to 0
 
-	area_size_set = false; //this should be changed to run after the first inner loop run in draw_all()
+	area_size_set = false;//this should be changed to run after the first inner loop run in draw_tiles()
 
 	tile_bag.init();
 
 	//give vertical scroll bar the addresses of the info it needs from the sdl_help object
 	vert_bar.init(&x_scroll,&y_scroll,&area.width,&area.height,
-		      &window_s.width,&window_s.height, renderer);
+		      &window_s.width,&window_s.height, renderer,"v_ou_dark_green_quarter.png");
 	//give horizontal scroll bar the address of the info it needs from the sdl_help object
 	horiz_bar.init(&x_scroll,&y_scroll,&area.width,&area.height,
-		      &window_s.width,&window_s.height, renderer);
+		      &window_s.width,&window_s.height, renderer,"h_ou_grey_quarter.png");
 
 	vert_bar.print(cout);
 	horiz_bar.print(cout);
@@ -136,7 +136,7 @@ void sdl_help::present(){
 }
 //arrange the tiles and draw their textures, for now just doing two tiles per row, with their locations
 //being just a fraction of the screen size for testing
-void sdl_help::draw_all(){
+void sdl_help::draw_tiles(){
 	SDL_Texture* tex = NULL;//seeing if putting these up here will help stop the memory leak
 	SDL_Surface* surf = NULL;//it seems to have worked. It runs better and valgrind says hardly any
 			  //memory leaks
@@ -219,7 +219,7 @@ void sdl_help::draw_all(){
                 }//end big if/else
 
 		if( surf == NULL || tex == NULL || renderer == NULL){
-			cout << "Error in draw_all(), an SDL pointer is null." << endl;
+			cout << "Error in draw_tiles(), an SDL pointer is null." << endl;
 			cout << "surface | texture | renderer: " << surf << " | " << tex
 			     << " | " << renderer << endl;
 			cout << "Image path: " << path << endl;
@@ -260,8 +260,12 @@ void sdl_help::draw_all(){
 		SDL_FreeSurface(area_surf);
 	  }*/
 
-}//end of draw_all
+}//end of draw_tiles
 
+void sdl_help::draw_sbars(){
+	horiz_bar.draw_me();
+	vert_bar.draw_me();
+}
 //**********************SCROLLING FUNCTIONS ***************************************************/
 
 // walk the tile locations vector, and keep track of the rightmost, leftmost, bottommost, and upmost
@@ -298,11 +302,12 @@ void sdl_help::update_scroll(int x_scroll_in, int y_scroll_in){
 		cout << "Hit right scrolling barrier." << endl;
 	}
 	if( (leftmost + x_scroll_in) >= window_s.width){
-		x_scroll = x_scroll - (window_s.width - leftmost);
+		x_scroll = x_scroll - (/*window_s.width - leftmost*/ leftmost-window_s.width);
 		cout << "Hit left scrolling barrier." << endl;
-	}
+	} //mid-statement commented regions are previous values, they were buggy so trying them switched
+	  //seems to have fixed it, but commented regions stay until more strenuously tested
 	if( (upmost + y_scroll_in) >= window_s.height){
-		y_scroll = y_scroll - (window_s.height - upmost);
+		y_scroll = y_scroll - (/*window_s.height - upmost*/ upmost-window_s.height);
 		cout << "Hit up scrolling barrier." << endl;
 	}
 	if( (downmost + y_scroll_in) <= 0){
@@ -316,11 +321,26 @@ void sdl_help::update_scroll(int x_scroll_in, int y_scroll_in){
 		     << y_scroll + y_scroll_in << endl;
 		x_scroll = x_scroll + x_scroll_in;
 		y_scroll = y_scroll + y_scroll_in;
+
+	//let the scroll bars know what is going on
+	vert_bar.update();
+	horiz_bar.update();
 	
 }
 //return user to the top of the page -currently called from a spacebar press
 void sdl_help::reset_scroll(){
 	x_scroll = 0; y_scroll = 0;
+
+	//let scroll bars know that scrolling has been reset
+	vert_bar.update();
+	horiz_bar.update();
+}
+
+bool sdl_help::scroll_clicked(ostream& outs,int click_x, int click_y) const{
+	if(vert_bar.clicked(outs,click_x,click_y)) return true;//call vbar's click detection member
+	if(horiz_bar.clicked(outs,click_x,click_y))return true;//call hbar's click detection member
+	return false;//if we make it to this line return false (nothing was clicked)
+		     //this returning false allows handle_mouseb_down to check the tiles
 }
 //********************************************************************************************/
 

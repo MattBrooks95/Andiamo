@@ -22,7 +22,8 @@ int main(){
 
   //sdl_helper.get_mgr().print_all(cout);
 
-  sdl_helper.draw_all();
+  sdl_helper.draw_tiles();
+  sdl_helper.draw_sbars();
   sdl_helper.present();
 
 
@@ -82,7 +83,8 @@ int main(){
 	}//event handling loop
 
 	//sdl_helper.get_mgr().print_all(cout);
-	sdl_helper.draw_all(); //re-draw the screen once all events have been handled
+	sdl_helper.draw_tiles(); //re-draw the screen once all events have been handled
+	sdl_helper.draw_sbars(); //draw the scroll bars
 	//sdl_helper.print_tile_locs(cout);
 	sdl_helper.present();  //and all positions have been calculated
 

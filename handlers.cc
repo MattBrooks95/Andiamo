@@ -31,7 +31,23 @@ void handle_mouseb_down(const SDL_Event& big_event, const sdl_help& sdl_help){
 		case SDL_BUTTON_LEFT: //handle left clicks
 			//cout << "\nLeft clicked at location= "
 			 //    << big_event.button.x << ":" << big_event.button.y << endl;
-			sdl_help.click_detection(cout,big_event.button.x,big_event.button.y);
+
+			//have sdl_help check to see if we clicked a scroll bar
+			//note that scroll bar has click priority over the tiles. Clicking a scroll bar
+			//with a tile under it won't do anything to that tile
+			if(sdl_help.scroll_clicked(cout,big_event.button.x,big_event.button.y)){
+				//there has to be some sort of mini event loop here to figure out how far
+				//to scroll as a response to the scroll bar being clicked and dragged
+				//the only solutions I can think of right now are ugly
+				//with this member structure, how do I know if it is an hbar or vbar
+				//drawing will stop if I do an event mini loop to capture the scroll
+				//	amounts
+				//perhaps do some sort of flag thing where big_event loop is in scrolling
+				//mode, and continues to draw, but only handles mouse dragging
+				//then stops when the mouse button is let go? hmmmmm
+			}
+			else sdl_help.click_detection(cout,big_event.button.x,big_event.button.y);
+
 			break;
 
 		case SDL_BUTTON_RIGHT: //handle right clicks
@@ -88,13 +104,13 @@ void handle_key_down(const SDL_Event& big_event, sdl_help& sdl_help){
 
 		case SDLK_RIGHT:
 			cout << SDL_GetKeyName(SDLK_RIGHT) << " pressed down" << endl;
-			sdl_help.update_scroll(-15,0); //scroll down
-			break;
+			sdl_help.update_scroll(-60,0); //scroll down
+			break;//-60 ^was -15
 
 		case SDLK_LEFT:
 			cout << SDL_GetKeyName(SDLK_LEFT) << " pressed down" << endl;
-			sdl_help.update_scroll(15,0); //scroll down
-			break;
+			sdl_help.update_scroll(60,0); //scroll down
+			break; //60 ^was 15
 		case SDLK_SPACE:
 			cout << "Spacebar pressed, resetting scroll values." << endl;
 			sdl_help.reset_scroll();
