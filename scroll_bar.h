@@ -55,6 +55,27 @@ class scroll_bar{
 	/*! prints a cute message for now, scrolls the screen later */
 	bool clicked(std::ostream& outs, int click_x, int click_y) const;
 
+	//################## GETTERS AND SETTERS ############################
+	//! returns true if scroll bar is being moved, and false otherwise
+	//getters
+	bool is_scrolling();
+
+	//! get ycoord of top of the scroll bar (used by vertical bars)
+	int get_top(){ return yloc; }
+	//! get ycoord of bottom of the scroll bar (used by vertical bars)
+	int get_bottom(){ return yloc + height; }
+
+	//! get xcoord of the left side of the scroll bar (use on horiz bars)
+	int get_left(){ return xloc; }
+	//! get xcoord of the right side of the scroll bar (use on horiz bars)
+	int get_right(){ return xloc + width; }
+
+	//setters
+
+	/*! toggles the scrolling_mode boolean based on if the user is 
+	 *trying to scroll with one of the scroll bars */
+	void scroll_mode_change(bool val_in);
+	//###################################################################
 
   private:
 	//**************** SCROLL BAR STUFF *********************************/
@@ -65,6 +86,11 @@ class scroll_bar{
 	std::string image_p;
 	SDL_Texture* my_tex;
 	SDL_Surface* my_surf;
+	//! keeps track of whether or not we are in scroll mode
+	/*! where scroll mode refers to the point in time in which the user
+         *has clicked and held down on the left mouse button, and may be
+         *dragging the scroll bar in order to scroll the page */
+	bool scrolling_mode;
 	//*******************************************************************/
 
 	//**************** SDL STUFF ****************************************/

@@ -35,9 +35,25 @@ int main(){
   bool done = false; //this will need to be changed to true when the user clicks on the 'x'
   while(!done){
 
-	if(!SDL_PollEvent(&big_event));
+	SDL_PollEvent(&big_event);
 
-	else
+
+	if(sdl_helper.get_v_bar().is_scrolling()){//if the vertical scroll bar is in "scroll mode"
+		   //do a mini loop until the left mouse button is released
+		scrolling_mini_loop(big_event,sdl_helper,'v');
+		sdl_helper.get_v_bar().scroll_mode_change(false);//stop v scroll bar mode
+		SDL_FlushEvents(0,1000); //is this necessary?
+
+		//return 0;//exit to prevent lockup, until scrolling is implemented more
+
+	} else if(sdl_helper.get_h_bar().is_scrolling()){//if the horizontal scroll bar is in "scroll mode"
+		     //do a mini loop until the left mouse button is released
+		scrolling_mini_loop(big_event,sdl_helper,'h');
+		sdl_helper.get_h_bar().scroll_mode_change(false);//stop h scroll bar mode
+		SDL_FlushEvents(0,1000);//is this necessary?
+
+		//return 0;//exit to prevent lockup, until scrolling is implemented more
+	} else
 	switch(big_event.type){ //switch controlled by the 'type' of input given, like the mouse moving
 				//or key presses
 
@@ -46,6 +62,7 @@ int main(){
 			cout << "quitting...." << endl;
 			done = true;
 			break;
+
 		//as of right now 5/11/17, this section is definitely moot because mouse motion is filtered
 		//out of the input queue
 		//case SDL_MOUSEMOTION: //I don't think anything will care about the mouse moving,
@@ -61,7 +78,7 @@ int main(){
 
 		case SDL_KEYUP:
 			handle_key_up(big_event,sdl_helper);
-			//SDL_FlushEvent(SDL_KEYUP);
+			SDL_FlushEvent(SDL_KEYUP);
 			break;
 
 		case SDL_MOUSEBUTTONDOWN:
@@ -80,7 +97,7 @@ int main(){
 
 		default:
 			break;
-	}//event handling loop
+	}//event handling switch
 
 	//sdl_helper.get_mgr().print_all(cout);
 	sdl_helper.draw_tiles(); //re-draw the screen once all events have been handled
@@ -103,8 +120,8 @@ int main(){
 
   //sdl_helper.print_tile_locs(cout);
   sdl_helper.print_size_info(cout);
-  sdl_helper.get_h_bar().print(cout);//make sure that these values are updating in the bars as
-  sdl_helper.get_v_bar().print(cout);//they are updated in the sdl_helper object
+  //sdl_helper.get_h_bar().print(cout);//make sure that these values are updating in the bars as
+  //sdl_helper.get_v_bar().print(cout);//they are updated in the sdl_helper object
 
   //SDL_Delay(5000);
 

@@ -16,7 +16,8 @@ class manager{
 
 	//! This member loads a given tile into the vector
 	/*! It doesn't do anything special right now, but later it may have to
-	 *implement some other book keeping, so it gets its own function */
+	 *implement some other book keeping, so it gets its own function 
+         *\param temp is the temporary tile that is passed by value, and shoved into the tiles vector */
 	void new_tile(field temp);
 
 	/*! this init member uses fstream and regex to open and process a text file, which for now defaults
@@ -26,19 +27,16 @@ class manager{
 	 *constructor is called after manager's apparently*/
 	void init();
 
-	/*! this member figures out how 'long' or 'tall' the screen needs to be for all tiles to fit
-	 *
-	 * the logic should be the yloc of the lowest tile, plus it's height and a buffer value
-	 */
-	int sum_height();
-
 
 	//! This runs through the vector and enacts each of the field element's print members
+	/*! \param outs is the output stream that the info should be sent to */
 	void print_all(std::ostream& outs);
 
 	//! This member updates the window's dimension values win_w and win_h
 	/*! This should usually only be called from a member of the sdl_help class,
-	 * probably whenever the user resizes the screen, and at startup of Andiamo */
+	 *probably whenever the user resizes the screen, and at startup of Andiamo 
+	 *\param width_in is the desired new width
+	 *\param height_in is the desired new height */
 	void update_win(int width_in, int height_in);
 
 	std::vector<field> tiles;//!< vector if tile information is public for easier access from sdl_help

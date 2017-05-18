@@ -9,15 +9,29 @@
 
 #include "sdl_help.h"
 
-//void plus_two(int num_in,const sdl_help& sdl_helper);//this was used to test compilation
 
 //! this is a filter function meant to prevent the sdl event queue from pushing mouse location updates
 int filter_mouse_move(void* userdata, SDL_Event* event);
 
+/*! this is a filter function designed for the mini loop in scrolling_mini_loop - only allows mouse motion
+ *and mouse button up events to happen (only events needed in the mini loop) */
+int filter_mini(void* userdata, SDL_Event* event);
+
+//############################## JERRY FUNCTIONS FOR SUBLOOPS #################################################
+/*! scrolling_mini_loop implements a sub-switch statement that handles left mouse clicks in the scrolling
+ *sub loop. */
+/*! the loop processes the user dragging the mouse, and updates the corresponding scroll bar, and the scroll
+ *value.
+ *\param big_event the sdl event that is going to determine behavior and eventually stop the loop
+ *\param sdl_help reference to the sdl_help object so that the mini loop can draw and access scroll bar info
+ *\param which_bar and 'v' means we are working with the vertical bar, 'h' means the horizontal
+ * bar */
+void scrolling_mini_loop(SDL_Event& big_event, sdl_help& sdl_help,char which_bar);
+//#############################################################################################################
 
 //############################## JERRY STUFF ##################################################################
 //! handle_mouseb_down implements the sub-switch statement that handles mouse buttons being pressed down
-void handle_mouseb_down(const SDL_Event& big_event, const sdl_help& sdl_help);
+void handle_mouseb_down(const SDL_Event& big_event, sdl_help& sdl_help);
 
 //! handle_mouseb_up implements the sub-switch statement that handles mouse buttons being released
 void handle_mouseb_up(const SDL_Event& big_event, const sdl_help& sdl_help);

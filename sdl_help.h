@@ -83,6 +83,13 @@ class sdl_help{
          *the lowest tile */
 	void most(int& rightmost,int& leftmost,int& upmost,int& downmost);
 
+	//! this member calls the scroll bars's scroll_bar::clicked() function (click detection)
+	/*! this doesn't do any logic besides return boolean values from the scroll bars's clicked member
+	 *\param outs is the stream that messages should be sent to
+	 *\param click_x is the xcoord of the mouse click
+	 *\param click_y is the ycoord of the mouse click
+	 *\return returns true if a scroll bar was clicked, and false elsewise */
+	int scroll_clicked(std::ostream& outs, int click_x, int click_y) const;
 	/**********************************************************************************************/
 	//! This member prints the sizes of the three important size variables: area, window, and display
 	/*! Where display is the dimensions of the physical monitor the user has. window_s keeps track of
@@ -101,13 +108,6 @@ class sdl_help{
          *logging features*/
 	void print_tile_locs(std::ostream& outs);
 
-	//! this member calls the scroll bars's scroll_bar::clicked() function (click detection)
-	/*! this doesn't do any logic besides return boolean values from the scroll bars's clicked member
-	 *\param outs is the stream that messages should be sent to
-	 *\param click_x is the xcoord of the mouse click
-	 *\param click_y is the ycoord of the mouse click
-	 *\return returns true if a scroll bar was clicked, and false elsewise */
-	bool scroll_clicked(std::ostream& outs, int click_x, int click_y) const;
 
 	//! This member traverses the tile location vector and sees if the user clicked on a tile or not
 	/*! it walks linearly through the tile_locations vector and enacts the clicked() member
@@ -129,6 +129,9 @@ class sdl_help{
 	void quit();
 
 	/**********GETTERS AND SETTERS*********************************/
+	//! This member gets the current frame count
+	unsigned long int get_frame_count(){ return frame_count; }
+
 	//! This member returns a pointer to window_s field
 	win_size* get_win_size();
 
@@ -160,21 +163,29 @@ class sdl_help{
 	std::string image_p; //!<  \brief a string that points to the resource image directory 
 	std::string hf_input_p; //!< \brief a path string to the algorithm's input file folder 
 
+	//!< contains a running total of how many times draw_all() has been ran
+	/*! as of right now this is just paying lip service to worrying about framerate
+	 *a bunch of decisions still have to be made in that regard. */
+	unsigned long int frame_count;
+
+
 	//! allows sdl_help to keep track of where tiles are
 	/* the SDL_Rect's indices in this vector should line up with manager's tiles vector so 
 	 *the members of the correct field can be invoked */
 	std::vector<SDL_Rect> tile_locations;
 	/***************** FIELDS THAT PERTAIN TO SCROLLING ********************************/
-	scroll_bar vert_bar;
-	scroll_bar horiz_bar;
+	scroll_bar vert_bar;/*!< \brief contains functions to act on, and draw, the vertical
+			     *scroll bar */
+	scroll_bar horiz_bar;/*!< \brief similarly contains functions act on, and draw, the
+			      *horizontal scrollbar */
 
 	int y_scroll;//!< \brief this integer controls how far up or down we've scrolled
 	int x_scroll;//!< \brief this integer controls how far right or left we've scrolled
 
 	/************************************************************************************/
 
-	bool area_size_set; /*!< \brief false on the onset of the program, set to true after draw_tiles() has
-			     *been invoked once
+	bool area_size_set; /*!< \brief false on the onset of the program, set to true after 
+                             *draw_tiles() has been invoked once
 			     *
 			     * this logic will need to be changed if we allow tile loading at run time */ 
 	win_size area;/*!< \brief a win_size struct that contains the dimensions for the entire area,

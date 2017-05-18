@@ -32,6 +32,8 @@ sdl_help::sdl_help(string name_in){
 	image_p = "./Assets/Images/";
 	hf_input_p = "./HF_Input/";
 
+	frame_count = 0;
+
 	if(SDL_GetCurrentDisplayMode(0,&display) < 0){
 		cout << "Get current display mode error" << endl;
 		cout << SDL_GetError();
@@ -69,7 +71,7 @@ sdl_help::sdl_help(std::string name_in, int width, int height){
 	image_p = "./Assets/Images/";
 	hf_input_p = "./HF_Input/";
 
-
+	frame_count = 0;
 
 	//this call is to make sure refresh_rate and driverdata are handled
 	if(SDL_GetCurrentDisplayMode(0,&display) < 0){
@@ -108,6 +110,8 @@ sdl_help::sdl_help(std::string name_in, int width, int height){
 sdl_help::~sdl_help(){
 	SDL_DestroyRenderer(renderer);//stops memory leaks
 	SDL_DestroyWindow(window);
+
+	//cout << "I'm dying. You killed me. Final frame count= " << frame_count << endl;
 
 	IMG_Quit();
 	SDL_Quit();
@@ -259,7 +263,7 @@ void sdl_help::draw_tiles(){
 		SDL_DestroyTexture(area_tex);
 		SDL_FreeSurface(area_surf);
 	  }*/
-
+	frame_count++; //increment frame counter;
 }//end of draw_tiles
 
 void sdl_help::draw_sbars(){
@@ -289,8 +293,8 @@ void sdl_help::most(int& rightmost,int& leftmost,int& upmost,int& downmost){
 			rightmost = tile_locations[c].x + tile_locations[c].w;
 		}
 	}//for loop
-	cout << "Highest values found [upmost,downmost,leftmost,rightmost]: \n"
-	     << "[" << upmost << "," << downmost << "," << leftmost << "," << rightmost << "]" << endl;
+	//cout << "Highest values found [upmost,downmost,leftmost,rightmost]: \n"
+	     //<< "[" << upmost << "," << downmost << "," << leftmost << "," << rightmost << "]" << endl;
 }
 //can detect when we should stop scrolling, but allows no scrolling afterwards, not even in the opposite
 //direction - fixed, but is there a better way?
@@ -315,10 +319,10 @@ void sdl_help::update_scroll(int x_scroll_in, int y_scroll_in){
 		cout << "Hit down scrolling barrier." << endl;
 	}
 	//it would make sense to be able to scroll like this 
-		cout << "x_scroll increased by " << x_scroll_in << "| " << x_scroll << "-> "
-		     << x_scroll + x_scroll_in << endl;
-		cout << "y_scroll increased by " << y_scroll_in << "| " << y_scroll << "-> "
-		     << y_scroll + y_scroll_in << endl;
+		//cout << "x_scroll increased by " << x_scroll_in << "| " << x_scroll << "-> "
+		     //<< x_scroll + x_scroll_in << endl;
+		//cout << "y_scroll increased by " << y_scroll_in << "| " << y_scroll << "-> "
+		     //<< y_scroll + y_scroll_in << endl;
 		x_scroll = x_scroll + x_scroll_in;
 		y_scroll = y_scroll + y_scroll_in;
 
@@ -336,10 +340,12 @@ void sdl_help::reset_scroll(){
 	horiz_bar.update();
 }
 
-bool sdl_help::scroll_clicked(ostream& outs,int click_x, int click_y) const{
-	if(vert_bar.clicked(outs,click_x,click_y)) return true;//call vbar's click detection member
-	if(horiz_bar.clicked(outs,click_x,click_y))return true;//call hbar's click detection member
-	return false;//if we make it to this line return false (nothing was clicked)
+int sdl_help::scroll_clicked(ostream& outs,int click_x, int click_y) const{
+	if(vert_bar.clicked(outs,click_x,click_y)) return 1;//call vbar's click detection member
+							    //1 means vertical bar was clicked
+	if(horiz_bar.clicked(outs,click_x,click_y)) return 2;//call hbar's click detection member
+							     //2 means horizontal bar was clicked
+	return 0;   //if we make it to this line return 'false' 0 (nothing was clicked)
 		     //this returning false allows handle_mouseb_down to check the tiles
 }
 //********************************************************************************************/

@@ -4,7 +4,7 @@
 #include "scroll_bar.h"
 
 using namespace std;
-
+//###################### CONSTRUCTORS/DESTRUCTORS #################################################
 scroll_bar::scroll_bar(){
 	xloc = -1;//dummy initial values to hint if things weren't initialized properly by init()
 	yloc = -1;
@@ -13,6 +13,8 @@ scroll_bar::scroll_bar(){
 	image_p = "notset";
 	my_tex = NULL;
 	my_surf = NULL;
+
+	scrolling_mode = false;//do not start out in scrolling mode
 
 	//null out references to sdl_help members until the init function is ran
 	x_scroll = NULL;
@@ -28,6 +30,18 @@ scroll_bar::~scroll_bar(){
 	SDL_FreeSurface(my_surf);
 	SDL_DestroyTexture(my_tex);
 }
+//################################################################################################
+
+//######################### GETTERS AND SETTERS ##################################################
+bool scroll_bar::is_scrolling(){
+	return scrolling_mode; // return whether or not we are in scrolling mode
+}
+void scroll_bar::scroll_mode_change(bool bool_in){
+	scrolling_mode = bool_in;
+	cout << "Scrolling mode changed to: " << scrolling_mode << endl;
+}
+//################################################################################################
+
 ///helper for init(), calcs corner location and sets up texture 
 void scroll_bar::init_corner_texture(){
 	my_surf = IMG_Load(image_p.c_str());
@@ -88,18 +102,18 @@ void scroll_bar::print(ostream& outs){
 		delete window_width; delete window_height;
 		return;//get outta here
 	}
-	cout << "x_scroll = " << *x_scroll << " | " << "y_scroll = " << *y_scroll << endl;
+/*	cout << "x_scroll = " << *x_scroll << " | " << "y_scroll = " << *y_scroll << endl;
 	cout << "area_width = " << *area_width << " | " << "area_height = " << *area_height << endl;
 	cout << "window_width = " << *window_width << " | " << "window_height = " << *window_height << endl;
 	cout << "renderer = " << renderer << endl;
-	cout << "scroll bar dims = " << width << ":" << height << endl;
+	cout << "scroll bar dims = " << width << ":" << height << endl; */
 }
-//it doesn't actually do anything yet LOL
+
 void scroll_bar::draw_me(){
 	SDL_Rect dest = {xloc,yloc,width,height};
 	SDL_RenderCopy(renderer,my_tex,NULL,&dest);
 }
-//it doesn't actually do anything yet LOL
+
 void scroll_bar::update(){
 	if(x_scroll == NULL || y_scroll == NULL || window_height == NULL || window_width == NULL ||
 	   area_width == NULL || area_height == NULL){
@@ -108,7 +122,6 @@ void scroll_bar::update(){
 		return;
 	}
 	if(width > height){//logic for horizontal bar
-		cout << "moving h bar" << endl;
 		xloc = int(-(*x_scroll) * ((*window_width) / ((*area_width)*1.0)));//move as a function of
 									    //screen size vs scrollabe size
 		if(xloc + width > *window_width){
@@ -117,7 +130,6 @@ void scroll_bar::update(){
 			xloc = 0;//don't go past left side of the screen
 		}
 	} else {//logic for vertical bar
-		cout << "moving v bar" << endl;
 
 		//move as a function of screen size vs scrollable size
 		cout << (*y_scroll) << " " << (*window_height) << ":" << (*area_height) << endl;
@@ -137,10 +149,7 @@ bool scroll_bar::in(int click_x,int click_y) const{
 }
 bool scroll_bar::clicked(ostream& outs, int click_x, int click_y) const{
 	bool was_clicked = false;
-	if( in(click_x,click_y)){
-		was_clicked = true;
-		cout << "hehehehehehe!" << endl;
-	}
+	if( in(click_x,click_y)) was_clicked = true;
 	return was_clicked;
 }
 

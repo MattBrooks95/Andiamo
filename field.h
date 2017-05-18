@@ -30,14 +30,25 @@ struct tile_size{
 class field{
   public:
 
-	//! this constructor requires 2 more arguments: tile height and width
+	//! this the constructor that needs to be used
+	/*! all of these fields should be filled by manager's init() function
+	 *\param tile_name is a contextual title that will be displayed on the tile
+	 *\param image_name_in is the name of the actual image used. This must be correct.
+	 *\param width is the width of the image supplied for the tile (and the tile width)
+	 *\param height is the height of the image supplied for the title (and the tile height) */
 	field(std::string tile_name_in,std::string image_name_in, int width, int height);
+
+	//! this the destructor for the field/tile object - does nothing
 	~field();
 	
 	//! this member prints a message if the user clicks on this tile
+	/*!
+	 *\param outs is the output stream that the info (if any) should be sent to */
 	void clicked(std::ostream& outs) const;
 
 	//! this void member prints the field's info to a given stream
+	/*!
+	 *\param outs is the output stream that the info (if any) should be sent to */
 	void print(std::ostream& outs);
 
 	tile_size get_size() { return size;}//!< getter for the private tile_size field
