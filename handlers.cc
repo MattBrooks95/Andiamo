@@ -79,6 +79,8 @@ void scrolling_mini_loop(SDL_Event& big_event, sdl_help& sdl_help,char which_bar
 									//flooded
 				}
 				break;
+			case 1776:
+				break;
 			default:
 				cout << "Error. Didn't hit a case in scrolling event sub-loop." << endl;
 				exit = true;
@@ -169,7 +171,7 @@ void handle_mouseb_up(const SDL_Event& big_event, const sdl_help& sdl_help){
 }
 
 void handle_mouse_wheel(const SDL_Event& big_event, sdl_help& sdl_help){
-		sdl_help.update_scroll(big_event.wheel.x * 15,big_event.wheel.y * 60);
+	sdl_help.update_scroll(big_event.wheel.x * 15,big_event.wheel.y * 60);
 }
 //############################# JERRY STUFF ################################################################
 
@@ -233,13 +235,6 @@ void handle_key_up(const SDL_Event& big_event, const sdl_help& sdl_help){
 	SDL_FlushEvent(SDL_MOUSEBUTTONUP);
 }
 //############################# KEYBOARD STUFF #############################################################
-
-
-
-
-
-
-
 
 
 

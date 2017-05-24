@@ -3,6 +3,11 @@
 #pragma once
 #include<string>
 #include<iostream>
+
+#include<SDL2/SDL.h>
+#include<SDL2/SDL_image.h>
+
+
 //! tile_size is a struct that contains height and width parameters for the main window
 /*! These should be a fraction of the size of the window, to allow for many input cards on one screen */
 struct tile_size{
@@ -38,6 +43,25 @@ class field{
 	 *\param height is the height of the image supplied for the title (and the tile height) */
 	field(std::string tile_name_in,std::string image_name_in, int width, int height);
 
+	//! fields should save their render information to save time and readability in main loop and drawing
+	/*! this is not done, and will likely change the structure of the program */
+	void graphics_init(SDL_Renderer* sdl_help_renderer_in,std::string image_p_in,
+			   int* xscroll_in,int* yscroll_in);
+
+	//! this function is used to change this tile object's size when normal logic can't be followed
+	/*! right now I believe the only case is when setting the background tile's size, because calc_corners()
+	 * doesn't processes the 0th (background) tile*/
+	void force_size(int width_in,int height_in);
+
+
+	//! this will draw this field object's texture to the screen
+	/*! this works using its known corner values offset by the current scrolling values, and
+	 *the texture/surface/renderer information given to it by sdl_help's constructor calling calc_corners and
+	 * give_fields_render
+	 */
+	void draw_me();
+
+
 	//! this the destructor for the field/tile object - does nothing
 	~field();
 	
@@ -46,10 +70,18 @@ class field{
 	 *\param outs is the output stream that the info (if any) should be sent to */
 	void clicked(std::ostream& outs) const;
 
+
 	//! this void member prints the field's info to a given stream
 	/*!
 	 *\param outs is the output stream that the info (if any) should be sent to */
 	void print(std::ostream& outs);
+
+	//! this member returns this tiles corner location, and dimensions as an sdl rect
+	/*! it's definitely weird to have them stored separately after I've decided to give field
+	 * access to SDL stuff, but I'm going to leave it this way for now. Note that this
+	 * does account for scrolling*/
+	SDL_Rect get_rect() const;
+
 
 	tile_size get_size() { return size;}//!< getter for the private tile_size field
 
@@ -57,8 +89,27 @@ class field{
 
 	std::string tile_name; //!< the tile_name should only serve a contextual purpose like (isospin)
 
+	int xloc; //!< the field keeps track of the xcoordinate of its upper right corner
+	int yloc; //!< the field keeps track of the ycoordinate of its upper right corner
+
   private:
+	int* sdl_xscroll;//!< this pointer allows field objects access to current x scrolling value in sdl_help
+	int* sdl_yscroll;//!< this pointer allows field objects access to current y scrolling value in sdl_help
+	SDL_Renderer* sdl_help_renderer;//!< a pointer to sdl_help's rendering context
+
+	SDL_Surface* my_surf;//!< saves the surface, so that it isn't re-created every frame
+	SDL_Texture* my_tex;//!< saves the texture, so that it isn't re-created every frame
+
+
 	std::string image_name; //!< the name of the image, so it can be found in Assets/Images
 
 	tile_size size; //!< tile_size struct containing the dimensions for this particular card/tile/block
 };
+
+
+
+
+
+
+
+

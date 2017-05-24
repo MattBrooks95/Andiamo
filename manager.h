@@ -4,6 +4,9 @@
 #include<vector>
 #include "field.h"
 
+#include<SDL2/SDL.h>
+#include<SDL2/SDL_image.h>
+
 //! The manager is a vector+ object that handles a standard vector that contains input tiles or 'cards'
 class manager{
   public:
@@ -20,13 +23,24 @@ class manager{
          *\param temp is the temporary tile that is passed by value, and shoved into the tiles vector */
 	void new_tile(field temp);
 
+	//! this member goes through all the tiles and keeps track of the rightmost and bottom most edges
+	/* area isn't being used right now, but I feel it may be a useful metric to have. It exists in
+	 * sdl_help, but the scroll bars have pointers to these values as well. */
+	void set_area(int& sdl_max_width, int& sdl_max_height);
+
+
+	//! this function traverses the tile bag and sets up each object with a reference to the main renderer
+	void give_fields_renderer(SDL_Renderer* sdl_help_renderer_in,std::string image_p_in,
+				  int* xscroll_in, int* yscroll_in);
+
+	//! this member loads in tiles from the tile input file using regular expressions and file i/o
 	/*! this init member uses fstream and regex to open and process a text file, which for now defaults
 	 * to tiles.txt, in the folder tile_Input, so that information on what parameter tiles/cards need
 	 *can be loaded into the program, and new tiles can be loaded without rebuilding - this work
 	 *is not done in the constructor because it needs information from the sdl class, whose 
-	 *constructor is called after manager's apparently*/
+	 *constructor is called after manager's apparently. It also sorts the tiles by descending width for
+	 *sdl_help's draw_tiles() function*/
 	void init();
-
 
 	//! This runs through the vector and enacts each of the field element's print members
 	/*! \param outs is the output stream that the info should be sent to */

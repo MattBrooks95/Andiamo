@@ -20,8 +20,11 @@ struct win_size{
 	int width; //! < holds the width of the window, which is different than the screen info in display
 	int height; //! < holds the height of the window, which is different than the info in display
 };
-
-
+//! the following struct is used by calc_corners to remember the tiles it's currently considering
+struct index_and_width{
+	unsigned int index; unsigned int width;
+};
+bool compare_width(index_and_width& left, index_and_width& right);
 
 //! Contains sdl objects and members to act on them.
 /*! sdl_help objects are mostly a container for sdl renderers and the window. Functionality that requires 
@@ -60,6 +63,10 @@ class sdl_help{
 	/* This should likely be called directly below every call to draw_tiles() */ 
 	void draw_sbars();
 	/**************************SCROLLING FUNCTIONS ************************************************/
+
+	void calc_corners();//working on new drawing algorithm here
+
+
 
 	//! This member changes this class's x_scroll and y_scroll values to the given parameters
 	/*! This is being called from the handlers.cc implementations most of the time.
@@ -141,18 +148,24 @@ class sdl_help{
 	scroll_bar& get_v_bar(){ return vert_bar; }
 
 	//!this member is a const getter for the tile_locations vector
-	const std::vector<SDL_Rect>& get_locations() const { return tile_locations;}
+	//const std::vector<SDL_Rect>& get_locations() const { return tile_locations;}
 	//!this member is non-const getter for the tile_locations vector
-	std::vector<SDL_Rect>& get_locations(){ return tile_locations;}
+	//std::vector<SDL_Rect>& get_locations(){ return tile_locations;}
+
         //! This member is a const getter for the tile/card manager
 	/*! \return tile_bag is a const reference to the tile_bag field. It is accessed
 	 * some_object.get_mgr().tile_bag_member(). Tile bag may not be changed*/
 	const manager& get_mgr() const{ return tile_bag;}
+
 	//! This member is a non-const getter for the tile/card manager
 	/*! \return tile_bag is a const reference to the tile_bag field. It is accessed
 	 * some_object.get_mgr().tile_bag_member(). Tile bag may be changed. Be careful. */
 	manager& get_mgr(){ return tile_bag;}
 
+	//!this member returns a copy of the tile_bag
+	/*! this is useful when an algorithm would require removing objects from the vector as they are
+	 * processed  */
+	manager get_mgr_copy(){ return tile_bag;}
 	SDL_Renderer* renderer; //!< pointer to the renderer object
 
 	/********* FRIENDS *******************************************/
@@ -172,7 +185,7 @@ class sdl_help{
 	//! allows sdl_help to keep track of where tiles are
 	/* the SDL_Rect's indices in this vector should line up with manager's tiles vector so 
 	 *the members of the correct field can be invoked */
-	std::vector<SDL_Rect> tile_locations;
+	//std::vector<SDL_Rect> tile_locations;
 	/***************** FIELDS THAT PERTAIN TO SCROLLING ********************************/
 	scroll_bar vert_bar;/*!< \brief contains functions to act on, and draw, the vertical
 			     *scroll bar */
@@ -184,10 +197,6 @@ class sdl_help{
 
 	/************************************************************************************/
 
-	bool area_size_set; /*!< \brief false on the onset of the program, set to true after 
-                             *draw_tiles() has been invoked once
-			     *
-			     * this logic will need to be changed if we allow tile loading at run time */ 
 	win_size area;/*!< \brief a win_size struct that contains the dimensions for the entire area,
 		       *not just what is seen */
 	win_size window_s; /*!< \brief a win_size struct that contains the window's current width and 

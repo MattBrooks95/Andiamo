@@ -19,24 +19,27 @@ int main(){
   cout << "And where does the newborn go from here? The net is vast and infinite." << endl;
 
   sdl_help sdl_helper("Andiamo!");
+  sdl_helper.get_mgr().print_all(cout);
 
-  //sdl_helper.get_mgr().print_all(cout);
+  sdl_helper.print_tile_locs(cout);
 
+  
   sdl_helper.draw_tiles();
   sdl_helper.draw_sbars();
   sdl_helper.present();
-
-
+  
   SDL_Event big_event; //pre-loop drawing commands, so screen comes up near instantly
   SDL_SetEventFilter(filter_mouse_move,NULL);
 
 
-
   bool done = false; //this will need to be changed to true when the user clicks on the 'x'
   while(!done){
-
-	SDL_PollEvent(&big_event);
-
+	//apparently if there is no new event big_event keeps that last value, so it scrolls indefinitely for
+	//example, so for now I'm using 1776 as a "no operation" flag
+	if(!SDL_PollEvent(&big_event)){
+		big_event.type = 1776;
+	}
+	//cout << "EVENT = " << big_event.type << endl;
 
 	if(sdl_helper.get_v_bar().is_scrolling()){//if the vertical scroll bar is in "scroll mode"
 		   //do a mini loop until the left mouse button is released
@@ -44,7 +47,6 @@ int main(){
 		sdl_helper.get_v_bar().scroll_mode_change(false);//stop v scroll bar mode
 		SDL_FlushEvents(0,1000); //is this necessary?
 
-		//return 0;//exit to prevent lockup, until scrolling is implemented more
 
 	} else if(sdl_helper.get_h_bar().is_scrolling()){//if the horizontal scroll bar is in "scroll mode"
 		     //do a mini loop until the left mouse button is released
@@ -52,7 +54,6 @@ int main(){
 		sdl_helper.get_h_bar().scroll_mode_change(false);//stop h scroll bar mode
 		SDL_FlushEvents(0,1000);//is this necessary?
 
-		//return 0;//exit to prevent lockup, until scrolling is implemented more
 	} else
 	switch(big_event.type){ //switch controlled by the 'type' of input given, like the mouse moving
 				//or key presses
@@ -94,7 +95,8 @@ int main(){
 			handle_mouse_wheel(big_event,sdl_helper);
 			SDL_FlushEvent(SDL_MOUSEWHEEL);//make it not get flooded with scroll commands
 			break;
-
+		case 1776: //no new event this time, don't just keep repeating the last event
+			break;
 		default:
 			break;
 	}//event handling switch
@@ -111,20 +113,13 @@ int main(){
 		     //eventually this will vary intelligently based on desired framerate
   }//end of while loop
 
-  //make sure that infinitely re-adding fields to location manager stopped happening
-  //these numbers should be exactly equal
-  //cout << "Tile vector size: " << sdl_helper.get_mgr().tiles.size() << " Tile location vector size: "
-  //     << sdl_helper.get_locations().size() << endl;
 
-  //sdl_helper.get_mgr().print_all(cout);
-
-  //sdl_helper.print_tile_locs(cout);
   sdl_helper.print_size_info(cout);
   //sdl_helper.get_h_bar().print(cout);//make sure that these values are updating in the bars as
   //sdl_helper.get_v_bar().print(cout);//they are updated in the sdl_helper object
 
   //SDL_Delay(5000);
 
-
+  
   return 0;//Exit success
 }

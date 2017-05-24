@@ -37,7 +37,7 @@ gdb:
 	g++ -g -o debug $(c_flg) *.cc $(SDL_inc)
 #pack useful files up for an email or storage
 tar:
-	tar -czvf andiamo.tar.gz *.cc *.h Makefile doxyfile readme.md tile_Input HF_Input Assets sandbox
+	tar -czvf andiamo.tar.gz *.cc *.h Makefile doxyfile readme.md tile_Input Assets sandbox
 #have doxygen run and create a manual from source comments and the configuration settings in doxyfile
 doxy: doxyfile
 	doxygen doxyfile

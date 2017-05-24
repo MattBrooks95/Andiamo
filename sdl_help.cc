@@ -3,6 +3,8 @@
 #include<iostream>
 #include<string>
 #include<cmath>
+#include<algorithm>
+#include<queue>
 using namespace std;
 
 bool sdl_test = false;
@@ -49,8 +51,6 @@ sdl_help::sdl_help(string name_in){
 					           // dimension window fields
 	x_scroll = 0; y_scroll = 0; //set scrolling variables to 0
 
-	area_size_set = false;//this should be changed to run after the first inner loop run in draw_tiles()
-
 	tile_bag.init();
 	//give vertical scroll bar the addresses of the info it needs from the sdl_help object
 	vert_bar.init(&x_scroll,&y_scroll,&area.width,&area.height,
@@ -61,6 +61,9 @@ sdl_help::sdl_help(string name_in){
 
 	vert_bar.print(cout);
 	horiz_bar.print(cout);
+
+	calc_corners(); //set up tile locations with the field's corner location 
+	tile_bag.give_fields_renderer(renderer,image_p,&x_scroll,&y_scroll);//give fields rendering info
 }
 
 sdl_help::sdl_help(std::string name_in, int width, int height){
@@ -92,8 +95,6 @@ sdl_help::sdl_help(std::string name_in, int width, int height){
 
 	x_scroll = 0; y_scroll = 0; //set scrolling values to 0
 
-	area_size_set = false;//this should be changed to run after the first inner loop run in draw_tiles()
-
 	tile_bag.init();
 
 	//give vertical scroll bar the addresses of the info it needs from the sdl_help object
@@ -105,6 +106,9 @@ sdl_help::sdl_help(std::string name_in, int width, int height){
 
 	vert_bar.print(cout);
 	horiz_bar.print(cout);
+
+	calc_corners();//set up tile_locations with the field's corner locations
+	tile_bag.give_fields_renderer(renderer,image_p,&x_scroll,&y_scroll);//give fields their rendering info
 }
 
 sdl_help::~sdl_help(){
@@ -141,129 +145,12 @@ void sdl_help::present(){
 //arrange the tiles and draw their textures, for now just doing two tiles per row, with their locations
 //being just a fraction of the screen size for testing
 void sdl_help::draw_tiles(){
-	SDL_Texture* tex = NULL;//seeing if putting these up here will help stop the memory leak
-	SDL_Surface* surf = NULL;//it seems to have worked. It runs better and valgrind says hardly any
-			  //memory leaks
+	SDL_RenderClear(renderer);
+	for(unsigned int c = 0; c < tile_bag.tiles.size();c++){
+		tile_bag.tiles[c].draw_me();
+	}
+	frame_count++;//increment the frame counter
 
-	int max_y = -1; //keep track of highest y+texture height value we've seen
-				   //so that sdl_help can keep track of what can't fit on the screen
-	int max_x = -1; //similarly keep track of highest x+texture width value we've seen
-
-
-	int row = 0; //keep track of what row we're on
-	for(unsigned int c = 0; c < get_mgr().tiles.size();c++){
-		string path = image_p + tile_bag.tiles[c].get_img_name(); //combine folder and image path
-
-		surf = IMG_Load(path.c_str()); //load the image to a sdl surface
-
-
-		if(surf == NULL) cout << SDL_GetError() << endl; //get useful error messages
-
-
-
-		tex = SDL_CreateTextureFromSurface(renderer,surf); //change the surface to a
-										//texture
-		if(tex == NULL) cout <<  SDL_GetError() << endl; //get useful sdl error messages
-
-		//calculate where this tile's base location (upper left corner) is
-		int xloc = 0, yloc = 0;//default, should be changed in all cases except background tile
-
-
-		if(c % 2 == 1){ //for now we're assuming only 2 tiles per row
-			xloc = ((display.w / 2) / 4) - tile_bag.tiles[c].get_size().width / 2;
-											//if odd place in
-			yloc = 30 + 30 * row + row * tile_bag.tiles[c].get_size().height;//column 1
-
-		} else if(c == 0){//empty case, rendercopy will get NULL NULL for bg tile
-
-		} else { //if even, place in second column
-			xloc = ((display.w / 2 )* .75) - tile_bag.tiles[c].get_size().width / 2;
-			yloc = 30 + 30 * row + row * tile_bag.tiles[c].get_size().height;
-			row++;//increment row counter every other tile
-		}
-
-
-		//use the base location + and the size info stored in the field to tell rendercopy where
-		//to draw each tile - now also a function of x_scroll and y_scroll
-		SDL_Rect dest = {xloc + x_scroll,yloc + y_scroll,tile_bag.tiles[c].get_size().width,
-					tile_bag.tiles[c].get_size().height};
-		/*if( (dest.x > area.width || dest.y  > area.height) ){
-			//cout << "We may be out of bounds there Jimbo." << endl;
-		}*/
-
-
-
-		if(c == 0){ //special logic for the background tile
-			SDL_RenderCopy(renderer,tex,NULL,NULL);//background should fill whole window
-
-			//anti seg fault and double counting every frame
-			if(tile_locations.size() != tile_bag.tiles.size()){
-				tile_locations.push_back(dest); //save where background tile was drawn
-			} else {
-				tile_locations[0] = dest;
-			}
-		} else { //process normal (meaningful) tiles here
-			if(sdl_test) cout << "To RenderCopy: xloc = " << xloc << " yloc= " << yloc
-			     << " tile width = " << tile_bag.tiles[c].get_size().width
-			     << " tile height = " << tile_bag.tiles[c].get_size().height << endl;
-			//the NULL here means use the whole texture, if we animate textures with
-			//sprite sheets, this will change
-			if(tile_locations.size() != tile_bag.tiles.size()){
-				//when I first wrote this I didn't account for the vector ALWAYS adding in
-				//a new SDL_Rect, causing a funny seg fault where illegal bits were printed
-				//to cout.....think it through!
-				tile_locations.push_back(dest);//only push_back if vector doesn't have every
-							       //tile in it yet
-			} else {
-				tile_locations[c] = dest;//if the vectors are the same size, then we need 
-							 //to only update the position - hopefully no seg 
-                                                         //fault and double positives now
-			}
-			SDL_RenderCopy(renderer,tex,NULL,&dest);
-                }//end big if/else
-
-		if( surf == NULL || tex == NULL || renderer == NULL){
-			cout << "Error in draw_tiles(), an SDL pointer is null." << endl;
-			cout << "surface | texture | renderer: " << surf << " | " << tex
-			     << " | " << renderer << endl;
-			cout << "Image path: " << path << endl;
-		}
-
-		if(sdl_test) cout << "xloc: " << xloc << " yloc: " << yloc << endl;
-		if(!area_size_set){
-			//do the math here and save it in an int variable, that way the math isn't re-done
-			//in the boolean checkks AND the assignments. The compiler might fix that for me
-			//but I'm not sure so I'll make sure it only does that addition once
-			int area_width = xloc + tile_bag.tiles[c].get_size().width;
-			int area_height = yloc + tile_bag.tiles[c].get_size().height;
-			//save value if it's higher than previous record
-			if(area_width > max_x) max_x = area_width;
-			//save value if it's higher than previous record
-			if(area_height > max_y) max_y = area_height;
-
-		}
-
-
-		SDL_DestroyTexture(tex);
-		SDL_FreeSurface(surf); //this stops memory leaking?
-		surf = NULL;
-		tex = NULL;
-	}//end of for loop
-	if(!area_size_set){
-		cout << "Set area size's dimensions. " << max_x << "x" << max_y << endl;
-		area.width = max_x;   //update sdl_help's area struct 
-		area.height = max_y;  //with the maximum coords needed for all items,
-		area_size_set = true; //even those that may be off screen
-	}/* else {
-				//make a semi-transparent gray square to check this
-		SDL_Rect area_dest = {0,0,area.width,area.height};
-		SDL_Surface* area_surf = IMG_Load("./Assets/Images/area_test.png");
-		SDL_Texture* area_tex = SDL_CreateTextureFromSurface(renderer,area_surf);
-		SDL_RenderCopy(renderer,area_tex,NULL,&area_dest);
-		SDL_DestroyTexture(area_tex);
-		SDL_FreeSurface(area_surf);
-	  }*/
-	frame_count++; //increment frame counter;
 }//end of draw_tiles
 
 void sdl_help::draw_sbars(){
@@ -277,30 +164,33 @@ void sdl_help::draw_sbars(){
 // where no objects are visible, or are just barely visible - might fiddle with constants to make it stop
 // scrolling a bit sooner or later
 void sdl_help::most(int& rightmost,int& leftmost,int& upmost,int& downmost){
-	for(unsigned int c = 0; c < tile_locations.size(); c++){
-		if(tile_locations[c].y < upmost){ //highest tile corner means LEAST Y value
-			upmost = tile_locations[c].y;
+	//note that we are starting at 1 to avoid the massive background tile messing up this calculation
+	for(unsigned int c = 1; c < tile_bag.tiles.size();c++){
+		if(tile_bag.tiles[c].yloc + y_scroll < upmost){ //highest tile corner means LEAST Y value
+			upmost = tile_bag.tiles[c].yloc + y_scroll;
 		}
-		if(tile_locations[c].y + tile_locations[c].h > downmost){
+		if(tile_bag.tiles[c].yloc + y_scroll + tile_bag.tiles[c].get_size().height > downmost){
 			//save lowest tile corner + that texture's height
-			downmost = tile_locations[c].y + tile_locations[c].h;
+			downmost = tile_bag.tiles[c].yloc + y_scroll + tile_bag.tiles[c].get_size().height;
 		}
-		if(tile_locations[c].x < leftmost){// save leftmost tile corner
-			leftmost = tile_locations[c].x;
+		if(tile_bag.tiles[c].xloc + x_scroll < leftmost){// save leftmost tile corner
+			leftmost = tile_bag.tiles[c].xloc + x_scroll;
 		}
-		if(tile_locations[c].x + tile_locations[c].w > rightmost){
+		if(tile_bag.tiles[c].xloc + x_scroll +  tile_bag.tiles[c].get_size().width > rightmost){
 			//save rightmost tile corner + texture width
-			rightmost = tile_locations[c].x + tile_locations[c].w;
+			rightmost = tile_bag.tiles[c].xloc + x_scroll + tile_bag.tiles[c].get_size().width;
 		}
-	}//for loop
-	//cout << "Highest values found [upmost,downmost,leftmost,rightmost]: \n"
-	     //<< "[" << upmost << "," << downmost << "," << leftmost << "," << rightmost << "]" << endl;
+	}
+	cout << "Rightmost: " << rightmost << " Leftmost: " << leftmost
+	     << "Upmost: " << upmost << "Downmost: " << downmost << endl;
 }
+
 //can detect when we should stop scrolling, but allows no scrolling afterwards, not even in the opposite
 //direction - fixed, but is there a better way?
 void sdl_help::update_scroll(int x_scroll_in, int y_scroll_in){
 	int rightmost = -2048, leftmost = 2048, upmost = 2048, downmost = -2048;
 	most(rightmost,leftmost,upmost,downmost);
+
 	if( (rightmost + x_scroll_in) <= 0){
 		x_scroll = x_scroll + abs(0-rightmost);
 		cout << "Hit right scrolling barrier." << endl;
@@ -319,10 +209,10 @@ void sdl_help::update_scroll(int x_scroll_in, int y_scroll_in){
 		cout << "Hit down scrolling barrier." << endl;
 	}
 	//it would make sense to be able to scroll like this 
-		//cout << "x_scroll increased by " << x_scroll_in << "| " << x_scroll << "-> "
-		     //<< x_scroll + x_scroll_in << endl;
-		//cout << "y_scroll increased by " << y_scroll_in << "| " << y_scroll << "-> "
-		     //<< y_scroll + y_scroll_in << endl;
+		cout << "x_scroll increased by " << x_scroll_in << "| " << x_scroll << "-> "
+		     << x_scroll + x_scroll_in << endl;
+		cout << "y_scroll increased by " << y_scroll_in << "| " << y_scroll << "-> "
+		     << y_scroll + y_scroll_in << endl;
 		x_scroll = x_scroll + x_scroll_in;
 		y_scroll = y_scroll + y_scroll_in;
 
@@ -351,17 +241,22 @@ int sdl_help::scroll_clicked(ostream& outs,int click_x, int click_y) const{
 //********************************************************************************************/
 
 void sdl_help::print_tile_locs(ostream& outs){
-	for(unsigned int c = 0; c < tile_locations.size();c++){
-		outs << "Corner= " << tile_locations[c].x << ":" << tile_locations[c].y 
-		     << " tile dimensions= "<< tile_locations[c].w << ":" << tile_locations[c].h << endl;
+	for(unsigned int c = 0; c < tile_bag.tiles.size();c++){
+		outs << "Corner= " << tile_bag.tiles[c].xloc << ":" << tile_bag.tiles[c].xloc
+		     << " tile dimensions= " << tile_bag.tiles[c].get_size().width << ":"
+		     << tile_bag.tiles[c].get_size().height << endl;
 	}
 }
 void sdl_help::click_detection(ostream& outs,int click_x, int click_y) const{
-	for(unsigned int c = 0; c < tile_locations.size();c++){ //walk entire location vector
-		if( in(click_x,click_y,tile_locations[c])){ //if the mouse click coordinates fall within
-			tile_bag.tiles[c].clicked(outs);//a tile, enact that tiles clicked() member
+	for(unsigned int c = 0; c < tile_bag.tiles.size();c++){
+
+		if( in(click_x,click_y, tile_bag.tiles[c].get_rect() ) ){
+		//if the mouse click coordinates fall within a tile,
+			tile_bag.tiles[c].clicked(outs);//enact that tiles clicked() member
 		}//endif	
-	}//end of for loop
+
+	}
+
 }
 bool sdl_help::in(int click_x, int click_y,const SDL_Rect& rect) const{
 	if( click_x > rect.x && click_x < rect.x + rect.w &&
@@ -371,6 +266,136 @@ bool sdl_help::in(int click_x, int click_y,const SDL_Rect& rect) const{
 }
 
 //############################ NON-MEMBER HELPERS ##########################################################
+
+
+void sdl_help::calc_corners(){
+	tile_bag.tiles[0].force_size(2048,2048); //set background tiles size info
+	//cout << tile_locations.size() << endl;
+	vector<index_and_width> candidates;//will be filled up with the width of each tile in the tile bag
+				       //and the index IN THE TILE BAG that corresponds to it
+
+	//start counting at 1 because the background tile is taken care of by field constructor
+	for(unsigned int c = 1; c < tile_bag.tiles.size();c++){
+		index_and_width push_me;
+		push_me.width = tile_bag.tiles[c].get_size().width;
+		push_me.index = c;
+		candidates.push_back(push_me);
+	}
+	sort(candidates.begin(),candidates.end(),compare_width);//sort the candidates such that they are in
+								//ascending order based on width
+
+	vector<int> processed(candidates.size(),0);//"boolean" vector, I don't want to use the optimized
+						   //stl vector<bool> here, initialize to 0 = false
+
+	queue<index_and_width> row;//temporarily hold the info of tiles about to be added to a row
+
+	unsigned int curr_width = 0;//keep track of the current row's width
+	unsigned int max_height = 0;//keep track of the current row's height
+
+	unsigned int horiz_padding = 20; //distance between columns
+	unsigned int vert_padding = 20; //distance between rows
+
+
+	unsigned int width_limit = window_s.width;
+
+	unsigned int done = 0;//keep track of how many tiles have their base corner location stored
+
+
+	unsigned int prev_height = 0; //keep track of the height of the previous rows
+	cout << "done: " << done << " candidate size: " << candidates.size() << endl;
+	while(done < candidates.size()){ //stop when every tile has been placed
+		cout << "DONE: " << done << endl;
+		curr_width = 0;//each new row begins with 0 width, which is filled in as tiles are chosen
+
+		int j = 0;
+		while( (processed[j]) && j < processed.size()-1) j++ ;  //get index of lowest width tile that hasn't
+								 //been processed yet
+
+
+		while( (width_limit - curr_width) > candidates[j].width ){
+
+			cout << "WIDTH_LIMIT - CURR_WIDTH= " << width_limit - curr_width << endl;
+			cout << "SMALLEST TILE= " << candidates[j].width << endl;
+
+
+			//start at the end of the array (where the highest values are) and walk backgrounds
+			//until a tile that hasn't been processed has been found
+			int i = candidates.size() - 1;
+			while( i > -1 ){
+			  //if this tile won't fit, move on
+			  if( (!processed[i]) ){ //if it hasn't been processed yet, consider it
+				//if it doesn't fit, move on
+				if(curr_width + candidates[i].width + horiz_padding > width_limit){
+					i--;
+				} else break; //elsewise we can leave this loop, i is where it needs to be
+			  } else i--; //keep going until an unprocessed candidate has been found
+			}
+			cout << "I candidate that may work i= " << i << " width = " << candidates[i].width
+			     << endl;
+
+			//the i index for the very last run of this loop is bad, so we need to leave early
+			//the queue is set up at this point so the while(!row.empty()) loop will finish up
+			if(i == -1){
+				cout << "row queue size when i = -1 : " << row.size() << endl;
+				break; //we have placed all tiles, exit
+			}
+			//keep track of how much space has been used, account for padding
+			curr_width = curr_width + candidates[i].width + horiz_padding;
+
+			//similarly keep track of the height of this row , account for padding
+			int temp_height = tile_bag.tiles[candidates[i].index].get_size().height +
+					  + vert_padding;
+			if(temp_height > max_height) {//save new max height
+				max_height = temp_height;
+				cout << " NEW MAX HEIGHT: " << temp_height << endl;
+			}
+			//don't look at this tile again, set it to "true" in the "boolean" vector
+			processed[i] = 1;
+
+			row.push(candidates[i]);//add it on to the pending row
+		} //loop for planning a row and filling in the queue
+		//should be ready to add a row once the above mini loop is done
+
+
+		int row_width = 0; //first tile starts off at the left edge of the screen
+		while( !row.empty() ){
+			cout << "QUEUE SIZE= " << row.size() << endl;
+			index_and_width temp = row.front(); //copy element in the front of the queue
+			row.pop();  //pop out biggest tile
+
+			tile_bag.tiles[temp.index].xloc = row_width;
+			tile_bag.tiles[temp.index].yloc = prev_height;
+
+
+			//calc xloc for next tile
+			row_width = row_width + tile_bag.tiles[temp.index].get_size().width + horiz_padding;
+			done++;//increment our progress counter
+		}//loop for putting the row into tile_locations
+
+		prev_height = prev_height + max_height; //update prev_height with new row's max value
+	}//loop until done
+	//this call sets the area struct
+	tile_bag.set_area(area.width,area.height);
+
+}
+
+bool compare_width(index_and_width& left, index_and_width& right){
+	if(left.width < right.width) return true;
+	return false;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
