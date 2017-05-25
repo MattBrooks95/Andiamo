@@ -6,11 +6,17 @@ c_flg = -std=c++11 -Wall
 vtool = --tool=memcheck
 vopt = --log-file="memory_check.txt" --leak-check=full
 
+#object files
+objects = main.o handlers.o manager.o ftran_structs.o field.o sdl_help.o scroll_bar.o input_maker.o
+
+#executable name
+name = andiamo
+
 #controls which browser the makefile opens to view doxygen html manual
 browser = firefox
 
-andiamo: main.o handlers.o sdl_help.o scroll_bar.o manager.o field.o 
-	g++  -o andiamo main.o handlers.o manager.o field.o sdl_help.o scroll_bar.o $(SDL_inc)
+andiamo: $(objects)
+	g++  -o $(name) $(objects) $(SDL_inc)
 
 main.o: main.cc sdl_help.h handlers.h
 	g++ $(c_flg) -c main.cc
@@ -29,6 +35,13 @@ field.o: field.cc field.h
 
 manager.o: manager.cc manager.h
 	g++ $(c_flg) -c manager.cc
+
+ftran_structs.o: ftran_structs.cc ftran_structs.h
+	g++ $(c_flg) -c ftran_structs.cc
+
+input_maker.o: input_maker.cc input_maker.h
+	g++ $(c_flg) -c input_maker.cc
+
 #runs valgrind on the debug executable created by make gdb
 valgrind:
 	valgrind $(vtool) $(vopt) ./debug
@@ -45,3 +58,8 @@ doxy: doxyfile
 #remove compiled things, text editor saves, memory check output
 clean:
 	rm *~ *.o andiamo debug memory_check.txt
+
+
+
+
+

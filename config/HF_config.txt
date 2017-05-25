@@ -1,0 +1,47 @@
+#lines starting with #, or empy lines, are ignored
+#parameters should appear in the order they are in a HF input file
+
+#TYPES
+
+#string format is C* var_name|size| = default value
+#the value field should be enclosed in ""
+
+#double format is R8 var_name = default value 
+#integer format is I4 var_name = default value
+
+
+C* label|79| = "Fe58(He-3,n)Fe58:HF2002 Calculations, Ed=10.0 MeV."
+
+
+R8 ELAB = 9.9
+R8 A = 61.0
+R8 Z = 28.0
+R8 FNRME1 = 1.0
+R8 FNRMM1 = 1.0
+
+I4 IENCH = 7
+I4 ICM = 1
+I4 NZ3 = 1
+I4 TCPR = 0
+
+R8 FNRME2 = 1.00
+I5 NGF = 2
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

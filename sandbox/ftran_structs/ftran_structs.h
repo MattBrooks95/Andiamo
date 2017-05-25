@@ -1,15 +1,13 @@
 //! \file ftran_structs.h declares some structs that make keeping track out outputs easy
 #include<iostream>
 
-//! param_int4 is a default c++ integer "and more"
-/*! it allows storage of a name that serves a contextual purpose, and a value that is compatible with Fortran INT*4 */
+
 struct param_int4{
 	//! constructor with default values
 	param_int4(std::string name_in = "No name",int val_in = 0);
 
 	//! overloaded << operator for printing
 	friend std::ostream& operator <<(std::ostream& outs, const param_int4& rhs);
-
 	//! I don't know if this works
 	/*! Something like this will need to be done when/if we have Andiamo
 	 * running the feshbach code in place */
@@ -42,15 +40,12 @@ struct param_int4{
 	int value;
 };
 
-//! param_real8 is a default c++ double "and more"
-/*! it allows storage of a name that serves a contextual purpose, and a value that is compatible with Fortran REAL*8 */
 struct param_real8{
 	//! constructor with default values
 	param_real8(std::string name_in = "No name",double val_in = 0.0);
 
 	//! overloaded << operator for printing
 	friend std::ostream& operator <<(std::ostream& outs, const param_real8& rhs);
-
 	//! I don't know if this works
 	/*! Something like this will need to be done when/if we have Andiamo
 	 * running the feshbach code in place */
@@ -83,12 +78,6 @@ struct param_real8{
 	double value;
 };
 
-struct param_string{
-	param_string(std::string name_in = "No name",std::string value_in = NULL);
-
-	std::string name; //!< is the contextual name for the variable, like the label line in an HF input file
-	std::string value; //!< is the actual string that should be output and cared about
-};
 
 
 /*
