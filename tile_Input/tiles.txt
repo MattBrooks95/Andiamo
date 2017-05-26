@@ -1,5 +1,5 @@
 background
-background.png
+hubble_deep_field.png
 andy
 HF2002_input_example
 base_tile.png

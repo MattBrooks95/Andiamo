@@ -3,6 +3,8 @@
  * and then makes decisions based on that config file */
 
 #include<vector>
+#include<iostream>
+#include<fstream>
 
 #include "ftran_structs.h"
 
@@ -17,9 +19,7 @@ class input_maker{
 	/*! it's likely going to use regular expressions */
 	void init();
 
-
-
-
+	void output(std::ostream& outs);
 
 
   private:

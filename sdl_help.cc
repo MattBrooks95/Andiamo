@@ -43,7 +43,7 @@ sdl_help::sdl_help(string name_in){
 
 	//cout << display.w << " " << display.h << endl;;
 	window = SDL_CreateWindow(window_name.c_str(), 0, 0, display.w * .5, display.h * .75, 0);
-	renderer = SDL_CreateRenderer(window,-1,0);
+	renderer = SDL_CreateRenderer(window,-1,SDL_RENDERER_PRESENTVSYNC);
         if(sdl_test) cout << "Enacting tile_bag update with values: " << display.w / 2 << " "
                           << display.h << endl;
 
@@ -64,6 +64,7 @@ sdl_help::sdl_help(string name_in){
 
 	calc_corners(); //set up tile locations with the field's corner location 
 	tile_bag.give_fields_renderer(renderer,image_p,&x_scroll,&y_scroll);//give fields rendering info
+
 }
 
 sdl_help::sdl_help(std::string name_in, int width, int height){
@@ -91,7 +92,7 @@ sdl_help::sdl_help(std::string name_in, int width, int height){
                                              //fields tile_bag.update_win(display.w,display.h);
 
 	window = SDL_CreateWindow(window_name.c_str(), 0, 0, display.w, display.h, 0);
-	renderer = SDL_CreateRenderer(window,-1,0);
+	renderer = SDL_CreateRenderer(window,-1,SDL_RENDERER_PRESENTVSYNC);
 
 	x_scroll = 0; y_scroll = 0; //set scrolling values to 0
 
@@ -109,6 +110,7 @@ sdl_help::sdl_help(std::string name_in, int width, int height){
 
 	calc_corners();//set up tile_locations with the field's corner locations
 	tile_bag.give_fields_renderer(renderer,image_p,&x_scroll,&y_scroll);//give fields their rendering info
+
 }
 
 sdl_help::~sdl_help(){

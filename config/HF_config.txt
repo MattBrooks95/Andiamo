@@ -12,7 +12,7 @@
 
 C* label|79| = "Fe58(He-3,n)Fe58:HF2002 Calculations, Ed=10.0 MeV."
 
-
+#line 2
 R8 ELAB = 9.9
 R8 A = 61.0
 R8 Z = 28.0
@@ -26,7 +26,15 @@ I4 TCPR = 0
 
 R8 FNRME2 = 1.00
 I5 NGF = 2
+#end line 2
 
+#line 3a
+I4(7) NENT = 20
+I4(6) LMAX = 10
+
+#line 3b - I actually don't understand where this is on the input file
+R8 ETAB = 
+R8 TTAB = 
 
 
 
