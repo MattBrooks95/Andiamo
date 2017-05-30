@@ -1,5 +1,5 @@
 #compilation flags
-SDL_inc = -lSDL2 -lSDL2_image
+SDL_inc = -lSDL2 -lSDL2_image -lSDL2_ttf
 c_flg = -std=c++11 -Wall
 
 #valgrind flags
@@ -33,7 +33,7 @@ scroll_bar.o: scroll_bar.cc scroll_bar.h
 field.o: field.cc field.h
 	g++ $(c_flg) -c field.cc
 
-manager.o: manager.cc manager.h
+manager.o: manager.cc manager.h field.h
 	g++ $(c_flg) -c manager.cc
 
 ftran_structs.o: ftran_structs.cc ftran_structs.h

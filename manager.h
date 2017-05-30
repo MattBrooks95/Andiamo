@@ -30,8 +30,9 @@ class manager{
 
 
 	//! this function traverses the tile bag and sets up each object with a reference to the main renderer
+	/*! it also allows fields to access sdl_help's scroll values and font pointer */
 	void give_fields_renderer(SDL_Renderer* sdl_help_renderer_in,std::string image_p_in,
-				  int* xscroll_in, int* yscroll_in);
+				  int* xscroll_in, int* yscroll_in,TTF_Font* font_in);
 
 	//! this member loads in tiles from the tile input file using regular expressions and file i/o
 	/*! this init member uses fstream and regex to open and process a text file, which for now defaults

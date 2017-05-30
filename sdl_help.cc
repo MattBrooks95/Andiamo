@@ -29,9 +29,12 @@ win_size* sdl_help::get_win_size(){
 sdl_help::sdl_help(string name_in){
 	SDL_Init(SDL_INIT_TIMER | SDL_INIT_EVENTS|SDL_INIT_VIDEO);//for now, timer,video and keyboard
 	IMG_Init(IMG_INIT_PNG);//allows use of .png files
-
+	if(TTF_Init() != 0){ //allows sdl to print text to the screen using .ttf files
+		cout << "Error in TTF_Init()! " << endl;
+	}
 	window_name = name_in; //set window name
 	image_p = "./Assets/Images/";
+	font_p = "./Assets/fonts/";
 	hf_input_p = "./HF_Input/";
 
 	frame_count = 0;
@@ -44,6 +47,11 @@ sdl_help::sdl_help(string name_in){
 	//cout << display.w << " " << display.h << endl;;
 	window = SDL_CreateWindow(window_name.c_str(), 0, 0, display.w * .5, display.h * .75, 0);
 	renderer = SDL_CreateRenderer(window,-1,SDL_RENDERER_PRESENTVSYNC);
+ //(font_p + "LiberationSerif-Regular.tff").c_str()
+	font = TTF_OpenFont( "./Assets/fonts/LiberationSerif-Regular.ttf", 28);//set up pointer to font from file
+	if(font == NULL) {
+		cout << "Error in opening font! " << SDL_GetError() << endl;
+	}
         if(sdl_test) cout << "Enacting tile_bag update with values: " << display.w / 2 << " "
                           << display.h << endl;
 
@@ -63,18 +71,20 @@ sdl_help::sdl_help(string name_in){
 	horiz_bar.print(cout);
 
 	calc_corners(); //set up tile locations with the field's corner location 
-	tile_bag.give_fields_renderer(renderer,image_p,&x_scroll,&y_scroll);//give fields rendering info
+	tile_bag.give_fields_renderer(renderer,image_p,&x_scroll,&y_scroll,font);//give fields rendering and font info
 
 }
 
 sdl_help::sdl_help(std::string name_in, int width, int height){
 	SDL_Init(SDL_INIT_TIMER | SDL_INIT_EVENTS|SDL_INIT_VIDEO);//for now, timer and keyboard
 	IMG_Init(IMG_INIT_PNG);//allows use of .png files
-
+	if(TTF_Init() != 0){//allows sdl to print text using .ttf files
+		cout << "Error in TTF_Init()! " << endl;
+	}
 	window_name = name_in;
 	image_p = "./Assets/Images/";
 	hf_input_p = "./HF_Input/";
-
+	font_p = "./Assets/fonts/";
 	frame_count = 0;
 
 	//this call is to make sure refresh_rate and driverdata are handled
@@ -91,8 +101,12 @@ sdl_help::sdl_help(std::string name_in, int width, int height){
 	window_update(display.w/2,display.h);//this call updates sdl_help and manager's window dimension 
                                              //fields tile_bag.update_win(display.w,display.h);
 
-	window = SDL_CreateWindow(window_name.c_str(), 0, 0, display.w, display.h, 0);
-	renderer = SDL_CreateRenderer(window,-1,SDL_RENDERER_PRESENTVSYNC);
+	window = SDL_CreateWindow(window_name.c_str(), 0, 0, display.w, display.h, 0); //set up the window pointer
+	renderer = SDL_CreateRenderer(window,-1,SDL_RENDERER_PRESENTVSYNC); //set up the renderer pointer
+	font = TTF_OpenFont( (font_p+"LiberationSerif-Regular.ttf").c_str(),24);
+	if(font == NULL) {
+		cout << "Error in opening font! " << SDL_GetError() << endl;
+	}
 
 	x_scroll = 0; y_scroll = 0; //set scrolling values to 0
 
@@ -109,16 +123,18 @@ sdl_help::sdl_help(std::string name_in, int width, int height){
 	horiz_bar.print(cout);
 
 	calc_corners();//set up tile_locations with the field's corner locations
-	tile_bag.give_fields_renderer(renderer,image_p,&x_scroll,&y_scroll);//give fields their rendering info
+	tile_bag.give_fields_renderer(renderer,image_p,&x_scroll,&y_scroll,font);//give fields their rendering and
+										 //font info
 
 }
 
 sdl_help::~sdl_help(){
 	SDL_DestroyRenderer(renderer);//stops memory leaks
 	SDL_DestroyWindow(window);
+	TTF_CloseFont(font);//give back memory from the font pointer
 
 	//cout << "I'm dying. You killed me. Final frame count= " << frame_count << endl;
-
+	TTF_Quit();
 	IMG_Quit();
 	SDL_Quit();
 }
@@ -271,7 +287,6 @@ bool sdl_help::in(int click_x, int click_y,const SDL_Rect& rect) const{
 
 
 void sdl_help::calc_corners(){
-	tile_bag.tiles[0].force_size(2048,2048); //set background tiles size info
 	//cout << tile_locations.size() << endl;
 	vector<index_and_width> candidates;//will be filled up with the width of each tile in the tile bag
 				       //and the index IN THE TILE BAG that corresponds to it
@@ -308,6 +323,7 @@ void sdl_help::calc_corners(){
 	while(done < candidates.size()){ //stop when every tile has been placed
 		cout << "DONE: " << done << endl;
 		curr_width = 0;//each new row begins with 0 width, which is filled in as tiles are chosen
+		max_height = 0;//reset this variable here, to be sure rows aren't affecting subsequent row's height
 
 		int j = 0;
 		while( (processed[j]) && j < processed.size()-1) j++ ;  //get index of lowest width tile that hasn't

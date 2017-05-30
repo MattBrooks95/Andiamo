@@ -4,6 +4,7 @@
 #include<string>
 #include<SDL2/SDL.h>
 #include<SDL2/SDL_image.h>
+#include<SDL2/SDL_ttf.h>
 
 #include "scroll_bar.h"
 #include "manager.h"
@@ -167,7 +168,7 @@ class sdl_help{
 	 * processed  */
 	manager get_mgr_copy(){ return tile_bag;}
 	SDL_Renderer* renderer; //!< pointer to the renderer object
-
+	TTF_Font* font;//!< pointer to the font created from the font.ttf file in /config
 	/********* FRIENDS *******************************************/
 	//I have no friends
 
@@ -175,7 +176,7 @@ class sdl_help{
 	std::string window_name; //!<  \brief A string that contains the window name, usually Andiamo."
 	std::string image_p; //!<  \brief a string that points to the resource image directory 
 	std::string hf_input_p; //!< \brief a path string to the algorithm's input file folder 
-
+	std::string font_p;//!< \brief a path string to the font folder
 	//!< contains a running total of how many times draw_all() has been ran
 	/*! as of right now this is just paying lip service to worrying about framerate
 	 *a bunch of decisions still have to be made in that regard. */

@@ -2,11 +2,12 @@
 
 #pragma once
 #include<string>
+#include<vector>
 #include<iostream>
 
 #include<SDL2/SDL.h>
 #include<SDL2/SDL_image.h>
-
+#include<SDL2/SDL_ttf.h>
 
 //! tile_size is a struct that contains height and width parameters for the main window
 /*! These should be a fraction of the size of the window, to allow for many input cards on one screen */
@@ -44,9 +45,10 @@ class field{
 	field(std::string tile_name_in,std::string image_name_in, int width, int height);
 
 	//! fields should save their render information to save time and readability in main loop and drawing
-	/*! this is not done, and will likely change the structure of the program */
+	/*! this is not done, and will likely change the structure of the program. This function now also allows
+	 *field objects access to the font information through sdl_font* */
 	void graphics_init(SDL_Renderer* sdl_help_renderer_in,std::string image_p_in,
-			   int* xscroll_in,int* yscroll_in);
+			   int* xscroll_in,int* yscroll_in,TTF_Font* font_in);
 
 	//! this function is used to change this tile object's size when normal logic can't be followed
 	/*! right now I believe the only case is when setting the background tile's size, because calc_corners()
@@ -88,6 +90,7 @@ class field{
 	std::string get_img_name(){ return image_name;}//!< getter for private image name field
 
 	std::string tile_name; //!< the tile_name should only serve a contextual purpose like (isospin)
+	std::vector<std::string> descriptions; //!< input description
 
 	int xloc; //!< the field keeps track of the xcoordinate of its upper right corner
 	int yloc; //!< the field keeps track of the ycoordinate of its upper right corner
@@ -95,10 +98,15 @@ class field{
   private:
 	int* sdl_xscroll;//!< this pointer allows field objects access to current x scrolling value in sdl_help
 	int* sdl_yscroll;//!< this pointer allows field objects access to current y scrolling value in sdl_help
+	TTF_Font* sdl_font;//!< this pointer allows field objects access to the font setting file
 	SDL_Renderer* sdl_help_renderer;//!< a pointer to sdl_help's rendering context
 
-	SDL_Surface* my_surf;//!< saves the surface, so that it isn't re-created every frame
-	SDL_Texture* my_tex;//!< saves the texture, so that it isn't re-created every frame
+	SDL_Surface* my_text_surf;//!< saves the surface for the text, so that it isn't recreated every frame
+	SDL_Texture* my_text_tex;//!< saves the texture for the text, so that it isn't recreated every frame
+
+
+	SDL_Surface* my_surf;//!< saves the surface, so that it isn't recreated every frame
+	SDL_Texture* my_tex;//!< saves the texture, so that it isn't recreated every frame
 
 
 	std::string image_name; //!< the name of the image, so it can be found in Assets/Images

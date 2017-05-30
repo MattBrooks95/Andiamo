@@ -12,7 +12,7 @@ manager::manager(){
 
 }
 
-bool man_test = false;
+bool man_test = true;
 
 void manager::init(){
 	
@@ -28,59 +28,91 @@ void manager::init(){
 	string bg_name = "bad bg name"; //name of the bg tile that the user will see
 	string bg_img = "bad bg image"; //name of the bg image file that will be loaded by sdl
 
-	ins >> bg_name;//read in background name
-	ins >> bg_img;//read in background image name
-	field bg(bg_name,bg_img,win_w,win_h); //create a 'special' background tile that should always
+	//ins >> bg_name;//read in background name
+	//ins >> bg_img;//read in background image name
+	getline(ins,bg_name);
+	getline(ins,bg_img);
+
+
+
+
+	field bg(bg_name,bg_img,0,0); //create a 'special' background tile that should always
 					      //be the first one specified in the text file
 	new_tile(bg);// pushes background tile into the vector
 
 	string temp_string;//used to store unidentified line
-	ins >> temp_string;//read the first line pre-loop
+	//ins >> temp_string;//read the first line pre-loop
+	getline(ins,temp_string);
 	if(temp_string != "andy"){ //background tile's info should have been ended with an 'andy' line
 		cout << "Missing \"andy\" separator after background tile information." << endl;
 	} //print an error if it was not there
-	else ins >> temp_string; //if it was formatted properly, read the next line which should
-				 // be meaningful
+	else {
+		//ins >> temp_string;
+		getline(ins,temp_string);//if it was formatted properly, read the next line which should
+					 // be meaningful
+	}
+
+	regex img_pattern(".*\\.png"); //this line specifies an image name
+	regex name_pattern("\\D[a-z0-9A-Z]?+"); //this line specifies a tile name
+	regex int_pattern("[0-9]+"); //these were causing an error b/c gcc 4.8 can't
+				     //handle the [], I'm updating fedora + gcc 
+				     //tomorrow 5/9 to resolve this issue
+
+	regex desc_pattern("c[ ]+?.*");
+		//describes a pattern for tile/input descriptors that starts with a 'c'
+		//and is followed by any number of spaces, then contains any character
+
+
+
 
 	while(!ins.eof()){
 		if(ins.fail()) break;//get out on potentially erroneous last run
 
 		string tile_name = "bad tile name";//names for generalized tiles
 		string img_name = "bad image name";//names for tile's picture file
+		string description; //description for this input tile
+		vector<string> temp_descriptions;//save all lines for description of tile
+
 
 		int tile_w = -1, tile_h = -1;//dimensions of given image for tile, -1 is bad input
 
 		while(temp_string != "andy"){ //loop until separator 'andy' is found
-			//cout << temp_string << endl;
+			if(man_test) cout << "LINE:" << temp_string << "|" << endl;
 
-			regex img_pattern(".*\\.png"); //this line specifies an image name
-			regex name_pattern("[a-zA-Z]+"); //this line specifies a tile name
-			regex int_pattern("[0-9]*"); //these were causing an error b/c gcc 4.8 can't
-						       //handle the [], I'm updating fedora + gcc 
-						       //tomorrow 5/9 to resolve this issue
 
 			if( regex_match(temp_string,img_pattern) ){ //if this line has '.png' in it, 
 								    //process it as an input picture name
 				if(man_test) cout << "Found an image name!: " << temp_string << endl;
 				img_name = temp_string;
 
-			} else if( regex_search(temp_string,name_pattern) ){
+			} else if( regex_match(temp_string,desc_pattern)){
+				if(man_test) cout << "Found a description line.: " << temp_string << endl;
+				description = temp_string;
+				temp_descriptions.push_back(temp_string);
+
+			} else if( regex_match(temp_string,name_pattern) ){
 				if(man_test) cout << "Found a tile name!: " << temp_string << endl;
 				tile_name = temp_string;
 
 			} else if( tile_w == -1 && regex_match(temp_string,int_pattern) ){
-				tile_w = stoi(temp_string);
+				tile_w = stoi(temp_string,NULL,10);
 				if(man_test) cout << "Found tile width!: " << tile_w << endl;
 
 			} else if( tile_w != -1 && regex_match(temp_string,int_pattern) ){
-				tile_h = stoi(temp_string);
+				tile_h = stoi(temp_string,NULL,10);
 				if(man_test) cout << "Found tile height!: " << tile_h << endl;
+			} else {
+				cout << "Error! This line failed to hit a case in the regex checks." << endl;
 			}
 
-			ins >> temp_string;//read in again to update loop
+			getline(ins,temp_string);//read in again to update loop
+			if(temp_string == "") getline(ins,temp_string);
 		}
 		//one tile will be filled and pushed into tile_bag vector per inner loop completion
-                field temp_field(tile_name, img_name,tile_w,tile_h); 
+                field temp_field(tile_name, img_name,tile_w,tile_h);
+		for(unsigned int c = 0; c < temp_descriptions.size();c++){
+			temp_field.descriptions.push_back(temp_descriptions[c]);
+		}
 		if(man_test){
 			cout << "PUSHING THIS FIELD-----------------------" << endl;
 			temp_field.print(cout);
@@ -122,9 +154,9 @@ void manager::set_area(int& sdl_max_width, int& sdl_max_height){
 }
 
 void manager::give_fields_renderer(SDL_Renderer* sdl_help_renderer_in,string image_p_in,
-				   int* xscroll_in, int* yscroll_in){
+				   int* xscroll_in, int* yscroll_in,TTF_Font* font_in){
 	for(unsigned int c = 0; c < tiles.size();c++){
-		tiles[c].graphics_init(sdl_help_renderer_in,image_p_in,xscroll_in,yscroll_in);
+		tiles[c].graphics_init(sdl_help_renderer_in,image_p_in,xscroll_in,yscroll_in,font_in);
 	}
 
 }
