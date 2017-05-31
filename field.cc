@@ -51,7 +51,7 @@ void field::graphics_init(SDL_Renderer* sdl_help_renderer_in,string image_p_in,
 	if(my_surf == NULL) cout << "Error in field.cc's graphics init() function: " << SDL_GetError() << endl;
 	my_tex = SDL_CreateTextureFromSurface(sdl_help_renderer,my_surf);
 	if(my_tex == NULL) cout << "Error in field.cc's graphics init() function: " << SDL_GetError() << endl;
-
+	/*
 	//thanks to http://headerphile.blogspot.com/2014/07/sdl2-part-10-text-rendering.html for the tutorial I used
 	//also http://gigi.nullneuron.net/gigilabs/displaying-text-in-sdl2-with-sdl_ttf/
 	SDL_Color color= {0,0,0,0}; //black text
@@ -59,14 +59,31 @@ void field::graphics_init(SDL_Renderer* sdl_help_renderer_in,string image_p_in,
 	if(my_text_surf == NULL) cout << "Error in field.cc's graphics init() function: " << SDL_GetError() << endl;
 	my_text_tex = SDL_CreateTextureFromSurface(sdl_help_renderer,my_text_surf);
 	if(my_text_tex == NULL) cout << "Error in field.cc's graphics init() function: " << SDL_GetError() << endl;
-
+	*/
+	text_init();
 
 
 	sdl_xscroll = xscroll_in;
 	sdl_yscroll = yscroll_in;
 
 }
+void field::text_init(){
+	//thanks to http://headerphile.blogspot.com/2014/07/sdl2-part-10-text-rendering.html for the tutorial I used
+	//also http://gigi.nullneuron.net/gigilabs/displaying-text-in-sdl2-with-sdl_ttf/
+	SDL_Color color= {0,0,0,0}; //black text
+	
+	string desc_lines; //sum of all description lines
+	for(unsigned int c = 0; c < descriptions.size();c++){
+		desc_lines.append((" " + descriptions[c]));
+		cout << "Current string total: " << desc_lines << endl;
+	}
 
+	my_text_surf = TTF_RenderText_Solid(sdl_font,(tile_name+desc_lines).c_str(),color);
+	if(my_text_surf == NULL) cout << "Error in field.cc's graphics init() function: " << SDL_GetError() << endl;
+	my_text_tex = SDL_CreateTextureFromSurface(sdl_help_renderer,my_text_surf);
+	if(my_text_tex == NULL) cout << "Error in field.cc's graphics init() function: " << SDL_GetError() << endl;
+
+}
 void field::draw_me(){
 	//normal tiles are drawn here
 	if(tile_name != "background") {

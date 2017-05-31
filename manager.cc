@@ -87,7 +87,7 @@ void manager::init(){
 
 			} else if( regex_match(temp_string,desc_pattern)){
 				if(man_test) cout << "Found a description line.: " << temp_string << endl;
-				description = temp_string;
+				description = temp_string.erase(0,2);//remove 'c ' at start of desc lines
 				temp_descriptions.push_back(temp_string);
 
 			} else if( regex_match(temp_string,name_pattern) ){

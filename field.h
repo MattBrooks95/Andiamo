@@ -49,6 +49,12 @@ class field{
 	 *field objects access to the font information through sdl_font* */
 	void graphics_init(SDL_Renderer* sdl_help_renderer_in,std::string image_p_in,
 			   int* xscroll_in,int* yscroll_in,TTF_Font* font_in);
+	//! This is a function, called from graphics_init(), that sets up the text's surface
+	/*! it should contain a logic that makes sure that the text does not run off the tile's size
+	 *and it also should not overrite any text boxes in the tile, which have not yet been implemented */
+	void text_init();
+
+
 
 	//! this function is used to change this tile object's size when normal logic can't be followed
 	/*! right now I believe the only case is when setting the background tile's size, because calc_corners()
