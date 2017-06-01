@@ -119,11 +119,12 @@ class sdl_help{
 
 	//! This member traverses the tile location vector and sees if the user clicked on a tile or not
 	/*! it walks linearly through the tile_locations vector and enacts the clicked() member
-	 *of the tile that the user clicked on. For now this means cute cout statements
+	 *of the tile that the user clicked on. For non-background tiles, this toggles their normal appearance
+	 *with their help_mode appearance
 	 *\param outs output stream to send messages to
 	 *\param click_x mouse click's x value (distance horizontaly from left side of window)
 	 *\param click_y mouse click's y value (distance vertically from top of window) */
-	void click_detection(std::ostream& outs, int click_x, int click_y) const;
+	void click_detection(std::ostream& outs, int click_x, int click_y);
 
 	//! this is a boolean helper for click_detection()
 	/* this member just takes in a mouse click's x or y values, and calculates whether or not

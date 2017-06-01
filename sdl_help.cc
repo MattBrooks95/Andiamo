@@ -265,7 +265,7 @@ void sdl_help::print_tile_locs(ostream& outs){
 		     << tile_bag.tiles[c].get_size().height << endl;
 	}
 }
-void sdl_help::click_detection(ostream& outs,int click_x, int click_y) const{
+void sdl_help::click_detection(ostream& outs,int click_x, int click_y){
 	for(unsigned int c = 0; c < tile_bag.tiles.size();c++){
 
 		if( in(click_x,click_y, tile_bag.tiles[c].get_rect() ) ){

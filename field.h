@@ -76,7 +76,7 @@ class field{
 	//! this member prints a message if the user clicks on this tile
 	/*!
 	 *\param outs is the output stream that the info (if any) should be sent to */
-	void clicked(std::ostream& outs) const;
+	void clicked(std::ostream& outs);
 
 
 	//! this void member prints the field's info to a given stream
@@ -90,6 +90,8 @@ class field{
 	 * does account for scrolling*/
 	SDL_Rect get_rect() const;
 
+	//! this member flips the boolean value of help_mode
+	void help_toggle();
 
 	tile_size get_size() { return size;}//!< getter for the private tile_size field
 
@@ -100,15 +102,25 @@ class field{
 
 	int xloc; //!< the field keeps track of the xcoordinate of its upper right corner
 	int yloc; //!< the field keeps track of the ycoordinate of its upper right corner
-
   private:
+
+	//! string that corresponds to the path to the image resource directory. set by graphics_init
+	std::string image_p;
+	bool help_mode;//!< this boolean variable controls whether the field will draw it's normal box or help box
+
+	//################################### SDL_HELP HOOKS #####################################################
 	int* sdl_xscroll;//!< this pointer allows field objects access to current x scrolling value in sdl_help
 	int* sdl_yscroll;//!< this pointer allows field objects access to current y scrolling value in sdl_help
 	TTF_Font* sdl_font;//!< this pointer allows field objects access to the font setting file
 	SDL_Renderer* sdl_help_renderer;//!< a pointer to sdl_help's rendering context
+	//########################################################################################################
 
 	SDL_Surface* my_text_surf;//!< saves the surface for the text, so that it isn't recreated every frame
 	SDL_Texture* my_text_tex;//!< saves the texture for the text, so that it isn't recreated every frame
+
+
+	SDL_Surface* my_help_surf;//!< saves the surface for this tile's 'help' mode
+	SDL_Texture* my_help_tex; //!< saves the texture for this tile's 'help' mode
 
 
 	SDL_Surface* my_surf;//!< saves the surface, so that it isn't recreated every frame
