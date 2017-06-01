@@ -48,7 +48,7 @@ sdl_help::sdl_help(string name_in){
 	window = SDL_CreateWindow(window_name.c_str(), 0, 0, display.w * .5, display.h * .75, 0);
 	renderer = SDL_CreateRenderer(window,-1,SDL_RENDERER_PRESENTVSYNC);
  //(font_p + "LiberationSerif-Regular.tff").c_str()
-	font = TTF_OpenFont( "./Assets/fonts/LiberationSerif-Regular.ttf", 28);//set up pointer to font from file
+	font = TTF_OpenFont( "./Assets/fonts/LiberationSerif-Regular.ttf", 22);//set up pointer to font from file
 	if(font == NULL) {
 		cout << "Error in opening font! " << SDL_GetError() << endl;
 	}
@@ -103,7 +103,7 @@ sdl_help::sdl_help(std::string name_in, int width, int height){
 
 	window = SDL_CreateWindow(window_name.c_str(), 0, 0, display.w, display.h, 0); //set up the window pointer
 	renderer = SDL_CreateRenderer(window,-1,SDL_RENDERER_PRESENTVSYNC); //set up the renderer pointer
-	font = TTF_OpenFont( (font_p+"LiberationSerif-Regular.ttf").c_str(),24);
+	font = TTF_OpenFont( (font_p+"LiberationSerif-Regular.ttf").c_str(),22);//"Aller_Bd.ttf"
 	if(font == NULL) {
 		cout << "Error in opening font! " << SDL_GetError() << endl;
 	}

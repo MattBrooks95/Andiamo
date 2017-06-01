@@ -32,7 +32,9 @@ andy_tile.png
 150
 andy
 IENCH
-c entrance channel: 1 = neutron, 2 = proton, 3 = deuteron, 4 = triton, 5 = helium-3, 6 = alpha, 
+c entrance channel:
+c 1 = neutron, 2 = proton, 3 = deuteron
+c 4 = triton, 5 = helium-3, 6 = alpha 
 c 7 = incident particle with A > 4
 andy_tile.png
 300
@@ -52,7 +54,7 @@ andy_tile.png
 150
 andy
 TCPR
-c 0 = do no tprint transmission coefficients, 1 = print transmission coefficients (title only) 
+c 0 = do not print transmission coefficients, 1 = print transmission coefficients (title only) 
 c >1 print complete transmission of coefficients
 andy_tile.png
 300
@@ -65,10 +67,14 @@ andy_tile.png
 150
 andy
 NGF
-c 0 = use original (Caltech) values, 1 = use original (Caltech) values, 
+c 0 = use original (Caltech) values
+c 1 = use original (Caltech) values
 c 2 = use Kopecky-Uhl values for gamma ray strength, 
-c 3 = Read in tabulated values for E1, M1, and E2 transmission coefficients. E1 are read in as if L = 0, 
-c M1 as if L = 1, and E2 as if L = 2, Thus, LMAX = 2 if all three are read in.
+c 3 = Read in tabulated values for E1, M1, and E2 transmission coefficients.
+c E1 values are read in as if L = 0 
+c M1 values as if L = 1
+c and E2 as if L = 2
+c Thus, LMAX = 2 if all three are read in.
 andy_tile.png
 300
 150
