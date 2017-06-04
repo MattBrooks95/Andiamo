@@ -163,10 +163,22 @@ void sdl_help::present(){
 //arrange the tiles and draw their textures, for now just doing two tiles per row, with their locations
 //being just a fraction of the screen size for testing
 void sdl_help::draw_tiles(){
-	SDL_RenderClear(renderer);
+	SDL_RenderClear(renderer);//clear off the renderer, to prepare to re-draw
+
+	vector<unsigned int> help_indices;
 	for(unsigned int c = 0; c < tile_bag.tiles.size();c++){
-		tile_bag.tiles[c].draw_me();
+		if(!tile_bag.tiles[c].is_help_mode()){ //draw tiles NOT in help mode first, so that the help mode boxes
+			tile_bag.tiles[c].draw_me(); //are always on top
+		} else {
+			help_indices.push_back(c);//save this index, so that the field tiles in help mode can
+						  //be drawn without re-iterating over the entire vector
+		}
 	}
+	//loop over vector of indices that still need drawn, drawing those tiles with help boxes on top
+	for(unsigned int c = 0; c < help_indices.size(); c++){
+		tile_bag.tiles[help_indices[c]].draw_me();
+	}
+
 	frame_count++;//increment the frame counter
 
 }//end of draw_tiles
@@ -199,8 +211,8 @@ void sdl_help::most(int& rightmost,int& leftmost,int& upmost,int& downmost){
 			rightmost = tile_bag.tiles[c].xloc + x_scroll + tile_bag.tiles[c].get_size().width;
 		}
 	}
-	cout << "Rightmost: " << rightmost << " Leftmost: " << leftmost
-	     << "Upmost: " << upmost << "Downmost: " << downmost << endl;
+	//cout << "Rightmost: " << rightmost << " Leftmost: " << leftmost
+	     //<< "Upmost: " << upmost << "Downmost: " << downmost << endl;
 }
 
 //can detect when we should stop scrolling, but allows no scrolling afterwards, not even in the opposite
@@ -211,26 +223,26 @@ void sdl_help::update_scroll(int x_scroll_in, int y_scroll_in){
 
 	if( (rightmost + x_scroll_in) <= 0){
 		x_scroll = x_scroll + abs(0-rightmost);
-		cout << "Hit right scrolling barrier." << endl;
+		//cout << "Hit right scrolling barrier." << endl;
 	}
 	if( (leftmost + x_scroll_in) >= window_s.width){
 		x_scroll = x_scroll - (/*window_s.width - leftmost*/ leftmost-window_s.width);
-		cout << "Hit left scrolling barrier." << endl;
+		//cout << "Hit left scrolling barrier." << endl;
 	} //mid-statement commented regions are previous values, they were buggy so trying them switched
 	  //seems to have fixed it, but commented regions stay until more strenuously tested
 	if( (upmost + y_scroll_in) >= window_s.height){
 		y_scroll = y_scroll - (/*window_s.height - upmost*/ upmost-window_s.height);
-		cout << "Hit up scrolling barrier." << endl;
+		//cout << "Hit up scrolling barrier." << endl;
 	}
 	if( (downmost + y_scroll_in) <= 0){
 		y_scroll = y_scroll + abs(0-downmost);
-		cout << "Hit down scrolling barrier." << endl;
+		//cout << "Hit down scrolling barrier." << endl;
 	}
 	//it would make sense to be able to scroll like this 
-		cout << "x_scroll increased by " << x_scroll_in << "| " << x_scroll << "-> "
-		     << x_scroll + x_scroll_in << endl;
-		cout << "y_scroll increased by " << y_scroll_in << "| " << y_scroll << "-> "
-		     << y_scroll + y_scroll_in << endl;
+		//cout << "x_scroll increased by " << x_scroll_in << "| " << x_scroll << "-> "
+		//     << x_scroll + x_scroll_in << endl;
+		//cout << "y_scroll increased by " << y_scroll_in << "| " << y_scroll << "-> "
+		//     << y_scroll + y_scroll_in << endl;
 		x_scroll = x_scroll + x_scroll_in;
 		y_scroll = y_scroll + y_scroll_in;
 
@@ -319,9 +331,9 @@ void sdl_help::calc_corners(){
 
 
 	unsigned int prev_height = 0; //keep track of the height of the previous rows
-	cout << "done: " << done << " candidate size: " << candidates.size() << endl;
+	//cout << "done: " << done << " candidate size: " << candidates.size() << endl;
 	while(done < candidates.size()){ //stop when every tile has been placed
-		cout << "DONE: " << done << endl;
+		//cout << "DONE: " << done << endl;
 		curr_width = 0;//each new row begins with 0 width, which is filled in as tiles are chosen
 		max_height = 0;//reset this variable here, to be sure rows aren't affecting subsequent row's height
 
@@ -332,8 +344,8 @@ void sdl_help::calc_corners(){
 
 		while( (width_limit - curr_width) > candidates[j].width ){
 
-			cout << "WIDTH_LIMIT - CURR_WIDTH= " << width_limit - curr_width << endl;
-			cout << "SMALLEST TILE= " << candidates[j].width << endl;
+			//cout << "WIDTH_LIMIT - CURR_WIDTH= " << width_limit - curr_width << endl;
+			//cout << "SMALLEST TILE= " << candidates[j].width << endl;
 
 
 			//start at the end of the array (where the highest values are) and walk backgrounds
@@ -348,13 +360,13 @@ void sdl_help::calc_corners(){
 				} else break; //elsewise we can leave this loop, i is where it needs to be
 			  } else i--; //keep going until an unprocessed candidate has been found
 			}
-			cout << "I candidate that may work i= " << i << " width = " << candidates[i].width
-			     << endl;
+			//cout << "I candidate that may work i= " << i << " width = " << candidates[i].width
+			//     << endl;
 
 			//the i index for the very last run of this loop is bad, so we need to leave early
 			//the queue is set up at this point so the while(!row.empty()) loop will finish up
 			if(i == -1){
-				cout << "row queue size when i = -1 : " << row.size() << endl;
+				//cout << "row queue size when i = -1 : " << row.size() << endl;
 				break; //we have placed all tiles, exit
 			}
 			//keep track of how much space has been used, account for padding
@@ -365,7 +377,7 @@ void sdl_help::calc_corners(){
 					  + vert_padding;
 			if(temp_height > max_height) {//save new max height
 				max_height = temp_height;
-				cout << " NEW MAX HEIGHT: " << temp_height << endl;
+				//cout << " NEW MAX HEIGHT: " << temp_height << endl;
 			}
 			//don't look at this tile again, set it to "true" in the "boolean" vector
 			processed[i] = 1;
@@ -377,7 +389,7 @@ void sdl_help::calc_corners(){
 
 		int row_width = 0; //first tile starts off at the left edge of the screen
 		while( !row.empty() ){
-			cout << "QUEUE SIZE= " << row.size() << endl;
+			//cout << "QUEUE SIZE= " << row.size() << endl;
 			index_and_width temp = row.front(); //copy element in the front of the queue
 			row.pop();  //pop out biggest tile
 

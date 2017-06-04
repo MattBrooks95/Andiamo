@@ -3,9 +3,10 @@
 using namespace std;
 
 //######################### FTRAN STRING ###############################################
-param_string::param_string(string name_in,string value_in){
+param_string::param_string(string name_in,string value_in,unsigned int size_in){
 	name = name_in;
 	value = value_in;
+	size = size_in;
 }
 
 //######################################################################################

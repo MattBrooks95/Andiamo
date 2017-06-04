@@ -89,7 +89,8 @@ class field{
 	 * access to SDL stuff, but I'm going to leave it this way for now. Note that this
 	 * does account for scrolling*/
 	SDL_Rect get_rect() const;
-
+	//! this member returns the boolean stored in help_mode
+	bool is_help_mode() { return help_mode; }
 	//! this member flips the boolean value of help_mode
 	void help_toggle();
 
@@ -99,6 +100,9 @@ class field{
 
 	std::string tile_name; //!< the tile_name should only serve a contextual purpose like (isospin)
 	std::vector<std::string> descriptions; //!< input description
+
+	//! this is the input that is set to a default value and overridden by input manager
+	std::string input;
 
 	int xloc; //!< the field keeps track of the xcoordinate of its upper right corner
 	int yloc; //!< the field keeps track of the ycoordinate of its upper right corner

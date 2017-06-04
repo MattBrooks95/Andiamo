@@ -14,6 +14,8 @@ field::field(string tile_name_in,string image_name_in, int width, int height){
 
 	help_mode = false; //start off in normal mode
 
+	input = ""; //start off input blank. Default value loaded in by input
+		    //manager, overridden by user
 	
 	xloc = 0;//these will be taken care of by calc_corners()
 	yloc = 0;
@@ -82,7 +84,7 @@ void field::text_init(){
 
 	//this part sets up the tile title surface
 	SDL_Color color= {0,0,0,0}; //black text
-	my_text_surf = TTF_RenderText_Solid(sdl_font,(tile_name+" = ").c_str(),color);
+	my_text_surf = TTF_RenderUTF8_Blended(sdl_font,(tile_name+" = ").c_str(),color);
 	if(my_text_surf == NULL) cout << "Error in field.cc's graphics init() function: " << SDL_GetError() << endl;
 	my_text_tex = SDL_CreateTextureFromSurface(sdl_help_renderer,my_text_surf);
 	if(my_text_tex == NULL) cout << "Error in field.cc's graphics init() function: " << SDL_GetError() << endl;
@@ -123,7 +125,7 @@ void field::text_init(){
 		#endif
 
 		//make help background 
-		cout << "SURFACE DIMS: " << max_width << ":" << total_height << endl;
+		//cout << "SURFACE DIMS: " << max_width << ":" << total_height << endl;
 		my_help_surf = SDL_CreateRGBSurface(0,max_width,total_height,32,red,green,blue,alpha);
 		if(my_help_surf == NULL) cout << "Error making " << tile_name << "'s help box."
 					      << SDL_GetError() << endl;
@@ -135,10 +137,10 @@ void field::text_init(){
 		for(unsigned int c = 0; c < descriptions.size();c++){
 			SDL_Rect word_dest = {0,0,0,0}; //used to tell it where to draw each line
 
-			SDL_Surface* temp_line = TTF_RenderText_Solid(sdl_font,descriptions[c].c_str(),color);
+			SDL_Surface* temp_line = TTF_RenderUTF8_Blended(sdl_font,descriptions[c].c_str(),color);
 			word_dest.y = new_row_height + vert_offset;//account for height of previous lines
 			new_row_height = word_dest.y + word_height;
-			cout << "Word_dest.h: " << word_dest.h <<  " Word_height: " << word_height << " C: " << c << endl;
+			//cout << "Word_dest.h: " << word_dest.h <<  " Word_height: " << word_height << " C: " << c << endl;
 			if(SDL_BlitSurface(temp_line,NULL,my_help_surf,&word_dest) != 0){
 				cout << "Error in help blit." << " " << SDL_GetError() << endl;
 			} //draw words atop the help surface

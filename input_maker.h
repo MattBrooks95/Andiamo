@@ -5,6 +5,7 @@
 #include<vector>
 #include<iostream>
 #include<fstream>
+#include<regex>
 
 #include "ftran_structs.h"
 
@@ -27,15 +28,17 @@ class input_maker{
 	std::string config_p; //!< \brief contains a string that provides the relative path to the config files
 	std::string file_name; //!< \brief set by the constructor to tell it which config file to use
 
-	//! \param contains a variable number of in4 fortran-style variables
+ 
+
+	//! contains a variable number of in4 fortran-style variables
 	/* it's length and contents should be specified in the config file */
 	std::vector<param_int4> int4_params; 
 
-	//! \param contains a variable number of real8 fortran-style variables
+	//! contains a variable number of real8 fortran-style variables
 	/* it's length and contents should be specified in the config file */
 	std::vector<param_real8> real8_params;
 
-	//! \param contains a variable number of c++ style strings, which should be fortran friendly with .c_str()
+	//! contains a variable number of c++ style strings, which should be fortran friendly with .c_str()
 	/* I think it'll play nicely with fortran just with .c_str() and .size() */
 	std::vector<param_string> string_params;
 };

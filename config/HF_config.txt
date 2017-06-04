@@ -33,8 +33,8 @@ I4(7) NENT = 20
 I4(6) LMAX = 10
 
 #line 3b - I actually don't understand where this is on the input file
-R8 ETAB = 
-R8 TTAB = 
+#R8 ETAB = 
+#R8 TTAB = 
 
 
 

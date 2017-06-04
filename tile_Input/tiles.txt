@@ -7,6 +7,12 @@ andy_tile.png
 300
 150
 andy
+output
+c filename to output to
+andy_tile.png
+200
+75
+andy
 A
 c mass number of first compound nucleus
 andy_tile.png

@@ -12,7 +12,7 @@ manager::manager(){
 
 }
 
-bool man_test = true;
+bool man_test = false;
 
 void manager::init(){
 	
@@ -58,7 +58,7 @@ void manager::init(){
 				     //handle the [], I'm updating fedora + gcc 
 				     //tomorrow 5/9 to resolve this issue
 
-	regex desc_pattern("c[ ]+?.*");
+	regex desc_pattern("\\s*?c[ ]+?.*");
 		//describes a pattern for tile/input descriptors that starts with a 'c'
 		//and is followed by any number of spaces, then contains any character
 

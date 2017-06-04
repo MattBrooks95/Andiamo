@@ -84,8 +84,10 @@ struct param_real8{
 };
 
 struct param_string{
-	param_string(std::string name_in = "No name",std::string value_in = NULL);
+	param_string(std::string name_in = "No name",std::string value_in = NULL,
+		     unsigned int size_in = 0);
 
+	unsigned int size; //!< make sure that the c-style string's size matches fortran's
 	std::string name; //!< is the contextual name for the variable, like the label line in an HF input file
 	std::string value; //!< is the actual string that should be output and cared about
 };
