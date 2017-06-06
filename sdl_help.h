@@ -8,6 +8,8 @@
 
 #include "scroll_bar.h"
 #include "manager.h"
+#include "input_maker.h"
+
 //! this structure is used to store the dimensions of the window itself
 /*! eventually the user will be able to change this to a variety of sizes */
 struct win_size{
@@ -37,11 +39,11 @@ class sdl_help{
 	/*! It initializes SDL and SDL image. Window size is based on a
 	 *SDL_GetCurrentDisplayMode call. \param name_in is the desired name of
          * the window.*/
-	sdl_help(std::string name_in = "Andiamo!");
+	sdl_help(std::string name_in = "Andiamo!",std::string HF_input_file_in = "HF_config.txt");
 
 	//!this overloaded constructor requires 3 arguments: window name, width and height
 	
-	sdl_help(std::string name_in, int width, int height);
+	sdl_help(std::string name_in,std::string HF_input_file_in, int width, int height);
 
 	//! This is a destructor member for the sdl_help class.
 	/*! It enacts SDL_Quit() and IMG_Quit(). */
@@ -51,6 +53,12 @@ class sdl_help{
 	/* \param width_in is the desired new window width
          * \param height_in is the desired new window height */
 	void window_update(int width_in, int height_in);
+
+	//! this member ensures that the manager class can access all of the input manager
+	/*! this is so that the fields and the input maker can interact with eachother
+	 *relatively simply. I'm sure there's a better solution than this, so look at improving
+	 *this later */
+	void give_manager_io(input_maker* input_maker_hook);
 
 	//! This member presents the renderer and all of it's current textures to the screen
 	void present();
@@ -63,6 +71,7 @@ class sdl_help{
 	//! This member enacts the draw members of vert_bar and horiz_bar
 	/* This should likely be called directly below every call to draw_tiles() */ 
 	void draw_sbars();
+
 	/**************************SCROLLING FUNCTIONS ************************************************/
 
 	void calc_corners();//working on new drawing algorithm here
@@ -99,6 +108,7 @@ class sdl_help{
 	 *\return returns true if a scroll bar was clicked, and false elsewise */
 	int scroll_clicked(std::ostream& outs, int click_x, int click_y) const;
 	/**********************************************************************************************/
+
 	//! This member prints the sizes of the three important size variables: area, window, and display
 	/*! Where display is the dimensions of the physical monitor the user has. window_s keeps track of
 	 *the size of the window in which things can be seen - this is usually less than the actual area.
@@ -168,6 +178,8 @@ class sdl_help{
 	/*! this is useful when an algorithm would require removing objects from the vector as they are
 	 * processed  */
 	manager get_mgr_copy(){ return tile_bag;}
+	/*****************************************************************/
+
 	SDL_Renderer* renderer; //!< pointer to the renderer object
 	TTF_Font* font;//!< pointer to the font created from the font.ttf file in /config
 	/********* FRIENDS *******************************************/
@@ -209,8 +221,13 @@ class sdl_help{
 
 	SDL_Window* window; //!< pointer to the window object
 
-
+	//################## MANAGER OBJECT #####################################################
 	manager tile_bag; //!< manager object that contains all the field objects
+	//#######################################################################################
+
+	//################## INPUT MAKER OBJECT #################################################
+	input_maker io_handler; //! object that manages the config and output files for HF relevant stuff
+	//#######################################################################################
 };
 
 

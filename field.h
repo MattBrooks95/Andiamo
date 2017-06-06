@@ -98,7 +98,10 @@ class field{
 
 	std::string get_img_name(){ return image_name;}//!< getter for private image name field
 
-	std::string tile_name; //!< the tile_name should only serve a contextual purpose like (isospin)
+	//!< the tile_name should be a parameter name for an HF_input file
+	/*! this name should correspond to a parameter name in the HF_config file. They are associated by 
+	 *this parameter name */
+	std::string tile_name;
 	std::vector<std::string> descriptions; //!< input description
 
 	//! this is the input that is set to a default value and overridden by input manager

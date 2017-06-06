@@ -26,7 +26,7 @@ win_size* sdl_help::get_win_size(){
 //######################### WIN SIZE STRUCT ################################################################
 
 //######################### SDL_HELP CONSTRUCTORS/DESTRUCTORS ##############################################
-sdl_help::sdl_help(string name_in){
+sdl_help::sdl_help(string name_in,string HF_input_file_in){
 	SDL_Init(SDL_INIT_TIMER | SDL_INIT_EVENTS|SDL_INIT_VIDEO);//for now, timer,video and keyboard
 	IMG_Init(IMG_INIT_PNG);//allows use of .png files
 	if(TTF_Init() != 0){ //allows sdl to print text to the screen using .ttf files
@@ -72,10 +72,11 @@ sdl_help::sdl_help(string name_in){
 
 	calc_corners(); //set up tile locations with the field's corner location 
 	tile_bag.give_fields_renderer(renderer,image_p,&x_scroll,&y_scroll,font);//give fields rendering and font info
-
+	give_manager_io(&io_handler);
 }
 
-sdl_help::sdl_help(std::string name_in, int width, int height){
+sdl_help::sdl_help(std::string name_in,string HF_input_file_in,
+		   int width, int height){
 	SDL_Init(SDL_INIT_TIMER | SDL_INIT_EVENTS|SDL_INIT_VIDEO);//for now, timer and keyboard
 	IMG_Init(IMG_INIT_PNG);//allows use of .png files
 	if(TTF_Init() != 0){//allows sdl to print text using .ttf files
@@ -125,7 +126,7 @@ sdl_help::sdl_help(std::string name_in, int width, int height){
 	calc_corners();//set up tile_locations with the field's corner locations
 	tile_bag.give_fields_renderer(renderer,image_p,&x_scroll,&y_scroll,font);//give fields their rendering and
 										 //font info
-
+	give_manager_io(&io_handler);
 }
 
 sdl_help::~sdl_help(){
@@ -142,7 +143,9 @@ sdl_help::~sdl_help(){
 void sdl_help::quit(){
 	this->~sdl_help();  
 }
-//######################### SDL_HELP CONSTRUCTORS/DESTRUCTORS ##############################################
+//#####################################################################################################
+
+
 void sdl_help::window_update(int width_in, int height_in){
 	window_s.width = width_in; //update sdl class's window size variables
 	window_s.height = height_in;
@@ -155,6 +158,10 @@ void sdl_help::print_size_info(std::ostream& outs){
 	outs << "Printing window size: "; window_s.print(outs);
 	outs << "Printing actual size: "; area.print(outs);
 	outs << "Printing display info: " << display.w << "x" << display.h << endl;
+}
+
+void sdl_help::give_manager_io(input_maker* input_maker_hook_in){
+	tile_bag.set_input_maker_hook(input_maker_hook_in);
 }
 
 void sdl_help::present(){

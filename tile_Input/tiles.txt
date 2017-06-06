@@ -4,8 +4,8 @@ andy
 ELAB
 c energy of projectile in MeV in the lab
 andy_tile.png
-300
 150
+50
 andy
 output
 c filename to output to
@@ -16,26 +16,26 @@ andy
 A
 c mass number of first compound nucleus
 andy_tile.png
-300
 150
+50
 andy
 Z
 c atomic number of first compound in nucleus
 andy_tile.png
-300
 150
+50
 andy
 FNRME1
 c normalization factors
 andy_tile.png
-300
 150
+50
 andy
 FNRMM1
 c for the E1 and M1 strength functions for gamma ray decay
 andy_tile.png
-300
 150
+50
 andy
 IENCH
 c entrance channel:
@@ -43,34 +43,34 @@ c 1 = neutron, 2 = proton, 3 = deuteron
 c 4 = triton, 5 = helium-3, 6 = alpha 
 c 7 = incident particle with A > 4
 andy_tile.png
-300
 150
+50
 andy
 ICM
 c reference frame of transmission coefficients: 0 = energies given in lab, 1 = energies given in center-of-mass
 andy_tile.png
-300
 150
+50
 andy
 NZ3
 c include or exclude d, t, 3He: 0 = include 2H, 3H, and 3He 
 c 1 = exclude 2H, 3H, and 3HE
 andy_tile.png
-300
 150
+50
 andy
 TCPR
 c 0 = do not print transmission coefficients, 1 = print transmission coefficients (title only) 
 c >1 print complete transmission of coefficients
 andy_tile.png
-300
 150
+50
 andy
 FNRME2
 c normalization factor for E2 strength
 andy_tile.png
-300
 150
+50
 andy
 NGF
 c 0 = use original (Caltech) values
@@ -82,36 +82,41 @@ c M1 values as if L = 1
 c and E2 as if L = 2
 c Thus, LMAX = 2 if all three are read in.
 andy_tile.png
-300
 150
+50
 andy
 NENT
 c number of energys in table for each l of the kth particle 7 <= NENT <= 20
 andy_tile.png
-300
 150
+50
 andy
 LMAX
 c maximum l value for transmission coefficients of kth particle
 andy_tile.png
-300
 150
+50
 andy
 TCTITLE
 c label for these transmission coefficients (optional)
 andy_tile.png
-300
 150
+50
 andy
 ETAB
 c energy
 andy_tile.png
-300
 150
+50
 andy
 TTAB
 c transmission coefficient
 andy_tile.png
-300
 150
+50
+andy
+no_desc
+andy_tile.png
+150
+50
 andy

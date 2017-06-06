@@ -2,7 +2,9 @@
 
 #pragma once
 #include<vector>
+
 #include "field.h"
+#include "input_maker.h"
 
 #include<SDL2/SDL.h>
 #include<SDL2/SDL_image.h>
@@ -28,11 +30,16 @@ class manager{
 	 * sdl_help, but the scroll bars have pointers to these values as well. */
 	void set_area(int& sdl_max_width, int& sdl_max_height);
 
+	//! this member is called by sdl_help's constructor, and sets up input_maker object pointer
+	void set_input_maker_hook(input_maker* input_maker_hook_in);
 
 	//! this function traverses the tile bag and sets up each object with a reference to the main renderer
 	/*! it also allows fields to access sdl_help's scroll values and font pointer */
 	void give_fields_renderer(SDL_Renderer* sdl_help_renderer_in,std::string image_p_in,
 				  int* xscroll_in, int* yscroll_in,TTF_Font* font_in);
+
+	//! this function "fills" each non-background tile with it's default value as a string
+	void give_fields_defaults();
 
 	//! this member loads in tiles from the tile input file using regular expressions and file i/o
 	/*! this init member uses fstream and regex to open and process a text file, which for now defaults
@@ -54,9 +61,11 @@ class manager{
 	 *\param height_in is the desired new height */
 	void update_win(int width_in, int height_in);
 
-	std::vector<field> tiles;//!< vector if tile information is public for easier access from sdl_help
+	std::vector<field> tiles;//!< vector of tile information is public for easier access from sdl_help
 
   private:
+	input_maker* input_maker_hook; //!< allows manager access to sdl_help's input_maker object
+
 	std::string tile_input_p; //!< \brief a path string to the tile input file folder
 	int win_w;//!< \brief keeps track of sdl window width
 	int win_h;//!< \brief keeps track of sdl window height

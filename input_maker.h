@@ -1,6 +1,7 @@
 //! \file input_maker.h \brief is the class that handles file manipulation
 /*! it handles creating the output file to be used by HF, and also reads in the config file "HF_config.txt"
  * and then makes decisions based on that config file */
+#pragma once
 
 #include<vector>
 #include<iostream>
@@ -8,27 +9,46 @@
 #include<regex>
 
 #include "ftran_structs.h"
-
+#include "string+.h"
 
 //! input_maker is a class that reads a config file to configure itself, and then creates the outputs to be used with HF
+//* it exists within sdl_help, and interacts heavily with fields and the manager
 class input_maker{
   public:
 	//! this constructor sets the config-file related strings
-	input_maker(std::string file_name_in);
+	input_maker(std::string output_file_name_in = "output.txt",std::string config_file_name_in = "HF_config.txt");
+
+	//! the destructor calls the output() member, to make sure only the most recent data is output
+	/*! I have it this way for now because I can imagine myself or someone else forgetting to call it
+	 * from main before the whole program terminates */
+	~input_maker();
 
 	//! init() sets up the parameter vectors to the specifications of the config file
-	/*! it's likely going to use regular expressions */
+	/*! It uses regular expressions, and the split functions in string+.h*/
 	void init();
 
-	void output(std::ostream& outs);
+	//! output() prints out the information in the order and format needed to be used by HF
+	/*! for now it defaults to printing to ./output/output.txt, but this will be made more dynamic and
+	 *and OS independent (I still need to do that to all the paths... */
+	void output();
 
+	//vector getters
+	std::vector<std::string>& get_names_in_order(){return names_in_order;}
+	std::vector<param_int4>& get_int4_params(){return int4_params;}
+	std::vector<param_real8> get_real8_params(){return real8_params;}
+	std::vector<param_string> get_string_params(){return string_params;}
 
   private:
 
 	std::string config_p; //!< \brief contains a string that provides the relative path to the config files
+	std::string output_file_name;//!< \brief name of the file in config_p's folder where output will be printed
+	std::string output_p; //!< \brief path to the output folder
 	std::string file_name; //!< \brief set by the constructor to tell it which config file to use
 
- 
+ 	//! contains the names of parameters in the order in which they were read
+	/*! the corresponding tile should be associated to its info by the tile name and parameter
+	 *string name being the same */
+	std::vector<std::string> names_in_order;
 
 	//! contains a variable number of in4 fortran-style variables
 	/* it's length and contents should be specified in the config file */

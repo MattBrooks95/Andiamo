@@ -6,11 +6,11 @@
 #string format is C* var_name|size| = default value
 #the value field should be enclosed in ""
 
-#double format is R8 var_name = default value 
+        #double format is R8 var_name = default value 
 #integer format is I4 var_name = default value
 
 
-C* label|79| = "Fe58(He-3,n)Fe58:HF2002 Calculations, Ed=10.0 MeV."
+C* label|79|      = "Fe58(He-3,n)Fe58:HF2002 Calculations, Ed=10.0 MeV."
 
 #line 2
 R8 ELAB = 9.9
@@ -25,31 +25,13 @@ I4 NZ3 = 1
 I4 TCPR = 0
 
 R8 FNRME2 = 1.00
-I5 NGF = 2
+I4 NGF = 2
 #end line 2
 
 #line 3a
-I4(7) NENT = 20
-I4(6) LMAX = 10
+#I4(7) NENT = 20
+#I4(6) LMAX = 10
 
 #line 3b - I actually don't understand where this is on the input file
 #R8 ETAB = 
 #R8 TTAB = 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

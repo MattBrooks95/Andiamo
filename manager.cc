@@ -1,5 +1,6 @@
 //! \file manager.cc implements the functions declared in manager.h
 #include "manager.h"
+
 #include<fstream>
 #include<iostream>
 #include<regex>
@@ -9,7 +10,7 @@ using namespace std;
 bool compare_width(field& left, field& right);//prototype for sorting function passed to algorithm::sort
 
 manager::manager(){
-
+	input_maker_hook = NULL; //should be overwritten when sdl_help's constructor calls give_manager_io
 }
 
 bool man_test = false;
@@ -53,12 +54,12 @@ void manager::init(){
 	}
 
 	regex img_pattern(".*\\.png"); //this line specifies an image name
-	regex name_pattern("\\D[a-z0-9A-Z]?+"); //this line specifies a tile name
+	regex name_pattern("\\D[a-z0-9_A-Z]?+"); //this line specifies a tile name
 	regex int_pattern("[0-9]+"); //these were causing an error b/c gcc 4.8 can't
 				     //handle the [], I'm updating fedora + gcc 
 				     //tomorrow 5/9 to resolve this issue
 
-	regex desc_pattern("\\s*?c[ ]+?.*");
+	regex desc_pattern("\\s*?c\\s+?.*");
 		//describes a pattern for tile/input descriptors that starts with a 'c'
 		//and is followed by any number of spaces, then contains any character
 
@@ -153,11 +154,52 @@ void manager::set_area(int& sdl_max_width, int& sdl_max_height){
 	sdl_max_height = downmost;
 }
 
+void manager::set_input_maker_hook(input_maker* input_maker_hook_in){
+	//seems to be working
+	//cout <<"SETTING INPUT MAKER HOOK!" << endl;
+	//cout <<"BEFORE: " << input_maker_hook << endl;
+	//cout <<"PASSED HOOK: " << input_maker_hook_in << endl;
+	input_maker_hook = input_maker_hook_in;
+	//cout <<"AFTER: " << input_maker_hook_in << endl;
+}
+
 void manager::give_fields_renderer(SDL_Renderer* sdl_help_renderer_in,string image_p_in,
 				   int* xscroll_in, int* yscroll_in,TTF_Font* font_in){
 	for(unsigned int c = 0; c < tiles.size();c++){
 		tiles[c].graphics_init(sdl_help_renderer_in,image_p_in,xscroll_in,yscroll_in,font_in);
 	}
+
+}
+
+void manager::give_fields_defaults(){
+	//starting at 1 to skip over background tile
+	for(unsigned int c = 1; c < tiles.size();c++){
+		for(unsigned int i = 0; i < input_maker_hook->get_int4_params().size();i++){
+
+			if(input_maker_hook->get_int4_params()[i].name == tiles[c].tile_name){
+
+				continue;
+			}
+
+		}//inner for 1
+
+		for(unsigned int i = 0;i < input_maker_hook->get_real8_params().size();i++){
+
+			if(input_maker_hook->get_real8_params()[i].name == tiles[c].tile_name){
+
+				continue;
+			}
+		}//inner for 2
+
+		for(unsigned int i = 0;i < input_maker_hook->get_string_params().size();i++){
+
+			if(input_maker_hook->get_string_params()[i].name == tiles[c].tile_name){
+
+				continue;
+			}
+
+		}//inner for 3
+	}//big for
 
 }
 

@@ -61,16 +61,9 @@ void field::graphics_init(SDL_Renderer* sdl_help_renderer_in,string image_p_in,
 	if(my_surf == NULL) cout << "Error in field.cc's graphics init() function: " << SDL_GetError() << endl;
 	my_tex = SDL_CreateTextureFromSurface(sdl_help_renderer,my_surf);
 	if(my_tex == NULL) cout << "Error in field.cc's graphics init() function: " << SDL_GetError() << endl;
-	/*
-	//thanks to http://headerphile.blogspot.com/2014/07/sdl2-part-10-text-rendering.html for the tutorial I used
-	//also http://gigi.nullneuron.net/gigilabs/displaying-text-in-sdl2-with-sdl_ttf/
-	SDL_Color color= {0,0,0,0}; //black text
-	my_text_surf = TTF_RenderText_Solid(sdl_font,(tile_name+" = ").c_str(),color);
-	if(my_text_surf == NULL) cout << "Error in field.cc's graphics init() function: " << SDL_GetError() << endl;
-	my_text_tex = SDL_CreateTextureFromSurface(sdl_help_renderer,my_text_surf);
-	if(my_text_tex == NULL) cout << "Error in field.cc's graphics init() function: " << SDL_GetError() << endl;
-	*/
-	if(descriptions.size() > 0 ) text_init();
+
+
+	text_init();
 
 
 
@@ -90,7 +83,7 @@ void field::text_init(){
 	if(my_text_tex == NULL) cout << "Error in field.cc's graphics init() function: " << SDL_GetError() << endl;
 	
 
-
+	if(descriptions.size() > 0){
 	//this part sets up this tile's dialogue box
 
 		//find widest description line
@@ -130,7 +123,7 @@ void field::text_init(){
 		if(my_help_surf == NULL) cout << "Error making " << tile_name << "'s help box."
 					      << SDL_GetError() << endl;
 		//color in the help background
-		SDL_FillRect(my_help_surf,NULL,SDL_MapRGBA(my_help_surf->format,0,105,78,255));//OU green?
+		SDL_FillRect(my_help_surf,NULL,SDL_MapRGBA(my_help_surf->format,0,105,78,255));//OU green
 
 
 		int new_row_height = 0;
@@ -146,18 +139,21 @@ void field::text_init(){
 			} //draw words atop the help surface
 			SDL_FreeSurface(temp_line);//free memory, this pointer will be used again
 		}
-	my_help_tex = SDL_CreateTextureFromSurface(sdl_help_renderer,my_help_surf);
-	if(my_help_tex == NULL) cout << "Error in creating help box texture. " << SDL_GetError() << endl;
+
+		my_help_tex = SDL_CreateTextureFromSurface(sdl_help_renderer,my_help_surf);
+		if(my_help_tex == NULL) cout << "Error in creating help box texture. " << SDL_GetError() << endl;
+	}
 }
 void field::draw_me(){
 	if(tile_name == "background"){ //if this is the background field, it gets drawn with no text
 		SDL_RenderCopy(sdl_help_renderer,my_tex,NULL,NULL); //and covers the entire environment
-		return;
+		return;//get out before any unecessary things are drawn
 	}
 	//normal tiles are drawn below
 
 	//this part draws the "normal box"
-	if(!help_mode){
+	if(!help_mode || my_help_surf == NULL || my_help_tex == NULL){
+		//####################### Draw name and tile background #####################################
 		SDL_Rect dest_temp = {xloc+ (*sdl_xscroll),yloc+ (*sdl_yscroll),size.width,size.height};
 		SDL_RenderCopy(sdl_help_renderer,my_tex,NULL,&dest_temp);
 
@@ -165,6 +161,14 @@ void field::draw_me(){
 		SDL_Rect text_dest_temp = {xloc+(*sdl_xscroll),yloc+ (*sdl_yscroll),0,0};
 		SDL_QueryTexture(my_text_tex,NULL,NULL,&text_dest_temp.w,&text_dest_temp.h); //get text surface info
 		SDL_RenderCopy(sdl_help_renderer,my_text_tex,NULL,&text_dest_temp);
+		//####################### Draw name and tile background #####################################
+
+		//####################### Do the drawing for the text box ###################################
+
+
+
+		//###########################################################################################
+
 
 	} else { //this part draws the "help box" in its place
 
@@ -181,6 +185,7 @@ void field::draw_me(){
 
 }
 void field::help_toggle(){
+	if(descriptions.size() == 0) return; //don't do anything if this tile doesn't have a help box
 	if(help_mode){ //if it's true, make it false
 		help_mode = false;
 		return;
@@ -219,6 +224,9 @@ field::~field(){
 
 	SDL_FreeSurface(my_surf); //free memory
 	SDL_DestroyTexture(my_tex); //free memory
+
+	SDL_FreeSurface(my_help_surf);
+	SDL_DestroyTexture(my_help_tex);
 }
 
 

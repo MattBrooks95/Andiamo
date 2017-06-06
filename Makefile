@@ -7,7 +7,7 @@ vtool = --tool=memcheck
 vopt = --log-file="memory_check.txt" --leak-check=full
 
 #object files
-objects = main.o handlers.o manager.o ftran_structs.o field.o sdl_help.o scroll_bar.o input_maker.o
+objects = main.o handlers.o manager.o ftran_structs.o field.o sdl_help.o scroll_bar.o input_maker.o string+.o
 
 #executable name
 name = andiamo
@@ -18,13 +18,13 @@ browser = firefox
 andiamo: $(objects)
 	g++  -o $(name) $(objects) $(SDL_inc)
 
-main.o: main.cc sdl_help.h handlers.h
+main.o: main.cc sdl_help.h handlers.h input_maker.h
 	g++ $(c_flg) -c main.cc
 
 handlers.o: handlers.cc handlers.h sdl_help.h
 	g++ $(c_flg) -c handlers.cc
 
-sdl_help.o: sdl_help.cc sdl_help.h manager.h scroll_bar.h
+sdl_help.o: sdl_help.cc sdl_help.h manager.h scroll_bar.h input_maker.h
 	g++ $(c_flg) -c sdl_help.cc
 
 scroll_bar.o: scroll_bar.cc scroll_bar.h
@@ -39,9 +39,11 @@ manager.o: manager.cc manager.h field.h
 ftran_structs.o: ftran_structs.cc ftran_structs.h
 	g++ $(c_flg) -c ftran_structs.cc
 
-input_maker.o: input_maker.cc input_maker.h
+input_maker.o: input_maker.cc input_maker.h string+.h
 	g++ $(c_flg) -c input_maker.cc
 
+string.o: string+.cc string+.h
+	g++ $(c_flg) -c string+.cc
 #runs valgrind on the debug executable created by make gdb
 valgrind:
 	valgrind $(vtool) $(vopt) ./debug

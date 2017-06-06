@@ -29,7 +29,7 @@ int main(){
   sdl_helper.present();
 
   //input/output manager class
-  input_maker io_handler("config/HF_config.txt");
+  //input_maker io_handler("HF_config.txt");
   
   SDL_Event big_event; //pre-loop drawing commands, so screen comes up near instantly
   SDL_SetEventFilter(filter_mouse_move,NULL);

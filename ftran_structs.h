@@ -82,7 +82,7 @@ struct param_real8{
 	std::string name;
 	double value;
 };
-
+//! this is a simple struct to keep track of a string parameter's "variable name" and string "value"
 struct param_string{
 	param_string(std::string name_in = "No name",std::string value_in = NULL,
 		     unsigned int size_in = 0);
@@ -91,8 +91,17 @@ struct param_string{
 	std::string name; //!< is the contextual name for the variable, like the label line in an HF input file
 	std::string value; //!< is the actual string that should be output and cared about
 };
+//this needs implemented in some way at some point, but I'm not worrying about it now
+//! this struct contains the information about a fortran array given in HF_config
+/*struct param_int4_array{
+	
+	
 
+	std::string name; //!< is the name for the parameter
+	int size;          //!< size of the array as specified by HF_config file
+	vector<int> values;//!< is the array of integers 
 
+}; */
 /*
 struct param_int8{
 	param_int8(std::string name_in,long long int val_in){
