@@ -73,8 +73,8 @@ class sdl_help{
 	void draw_sbars();
 
 	/**************************SCROLLING FUNCTIONS ************************************************/
-
-	void calc_corners();//working on new drawing algorithm here
+	//! calc_corners implements a guessing algorithm that tries to place tiles in a space-efficient way
+	void calc_corners();
 
 
 

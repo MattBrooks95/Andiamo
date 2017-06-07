@@ -289,7 +289,7 @@ void sdl_help::click_detection(ostream& outs,int click_x, int click_y){
 
 		if( in(click_x,click_y, tile_bag.tiles[c].get_rect() ) ){
 		//if the mouse click coordinates fall within a tile,
-			tile_bag.tiles[c].clicked(outs);//enact that tiles clicked() member
+			tile_bag.tiles[c].clicked(outs,click_x,click_y);//enact that tiles clicked() member
 		}//endif	
 
 	}

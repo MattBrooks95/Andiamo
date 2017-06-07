@@ -9,6 +9,28 @@
 #include<SDL2/SDL_image.h>
 #include<SDL2/SDL_ttf.h>
 
+#include "ftran_structs.h"
+
+//! this is a handy bag for the textures and surfaces necessary for text box creation. To be used in a field object
+struct sdl_text_box{
+	//! the constructor sets all pointers to NULL, it seems like it's the safe thing to do
+	sdl_text_box();
+
+	//! the destructor frees all of the memory
+	~sdl_text_box();
+
+	//! stores the tile_box's y offset from the top left corner of the tile on which it resides
+	int y_offset; 
+
+
+	SDL_Surface* box_surf; //!< keep track of the surface for the (usually) white background
+	SDL_Texture* box_tex;  //!< keep track of the texture for the (usually) white background
+
+	SDL_Surface* text_surf; //!< keep track of the surface for the current text in the text box
+	SDL_Texture* text_tex;  //!< keep track of the texture for the current text in the text box
+
+};
+
 //! tile_size is a struct that contains height and width parameters for the main window
 /*! These should be a fraction of the size of the window, to allow for many input cards on one screen */
 struct tile_size{
@@ -54,7 +76,10 @@ class field{
 	 *and it also should not overrite any text boxes in the tile, which have not yet been implemented */
 	void text_init();
 
-
+	//! this function sets up the text box, which will be situated in the bottom of the tile card
+	/*! it should have as much width as allowed by reason, and the height will likely be consant or based on the
+	 *size of the sdl_font in use */
+	void text_box_init();
 
 	//! this function is used to change this tile object's size when normal logic can't be followed
 	/*! right now I believe the only case is when setting the background tile's size, because calc_corners()
@@ -75,9 +100,14 @@ class field{
 	
 	//! this member prints a message if the user clicks on this tile
 	/*!
-	 *\param outs is the output stream that the info (if any) should be sent to */
-	void clicked(std::ostream& outs);
+	 *\param outs is the output stream that the info (if any) should be sent to
+	 *\param click_x is the xlocation relative to the top left corner of the screen, where the user left clicked
+	 *\param click_y is the ylocation relative to the top left corner of the screen, where the user left clicked*/
+	void clicked(std::ostream& outs,const int& click_x,const int& click_y);
 
+	//! this function returns true if the text box was clicked, and false otherwise
+	/*! it will either implement text grabbing from keyboard, or call a function that does it */
+	bool text_box_clicked(std::ostream& outs, const int& click_x, const int& click_y);
 
 	//! this void member prints the field's info to a given stream
 	/*!
@@ -102,10 +132,19 @@ class field{
 	/*! this name should correspond to a parameter name in the HF_config file. They are associated by 
 	 *this parameter name */
 	std::string tile_name;
-	std::vector<std::string> descriptions; //!< input description
 
-	//! this is the input that is set to a default value and overridden by input manager
-	std::string input;
+	std::vector<std::string> descriptions; //!< input description lines
+
+	param_int4* int4_hook;//!< access to this tile's fortran struct in input_maker vector. Set up by manager::give_fields_defaults
+	param_real8* real8_hook;//!< access to this tile's fortran struct in input_maker vector. Set up by manager::give_fields_defaults
+	param_string* string_hook;//!< access to this tile's fortran struct in input_maker vector. Set up by manager::give_fields_defaults
+
+	//!< stores text entered from the user overtop the default value which is loaded in with the appropriate ftran_struct hook
+	std::string temp_input;
+
+
+	////! this is the input that is set to a default value and overridden by input manager
+	//std::string input;
 
 	int xloc; //!< the field keeps track of the xcoordinate of its upper right corner
 	int yloc; //!< the field keeps track of the ycoordinate of its upper right corner
@@ -122,8 +161,10 @@ class field{
 	SDL_Renderer* sdl_help_renderer;//!< a pointer to sdl_help's rendering context
 	//########################################################################################################
 
-	SDL_Surface* my_text_surf;//!< saves the surface for the text, so that it isn't recreated every frame
-	SDL_Texture* my_text_tex;//!< saves the texture for the text, so that it isn't recreated every frame
+	SDL_Surface* my_text_surf;//!< saves the surface for the tile name text, so that it isn't recreated every frame
+	SDL_Texture* my_text_tex;//!< saves the texture for the tile name text, so that it isn't recreated every frame
+
+	sdl_text_box text_box; //!< struct that keeps track of the surfaces and textures required for the text box implementation
 
 
 	SDL_Surface* my_help_surf;//!< saves the surface for this tile's 'help' mode

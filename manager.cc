@@ -161,6 +161,7 @@ void manager::set_input_maker_hook(input_maker* input_maker_hook_in){
 	//cout <<"PASSED HOOK: " << input_maker_hook_in << endl;
 	input_maker_hook = input_maker_hook_in;
 	//cout <<"AFTER: " << input_maker_hook_in << endl;
+	give_fields_defaults();
 }
 
 void manager::give_fields_renderer(SDL_Renderer* sdl_help_renderer_in,string image_p_in,
@@ -177,7 +178,12 @@ void manager::give_fields_defaults(){
 		for(unsigned int i = 0; i < input_maker_hook->get_int4_params().size();i++){
 
 			if(input_maker_hook->get_int4_params()[i].name == tiles[c].tile_name){
+				tiles[c].int4_hook = &(input_maker_hook->get_int4_params()[i]);
+				tiles[c].temp_input = to_string(input_maker_hook->get_int4_params()[i].value);
+				//cout << "Setting " << tiles[c].tile_name << "'s string field to "
+				     //<< to_string(input_maker_hook->get_int4_params()[i].value) << endl;
 
+				tiles[c].text_box_init();//now that input_maker hook is set, create surfaces and textures
 				continue;
 			}
 
@@ -186,7 +192,10 @@ void manager::give_fields_defaults(){
 		for(unsigned int i = 0;i < input_maker_hook->get_real8_params().size();i++){
 
 			if(input_maker_hook->get_real8_params()[i].name == tiles[c].tile_name){
+				tiles[c].real8_hook = &(input_maker_hook->get_real8_params()[i]);
+				tiles[c].temp_input = to_string(input_maker_hook->get_real8_params()[i].value);
 
+				tiles[c].text_box_init();//now that input_maker hook is set, create surfaces and textures
 				continue;
 			}
 		}//inner for 2
@@ -194,7 +203,9 @@ void manager::give_fields_defaults(){
 		for(unsigned int i = 0;i < input_maker_hook->get_string_params().size();i++){
 
 			if(input_maker_hook->get_string_params()[i].name == tiles[c].tile_name){
-
+				tiles[c].string_hook = &(input_maker_hook->get_string_params()[i]);
+				tiles[c].temp_input = input_maker_hook->get_string_params()[i].value;
+				tiles[c].text_box_init();//now that input_maker hook is set, create surfaces and textures
 				continue;
 			}
 

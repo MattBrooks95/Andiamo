@@ -14,7 +14,7 @@ field::field(string tile_name_in,string image_name_in, int width, int height){
 
 	help_mode = false; //start off in normal mode
 
-	input = ""; //start off input blank. Default value loaded in by input
+	temp_input = "temp_input -> default failure"; //start off input blank. Default value loaded in by input
 		    //manager, overridden by user
 	
 	xloc = 0;//these will be taken care of by calc_corners()
@@ -35,6 +35,14 @@ field::field(string tile_name_in,string image_name_in, int width, int height){
 	my_help_tex = NULL;
 
 	sdl_help_renderer = NULL;
+
+	//this will allow the field to change values in the input manager's vectors
+	//they will be set up by give_defaults. Note that it's likely that any one tile will only have one
+	//of these not be null
+	int4_hook = NULL;
+	real8_hook = NULL;
+	string_hook = NULL;
+
 }
 SDL_Rect field::get_rect() const{
 	SDL_Rect return_me = {xloc+ (*sdl_xscroll),yloc+ (*sdl_yscroll),size.width,size.height};
@@ -57,15 +65,16 @@ void field::graphics_init(SDL_Renderer* sdl_help_renderer_in,string image_p_in,
 
 	sdl_font = font_in;//sets up the "hook" to true text font information pointer
 
+	//load in tile background
 	my_surf = IMG_Load(image_name.c_str());
 	if(my_surf == NULL) cout << "Error in field.cc's graphics init() function: " << SDL_GetError() << endl;
 	my_tex = SDL_CreateTextureFromSurface(sdl_help_renderer,my_surf);
 	if(my_tex == NULL) cout << "Error in field.cc's graphics init() function: " << SDL_GetError() << endl;
 
-
 	text_init();
 
-
+	//note that text_box_init() is called from manager::give_fields_defaults because of a timing issue where this code would run
+	//before it was given access to the info in the input_maker
 
 	sdl_xscroll = xscroll_in;
 	sdl_yscroll = yscroll_in;
@@ -84,7 +93,7 @@ void field::text_init(){
 	
 
 	if(descriptions.size() > 0){
-	//this part sets up this tile's dialogue box
+	//this part sets up this tile's help box
 
 		//find widest description line
 		unsigned int max_width = 0;
@@ -133,7 +142,7 @@ void field::text_init(){
 			SDL_Surface* temp_line = TTF_RenderUTF8_Blended(sdl_font,descriptions[c].c_str(),color);
 			word_dest.y = new_row_height + vert_offset;//account for height of previous lines
 			new_row_height = word_dest.y + word_height;
-			//cout << "Word_dest.h: " << word_dest.h <<  " Word_height: " << word_height << " C: " << c << endl;
+
 			if(SDL_BlitSurface(temp_line,NULL,my_help_surf,&word_dest) != 0){
 				cout << "Error in help blit." << " " << SDL_GetError() << endl;
 			} //draw words atop the help surface
@@ -161,12 +170,29 @@ void field::draw_me(){
 		SDL_Rect text_dest_temp = {xloc+(*sdl_xscroll),yloc+ (*sdl_yscroll),0,0};
 		SDL_QueryTexture(my_text_tex,NULL,NULL,&text_dest_temp.w,&text_dest_temp.h); //get text surface info
 		SDL_RenderCopy(sdl_help_renderer,my_text_tex,NULL,&text_dest_temp);
-		//####################### Draw name and tile background #####################################
+		//###########################################################################################
 
 		//####################### Do the drawing for the text box ###################################
+		//text box xcoord will line up with tile's x coord
+		//y corner will be tile ycorner + scroll + calculated offset (by text_box_init(), same width
+		//height of 15 is line with the constant value in text_box_init()
+		SDL_Rect text_box_dest = {xloc+(*sdl_xscroll), yloc + text_box.y_offset + (*sdl_yscroll),size.width,25};
+		SDL_Rect text_box_src = {0,0,size.width,25};
+		SDL_RenderCopy(sdl_help_renderer,text_box.box_tex,&text_box_src,&text_box_dest);
 
 
+		//text was too big in cases, now text won't show at all. I'm pretty sure it's a texture source_rect issue
+		//but who knows...
 
+		SDL_Rect text_box_text_src = {0,0,0,0};
+		TTF_SizeText(sdl_font,temp_input.c_str(),&text_box_text_src.w,&text_box_text_src.h);
+		SDL_Rect text_box_text_dest = {xloc+(*sdl_xscroll), yloc + text_box.y_offset + (*sdl_yscroll),0,0};
+
+		//I had a "funny" bug here where I was drawing the text box's text using the dimensions of the 
+		//TILE NAME'S TEXTURE INSTEAD OF THE TEXT BOXE'S AHOFEHF*($H(HFO(HEDASUIOFHW(((((DFH(H&*()Q
+		//causing blurry text and such...changing it to text_box.text_text fixed it. Unfortunate naming scheme
+		SDL_QueryTexture(text_box.text_tex,NULL,NULL,&text_box_text_dest.w,&text_box_text_dest.h);
+		SDL_RenderCopy(sdl_help_renderer,text_box.text_tex,&text_box_text_src,&text_box_text_dest);
 		//###########################################################################################
 
 
@@ -184,6 +210,7 @@ void field::draw_me(){
 	}
 
 }
+
 void field::help_toggle(){
 	if(descriptions.size() == 0) return; //don't do anything if this tile doesn't have a help box
 	if(help_mode){ //if it's true, make it false
@@ -213,10 +240,30 @@ void field::print(ostream& outs){
 	size.print(outs);
 	cout << "\n\n" << endl;
 }
-void field::clicked(ostream& outs){
+
+void field::clicked(ostream& outs,const int& click_x,const int& click_y){
 	outs << "Tile " << tile_name << " says: That tickles!" << endl;
-	help_toggle();
+	if( text_box_clicked(outs,click_x,click_y) ){
+		//start doing text grabbing stuff
+	} else help_toggle();
 }
+
+bool field::text_box_clicked(std::ostream& outs, const int& click_x, const int& click_y){
+	//note that in order to be in this function, the tile MUST have been clicked in the text boxes x values,
+	//as the text boxes are the same width as the tiles they sit on, so only the height needs checked
+	//atleast until it's fancy enough to place the cursor right or left based on how far to the right or left
+	//the user clicked
+	if( int4_hook == NULL && real8_hook == NULL && string_hook == NULL){
+		//return false because there is no field to input_manager connection for the user to modify
+		return false;
+	}
+	if( (click_y >  yloc + (*sdl_yscroll) + size.height - 25  && click_y < yloc + (*sdl_yscroll) + size.height ) ){
+		return true;
+	}
+	return false;
+
+}
+
 field::~field(){
 	SDL_FreeSurface(my_text_surf);//give back memory
 	SDL_DestroyTexture(my_text_tex);//give back memory
@@ -228,6 +275,56 @@ field::~field(){
 	SDL_FreeSurface(my_help_surf);
 	SDL_DestroyTexture(my_help_tex);
 }
+
+
+void field::text_box_init(){
+
+	//      v distance below tile =     v tile height - v constant pixel height
+	text_box.y_offset =                 size.height   - 25;
+
+
+	SDL_Color color = {0,0,0,0};//text black as davy jones's heart
+
+	//set up text box background
+	text_box.box_surf = IMG_Load((image_p+"text_box.png").c_str());
+	if(text_box.box_surf == NULL) cout << "Error in text_box_init! " << SDL_GetError() << endl;
+	text_box.box_tex = SDL_CreateTextureFromSurface(sdl_help_renderer,text_box.box_surf);
+	if(text_box.box_tex == NULL) cout << "Error in text_box_init! " << SDL_GetError() << endl;
+
+
+	//set up text box text
+	text_box.text_surf = TTF_RenderUTF8_Blended(sdl_font,temp_input.c_str(),color);
+
+	SDL_Rect delete_me = {0,0,0,0};
+	TTF_SizeText(sdl_font,temp_input.c_str(),&delete_me.w,&delete_me.h);
+	//cout << "Text:" << temp_input << " Size: " << delete_me.w << ":" << delete_me.h << endl;
+	if(text_box.text_surf == NULL) cout << "Error in text_box_init! " << SDL_GetError() << endl;
+	text_box.text_tex = SDL_CreateTextureFromSurface(sdl_help_renderer,text_box.text_surf);
+	if(text_box.text_tex == NULL) cout << "Error in text_box_init! " << SDL_GetError() << endl;
+
+
+}
+
+
+sdl_text_box::sdl_text_box(){
+
+	box_surf = NULL;
+	box_tex = NULL;
+
+	text_surf = NULL;
+	text_tex = NULL;
+
+	y_offset = 0;
+
+}
+
+sdl_text_box::~sdl_text_box(){
+	SDL_FreeSurface(box_surf);
+	SDL_FreeSurface(text_surf);
+	SDL_DestroyTexture(box_tex);
+	SDL_DestroyTexture(text_tex);
+}
+
 
 
 

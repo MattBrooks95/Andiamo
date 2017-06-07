@@ -1,4 +1,5 @@
 //! \file ftran_structs.h declares some structs that make keeping track out outputs easy
+#pragma once
 #include<iostream>
 
 //! param_int4 is a default c++ integer "and more"
@@ -9,6 +10,7 @@ struct param_int4{
 
 	//! overloaded << operator for printing
 	friend std::ostream& operator <<(std::ostream& outs, const param_int4& rhs);
+
 
 	//! I don't know if this works
 	/*! Something like this will need to be done when/if we have Andiamo

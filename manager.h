@@ -16,7 +16,8 @@ class manager{
 	/*! the manager constructor doesn't do anything right now, as set up must occur after sdl_help's
 	 *constructor */
 	manager();
-	//! destructor is left empty for now. I believe standard vectors kill themselves properly, as should these fields
+
+	//! destructor is left empty for now.
 	~manager();
 
 	//! This member loads a given tile into the vector
