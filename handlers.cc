@@ -92,7 +92,7 @@ void scrolling_mini_loop(SDL_Event& big_event, sdl_help& sdl_help,char which_bar
 //##########################################################################################################
 
 //############################# JERRY STUFF ################################################################
-void handle_mouseb_down(const SDL_Event& big_event, sdl_help& sdl_help){
+void handle_mouseb_down( SDL_Event& big_event, sdl_help& sdl_help){
 	int which_bar = -1;//-1 is dummy value, an error code of sorts
 			   //this is here to store the result of sdl_help.scroll_clicked() later in the
 			   //left mouse button click case
@@ -115,7 +115,7 @@ void handle_mouseb_down(const SDL_Event& big_event, sdl_help& sdl_help){
 					sdl_help.get_v_bar().scroll_mode_change(true);
 					SDL_FlushEvents(0,1000);//is this necessary?
 				} else {//should never hit this branch
-					cout << "Error! V croll bar already in scroll mode upon click!"
+					cout << "Error! V scroll bar already in scroll mode upon click!"
 					     << endl;
 				}
 
@@ -132,7 +132,7 @@ void handle_mouseb_down(const SDL_Event& big_event, sdl_help& sdl_help){
 				}
 
 			} else if( which_bar == 0){//no scroll bar was clicked, look at tiles
-				sdl_help.click_detection(cout,big_event.button.x,big_event.button.y);
+				sdl_help.click_detection(cout,big_event,big_event.button.x,big_event.button.y);
 
 			} else {//if which_bar is still -1, something is wrong
 				cout << "Error in left mouse button case, sdl_help::scroll_clicked "

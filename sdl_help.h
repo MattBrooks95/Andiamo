@@ -134,7 +134,16 @@ class sdl_help{
 	 *\param outs output stream to send messages to
 	 *\param click_x mouse click's x value (distance horizontaly from left side of window)
 	 *\param click_y mouse click's y value (distance vertically from top of window) */
-	void click_detection(std::ostream& outs, int click_x, int click_y);
+	void click_detection(std::ostream& outs, SDL_Event& event, int click_x, int click_y);
+
+	//! this function handles the mini-loop where the user can edit the text box
+	/*! should turn off keybindings so keystrokes are interpreted as input to the respective fields
+	 *temporary storage string. This member started off being in class field, but I've since moved it to
+	 *sdl_help, because sdl_help needs to be able to draw in this loop */
+	void text_box_mini_loop(std::ostream& outs, SDL_Event& event,field& current_tile);
+
+	//! this function helps text_box_mini_loop by doing the functions related to the text input event
+	void text_box_mini_loop_helper(SDL_Keysym& key,field& current_tile);
 
 	//! this is a boolean helper for click_detection()
 	/* this member just takes in a mouse click's x or y values, and calculates whether or not
@@ -190,7 +199,8 @@ class sdl_help{
 	std::string image_p; //!<  \brief a string that points to the resource image directory 
 	std::string hf_input_p; //!< \brief a path string to the algorithm's input file folder 
 	std::string font_p;//!< \brief a path string to the font folder
-	//!< contains a running total of how many times draw_all() has been ran
+
+	//! contains a running total of how many times a frame has been drawn
 	/*! as of right now this is just paying lip service to worrying about framerate
 	 *a bunch of decisions still have to be made in that regard. */
 	unsigned long int frame_count;

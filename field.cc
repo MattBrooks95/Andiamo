@@ -241,11 +241,9 @@ void field::print(ostream& outs){
 	cout << "\n\n" << endl;
 }
 
-void field::clicked(ostream& outs,const int& click_x,const int& click_y){
+void field::clicked(ostream& outs,SDL_Event& event, const int& click_x,const int& click_y){
 	outs << "Tile " << tile_name << " says: That tickles!" << endl;
-	if( text_box_clicked(outs,click_x,click_y) ){
-		//start doing text grabbing stuff
-	} else help_toggle();
+	help_toggle();
 }
 
 bool field::text_box_clicked(std::ostream& outs, const int& click_x, const int& click_y){
@@ -262,6 +260,31 @@ bool field::text_box_clicked(std::ostream& outs, const int& click_x, const int& 
 	}
 	return false;
 
+}
+void field::back_space(){
+	if(temp_input.length() > 0){
+		cout << "BEFORE DELETE: " << temp_input << endl;
+		temp_input.pop_back();
+		cout << "AFTER DELETE: " << temp_input << endl;
+	}
+	update_texture();
+}
+void field::update_temp_input(SDL_Event& event){
+	
+	cout << "Stuff to change text and update surfaces here" << endl;
+	cout << "OLD LINE: " << temp_input << endl;
+	temp_input.append( event.text.text );
+	cout << "AFTER APPEND: " << temp_input << endl;
+	update_texture();
+}
+
+void field::update_texture(){
+		cout << "Texture has been updated, but can you draw it?" << endl;
+		SDL_FreeSurface(text_box.text_surf);//prevent memory loss
+		SDL_DestroyTexture(text_box.text_tex);//prevent memory loss
+
+		text_box.text_surf = TTF_RenderUTF8_Blended(sdl_font,temp_input.c_str(),text_box.text_color);
+		text_box.text_tex = SDL_CreateTextureFromSurface(sdl_help_renderer,text_box.text_surf);
 }
 
 field::~field(){
@@ -313,6 +336,8 @@ sdl_text_box::sdl_text_box(){
 
 	text_surf = NULL;
 	text_tex = NULL;
+
+	text_color = {0,0,0,0};
 
 	y_offset = 0;
 

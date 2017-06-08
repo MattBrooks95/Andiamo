@@ -284,17 +284,117 @@ void sdl_help::print_tile_locs(ostream& outs){
 		     << tile_bag.tiles[c].get_size().height << endl;
 	}
 }
-void sdl_help::click_detection(ostream& outs,int click_x, int click_y){
+
+void sdl_help::click_detection(ostream& outs,SDL_Event& event, int click_x, int click_y){
 	for(unsigned int c = 0; c < tile_bag.tiles.size();c++){
 
 		if( in(click_x,click_y, tile_bag.tiles[c].get_rect() ) ){
 		//if the mouse click coordinates fall within a tile,
-			tile_bag.tiles[c].clicked(outs,click_x,click_y);//enact that tiles clicked() member
+			if( tile_bag.tiles[c].text_box_clicked(outs,click_x,click_y) ){
+				//if that click fell within the text box
+				text_box_mini_loop(outs,event,tile_bag.tiles[c]);
+
+			} else { //if that click didn't fall within the text box, enact clicked
+				tile_bag.tiles[c].clicked(outs,event,click_x,click_y);//enact that tiles clicked() member
+
+			}
 		}//endif	
 
 	}
 
 }
+
+//thanks to http://lazyfoo.net/tutorials/SDL/32_text_input_and_clipboard_handling/index.php
+//which was used as a reference 
+void sdl_help::text_box_mini_loop(ostream& outs, SDL_Event& event,field& current_tile){
+
+	SDL_StartTextInput();//turn on the text input background functions
+
+	//used to control text entry loop
+	bool done = false;
+	//int c = 0;
+
+	while(!done){
+		//if(c >= 10) return;
+		//do stuff
+		//cout << " in text input mini loop " << c << endl;
+
+		if( !SDL_PollEvent(&event) ){
+			event.type = 1776; //dummy event to stop it from printing default message every frame
+		}
+
+		switch(event.type){
+		  case SDL_MOUSEMOTION:
+			cout << "Mouse motion for some reason.... " << endl;
+			break;
+
+		  case SDL_MOUSEBUTTONDOWN:
+			//if the click was within the text box, move the cursor maybe
+		  	if( current_tile.text_box_clicked(outs,event.button.x,event.button.y) ){
+				cout << "Text box click at " << event.button.x << ":" << event.button.y << endl;
+		  	} else { //elsewise exit text input mode, user clicked off the text box
+		  		cout << "Clicked outside of the text box, exiting mini-loop" << endl;
+				done = true;
+			}
+		  	break;
+
+		  case SDL_TEXTINPUT:
+		  	cout << " I guess this was an SDL_TEXTINPUT event... " << endl;
+			current_tile.update_temp_input(event);
+			draw_tiles();
+			draw_sbars();
+			present();
+		  	//here this actually causes a loss of letters, so the event flooding is necessary, don't flush
+			//SDL_FlushEvent(SDL_TEXTINPUT);
+			break;
+
+		  case SDL_KEYDOWN:
+		  	cout << " Key pressed: " << event.key.keysym.sym << endl;
+			text_box_mini_loop_helper(event.key.keysym,current_tile);
+			draw_tiles();
+			draw_sbars();
+			present();
+			SDL_FlushEvent(SDL_KEYDOWN); //prevent event flooding
+		  	break;
+		  
+		  case 1776: //do nothing, event was not new
+			break;
+
+		  default:
+			outs << "Error finding case in text entry mini-loop" << endl;
+			break;
+		}
+
+
+
+		//update picture
+		draw_tiles();
+		draw_sbars();
+		//c++;
+		SDL_Delay(50);
+	}//end of loop
+	SDL_StopTextInput();//stop text input functionality because it slows down the app
+
+}
+
+void sdl_help::text_box_mini_loop_helper(SDL_Keysym& key,field& current_tile){
+	cout << key.sym << endl;
+	switch( key.sym ){
+	  case SDLK_BACKSPACE:
+	  	cout << "BACKSPACE" << endl;
+		//delete last character, unless it's empty already than do nothing
+		if( current_tile.temp_input.size() > 0 ){
+			current_tile.back_space();//delete a character, update text's graphics
+		}
+		break;
+
+	  default:
+	  	break;
+
+	}
+}
+
+
 bool sdl_help::in(int click_x, int click_y,const SDL_Rect& rect) const{
 	if( click_x > rect.x && click_x < rect.x + rect.w &&
 	    click_y > rect.y && click_y < rect.y + rect.h) return true;//return true if click falls within

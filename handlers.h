@@ -31,7 +31,7 @@ void scrolling_mini_loop(SDL_Event& big_event, sdl_help& sdl_help,char which_bar
 
 //############################## JERRY STUFF ##################################################################
 //! handle_mouseb_down implements the sub-switch statement that handles mouse buttons being pressed down
-void handle_mouseb_down(const SDL_Event& big_event, sdl_help& sdl_help);
+void handle_mouseb_down( SDL_Event& big_event, sdl_help& sdl_help);
 
 //! handle_mouseb_up implements the sub-switch statement that handles mouse buttons being released
 void handle_mouseb_up(const SDL_Event& big_event, const sdl_help& sdl_help);

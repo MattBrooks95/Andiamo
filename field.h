@@ -22,6 +22,7 @@ struct sdl_text_box{
 	//! stores the tile_box's y offset from the top left corner of the tile on which it resides
 	int y_offset; 
 
+	SDL_Color text_color;//! keep track of the text color
 
 	SDL_Surface* box_surf; //!< keep track of the surface for the (usually) white background
 	SDL_Texture* box_tex;  //!< keep track of the texture for the (usually) white background
@@ -103,11 +104,26 @@ class field{
 	 *\param outs is the output stream that the info (if any) should be sent to
 	 *\param click_x is the xlocation relative to the top left corner of the screen, where the user left clicked
 	 *\param click_y is the ylocation relative to the top left corner of the screen, where the user left clicked*/
-	void clicked(std::ostream& outs,const int& click_x,const int& click_y);
+	void clicked(std::ostream& outs,SDL_Event& event, const int& click_x,const int& click_y);
 
 	//! this function returns true if the text box was clicked, and false otherwise
 	/*! it will either implement text grabbing from keyboard, or call a function that does it */
 	bool text_box_clicked(std::ostream& outs, const int& click_x, const int& click_y);
+
+	//! this function changes the temp_input field as a response to typing in the text box
+	/*! it should also update the surface for the text, so that the changes are reflected in the graphics when the next
+	 *frame is drawn */
+	void update_temp_input(SDL_Event& event);
+
+	//! this function updates the texture for the text box
+	/*! this means that the information's changes by update_temp_input or back_space are reflected graphically
+	 *on the next frame that occurs */
+	void update_texture();
+
+
+	//! this function deletes the last character, unless the string is empty, then it does nothing
+	void back_space();
+
 
 	//! this void member prints the field's info to a given stream
 	/*!
@@ -119,8 +135,10 @@ class field{
 	 * access to SDL stuff, but I'm going to leave it this way for now. Note that this
 	 * does account for scrolling*/
 	SDL_Rect get_rect() const;
+
 	//! this member returns the boolean stored in help_mode
 	bool is_help_mode() { return help_mode; }
+
 	//! this member flips the boolean value of help_mode
 	void help_toggle();
 
@@ -135,11 +153,14 @@ class field{
 
 	std::vector<std::string> descriptions; //!< input description lines
 
-	param_int4* int4_hook;//!< access to this tile's fortran struct in input_maker vector. Set up by manager::give_fields_defaults
-	param_real8* real8_hook;//!< access to this tile's fortran struct in input_maker vector. Set up by manager::give_fields_defaults
-	param_string* string_hook;//!< access to this tile's fortran struct in input_maker vector. Set up by manager::give_fields_defaults
+	//! access to this tile's fortran struct in input_maker vector. Set up by manager::give_fields_defaults
+	param_int4* int4_hook;
+	//! access to this tile's fortran struct in input_maker vector. Set up by manager::give_fields_defaults
+	param_real8* real8_hook;
+	//! access to this tile's fortran struct in input_maker vector. Set up by manager::give_fields_defaults
+	param_string* string_hook;
 
-	//!< stores text entered from the user overtop the default value which is loaded in with the appropriate ftran_struct hook
+	//! stores text entered from the user overtop the default value which is loaded in with the appropriate ftran_struct hook
 	std::string temp_input;
 
 
