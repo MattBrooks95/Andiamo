@@ -182,7 +182,7 @@ void field::draw_me(){
 
 
 		//text was too big in cases, now text won't show at all. I'm pretty sure it's a texture source_rect issue
-		//but who knows...
+		//but who knows... - fixed, see below comment
 
 		SDL_Rect text_box_text_src = {0,0,0,0};
 		TTF_SizeText(sdl_font,temp_input.c_str(),&text_box_text_src.w,&text_box_text_src.h);
@@ -250,12 +250,14 @@ bool field::text_box_clicked(std::ostream& outs, const int& click_x, const int& 
 	//note that in order to be in this function, the tile MUST have been clicked in the text boxes x values,
 	//as the text boxes are the same width as the tiles they sit on, so only the height needs checked
 	//atleast until it's fancy enough to place the cursor right or left based on how far to the right or left
-	//the user clicked
+	//the user clicked - this is wrong
+	//turns out, I get false positives if I click in another box of the same row
 	if( int4_hook == NULL && real8_hook == NULL && string_hook == NULL){
 		//return false because there is no field to input_manager connection for the user to modify
 		return false;
 	}
-	if( (click_y >  yloc + (*sdl_yscroll) + size.height - 25  && click_y < yloc + (*sdl_yscroll) + size.height ) ){
+	if( (click_y >  yloc + (*sdl_yscroll) + size.height - 25  && click_y < yloc + (*sdl_yscroll) + size.height ) &&
+	    (click_x > xloc + (*sdl_xscroll) && click_x < xloc + (*sdl_xscroll) + size.width ) ){
 		return true;
 	}
 	return false;
@@ -271,10 +273,10 @@ void field::back_space(){
 }
 void field::update_temp_input(SDL_Event& event){
 	
-	cout << "Stuff to change text and update surfaces here" << endl;
-	cout << "OLD LINE: " << temp_input << endl;
+	//cout << "Stuff to change text and update surfaces here" << endl;
+	//cout << "OLD LINE: " << temp_input << endl;
 	temp_input.append( event.text.text );
-	cout << "AFTER APPEND: " << temp_input << endl;
+	//cout << "AFTER APPEND: " << temp_input << endl;
 	update_texture();
 }
 
@@ -327,7 +329,6 @@ void field::text_box_init(){
 
 
 }
-
 
 sdl_text_box::sdl_text_box(){
 

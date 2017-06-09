@@ -9,6 +9,8 @@
 #include "scroll_bar.h"
 #include "manager.h"
 #include "input_maker.h"
+#include "buttons.h"
+
 
 //! this structure is used to store the dimensions of the window itself
 /*! eventually the user will be able to change this to a variety of sizes */

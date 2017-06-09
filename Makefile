@@ -7,7 +7,7 @@ vtool = --tool=memcheck
 vopt = --log-file="memory_check.txt" --leak-check=full
 
 #object files
-objects = main.o handlers.o manager.o ftran_structs.o field.o sdl_help.o scroll_bar.o input_maker.o string+.o
+objects = main.o handlers.o manager.o ftran_structs.o field.o sdl_help.o scroll_bar.o input_maker.o string+.o buttons.o
 
 #executable name
 name = andiamo
@@ -32,6 +32,9 @@ scroll_bar.o: scroll_bar.cc scroll_bar.h
 
 field.o: field.cc field.h
 	g++ $(c_flg) -c field.cc
+
+buttons.o: buttons.cc buttons.h sdl_help.h
+	g++ $(c_flg) -c buttons.cc
 
 manager.o: manager.cc manager.h field.h
 	g++ $(c_flg) -c manager.cc

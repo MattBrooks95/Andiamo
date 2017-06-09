@@ -100,6 +100,7 @@ int main(){
 			break;
 		case 1776: //no new event this time, don't just keep repeating the last event
 			break;
+
 		default:
 			break;
 	}//event handling switch

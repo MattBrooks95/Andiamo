@@ -313,6 +313,7 @@ void sdl_help::text_box_mini_loop(ostream& outs, SDL_Event& event,field& current
 	//used to control text entry loop
 	bool done = false;
 	//int c = 0;
+	bool text_was_changed = false;
 
 	while(!done){
 		//if(c >= 10) return;
@@ -321,6 +322,7 @@ void sdl_help::text_box_mini_loop(ostream& outs, SDL_Event& event,field& current
 
 		if( !SDL_PollEvent(&event) ){
 			event.type = 1776; //dummy event to stop it from printing default message every frame
+					   //where no event happens
 		}
 
 		switch(event.type){
@@ -334,6 +336,8 @@ void sdl_help::text_box_mini_loop(ostream& outs, SDL_Event& event,field& current
 				cout << "Text box click at " << event.button.x << ":" << event.button.y << endl;
 		  	} else { //elsewise exit text input mode, user clicked off the text box
 		  		cout << "Clicked outside of the text box, exiting mini-loop" << endl;
+				SDL_PushEvent(&event);//doing this allows the user to 'hop' to another text box
+						      //directly from editing another box
 				done = true;
 			}
 		  	break;
@@ -341,9 +345,7 @@ void sdl_help::text_box_mini_loop(ostream& outs, SDL_Event& event,field& current
 		  case SDL_TEXTINPUT:
 		  	cout << " I guess this was an SDL_TEXTINPUT event... " << endl;
 			current_tile.update_temp_input(event);
-			draw_tiles();
-			draw_sbars();
-			present();
+			text_was_changed = true;
 		  	//here this actually causes a loss of letters, so the event flooding is necessary, don't flush
 			//SDL_FlushEvent(SDL_TEXTINPUT);
 			break;
@@ -351,12 +353,16 @@ void sdl_help::text_box_mini_loop(ostream& outs, SDL_Event& event,field& current
 		  case SDL_KEYDOWN:
 		  	cout << " Key pressed: " << event.key.keysym.sym << endl;
 			text_box_mini_loop_helper(event.key.keysym,current_tile);
-			draw_tiles();
-			draw_sbars();
-			present();
+
 			SDL_FlushEvent(SDL_KEYDOWN); //prevent event flooding
 		  	break;
-		  
+		  case SDL_QUIT:
+			cout << "exiting from text entry" << endl;
+			SDL_PushEvent(&event);//puts another sdl quit in the event queue, so program
+					      //can be terminated while in "text entry" mode
+			done = true;			
+			break;
+
 		  case 1776: //do nothing, event was not new
 			break;
 
@@ -367,9 +373,17 @@ void sdl_help::text_box_mini_loop(ostream& outs, SDL_Event& event,field& current
 
 
 
-		//update picture
-		draw_tiles();
-		draw_sbars();
+		//if something actually changed, re-draw
+		//elsewise don't do it to try and save time
+		if(text_was_changed){
+			//update picture
+			draw_tiles();
+			draw_sbars();
+			text_was_changed = false;
+			//show updated picture
+			present();
+		}
+
 		//c++;
 		SDL_Delay(50);
 	}//end of loop
