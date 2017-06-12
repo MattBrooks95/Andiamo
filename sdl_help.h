@@ -9,7 +9,6 @@
 #include "scroll_bar.h"
 #include "manager.h"
 #include "input_maker.h"
-#include "buttons.h"
 
 
 //! this structure is used to store the dimensions of the window itself
@@ -145,7 +144,7 @@ class sdl_help{
 	void text_box_mini_loop(std::ostream& outs, SDL_Event& event,field& current_tile);
 
 	//! this function helps text_box_mini_loop by doing the functions related to the text input event
-	void text_box_mini_loop_helper(SDL_Keysym& key,field& current_tile);
+	void text_box_mini_loop_helper(SDL_Keysym& key,field& current_tile,bool& text_was_changed);
 
 	//! this is a boolean helper for click_detection()
 	/* this member just takes in a mouse click's x or y values, and calculates whether or not
@@ -178,7 +177,7 @@ class sdl_help{
         //! This member is a const getter for the tile/card manager
 	/*! \return tile_bag is a const reference to the tile_bag field. It is accessed
 	 * some_object.get_mgr().tile_bag_member(). Tile bag may not be changed*/
-	const manager& get_mgr() const{ return tile_bag;}
+	const manager& get_const_mgr() const{ return tile_bag;}
 
 	//! This member is a non-const getter for the tile/card manager
 	/*! \return tile_bag is a const reference to the tile_bag field. It is accessed
@@ -206,6 +205,7 @@ class sdl_help{
 	/*! as of right now this is just paying lip service to worrying about framerate
 	 *a bunch of decisions still have to be made in that regard. */
 	unsigned long int frame_count;
+
 
 
 	//! allows sdl_help to keep track of where tiles are

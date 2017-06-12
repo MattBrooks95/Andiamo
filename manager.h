@@ -40,7 +40,14 @@ class manager{
 				  int* xscroll_in, int* yscroll_in,TTF_Font* font_in);
 
 	//! this function "fills" each non-background tile with it's default value as a string
+	/* it also gives them a pointer reference to their position in input_maker's vector
+	 *to save time when we have to update input_maker's values. For this reason input_maker
+	 *shouldn't resize it's vector besides in the init function, because that could cause illegal reads
+	 *because the field's pointer points to the vector's old location. */
 	void give_fields_defaults();
+
+	//! this function updates input_maker's vectors with the field's new values (from user)
+	void update_io_maker();
 
 	//! this member loads in tiles from the tile input file using regular expressions and file i/o
 	/*! this init member uses fstream and regex to open and process a text file, which for now defaults

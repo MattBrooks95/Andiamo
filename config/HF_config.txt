@@ -31,7 +31,7 @@ I4 NGF = 2
 #line 3a
 #I4(7) NENT = 20
 #I4(6) LMAX = 10
-
+C* TCTITLE|60| = "ProjecA=    1     Z=        0"
 #line 3b - I actually don't understand where this is on the input file
 #R8 ETAB = 
 #R8 TTAB = 

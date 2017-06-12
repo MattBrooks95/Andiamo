@@ -156,11 +156,11 @@ void manager::set_area(int& sdl_max_width, int& sdl_max_height){
 
 void manager::set_input_maker_hook(input_maker* input_maker_hook_in){
 	//seems to be working
-	//cout <<"SETTING INPUT MAKER HOOK!" << endl;
-	//cout <<"BEFORE: " << input_maker_hook << endl;
-	//cout <<"PASSED HOOK: " << input_maker_hook_in << endl;
+	cout <<"SETTING INPUT MAKER HOOK!" << endl;
+	cout <<"BEFORE: " << input_maker_hook << endl;
+	cout <<"PASSED HOOK: " << input_maker_hook_in << endl;
 	input_maker_hook = input_maker_hook_in;
-	//cout <<"AFTER: " << input_maker_hook_in << endl;
+	cout <<"AFTER: " << input_maker_hook_in << endl;
 	give_fields_defaults();
 }
 
@@ -180,8 +180,9 @@ void manager::give_fields_defaults(){
 			if(input_maker_hook->get_int4_params()[i].name == tiles[c].tile_name){
 				tiles[c].int4_hook = &(input_maker_hook->get_int4_params()[i]);
 				tiles[c].temp_input = to_string(input_maker_hook->get_int4_params()[i].value);
-				//cout << "Setting " << tiles[c].tile_name << "'s string field to "
-				     //<< to_string(input_maker_hook->get_int4_params()[i].value) << endl;
+				cout << "Setting " << tiles[c].tile_name << "'s string field to "
+				     << to_string(input_maker_hook->get_int4_params()[i].value) << endl;
+				cout << "And its value has been set to: " << tiles[c].temp_input << endl;
 
 				tiles[c].text_box_init();//now that input_maker hook is set, create surfaces and textures
 				continue;
@@ -202,15 +203,38 @@ void manager::give_fields_defaults(){
 
 		for(unsigned int i = 0;i < input_maker_hook->get_string_params().size();i++){
 
+			//cout << " PARAM VEC SIZE: " << input_maker_hook->get_string_params().size() << endl;
 			if(input_maker_hook->get_string_params()[i].name == tiles[c].tile_name){
+				//cout << "STRING HOOK: " << &(input_maker_hook->get_string_params()[i]) << endl;
 				tiles[c].string_hook = &(input_maker_hook->get_string_params()[i]);
-				tiles[c].temp_input = input_maker_hook->get_string_params()[i].value;
+				cout << tiles[c].string_hook << endl;
+				tiles[c].temp_input = tiles[c].string_hook->value;
+				//cout << " STRING HOOK VALUE: " << input_maker_hook->get_string_params()[i].value << endl;
 				tiles[c].text_box_init();//now that input_maker hook is set, create surfaces and textures
+				//cout << "SET STRING HOOK: " << tiles[c].string_hook << " = " << tiles[c].string_hook->value << endl;
 				continue;
 			}
+//don't set pointers to copy of values....I spent a lot of time debugging this part and it turned out to be an error
+//where input_maker's getters were by value instead of by reference....
+
+
+
+//if text_box_init is commented out
+//SET STRING HOOK: 0x3ec4df8 = ��=    1     Z=        0"
+
+//empty or diff every time if text_box_init is not commented out
+//SET STRING HOOK: 0x395ca18 = $��,� 6
+                                     // �����!
 
 		}//inner for 3
 	}//big for
+
+}
+
+void manager::update_io_maker(){
+	for(unsigned int c = 1; c < tiles.size();c++){
+		tiles[c].update_my_value();
+	}
 
 }
 

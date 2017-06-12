@@ -10,3 +10,10 @@
  *the meaningful information, or it will likely return a bad vector */
 std::vector<std::string> split(std::string split_me, char delim);
 
+//! this function trims the first argument's size by the lenght of the second argument.
+/* this function is used to ensure that the character array field::temp_input is the same size as the one expected
+ *in input_maker's fortran string struct
+ * \param base_string the string who will lose size(string_remove) characters
+ * \param remove_num integer value that is the n characters to be "lopped off" the end of the string */
+void trim(std::string& base_string,int remove_num);
+

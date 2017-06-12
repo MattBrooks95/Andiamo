@@ -100,7 +100,7 @@ andy
 TCTITLE
 c label for these transmission coefficients (optional)
 andy_tile.png
-150
+300
 50
 andy
 ETAB

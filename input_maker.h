@@ -33,10 +33,14 @@ class input_maker{
 	void output();
 
 	//vector getters
+	//! return names_in_order BY REFERENCE
 	std::vector<std::string>& get_names_in_order(){return names_in_order;}
+	//! return int4_params BY REFERENCE
 	std::vector<param_int4>& get_int4_params(){return int4_params;}
-	std::vector<param_real8> get_real8_params(){return real8_params;}
-	std::vector<param_string> get_string_params(){return string_params;}
+	//! return real8_params BY REFERENCE
+	std::vector<param_real8>& get_real8_params(){return real8_params;}
+	//! return string_params BY REFERENCE
+	std::vector<param_string>& get_string_params(){return string_params;}
 
   private:
 

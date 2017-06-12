@@ -8,10 +8,15 @@
 #include<iostream>
 #include<string>
 
+#include "sdl_help.h"
 
 struct button{
 	button();
 	~button();
+
+	void init();
+
+	std::string name;
 
 	unsigned int width;
 	unsigned int height;
@@ -27,7 +32,7 @@ struct button{
  *It needs access to a lot of sdl_helper fields, like the renderer, font, window size... */
 class buttons{
   public:
-	buttons();
+	buttons(sdl_help* sdl_helper_in);
 	~buttons();
 
 
@@ -35,6 +40,8 @@ class buttons{
 
 	std::string button_config_name;
 	std::string button_config_path;
+
+	sdl_help* sdl_helper;
 
   private:
 	button exit_dialogue;

@@ -263,6 +263,7 @@ bool field::text_box_clicked(std::ostream& outs, const int& click_x, const int& 
 	return false;
 
 }
+
 void field::back_space(){
 	if(temp_input.length() > 0){
 		cout << "BEFORE DELETE: " << temp_input << endl;
@@ -271,6 +272,7 @@ void field::back_space(){
 	}
 	update_texture();
 }
+
 void field::update_temp_input(SDL_Event& event){
 	
 	//cout << "Stuff to change text and update surfaces here" << endl;
@@ -279,20 +281,55 @@ void field::update_temp_input(SDL_Event& event){
 	//cout << "AFTER APPEND: " << temp_input << endl;
 	update_texture();
 }
-
+//I need to find a way to save time, it's slow when the user is typing
 void field::update_texture(){
-		cout << "Texture has been updated, but can you draw it?" << endl;
+		//cout << "Texture has been updated, but can you draw it?" << endl;
 		SDL_FreeSurface(text_box.text_surf);//prevent memory loss
 		SDL_DestroyTexture(text_box.text_tex);//prevent memory loss
 
 		text_box.text_surf = TTF_RenderUTF8_Blended(sdl_font,temp_input.c_str(),text_box.text_color);
 		text_box.text_tex = SDL_CreateTextureFromSurface(sdl_help_renderer,text_box.text_surf);
 }
+//this function updates this fields ftran_struct in the input_maker vectors
+void field::update_my_value(){
+	//cout << "Tile name: " << tile_name << endl;
+	//cout << "Hooks  int4:r8:string = " << int4_hook << ":" << real8_hook << ":" << string_hook << ":"
+	     << endl;
+	if(int4_hook == NULL && real8_hook == NULL && string_hook == NULL){
+		cout << "ERROR! Tile " << tile_name << " has no association with a fortran struct"
+		     << " in input_maker's vectors. Please check that the tile's name in the tiles.txt"
+		     << " and HF_config.txt match each other.\n\n" << endl;
+		return;
+	}
+
+	if(int4_hook != NULL){
+		if( !temp_input.empty() ){
+			int4_hook->value = stoi(temp_input);
+		}
+	} else if(real8_hook != NULL){
+		if( !temp_input.empty() ){
+			real8_hook->value = stod(temp_input);
+		}
+	} else if(string_hook != NULL){
+		//cout << string_hook << endl;
+		//char junk;
+		//cin >> junk;
+		//cout << "Ftran String value before: " << string_hook->value << endl;
+		//cout << "Ftran string name before: " << string_hook->name << endl;
+		//cout << "Ftran string size before: " << string_hook->size << endl;
+		string temp_string = temp_input;
+		int balance_factor = temp_string.length() - string_hook->value.length();
+		trim(temp_string,balance_factor);
+		string_hook->value = temp_string;
+		cout << "Ftran String value after: " << string_hook->value << endl;
+	}
+
+
+}
 
 field::~field(){
 	SDL_FreeSurface(my_text_surf);//give back memory
 	SDL_DestroyTexture(my_text_tex);//give back memory
-
 
 	SDL_FreeSurface(my_surf); //free memory
 	SDL_DestroyTexture(my_tex); //free memory
@@ -303,7 +340,6 @@ field::~field(){
 
 
 void field::text_box_init(){
-
 	//      v distance below tile =     v tile height - v constant pixel height
 	text_box.y_offset =                 size.height   - 25;
 
@@ -326,7 +362,6 @@ void field::text_box_init(){
 	if(text_box.text_surf == NULL) cout << "Error in text_box_init! " << SDL_GetError() << endl;
 	text_box.text_tex = SDL_CreateTextureFromSurface(sdl_help_renderer,text_box.text_surf);
 	if(text_box.text_tex == NULL) cout << "Error in text_box_init! " << SDL_GetError() << endl;
-
 
 }
 

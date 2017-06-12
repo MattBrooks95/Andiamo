@@ -18,7 +18,7 @@ browser = firefox
 andiamo: $(objects)
 	g++  -o $(name) $(objects) $(SDL_inc)
 
-main.o: main.cc sdl_help.h handlers.h input_maker.h
+main.o: main.cc sdl_help.h handlers.h input_maker.h buttons.h
 	g++ $(c_flg) -c main.cc
 
 handlers.o: handlers.cc handlers.h sdl_help.h
@@ -33,7 +33,7 @@ scroll_bar.o: scroll_bar.cc scroll_bar.h
 field.o: field.cc field.h
 	g++ $(c_flg) -c field.cc
 
-buttons.o: buttons.cc buttons.h sdl_help.h
+buttons.o: buttons.cc buttons.h
 	g++ $(c_flg) -c buttons.cc
 
 manager.o: manager.cc manager.h field.h

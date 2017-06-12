@@ -8,6 +8,7 @@
 #include "sdl_help.h"
 #include "handlers.h"
 #include "input_maker.h"
+#include "buttons.h"
 using namespace std;
 
  /*! main() handles sdl events (keypresses, mouse movements), instantiates an sdl_help object,
@@ -19,6 +20,8 @@ int main(){
   cout << "And where does the newborn go from here? The net is vast and infinite." << endl;
 
   sdl_help sdl_helper("Andiamo!");
+  buttons button_manager(&sdl_helper);
+  cout << "Now past the sdl_help constructor." << endl;
   //sdl_helper.get_mgr().print_all(cout);
 
   //sdl_helper.print_tile_locs(cout);
@@ -28,12 +31,9 @@ int main(){
   sdl_helper.draw_sbars();
   sdl_helper.present();
 
-  //input/output manager class
-  //input_maker io_handler("HF_config.txt");
   
   SDL_Event big_event; //pre-loop drawing commands, so screen comes up near instantly
   SDL_SetEventFilter(filter_mouse_move,NULL);
-
 
   bool done = false; //this will need to be changed to true when the user clicks on the 'x'
   while(!done){
@@ -117,7 +117,7 @@ int main(){
 		     //eventually this will vary intelligently based on desired framerate
   }//end of while loop
 
-
+  sdl_helper.get_mgr().update_io_maker();
   //sdl_helper.print_size_info(cout);
   //sdl_helper.get_h_bar().print(cout);//make sure that these values are updating in the bars as
   //sdl_helper.get_v_bar().print(cout);//they are updated in the sdl_helper object

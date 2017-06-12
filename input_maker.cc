@@ -10,14 +10,14 @@ input_maker::input_maker(string output_file_name_in,string config_file_name_in){
 	output_file_name = output_file_name_in;
 	file_name = config_file_name_in;
 
-	init();//parse config file
+	//init();//parse config file
 }
 input_maker::~input_maker(){
 	output();
 }
 
 void input_maker::init(){
-	bool init_test = false;
+	bool init_test = true;
 
 	ifstream ins;
 	ins.open( (config_p+file_name).c_str() );
@@ -104,7 +104,7 @@ void input_maker::init(){
 			vector<string> tokens = split(temp_string,' ');
 			if(init_test){
 				for(unsigned int c = 0; c < tokens.size() ;c++){
-					cout << tokens[c] << endl;
+					cout << c << ": " << tokens[c] << endl;
 				}
 			}
 
@@ -120,7 +120,9 @@ void input_maker::init(){
 				string temp_string = number_matches[0].str(); //put it into a string
 				//convert the string to an integer
 				int size = stoi( temp_string.substr(1,temp_string.length()-1));
-
+				cout << "CHARACTER ARRAY SIZE = " << size << endl;
+				cout << "CHARACTER ARRAY NAME = " << tokens[1].substr(0,tokens[1].size()-
+				temp_string.size()) << endl;
 				//name can be found by token label|some-number| minus the |some-number| part
 				string name = tokens[1].substr(0,tokens[1].size()- temp_string.size());
 
@@ -128,6 +130,7 @@ void input_maker::init(){
 				names_in_order.push_back(name);
 
 				//create new ftran struct
+				cout << "CHARACTER ARRAY VALUE = " << tokens[tokens.size()-1] << endl; 
 				param_string push_me(name,tokens[tokens.size()-1],size);
 				//save this new param value in its vector
 				string_params.push_back(push_me);	

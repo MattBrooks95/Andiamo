@@ -7,6 +7,8 @@ button::button(){
 
 	width = 0;
 	height = 0;
+	
+	name = "No name.";
 
 	button_surface = NULL;
 	button_texture = NULL;
@@ -24,8 +26,13 @@ button::~button(){
 
 
 //####################  BUTTONS CLASS  ########################################
-buttons::buttons(){
+buttons::buttons(sdl_help* sdl_helper_in){
+	sdl_helper = sdl_helper_in;
 
+
+}
+
+buttons::~buttons(){
 
 
 }

@@ -10,6 +10,7 @@
 #include<SDL2/SDL_ttf.h>
 
 #include "ftran_structs.h"
+#include "string+.h"
 
 //! this is a handy bag for the textures and surfaces necessary for text box creation. To be used in a field object
 struct sdl_text_box{
@@ -114,6 +115,14 @@ class field{
 	/*! it should also update the surface for the text, so that the changes are reflected in the graphics when the next
 	 *frame is drawn */
 	void update_temp_input(SDL_Event& event);
+
+	//! this function copies the temp value that was likely entered by the user into the output vectors
+	/*! because these fields have direct pointer access to their ftran_struct in input_maker's vectors,
+	 *input_maker's size should not be changed after the initial function calls when the program starts.
+	 *the reason being that if it resizes, it will be re-copied to another location, and the fields pointer
+	 *will go bad. This would cause illegal reads of memory, and mayhem. */
+	void update_my_value();
+
 
 	//! this function updates the texture for the text box
 	/*! this means that the information's changes by update_temp_input or back_space are reflected graphically

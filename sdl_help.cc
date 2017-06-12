@@ -72,6 +72,8 @@ sdl_help::sdl_help(string name_in,string HF_input_file_in){
 
 	calc_corners(); //set up tile locations with the field's corner location 
 	tile_bag.give_fields_renderer(renderer,image_p,&x_scroll,&y_scroll,font);//give fields rendering and font info
+
+	io_handler.init();
 	give_manager_io(&io_handler);
 }
 
@@ -126,6 +128,8 @@ sdl_help::sdl_help(std::string name_in,string HF_input_file_in,
 	calc_corners();//set up tile_locations with the field's corner locations
 	tile_bag.give_fields_renderer(renderer,image_p,&x_scroll,&y_scroll,font);//give fields their rendering and
 										 //font info
+
+	//io_handler.init();
 	give_manager_io(&io_handler);
 }
 
@@ -352,7 +356,7 @@ void sdl_help::text_box_mini_loop(ostream& outs, SDL_Event& event,field& current
 
 		  case SDL_KEYDOWN:
 		  	cout << " Key pressed: " << event.key.keysym.sym << endl;
-			text_box_mini_loop_helper(event.key.keysym,current_tile);
+			text_box_mini_loop_helper(event.key.keysym,current_tile,text_was_changed);
 
 			SDL_FlushEvent(SDL_KEYDOWN); //prevent event flooding
 		  	break;
@@ -376,6 +380,7 @@ void sdl_help::text_box_mini_loop(ostream& outs, SDL_Event& event,field& current
 		//if something actually changed, re-draw
 		//elsewise don't do it to try and save time
 		if(text_was_changed){
+			cout << "HAVING TO REDRAW" << endl;
 			//update picture
 			draw_tiles();
 			draw_sbars();
@@ -391,7 +396,7 @@ void sdl_help::text_box_mini_loop(ostream& outs, SDL_Event& event,field& current
 
 }
 
-void sdl_help::text_box_mini_loop_helper(SDL_Keysym& key,field& current_tile){
+void sdl_help::text_box_mini_loop_helper(SDL_Keysym& key,field& current_tile,bool& text_was_changed){
 	cout << key.sym << endl;
 	switch( key.sym ){
 	  case SDLK_BACKSPACE:
@@ -399,6 +404,7 @@ void sdl_help::text_box_mini_loop_helper(SDL_Keysym& key,field& current_tile){
 		//delete last character, unless it's empty already than do nothing
 		if( current_tile.temp_input.size() > 0 ){
 			current_tile.back_space();//delete a character, update text's graphics
+			text_was_changed = true;
 		}
 		break;
 
