@@ -266,9 +266,9 @@ bool field::text_box_clicked(std::ostream& outs, const int& click_x, const int& 
 
 void field::back_space(){
 	if(temp_input.length() > 0){
-		cout << "BEFORE DELETE: " << temp_input << endl;
+		//cout << "BEFORE DELETE: " << temp_input << endl;
 		temp_input.pop_back();
-		cout << "AFTER DELETE: " << temp_input << endl;
+		//cout << "AFTER DELETE: " << temp_input << endl;
 	}
 	update_texture();
 }
@@ -294,7 +294,7 @@ void field::update_texture(){
 void field::update_my_value(){
 	//cout << "Tile name: " << tile_name << endl;
 	//cout << "Hooks  int4:r8:string = " << int4_hook << ":" << real8_hook << ":" << string_hook << ":"
-	     << endl;
+	//     << endl;
 	if(int4_hook == NULL && real8_hook == NULL && string_hook == NULL){
 		cout << "ERROR! Tile " << tile_name << " has no association with a fortran struct"
 		     << " in input_maker's vectors. Please check that the tile's name in the tiles.txt"

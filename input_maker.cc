@@ -17,7 +17,7 @@ input_maker::~input_maker(){
 }
 
 void input_maker::init(){
-	bool init_test = true;
+	bool init_test = false;
 
 	ifstream ins;
 	ins.open( (config_p+file_name).c_str() );
@@ -120,9 +120,9 @@ void input_maker::init(){
 				string temp_string = number_matches[0].str(); //put it into a string
 				//convert the string to an integer
 				int size = stoi( temp_string.substr(1,temp_string.length()-1));
-				cout << "CHARACTER ARRAY SIZE = " << size << endl;
-				cout << "CHARACTER ARRAY NAME = " << tokens[1].substr(0,tokens[1].size()-
-				temp_string.size()) << endl;
+				//cout << "CHARACTER ARRAY SIZE = " << size << endl;
+				//cout << "CHARACTER ARRAY NAME = " << tokens[1].substr(0,tokens[1].size()-
+				//temp_string.size()) << endl;
 				//name can be found by token label|some-number| minus the |some-number| part
 				string name = tokens[1].substr(0,tokens[1].size()- temp_string.size());
 
@@ -130,7 +130,7 @@ void input_maker::init(){
 				names_in_order.push_back(name);
 
 				//create new ftran struct
-				cout << "CHARACTER ARRAY VALUE = " << tokens[tokens.size()-1] << endl; 
+				//cout << "CHARACTER ARRAY VALUE = " << tokens[tokens.size()-1] << endl; 
 				param_string push_me(name,tokens[tokens.size()-1],size);
 				//save this new param value in its vector
 				string_params.push_back(push_me);	

@@ -156,11 +156,11 @@ void manager::set_area(int& sdl_max_width, int& sdl_max_height){
 
 void manager::set_input_maker_hook(input_maker* input_maker_hook_in){
 	//seems to be working
-	cout <<"SETTING INPUT MAKER HOOK!" << endl;
-	cout <<"BEFORE: " << input_maker_hook << endl;
-	cout <<"PASSED HOOK: " << input_maker_hook_in << endl;
+	//cout <<"SETTING INPUT MAKER HOOK!" << endl;
+	//cout <<"BEFORE: " << input_maker_hook << endl;
+	//cout <<"PASSED HOOK: " << input_maker_hook_in << endl;
 	input_maker_hook = input_maker_hook_in;
-	cout <<"AFTER: " << input_maker_hook_in << endl;
+	//cout <<"AFTER: " << input_maker_hook_in << endl;
 	give_fields_defaults();
 }
 
@@ -180,9 +180,9 @@ void manager::give_fields_defaults(){
 			if(input_maker_hook->get_int4_params()[i].name == tiles[c].tile_name){
 				tiles[c].int4_hook = &(input_maker_hook->get_int4_params()[i]);
 				tiles[c].temp_input = to_string(input_maker_hook->get_int4_params()[i].value);
-				cout << "Setting " << tiles[c].tile_name << "'s string field to "
-				     << to_string(input_maker_hook->get_int4_params()[i].value) << endl;
-				cout << "And its value has been set to: " << tiles[c].temp_input << endl;
+				//cout << "Setting " << tiles[c].tile_name << "'s string field to "
+				     //<< to_string(input_maker_hook->get_int4_params()[i].value) << endl;
+				//cout << "And its value has been set to: " << tiles[c].temp_input << endl;
 
 				tiles[c].text_box_init();//now that input_maker hook is set, create surfaces and textures
 				continue;
@@ -207,7 +207,7 @@ void manager::give_fields_defaults(){
 			if(input_maker_hook->get_string_params()[i].name == tiles[c].tile_name){
 				//cout << "STRING HOOK: " << &(input_maker_hook->get_string_params()[i]) << endl;
 				tiles[c].string_hook = &(input_maker_hook->get_string_params()[i]);
-				cout << tiles[c].string_hook << endl;
+				//cout << tiles[c].string_hook << endl;
 				tiles[c].temp_input = tiles[c].string_hook->value;
 				//cout << " STRING HOOK VALUE: " << input_maker_hook->get_string_params()[i].value << endl;
 				tiles[c].text_box_init();//now that input_maker hook is set, create surfaces and textures

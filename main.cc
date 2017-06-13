@@ -8,8 +8,12 @@
 #include "sdl_help.h"
 #include "handlers.h"
 #include "input_maker.h"
-#include "buttons.h"
+#include "button_manager.h"
 using namespace std;
+
+//making this global and giving it a unique name, so the exit button can change it
+//this should have serious consequences until it's thoroughly debugged
+bool main_done = false;
 
  /*! main() handles sdl events (keypresses, mouse movements), instantiates an sdl_help object,
   *and calls its drawing functions per run of the loop. It will eventually have options for resizing
@@ -20,8 +24,11 @@ int main(){
   cout << "And where does the newborn go from here? The net is vast and infinite." << endl;
 
   sdl_help sdl_helper("Andiamo!");
-  buttons button_manager(&sdl_helper);
-  cout << "Now past the sdl_help constructor." << endl;
+  //cout << "Now past the sdl_help constructor." << endl;
+
+  button_manager b_manager(&sdl_helper);
+  b_manager.init_buttons();
+  b_manager.print_buttons();
   //sdl_helper.get_mgr().print_all(cout);
 
   //sdl_helper.print_tile_locs(cout);
@@ -35,8 +42,8 @@ int main(){
   SDL_Event big_event; //pre-loop drawing commands, so screen comes up near instantly
   SDL_SetEventFilter(filter_mouse_move,NULL);
 
-  bool done = false; //this will need to be changed to true when the user clicks on the 'x'
-  while(!done){
+  //bool done = false; //this will need to be changed to true when the user clicks on the 'x'
+  while(!main_done){
 	//apparently if there is no new event big_event keeps that last value, so it scrolls indefinitely for
 	//example, so for now I'm using 1776 as a "no operation" flag
 	if(!SDL_PollEvent(&big_event)){
@@ -64,7 +71,7 @@ int main(){
 
 		case SDL_QUIT:
 			cout << "quitting...." << endl;
-			done = true;
+			main_done = true;
 			break;
 
 		//as of right now 5/11/17, this section is definitely moot because mouse motion is filtered

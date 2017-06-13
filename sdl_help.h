@@ -169,6 +169,13 @@ class sdl_help{
 	//! this member is a getter (by reference) for the vertical scroll bar
 	scroll_bar& get_v_bar(){ return vert_bar; }
 
+	//! this member returns current horizontal scrolling value by value
+	int get_xscroll(){return x_scroll;}
+
+	//! this member returns current vertical scrolling value by value
+	int get_yscroll(){return y_scroll;}
+
+
 	//!this member is a const getter for the tile_locations vector
 	//const std::vector<SDL_Rect>& get_locations() const { return tile_locations;}
 	//!this member is non-const getter for the tile_locations vector

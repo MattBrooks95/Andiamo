@@ -337,9 +337,9 @@ void sdl_help::text_box_mini_loop(ostream& outs, SDL_Event& event,field& current
 		  case SDL_MOUSEBUTTONDOWN:
 			//if the click was within the text box, move the cursor maybe
 		  	if( current_tile.text_box_clicked(outs,event.button.x,event.button.y) ){
-				cout << "Text box click at " << event.button.x << ":" << event.button.y << endl;
+				//cout << "Text box click at " << event.button.x << ":" << event.button.y << endl;
 		  	} else { //elsewise exit text input mode, user clicked off the text box
-		  		cout << "Clicked outside of the text box, exiting mini-loop" << endl;
+		  		//cout << "Clicked outside of the text box, exiting mini-loop" << endl;
 				SDL_PushEvent(&event);//doing this allows the user to 'hop' to another text box
 						      //directly from editing another box
 				done = true;
@@ -355,13 +355,13 @@ void sdl_help::text_box_mini_loop(ostream& outs, SDL_Event& event,field& current
 			break;
 
 		  case SDL_KEYDOWN:
-		  	cout << " Key pressed: " << event.key.keysym.sym << endl;
+		  	//cout << " Key pressed: " << event.key.keysym.sym << endl;
 			text_box_mini_loop_helper(event.key.keysym,current_tile,text_was_changed);
 
 			SDL_FlushEvent(SDL_KEYDOWN); //prevent event flooding
 		  	break;
 		  case SDL_QUIT:
-			cout << "exiting from text entry" << endl;
+			//cout << "exiting from text entry" << endl;
 			SDL_PushEvent(&event);//puts another sdl quit in the event queue, so program
 					      //can be terminated while in "text entry" mode
 			done = true;			
@@ -371,7 +371,7 @@ void sdl_help::text_box_mini_loop(ostream& outs, SDL_Event& event,field& current
 			break;
 
 		  default:
-			outs << "Error finding case in text entry mini-loop" << endl;
+			//outs << "Error finding case in text entry mini-loop" << endl;
 			break;
 		}
 
@@ -380,7 +380,7 @@ void sdl_help::text_box_mini_loop(ostream& outs, SDL_Event& event,field& current
 		//if something actually changed, re-draw
 		//elsewise don't do it to try and save time
 		if(text_was_changed){
-			cout << "HAVING TO REDRAW" << endl;
+			//cout << "HAVING TO REDRAW" << endl;
 			//update picture
 			draw_tiles();
 			draw_sbars();
@@ -400,7 +400,7 @@ void sdl_help::text_box_mini_loop_helper(SDL_Keysym& key,field& current_tile,boo
 	cout << key.sym << endl;
 	switch( key.sym ){
 	  case SDLK_BACKSPACE:
-	  	cout << "BACKSPACE" << endl;
+	  	//cout << "BACKSPACE" << endl;
 		//delete last character, unless it's empty already than do nothing
 		if( current_tile.temp_input.size() > 0 ){
 			current_tile.back_space();//delete a character, update text's graphics
