@@ -31,8 +31,18 @@ void button_manager::print_buttons(){
 }
 
 void button_manager::draw_buttons(){
-
-
+	default_test.draw_me();
+	//exit_dialogue.draw_me();
 }
 
+void button_manager::click_handling(SDL_Event& mouse_event){
+	if(default_test.shown){
+		default_test.handle_click(mouse_event);
+	}
+	//if( exit_dialogue.shown){
+
+	//	exit_dialogue.handle_click(mouse_event);
+	//}
+
+}
 //##############################################################################

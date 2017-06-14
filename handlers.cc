@@ -22,7 +22,7 @@ int filter_mini(void* userdata, SDL_Event* big_event){
 	return 0;
 }
 //############################# MINI LOOP STUFF ###########################################################
-void scrolling_mini_loop(SDL_Event& big_event, sdl_help& sdl_help,char which_bar){
+void scrolling_mini_loop(SDL_Event& big_event, sdl_help& sdl_help,button_manager& b_manager,char which_bar){
 	bool exit = false;//change to true to end the mini loop
 	SDL_SetEventFilter(filter_mini,NULL);
 		//change the filter to disallow MOUSEBUTTONDOWN events and allow
@@ -58,6 +58,7 @@ void scrolling_mini_loop(SDL_Event& big_event, sdl_help& sdl_help,char which_bar
 					}
 					sdl_help.draw_tiles();
 					sdl_help.draw_sbars();
+					b_manager.draw_buttons();
 					sdl_help.present();
 					SDL_FlushEvent(SDL_MOUSEMOTION);//prevent queue from getting
 										 //flooded
@@ -74,6 +75,7 @@ void scrolling_mini_loop(SDL_Event& big_event, sdl_help& sdl_help,char which_bar
 					}
 					sdl_help.draw_tiles();
 					sdl_help.draw_sbars();	
+					b_manager.draw_buttons();
 					sdl_help.present();
 					SDL_FlushEvent(SDL_MOUSEMOTION);//prevent queue from getting
 									//flooded
@@ -92,7 +94,7 @@ void scrolling_mini_loop(SDL_Event& big_event, sdl_help& sdl_help,char which_bar
 //##########################################################################################################
 
 //############################# JERRY STUFF ################################################################
-void handle_mouseb_down( SDL_Event& big_event, sdl_help& sdl_help){
+void handle_mouseb_down( SDL_Event& big_event, sdl_help& sdl_help,button_manager& b_manager){
 	int which_bar = -1;//-1 is dummy value, an error code of sorts
 			   //this is here to store the result of sdl_help.scroll_clicked() later in the
 			   //left mouse button click case
@@ -131,9 +133,11 @@ void handle_mouseb_down( SDL_Event& big_event, sdl_help& sdl_help){
 					     << endl;
 				}
 
-			} else if( which_bar == 0){//no scroll bar was clicked, look at tiles
-				sdl_help.click_detection(cout,big_event,big_event.button.x,big_event.button.y);
-
+			} else if( which_bar == 0){//no scroll bar was clicked, look at other things
+				//like tiles
+				sdl_help.click_detection(cout,big_event, big_event.button.x,big_event.button.y);
+				//or buttons
+				b_manager.click_handling(big_event);
 			} else {//if which_bar is still -1, something is wrong
 				cout << "Error in left mouse button case, sdl_help::scroll_clicked "
 				     << "has a bad value." << endl;

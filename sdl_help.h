@@ -141,7 +141,7 @@ class sdl_help{
 	/*! should turn off keybindings so keystrokes are interpreted as input to the respective fields
 	 *temporary storage string. This member started off being in class field, but I've since moved it to
 	 *sdl_help, because sdl_help needs to be able to draw in this loop */
-	void text_box_mini_loop(std::ostream& outs, SDL_Event& event,field& current_tile);
+	void text_box_mini_loop(std::ostream& outs, SDL_Event& event, field& current_tile);
 
 	//! this function helps text_box_mini_loop by doing the functions related to the text input event
 	void text_box_mini_loop_helper(SDL_Keysym& key,field& current_tile,bool& text_was_changed);
@@ -197,8 +197,14 @@ class sdl_help{
 	manager get_mgr_copy(){ return tile_bag;}
 	/*****************************************************************/
 
+	//! contains a running total of how many times a frame has been drawn
+	/*! as of right now this is just paying lip service to worrying about framerate
+	 *a bunch of decisions still have to be made in that regard. */
+	unsigned long int frame_count;
+
 	SDL_Renderer* renderer; //!< pointer to the renderer object
 	TTF_Font* font;//!< pointer to the font created from the font.ttf file in /config
+
 	/********* FRIENDS *******************************************/
 	//I have no friends
 
@@ -208,10 +214,7 @@ class sdl_help{
 	std::string hf_input_p; //!< \brief a path string to the algorithm's input file folder 
 	std::string font_p;//!< \brief a path string to the font folder
 
-	//! contains a running total of how many times a frame has been drawn
-	/*! as of right now this is just paying lip service to worrying about framerate
-	 *a bunch of decisions still have to be made in that regard. */
-	unsigned long int frame_count;
+
 
 
 
@@ -248,6 +251,5 @@ class sdl_help{
 	input_maker io_handler; //! object that manages the config and output files for HF relevant stuff
 	//#######################################################################################
 };
-
 
 

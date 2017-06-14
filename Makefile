@@ -21,7 +21,7 @@ andiamo: $(objects)
 main.o: main.cc sdl_help.h handlers.h input_maker.h button_manager.h
 	g++ $(c_flg) -c main.cc
 
-handlers.o: handlers.cc handlers.h sdl_help.h
+handlers.o: handlers.cc handlers.h sdl_help.h button_manager.h
 	g++ $(c_flg) -c handlers.cc
 
 sdl_help.o: sdl_help.cc sdl_help.h manager.h scroll_bar.h input_maker.h
@@ -38,8 +38,10 @@ button_manager.o: button_manager.cc button_manager.h button.h derived_buttons.h
 
 button.o: button.cc button.h derived_buttons.h
 	g++ $(c_flg) -c button.cc
+
 derived_buttons.o: derived_buttons.cc derived_buttons.h button.h
 	g++ $(c_flg) -c derived_buttons.cc
+
 manager.o: manager.cc manager.h field.h
 	g++ $(c_flg) -c manager.cc
 

@@ -4,6 +4,7 @@
 
 //! contains the information needed for rectangular "click areas", like the yes/no buttons on the exit dialogue
 /*! this should be useful for many different types of buttons */
+/*
 struct active_area{
 	//! constructor defaults stuff to 0
 	active_area(){
@@ -25,7 +26,7 @@ struct active_area{
 	int yloc;
 	int width;
 	int height;
-};
+};*/
 
 //! this class describes the exit dialogue that pops up when the main loop encounters SDL_QUIT
 class exit_button : public button{
@@ -44,7 +45,7 @@ class exit_button : public button{
 	int my_click(SDL_Event& mouse_event);
 	//! used instead of optional default click_helper
 	/*! has logic for yes or no being hit */ 
-	void my_click_helper(int which);
+	void my_click_helper(int which,bool& satisfied);
 
 	//! set up active areas and corner location using set_corner_loc
 	void init(std::string image_name_in, std::string image_p_in,sdl_help* sdl_help_in);
@@ -52,9 +53,9 @@ class exit_button : public button{
 
   private:
 	//! click area for the no button
-	active_area no_button;
+	active_area no_area;
 	//! click area for the yes button
-	active_area yes_button;
+	active_area yes_area;
 
 
 };

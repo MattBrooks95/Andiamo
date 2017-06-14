@@ -11,6 +11,8 @@ button::button(sdl_help* sdl_help_in){
 	xloc = 0;
 	yloc = 0;
 
+	my_rect = {0,0,0,0};
+
 	shown = true;
 
 	image_name = "No name.";
@@ -37,12 +39,16 @@ void button::init(string image_name_in, string image_p_in,sdl_help* sdl_help_in)
 	total_image_p = image_p_in + image_name;
 
 	button_surface = IMG_Load(total_image_p.c_str());
+	if(button_surface == NULL) cout << SDL_GetError() << endl;
 	button_texture = SDL_CreateTextureFromSurface(sdl_helper->renderer,button_surface);
+	if(button_texture == NULL) cout << SDL_GetError() << endl;
 
 	SDL_QueryTexture(button_texture,NULL,NULL,&width,&height);
 
 	set_corner_loc();
+	make_rect();
 }
+
 //virtual
 void button::print_me(){
 	cout << "IMAGE NAME: " << image_name << " TOTAL IMAGE PATH: " << total_image_p << endl;
@@ -51,10 +57,28 @@ void button::print_me(){
 	cout << "SURFACE PTR: " << button_surface << " TEXTURE PTR: " << button_texture << endl;
 	cout << "SHOWN? = " << shown << endl;
 }
+
+//virtual
+void button::make_rect(){
+	my_rect.x = xloc;
+	my_rect.y = yloc;
+	my_rect.w = width;
+	my_rect.h = height;
+}
+
+//virtual
+void button::draw_me(){
+	if(shown){
+		SDL_RenderCopy(sdl_helper->renderer,button_texture,NULL,&my_rect);
+	}
+}
+
 //virtual 
 void button::set_corner_loc(){
 	xloc = 0;
-	yloc = 0;
+	//this puts the tile in a fixed position just above the horizonal scroll bar
+	//this is what the HUD style of buttons could look like
+	yloc = sdl_helper->get_h_bar().get_top() - height;
 }
 
 //################## virtual click members #############

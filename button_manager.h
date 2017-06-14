@@ -1,5 +1,5 @@
 //! this file describes the button_manager class that contains various derivations of class button
-
+#pragma once
 #include<SDL2/SDL.h>
 #include<SDL2/SDL_image.h>
 
@@ -23,6 +23,12 @@ class button_manager{
 	void print_buttons();
 
 	void draw_buttons();
+
+	void click_handling(SDL_Event& mouse_event);
+
+	//GETTERS AND SETTERS
+	exit_button& get_exit_dialogue(){ return exit_dialogue;}
+	button& get_default_test(){ return default_test;}
 
 	std::string button_image_p;
 

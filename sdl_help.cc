@@ -5,6 +5,7 @@
 #include<cmath>
 #include<algorithm>
 #include<queue>
+
 using namespace std;
 
 bool sdl_test = false;
@@ -296,7 +297,7 @@ void sdl_help::click_detection(ostream& outs,SDL_Event& event, int click_x, int 
 		//if the mouse click coordinates fall within a tile,
 			if( tile_bag.tiles[c].text_box_clicked(outs,click_x,click_y) ){
 				//if that click fell within the text box
-				text_box_mini_loop(outs,event,tile_bag.tiles[c]);
+				text_box_mini_loop(outs,event, tile_bag.tiles[c]);
 
 			} else { //if that click didn't fall within the text box, enact clicked
 				tile_bag.tiles[c].clicked(outs,event,click_x,click_y);//enact that tiles clicked() member

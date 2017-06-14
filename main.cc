@@ -36,6 +36,8 @@ int main(){
   //graphics class initializations
   sdl_helper.draw_tiles();
   sdl_helper.draw_sbars();
+  b_manager.draw_buttons();
+
   sdl_helper.present();
 
   
@@ -53,14 +55,14 @@ int main(){
 
 	if(sdl_helper.get_v_bar().is_scrolling()){//if the vertical scroll bar is in "scroll mode"
 		   //do a mini loop until the left mouse button is released
-		scrolling_mini_loop(big_event,sdl_helper,'v');
+		scrolling_mini_loop(big_event,sdl_helper,b_manager,'v');
 		sdl_helper.get_v_bar().scroll_mode_change(false);//stop v scroll bar mode
 		SDL_FlushEvents(0,1000); //is this necessary?
 
 
 	} else if(sdl_helper.get_h_bar().is_scrolling()){//if the horizontal scroll bar is in "scroll mode"
 		     //do a mini loop until the left mouse button is released
-		scrolling_mini_loop(big_event,sdl_helper,'h');
+		scrolling_mini_loop(big_event,sdl_helper,b_manager,'h');
 		sdl_helper.get_h_bar().scroll_mode_change(false);//stop h scroll bar mode
 		SDL_FlushEvents(0,1000);//is this necessary?
 
@@ -70,8 +72,9 @@ int main(){
 
 
 		case SDL_QUIT:
-			cout << "quitting...." << endl;
-			main_done = true;
+				//does a mini loop that implements exit_button's functionality
+				//where the user has to click yes or no for it to go away
+				b_manager.get_exit_dialogue().handle_click(big_event);
 			break;
 
 		//as of right now 5/11/17, this section is definitely moot because mouse motion is filtered
@@ -94,7 +97,7 @@ int main(){
 
 		case SDL_MOUSEBUTTONDOWN:
 			//this function handles left/right mouse button down clicks, and mousewheel clicks
-			handle_mouseb_down(big_event,sdl_helper); 
+			handle_mouseb_down(big_event,sdl_helper,b_manager); 
 			break;
 
 		case SDL_MOUSEBUTTONUP:
@@ -115,6 +118,7 @@ int main(){
 	//sdl_helper.get_mgr().print_all(cout);
 	sdl_helper.draw_tiles(); //re-draw the screen once all events have been handled
 	sdl_helper.draw_sbars(); //draw the scroll bars
+	b_manager.draw_buttons(); //draw visible/on buttons
 	//sdl_helper.print_tile_locs(cout);
 	sdl_helper.present();  //and all positions have been calculated
 
@@ -123,7 +127,7 @@ int main(){
 	SDL_Delay(50);//this is an arbitrary number to slow down the loop speed
 		     //eventually this will vary intelligently based on desired framerate
   }//end of while loop
-
+  b_manager.print_buttons();
   sdl_helper.get_mgr().update_io_maker();
   //sdl_helper.print_size_info(cout);
   //sdl_helper.get_h_bar().print(cout);//make sure that these values are updating in the bars as
