@@ -15,41 +15,76 @@
  *output file name entry*/
 class button{
   public:
+	//! constructor for the base part of all inherited classes
+	/* the constructor does the same thing everytime, but it has an sdl_help* param that can be left blank.
+	 *I'm leaving it in, in case it is useful later
+	 *\param sdl_help_in defaults to NULL, and is later set by init */
 	button(sdl_help* sdl_help_in = NULL);
+
+	//! this frees the memory held by the surface and texture of a class
+	/*! if an inherited class implements more textures and surfaces, then that derived class
+	 *should have a special destructor written for it. */
 	virtual ~button();
 
+	//! this is the virtual print_me() function
+	/*! it prints the default variables contained in a button class. If a class needs more printing,
+	 *it needs to implement a print_me() function that first calls this one via button::print_me() 
+	 *(to print the base variables) and then does it special logic that prints its own extra variables */
 	virtual void print_me();
+
+	//! this is the virtual draw_me() function
+	/*! so long as the class has the same basic structure as the default class, this shouldn't need
+	 *a special implementation. It bases its logic on the virtual set_corner_logic() and make_rect() logic,
+	 *so those should be written to make sure the button is drawn where you need it to be */
 	virtual void draw_me();
 
+	//! this is the virtual make_rect() function
+	/*! it really just packages the data set by set_corner_logic() into an SDL_Rect, to be used for
+	 *rendercopy destinations (where it needs to be drawn) */
 	virtual void make_rect();
 
-
+	//! this is the virtual set_corner_logic() function
+	/*! this will likely need overwritten if you wan the button to be drawn somewhere special, and not in the
+	 *same location as more default-like buttons */
 	virtual void set_corner_loc();
 
 	//###########################################################
+	//! this virtual function handles the button being clicked
+	/*! it uses virtual was_clicked() to figure out if the user actually clicked on it, and then
+	 *it calls virtual click_helper() to implement the "work" resultant of it being clicked
+	 *\param mouse_event is the SDL_Event that contains the click information */
 	virtual void handle_click(SDL_Event& mouse_event);
+	//! this virtual function does the boolean logic for handle_click()
+	/*! \param mouse_event is the SDL_Event that contains the click information */
 	virtual bool was_clicked(SDL_Event& mouse_event);
+	//! this virtual function does the work when the button is clicked
+	/*! \param mouse_event is the SDL_Event that contains the click information */
 	virtual void click_helper(SDL_Event& mouse_event);
 	//###########################################################
+	//! this virtual init function sets up the image name, path, and the sdl_help pointer
+	/*! \param image_name_in is what the name of the image will be set to, like "default_button.png"
+	 *\param image_p_in is what the path to the button's asset directory will be set to
+	 *\param sdl_help_in is the pointer to the main graphics class that will be saved in sdl_helper */
 	virtual void init(std::string image_name_in, std::string image_p_in,sdl_help* sdl_help_in);
-	bool shown;
+
+	bool shown;//!< this defaults to true for most buttons, so they are drawn on screen
 
   protected:
-	std::string image_name;
-	std::string total_image_p;
+	std::string image_name;//!< name of the image file
+	std::string total_image_p;//!< image file directory's path
 
-	sdl_help* sdl_helper;
+	sdl_help* sdl_helper;//!< pointer to the main graphics class
 
-	int xloc;
-	int yloc;
+	int xloc;//!< horizontal location of the button's corner
+	int yloc;//!< vertical location of the buttno's corner
 
-	int width;
-	int height;
+	int width;//!< width of the button's texture
+	int height;//!< height of the button's texture
 
-	SDL_Rect my_rect;
+	SDL_Rect my_rect;//!< xloc, yloc, width and height in a SDL_Rect, for SDL functions
 
-	SDL_Surface* button_surface;
-	SDL_Texture* button_texture;
+	SDL_Surface* button_surface;//!< save the surface
+	SDL_Texture* button_texture;//!< save the texture created from the surface
 
 };
 
@@ -64,6 +99,7 @@ struct active_area{
 		height=0;
 	}
 	//! boolean variable to check mouse click coords against this active area's location
+	/*! \param event is the SDL event from main that contains the click information */
 	bool clicked(SDL_Event& event){
 		//std::cout << "MOUSE " << event.button.x << ":" << event.button.y << std::endl;
 		//std::cout << "My Area: X=" << xloc << "-" << xloc + width << " Y= " << yloc << "-" 
@@ -74,16 +110,18 @@ struct active_area{
 		}
 		return false;
 	}
-
+	//! this print function is most useful when called from a button's print_me() member
+	/*! it can be used to "line up" the actual button part that responds to clicks with its texture's
+	 *shape and location, like the "yes" and "no" click areas in exit_button */
 	void print_me(){
 		std::cout << "Printing active area" << std::endl;
 		std::cout << xloc << ":" << yloc << "     " << width << ":" << height << std::endl;
 	}
 
-	int xloc;
-	int yloc;
-	int width;
-	int height;
+	int xloc;//!< corner'ss horizontal location
+	int yloc;//!< corner's vertical location
+	int width;//!< texture's width
+	int height;//!< texture's height
 };
 
 

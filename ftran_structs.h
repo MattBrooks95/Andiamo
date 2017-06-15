@@ -40,8 +40,8 @@ struct param_int4{
 
 
 
-	std::string name;
-	int value;
+	std::string name;//!< contextual name for the parameter. This is how the output is associated with its tile
+	int value; //!< integer value to be output after some formatting
 };
 
 //! param_real8 is a default c++ double "and more"
@@ -81,11 +81,15 @@ struct param_real8{
 
 
 
-	std::string name;
-	double value;
+	std::string name;//!< contextual name for the parameter. This is how the output is associated with its tile
+	double value;//! double value to be output after some formatting
 };
 //! this is a simple struct to keep track of a string parameter's "variable name" and string "value"
 struct param_string{
+	//! the constructor sets fields to a parameter, or a default value if () version is called
+	/*!\param name_in the name that name will be set to
+	 *\param value_in is the value that value will be set to
+	 *\param size_in is the value that the size variable will be set to */
 	param_string(std::string name_in = "No name",std::string value_in = NULL,
 		     unsigned int size_in = 0);
 

@@ -2,52 +2,51 @@
 #pragma once
 #include "button.h"
 
-//! contains the information needed for rectangular "click areas", like the yes/no buttons on the exit dialogue
-/*! this should be useful for many different types of buttons */
-/*
-struct active_area{
-	//! constructor defaults stuff to 0
-	active_area(){
-		xloc = 0;
-		yloc = 0;
-		width= 0;
-		height=0;
-	}
-	//! boolean variable to check mouse click coords against this active area's location
-	bool clicked(SDL_Event& event){
-		if( (event.button.x > xloc && event.button.x < xloc + width) &&
-		    (event.button.y > yloc && event.button.y < yloc + height) ){
-			return true;
-		}
-		return false;
-	}
-
-	int xloc;
-	int yloc;
-	int width;
-	int height;
-};*/
 
 //! this class describes the exit dialogue that pops up when the main loop encounters SDL_QUIT
+/*! it inherits members and fields from the default button class in button.h, so a lot of that
+ *functionality doesn't need re-written here. The only things that need implemented here are new
+ *variables and new members to act on them that the base class doesn't have */
 class exit_button : public button{
   public:
-	exit_button();
+	//! this doesn't do anything special for now
+	exit_button();	
+	//! set_corner_loc() has different logic than the base class's version button::set_corner_loc()
+	/*! it places the exit dialogue in the exact center of the screen. It is not shown until the user
+	 *sends an SDL_QUIT, and the button manager makes this button shown */
 	void set_corner_loc();
-
+	//! does the printing from the base class, along with extra lines to output the special information
+	/*! it calls button::print_me, from the default class, and calls active_area::print_me() for
+	 *the yes and no boxes. This is a good example of why class inheritance is cool. */
 	void print_me();
 
 	//###########################################################
+	//! this special version of handle_click uses helper functions to implement the yes/no quit dialogue
 	void handle_click(SDL_Event& mouse_event);
 	//###########################################################
 	//! this member is used instead of the (optional) virtual members in this case
 	/*! this is used instead of the virtual members because the exit dialogue has two active areas
-	 *the yes part and the no part, so the normal logic won't work here */
+	 *the yes part and the no part, so the normal boolean won't work here, so it implements
+	 *a no/yes_this/yes_that return value for 0 (click out of exit box, 1 (no was clicked), and 2
+	 * (yes was clicked)
+	 *\param mouse_event contains the necessary click information, param for active_area::clicked
+	 *\return 0, neither yes or no was clicked
+	 *\return 1, no was clicked
+	 *\return 2, yes was clicked */
 	int my_click(SDL_Event& mouse_event);
-	//! used instead of optional default click_helper
-	/*! has logic for yes or no being hit */ 
+	//! used instead of optional default click_helper - does work according to return value of my_click
+	/*! has logic for yes or no being hit
+	 *\param which is used to control logic
+	 *\param satisfied is used to stop the loop in exit_button::handle_click*/ 
 	void my_click_helper(int which,bool& satisfied);
 
 	//! set up active areas and corner location using set_corner_loc
+	/* this calls button::init() to set up the import bits of the base class, then sets up
+	 *the special bits of exit_button like the shown boolean defaulting to false, and a different
+	 *corner location
+	 *\param image_name_in parameter for button::init
+	 *\param image_p_in parameter for button::init
+	 *\param sdl_help_in parameter for button::init */
 	void init(std::string image_name_in, std::string image_p_in,sdl_help* sdl_help_in);
 
 

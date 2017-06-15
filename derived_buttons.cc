@@ -43,18 +43,10 @@ int exit_button::my_click(SDL_Event& mouse_event){
 		return 1;
 	} else if( yes_area.clicked(mouse_event) ){//"yes" part was clicked
 		return 2;
-	} else {
+	} else {//neither one was clicked
 		return 0;
 	}
 
-}
-
-void exit_button::print_me(){
-
-	cout << "Did my parent's print function get called too? How about now?" << endl;
-	button::print_me();
-	no_area.print_me();
-	yes_area.print_me();
 }
 
 void exit_button::my_click_helper(int which,bool& satisfied){
@@ -73,6 +65,14 @@ void exit_button::my_click_helper(int which,bool& satisfied){
 	}
 
 }
+
+void exit_button::print_me(){
+	//cout << "Did my parent's print function get called too? How about now?" << endl;
+	button::print_me();
+	no_area.print_me();
+	yes_area.print_me();
+}
+
 
 void exit_button::init(string image_name_in, string image_p_in,sdl_help* sdl_help_in){
 	//run default procedure

@@ -248,7 +248,7 @@ class sdl_help{
 	//#######################################################################################
 
 	//################## INPUT MAKER OBJECT #################################################
-	input_maker io_handler; //! object that manages the config and output files for HF relevant stuff
+	input_maker io_handler; //!< object that manages the config and output files for HF relevant stuff
 	//#######################################################################################
 };
 
