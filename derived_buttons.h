@@ -2,6 +2,7 @@
 #pragma once
 #include "button.h"
 
+//########################## EXIT BUTTON ###########################################################################
 
 //! this class describes the exit dialogue that pops up when the main loop encounters SDL_QUIT
 /*! it inherits members and fields from the default button class in button.h, so a lot of that
@@ -58,3 +59,45 @@ class exit_button : public button{
 
 
 };
+//##################################################################################################################
+
+//##################################################################################################################
+//! implements the button that has the graphing options
+/*! these options should include a checkbox to control whether or not graphing is done at all,
+ *and a text input field for the desired output file name */
+class graphing_button : public button{
+
+  public:
+	//! need a new destructor, to clear memory from the check box surfaces and the text box
+	~graphing_button();
+	//! draws different texture based on whether or not this button has been checked
+	void draw_me();
+
+	//! prints the base information, and the information special to this class
+	void print_me();
+
+	//! does button::init() and also sets up the checked texture
+	void init(std::string image_name_in, std::string image_p_in,sdl_help* sdl_help_in);
+
+	//! force_corner_lock does normal stuff, and forces the active area to update as well
+	void force_corner_loc(int xloc_in, int yloc_in);
+
+	//! overload click_helper, to toggle the checkmark mode
+	/*! it will also have to interact with the text field */
+	void click_helper(SDL_Event& mouse_event);
+
+
+  private:
+	bool show_check_version;//!< boolean used to decide whether we're drawing the check or not
+	active_area check_box; //!< used to detect the check box being clicked
+
+	SDL_Surface* checked_surface; //!< save the surface for the checked version
+	SDL_Texture* checked_texture; //!< save the texture for the checked version
+
+};
+//##################################################################################################################
+
+
+
+
+

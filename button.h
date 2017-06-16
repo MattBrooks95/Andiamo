@@ -48,6 +48,10 @@ class button{
 	 *same location as more default-like buttons */
 	virtual void set_corner_loc();
 
+	//! this member is used to set a custom corner location
+	/*! an example would be button_manager calling this to move the buttons on top of the button tray */
+	virtual void force_corner_loc(int xloc_in, int yloc_in);
+
 	//###########################################################
 	//! this virtual function handles the button being clicked
 	/*! it uses virtual was_clicked() to figure out if the user actually clicked on it, and then
@@ -67,7 +71,17 @@ class button{
 	 *\param sdl_help_in is the pointer to the main graphics class that will be saved in sdl_helper */
 	virtual void init(std::string image_name_in, std::string image_p_in,sdl_help* sdl_help_in);
 
+	//##################### GETTERS AND SETTERS ###########################################
+	int get_xloc() { return xloc;}
+	int get_yloc() { return yloc;}
+	int get_width() { return width;}
+	int get_height() { return height;}
+
+	//#####################################################################################
+
 	bool shown;//!< this defaults to true for most buttons, so they are drawn on screen
+
+
 
   protected:
 	std::string image_name;//!< name of the image file
@@ -76,7 +90,7 @@ class button{
 	sdl_help* sdl_helper;//!< pointer to the main graphics class
 
 	int xloc;//!< horizontal location of the button's corner
-	int yloc;//!< vertical location of the buttno's corner
+	int yloc;//!< vertical location of the button's corner
 
 	int width;//!< width of the button's texture
 	int height;//!< height of the button's texture
@@ -101,9 +115,9 @@ struct active_area{
 	//! boolean variable to check mouse click coords against this active area's location
 	/*! \param event is the SDL event from main that contains the click information */
 	bool clicked(SDL_Event& event){
-		//std::cout << "MOUSE " << event.button.x << ":" << event.button.y << std::endl;
-		//std::cout << "My Area: X=" << xloc << "-" << xloc + width << " Y= " << yloc << "-" 
-			  //<< yloc + height << std::endl;
+		std::cout << "MOUSE " << event.button.x << ":" << event.button.y << std::endl;
+		std::cout << "My Area: X=" << xloc << "-" << xloc + width << " Y= " << yloc << "-" 
+			  << yloc + height << std::endl;
 		if( (event.button.x > xloc && event.button.x < xloc + width) &&
 		    (event.button.y > yloc && event.button.y < yloc + height) ){
 			return true;

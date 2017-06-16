@@ -6,8 +6,8 @@ using namespace std;
 
 extern bool main_done;
 
-//################################ EXIT ########################################################
-//################################ Button ######################################################
+//################################ EXIT BUTTON ########################################################
+
 exit_button::exit_button(){
 
 
@@ -100,5 +100,84 @@ void exit_button::init(string image_name_in, string image_p_in,sdl_help* sdl_hel
 
 }
 //##############################################################################################
-//##############################################################################################
+
+//########################## GRAPHING OPTIONS BUTTON ###########################################
+
+
+graphing_button::~graphing_button(){
+	SDL_FreeSurface(checked_surface);
+	SDL_DestroyTexture(checked_texture);
+}
+
+void graphing_button::draw_me(){
+	if(shown){
+		if(show_check_version){
+			cout <<"copying check to renderer" << endl;
+			SDL_RenderCopy(sdl_helper->renderer,checked_texture,NULL,&my_rect);
+		} else {
+			cout << "copying non check to renderer" << endl;
+			SDL_RenderCopy(sdl_helper->renderer,button_texture,NULL,&my_rect);
+		}
+	}
+}
+
+void graphing_button::print_me(){
+	button::print_me();
+	cout << "CHECK SURFACE: " << checked_surface << " CHECK TEXTURE: " << checked_texture << endl;
+	cout << "SHOW CHECK BOOLEAN: " << show_check_version << endl;
+	check_box.print_me();
+}
+
+
+void graphing_button::click_helper(SDL_Event& mouse_event){
+	if( check_box.clicked(mouse_event) ){
+		//if already showing check, hide it
+		if(show_check_version){
+
+			show_check_version = false;
+
+		} else {//if not already showing check, show it
+
+			show_check_version = true;
+		}
+	}
+}
+
+void graphing_button::force_corner_loc(int xloc_in, int yloc_in){
+	button::force_corner_loc(xloc_in,yloc_in);
+	check_box.xloc = xloc_in + 48;
+	check_box.yloc = yloc_in + 35;
+}
+
+void graphing_button::init(std::string image_name_in, std::string image_p_in,sdl_help* sdl_help_in){
+	//do the base class's setting up
+	button::init(image_name_in,image_p_in,sdl_help_in);
+	show_check_version = false;
+
+	cout << "MY XLOC YLOC: " << xloc << ":" << yloc << endl;
+	//set up the active area for the check box
+	check_box.xloc = xloc + 48;
+	check_box.yloc = yloc + 32;
+	check_box.width = 35;
+	check_box.height = 35;
+
+
+	//set up the checked version texture
+	checked_surface = IMG_Load( (image_p_in+"graphing_options_checked.png").c_str() );
+	if(checked_surface == NULL) cout << SDL_GetError() << endl;
+	checked_texture = SDL_CreateTextureFromSurface(sdl_helper->renderer,checked_surface);
+	if(checked_texture == NULL) cout << SDL_GetError() << endl;
+}
+
+//###############################################################################################
+
+
+
+
+
+
+
+
+
+
 

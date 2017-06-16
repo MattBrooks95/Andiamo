@@ -1,0 +1,13 @@
+Start working on implementing the button tray that reside below,
+and scroll with the tiles. - actually I like the HUD design XD
+buttons:
+	1.)Generate Input
+	2.)Select output file name
+	3.)select transmission coefficients file (graphical system file
+		browser?)
+	4.)plotting placeholders
+	5.) assets for the tray images 
+
+
+MAKE TEXT BOX CLASS FOR BUTTONS - THINK ABOUT REWRITING TILES TO USE TEXT BOX
+	AS A CLASS INSTEAD OF A MAGICAL PROPERTY OF TILES

@@ -21,12 +21,21 @@ class button_manager{
 	button_manager(sdl_help* sdl_helper_in);
 	~button_manager();
 
+	//#################### BUTTON TRAY STUFF #######################################################//
+
+	//! this member sets up the tray in which the buttons are placed
+	void init_tray();
+
+	//! this member displays the tray to the screen
+	void draw_tray();
+	//##############################################################################################//
 	//! this member calls the virtual init() memeber on each of button_manager's private buttons
 	void init_buttons();
 	//! this member calls each buttons virtual print_me() member
 	void print_buttons();
 
 	//! this member calls each button's virtual draw_me() member
+	/*! it also calls draw_tray() at the very beginning, so that the tray is drawn "below" the buttons */
 	void draw_buttons();
 
 	//! this member calls each button's virtual handle_click() member
@@ -45,7 +54,22 @@ class button_manager{
 
 	sdl_help* sdl_helper;//!< this is a pointer to the main graphics class, for renderer access
   private:
+
+	SDL_Surface* button_tray_surf;//!< save the surface for the tray on which buttons sit
+	SDL_Texture* button_tray_texture;//!< save the texture for the tray on which buttons sit
+
+	//! name for the tray's image file. Defaults to button_image_p + "button_tray.png" in constructor
+	std::string tray_image_name;
+
+	bool tray_shown;//!< keep track of whether or not the tray should be drawn to the screen
+	SDL_Rect tray_rect;//!< drawing destion for the tray
+
+
 	button default_test;//!< example of a base class instantiation, not actually for use
+	button output_fname;//!< button to allow user to select where to output the HF input file
+	button t_coefficients;//!< button to allow user to select the input transmission coefficients file
+	button lets_go;//!< button to generate output
+	graphing_button graphing_options;//!< button to allow user to select graphing options
 	exit_button exit_dialogue; //! first class that inherits from button default class, handles exiting
 	//button make_output;
 	//button output_file_set;

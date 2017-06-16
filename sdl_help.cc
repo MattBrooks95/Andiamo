@@ -515,7 +515,7 @@ void sdl_help::calc_corners(){
 		//should be ready to add a row once the above mini loop is done
 
 
-		int row_width = 0; //first tile starts off at the left edge of the screen
+		int row_width = 5; //first tile starts off at the left edge of the screen - with some padding
 		while( !row.empty() ){
 			//cout << "QUEUE SIZE= " << row.size() << endl;
 			index_and_width temp = row.front(); //copy element in the front of the queue

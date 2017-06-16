@@ -80,6 +80,14 @@ void button::set_corner_loc(){
 	//this is what the HUD style of buttons could look like
 	yloc = sdl_helper->get_h_bar().get_top() - height;
 }
+//virtual
+void button::force_corner_loc(int xloc_in, int yloc_in){
+	cout << "DEFAULT BUTTON OLD: " << xloc << ":" << yloc << endl;
+	xloc = xloc_in;
+	yloc = yloc_in;
+	cout << "DEFAULT BUTTON NEW: " << xloc << ":" << yloc << endl;
+	make_rect();
+}
 
 //################## virtual click members #############
 void button::handle_click(SDL_Event& mouse_event){
