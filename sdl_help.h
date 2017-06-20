@@ -215,13 +215,6 @@ class sdl_help{
 	std::string font_p;//!< \brief a path string to the font folder
 
 
-
-
-
-	//! allows sdl_help to keep track of where tiles are
-	/* the SDL_Rect's indices in this vector should line up with manager's tiles vector so 
-	 *the members of the correct field can be invoked */
-	//std::vector<SDL_Rect> tile_locations;
 	/***************** FIELDS THAT PERTAIN TO SCROLLING ********************************/
 	scroll_bar vert_bar;/*!< \brief contains functions to act on, and draw, the vertical
 			     *scroll bar */

@@ -19,11 +19,11 @@ void exit_button::set_corner_loc(){
 	yloc = (sdl_helper->get_win_size()->height / 2) - (height / 2);
 }
 
-void exit_button::handle_click(SDL_Event& mouse_event){
+bool exit_button::handle_click(SDL_Event& mouse_event){
 	shown = true;
 	bool satisfied = false;
 	int which = 0;
-
+	bool did_something = false;
 	while(!satisfied){
 
 		draw_me();
@@ -33,9 +33,10 @@ void exit_button::handle_click(SDL_Event& mouse_event){
 		which = my_click(mouse_event);//see if they clicked on the yes or no boxes
 
 		my_click_helper(which,satisfied);
-
+		if(which == 1 || which ==2) did_something = true;
 		SDL_Delay(50);
 	}
+	return did_something;
 }
 
 int exit_button::my_click(SDL_Event& mouse_event){
@@ -101,6 +102,62 @@ void exit_button::init(string image_name_in, string image_p_in,sdl_help* sdl_hel
 }
 //##############################################################################################
 
+
+//############################## text_box button ###############################
+//TC_file_button::~TC_file_button(){
+
+//}
+
+void text_box_button::draw_me(){
+	if(shown){
+		SDL_RenderCopy(sdl_helper->renderer,button_texture,NULL,&my_rect);
+		my_text_box.draw_me();
+	}
+}
+
+void text_box_button::print_me(){
+	button::print_me();
+	my_text_box.print_me();
+}
+	
+void text_box_button::init(const std::string& image_name_in,const std::string& image_p_in,sdl_help* sdl_help_in){
+	button::init(image_name_in,image_p_in,sdl_help_in);
+
+	sdl_help_font = sdl_helper->font;
+
+	my_text_box.init(sdl_helper,sdl_help_font," ",xloc,yloc+height-25,width,25);
+
+}
+
+void text_box_button::force_corner_loc(int xloc_in, int yloc_in){
+	//run default force_corner_loc
+	button::force_corner_loc(xloc_in,yloc_in);
+
+	//update the text box's location
+	my_text_box.xloc = xloc_in;
+	my_text_box.yloc = yloc_in + height - 25;
+	my_text_box.make_rect();
+}
+
+//###############################################################################################
+
+//###################### TRANSMISSION COEFFICIENTS FILE BUTTON ##################################
+int TC_input_file_button::work(){
+	cout << "Hi, I'm Paul! (from TC_input_file_button.work() )" << endl;
+	return 0;
+}
+
+//###############################################################################################
+
+//######################## CREATED HF FILE OUTPUT BUTTON ########################################
+
+int output_file_button::work(){
+	cout << "Hi, I'm Paul! (from TC_input_file_button.work() )" << endl;
+	return 0;
+}
+
+//##############################################################################################
+
 //########################## GRAPHING OPTIONS BUTTON ###########################################
 
 
@@ -111,47 +168,63 @@ graphing_button::~graphing_button(){
 
 void graphing_button::draw_me(){
 	if(shown){
+		//show the version with the check box checked
 		if(show_check_version){
-			cout <<"copying check to renderer" << endl;
 			SDL_RenderCopy(sdl_helper->renderer,checked_texture,NULL,&my_rect);
+
+		//show the version with the check box unchecked
 		} else {
-			cout << "copying non check to renderer" << endl;
 			SDL_RenderCopy(sdl_helper->renderer,button_texture,NULL,&my_rect);
 		}
+		//the graphing_button class doesn't call the text_box_button draw function because
+		//it can render the wrong version of the texture. It causes a bug where the check mark
+		//mode is on, and the graphing_button draws the check box, and then the text_box_button.draw_me()
+		//draws on top of it
+		my_text_box.draw_me();
 	}
+
 }
 
 void graphing_button::print_me(){
-	button::print_me();
+	text_box_button::print_me();
 	cout << "CHECK SURFACE: " << checked_surface << " CHECK TEXTURE: " << checked_texture << endl;
 	cout << "SHOW CHECK BOOLEAN: " << show_check_version << endl;
 	check_box.print_me();
 }
 
+int graphing_button::work(){
+	cout << "Hi, I'm Paul! (from graphing_button.work() )" << endl;
+	return 0;
+}
 
-void graphing_button::click_helper(SDL_Event& mouse_event){
-	if( check_box.clicked(mouse_event) ){
+bool graphing_button::handle_click(SDL_Event& mouse_event){
+	if( check_box.clicked(mouse_event) ){//check or uncheck the check box
 		//if already showing check, hide it
 		if(show_check_version){
-
+			//cout << "Toggling show_check to false" << endl;
 			show_check_version = false;
 
 		} else {//if not already showing check, show it
-
+			//cout << "Toggling show_check to true" << endl;
 			show_check_version = true;
 		}
+		return true;
 	}
+	return false;
 }
 
 void graphing_button::force_corner_loc(int xloc_in, int yloc_in){
-	button::force_corner_loc(xloc_in,yloc_in);
+	text_box_button::force_corner_loc(xloc_in,yloc_in);//fix normal x:y w:h values
+
+	//update the check box's location
 	check_box.xloc = xloc_in + 48;
 	check_box.yloc = yloc_in + 35;
 }
 
-void graphing_button::init(std::string image_name_in, std::string image_p_in,sdl_help* sdl_help_in){
+void graphing_button::init(const std::string& image_name_in,const std::string& image_p_in,sdl_help* sdl_help_in){
 	//do the base class's setting up
-	button::init(image_name_in,image_p_in,sdl_help_in);
+	text_box_button::init(image_name_in,image_p_in,sdl_help_in);
+
 	show_check_version = false;
 
 	cout << "MY XLOC YLOC: " << xloc << ":" << yloc << endl;

@@ -6,6 +6,7 @@ using namespace std;
 
 button_manager::button_manager(sdl_help* sdl_helper_in){
 	sdl_helper = sdl_helper_in;
+
 	button_image_p = "./Assets/Images/Buttons/";
 
 	tray_image_name = "button_tray.png";
@@ -22,6 +23,14 @@ button_manager::button_manager(sdl_help* sdl_helper_in){
 }
 
 button_manager::~button_manager(){
+	if(button_tray_surf == NULL || button_tray_texture == NULL){
+		cout << "WEIRD, DESTRUCTOR HAS BEEN CALLED TWICE" << endl;
+		char junk;
+		cin >> junk;
+
+	} //else {
+		//cout << "B_MANAGER'S DESTRUCTOR RUNNING" << endl;
+	//}
 	SDL_FreeSurface(button_tray_surf);
 	SDL_DestroyTexture(button_tray_texture);
 }
@@ -91,15 +100,6 @@ void button_manager::print_buttons(){
 	graphing_options.print_me();
 	cout << endl;
 	cout << "####################### DONE PRINTING BUTTONS #######################" << endl;
-
-
-
-	button default_test;//!< example of a base class instantiation, not actually for use
-	button output_fname;//!< button to allow user to select where to output the HF input file
-	button t_coefficients;//!< button to allow user to select the input transmission coefficients file
-	button lets_go;//!< button to generate output
-	button graphing_options;//!< button to allow user to select graphing options
-	exit_button exit_dialogue; //! first class that inherits from button default class, handles exiting
 }
 
 void button_manager::draw_tray(){
@@ -118,23 +118,138 @@ void button_manager::draw_buttons(){
 
 }
 
-void button_manager::click_handling(SDL_Event& mouse_event){
-	if(default_test.shown){
-		default_test.handle_click(mouse_event);
-	}
-	if(output_fname.shown){
-		output_fname.handle_click(mouse_event);
-	}
-	if(t_coefficients.shown){
-		t_coefficients.handle_click(mouse_event);
-	}
-	if(lets_go.shown){
-		lets_go.handle_click(mouse_event);
-	}
-	if(graphing_options.shown){
-		graphing_options.handle_click(mouse_event);
-	}
+void button_manager::text_box_loop(text_box_button* current_button,SDL_Event& event){
+	//cout << "Text box was clicked." << endl;
 
+
+	SDL_StartTextInput();//turn on the text input background functions
+
+	//used to control text entry loop
+	bool done = false;
+	//int c = 0;
+	bool text_was_changed = false;
+
+	string pass_me; //string container for event text info (which is normally a c-string)
+	while(!done){
+		//if(c >= 10) return;
+		//do stuff
+		//cout << " in text input mini loop " << c << endl;
+
+		if( !SDL_PollEvent(&event) ){
+			event.type = 1776; //dummy event to stop it from printing default message every frame
+					   //where no event happens
+		}
+
+		switch(event.type){
+		  case SDL_MOUSEMOTION:
+			cout << "Mouse motion for some reason.... " << endl;
+			break;
+
+		  case SDL_MOUSEBUTTONDOWN:
+			//if the click was within the text box, move the cursor maybe
+		  	if( current_button->my_text_box.was_clicked(event) ){
+				//cout << "Text box click at " << event.button.x << ":" << event.button.y << endl;
+		  	} else { //elsewise exit text input mode, user clicked off the text box
+		  		//cout << "Clicked outside of the text box, exiting mini-loop" << endl;
+				SDL_PushEvent(&event);//doing this allows the user to 'hop' to another text box
+						      //directly from editing another box
+				done = true;
+			}
+		  	break;
+
+		  case SDL_TEXTINPUT:
+		  	//cout << " I guess this was an SDL_TEXTINPUT event... " << endl;
+			pass_me = event.text.text;
+			current_button->my_text_box.update_text(pass_me);
+			text_was_changed = true;
+		  	//here this actually causes a loss of letters, so the event flooding is necessary, don't flush
+			//SDL_FlushEvent(SDL_TEXTINPUT);
+			break;
+
+		  case SDL_KEYDOWN:
+		  	//cout << " Key pressed: " << event.key.keysym.sym << endl;
+			if(event.key.keysym.sym == SDLK_BACKSPACE){
+				//they hit backspace, so delete the end character if it is non-empty
+				current_button->my_text_box.back_space();
+				text_was_changed = true;
+			}
+			SDL_FlushEvent(SDL_KEYDOWN); //prevent event flooding
+		  	break;
+		  case SDL_QUIT:
+			//cout << "exiting from text entry" << endl;
+			SDL_PushEvent(&event);//puts another sdl quit in the event queue, so program
+					      //can be terminated while in "text entry" mode
+			done = true;			
+			break;
+
+		  case 1776: //do nothing, event was not new
+			break;
+
+		  default:
+			//outs << "Error finding case in text entry mini-loop" << endl;
+			break;
+		}
+
+		//if something actually changed, re-draw
+		//elsewise don't do it to try and save time
+		if(text_was_changed){
+			//cout << "HAVING TO REDRAW" << endl;
+			//update picture
+			sdl_helper->draw_tiles();
+			sdl_helper->draw_sbars();
+			text_was_changed = false;
+			draw_buttons();
+			//show updated picture
+			sdl_helper->present();
+		}
+
+		//c++;
+		SDL_Delay(50);
+	}//end of loop
+	SDL_StopTextInput();//stop text input functionality because it slows down the app
+
+}
+
+void button_manager::click_handling(SDL_Event& mouse_event){
+	bool done_something = false;//turn off when a button has actually been clicked
+			 	    //no need to check all buttons if one has already been clicked
+			 	    //shouldn't be possible to click two at the same time
+
+	cout << "HANDLING BUTTON CLICKS" << endl;
+	if(!done_something && default_test.shown){
+		if( default_test.handle_click(mouse_event)){
+			done_something = true;
+		}
+
+	}
+	if(!done_something && output_fname.shown){//needs text input handling
+
+		if(output_fname.my_text_box.was_clicked(mouse_event) ){
+			text_box_loop(&output_fname,mouse_event);
+			done_something = true;
+		}
+
+	}
+	if(!done_something && t_coefficients.shown){//needs text input handling
+
+		if( t_coefficients.my_text_box.was_clicked(mouse_event) ){
+			text_box_loop(&t_coefficients,mouse_event);
+			done_something = true;
+		}
+	}
+	if(!done_something && lets_go.shown){
+		if( lets_go.handle_click(mouse_event) ){
+			done_something = true;
+		}
+	}
+	if(!done_something && graphing_options.shown){
+		//needs text input handling and needs to do handle_click for check box
+		graphing_options.handle_click(mouse_event);
+		if( graphing_options.my_text_box.was_clicked(mouse_event) ) {
+			text_box_loop(&graphing_options,mouse_event);
+		}
+	}
+	cout << "DONE HANDLING BUTTON CLICKS" << endl;
 
 }
 

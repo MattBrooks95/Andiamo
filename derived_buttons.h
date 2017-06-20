@@ -1,7 +1,7 @@
 //! \file declares the classes that inherit from button.h's button class
 #pragma once
 #include "button.h"
-
+#include "text_box.h"
 //########################## EXIT BUTTON ###########################################################################
 
 //! this class describes the exit dialogue that pops up when the main loop encounters SDL_QUIT
@@ -23,7 +23,7 @@ class exit_button : public button{
 
 	//###########################################################
 	//! this special version of handle_click uses helper functions to implement the yes/no quit dialogue
-	void handle_click(SDL_Event& mouse_event);
+	bool handle_click(SDL_Event& mouse_event);
 	//###########################################################
 	//! this member is used instead of the (optional) virtual members in this case
 	/*! this is used instead of the virtual members because the exit dialogue has two active areas
@@ -62,10 +62,59 @@ class exit_button : public button{
 //##################################################################################################################
 
 //##################################################################################################################
+
+class text_box_button : public button{
+  public:
+	//~text_box_button();
+
+	//! needs new draw_me(), to draw its text box as well
+	void draw_me();
+
+	//! print me calls button:print_me(), but also prints info about its text box
+	void print_me();
+	//! this is a pure virtual member
+	/*! it must be implemented in classes that inherit from this class, because some will want to
+	 *READ from the input file, and some will want to WRITE to the output file */
+	virtual int work() = 0;
+
+
+	//! init also sets up the text box
+	void init(const std::string& image_name_in,const std::string& image_p_in,sdl_help* sdl_help_in);
+
+	//! force_corner_loc also updates the text box
+	void force_corner_loc(int xloc_in, int yloc_in);
+
+	text_box my_text_box;
+
+  protected:
+	TTF_Font* sdl_help_font;
+};
+
+
+
+//! this is derived from the text_box_button class, it should read inputs from the given TC file 
+class TC_input_file_button : public text_box_button{
+  public:
+	//! this function should make sure that the transmission coefficients are read from the given file
+	int work();
+  private:
+
+};
+//! this is derived from the text_box_button class, it should WRITE the HF input file (final product) to this file
+class output_file_button : public text_box_button{
+  public:
+	//! this function should make sure input_maker writes to the given file name
+	int work();
+
+  private:
+
+};
+
+
 //! implements the button that has the graphing options
 /*! these options should include a checkbox to control whether or not graphing is done at all,
  *and a text input field for the desired output file name */
-class graphing_button : public button{
+class graphing_button : public text_box_button{
 
   public:
 	//! need a new destructor, to clear memory from the check box surfaces and the text box
@@ -76,18 +125,20 @@ class graphing_button : public button{
 	//! prints the base information, and the information special to this class
 	void print_me();
 
+	//! this work function needs implemented to make sure graphing is output to the given file name
+	int work();
+
 	//! does button::init() and also sets up the checked texture
-	void init(std::string image_name_in, std::string image_p_in,sdl_help* sdl_help_in);
+	void init(const std::string& image_name_in, const std::string& image_p_in,sdl_help* sdl_help_in);
 
 	//! force_corner_lock does normal stuff, and forces the active area to update as well
 	void force_corner_loc(int xloc_in, int yloc_in);
 
-	//! overload click_helper, to toggle the checkmark mode
-	/*! it will also have to interact with the text field */
-	void click_helper(SDL_Event& mouse_event);
-
+	//! overload handle_click, to toggle the checkmark mode
+	bool handle_click(SDL_Event& mouse_event);
 
   private:
+
 	bool show_check_version;//!< boolean used to decide whether we're drawing the check or not
 	active_area check_box; //!< used to detect the check box being clicked
 
@@ -96,6 +147,11 @@ class graphing_button : public button{
 
 };
 //##################################################################################################################
+
+
+
+
+
 
 
 

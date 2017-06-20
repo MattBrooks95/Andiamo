@@ -7,7 +7,7 @@ vtool = --tool=memcheck
 vopt = --log-file="memory_check.txt" --leak-check=full
 
 #object files
-objects = main.o handlers.o manager.o ftran_structs.o field.o sdl_help.o scroll_bar.o input_maker.o string+.o button_manager.o button.o derived_buttons.o
+objects = main.o handlers.o manager.o ftran_structs.o field.o sdl_help.o scroll_bar.o input_maker.o string+.o button_manager.o button.o derived_buttons.o text_box.o
 
 #executable name
 name = andiamo
@@ -24,7 +24,7 @@ main.o: main.cc sdl_help.h handlers.h input_maker.h button_manager.h
 handlers.o: handlers.cc handlers.h sdl_help.h button_manager.h
 	g++ $(c_flg) -c handlers.cc
 
-sdl_help.o: sdl_help.cc sdl_help.h manager.h scroll_bar.h input_maker.h
+sdl_help.o: sdl_help.cc sdl_help.h manager.h scroll_bar.h input_maker.h text_box.h
 	g++ $(c_flg) -c sdl_help.cc
 
 scroll_bar.o: scroll_bar.cc scroll_bar.h
@@ -33,7 +33,7 @@ scroll_bar.o: scroll_bar.cc scroll_bar.h
 field.o: field.cc field.h
 	g++ $(c_flg) -c field.cc
 
-button_manager.o: button_manager.cc button_manager.h button.h derived_buttons.h
+button_manager.o: button_manager.cc button_manager.h button.h derived_buttons.h text_box.h
 	g++ $(c_flg) -c button_manager.cc
 
 button.o: button.cc button.h derived_buttons.h
@@ -50,6 +50,9 @@ ftran_structs.o: ftran_structs.cc ftran_structs.h
 
 input_maker.o: input_maker.cc input_maker.h string+.h
 	g++ $(c_flg) -c input_maker.cc
+
+text_box.o: text_box.cc text_box.h sdl_help.h
+	g++ $(c_flg) -c text_box.cc
 
 string.o: string+.cc string+.h
 	g++ $(c_flg) -c string+.cc

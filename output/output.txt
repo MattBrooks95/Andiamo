@@ -10,4 +10,4 @@ NZ3=    1
 TCPR=    0
 FNRME2=    1.00
 NGF=    2
-TCTITLE="ProjecA=    1     Z=        0"
+TCTITLE="Why is this so slow"

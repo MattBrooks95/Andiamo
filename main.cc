@@ -12,7 +12,6 @@
 using namespace std;
 
 //making this global and giving it a unique name, so the exit button can change it
-//this should have serious consequences until it's thoroughly debugged
 bool main_done = false;
 
  /*! main() handles sdl events (keypresses, mouse movements), instantiates an sdl_help object,
@@ -73,18 +72,12 @@ int main(){
 
 
 		case SDL_QUIT:
-				//does a mini loop that implements exit_button's functionality
-				//where the user has to click yes or no for it to go away
-				b_manager.get_exit_dialogue().handle_click(big_event);
+			//does a mini loop that implements exit_button's functionality
+			//where the user has to click yes or no for it to go away
+			b_manager.get_exit_dialogue().handle_click(big_event);
+			//main_done = true;
 			break;
 
-		//as of right now 5/11/17, this section is definitely moot because mouse motion is filtered
-		//out of the input queue
-		//case SDL_MOUSEMOTION: //I don't think anything will care about the mouse moving,
-					//only clicks. Unless we get fancy with reactive animations
-			//cout << big_event.motion.x << " " << big_event.motion.y << endl;
-
-			//break;
 
 		case SDL_KEYDOWN:
 			handle_key_down(big_event,sdl_helper);

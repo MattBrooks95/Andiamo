@@ -423,7 +423,7 @@ bool sdl_help::in(int click_x, int click_y,const SDL_Rect& rect) const{
 	return false; //return false otherwise
 }
 
-//############################ NON-MEMBER HELPERS ##########################################################
+
 
 
 void sdl_help::calc_corners(){
@@ -501,7 +501,7 @@ void sdl_help::calc_corners(){
 			curr_width = curr_width + candidates[i].width + horiz_padding;
 
 			//similarly keep track of the height of this row , account for padding
-			int temp_height = tile_bag.tiles[candidates[i].index].get_size().height +
+			unsigned int temp_height = tile_bag.tiles[candidates[i].index].get_size().height +
 					  + vert_padding;
 			if(temp_height > max_height) {//save new max height
 				max_height = temp_height;
@@ -536,6 +536,8 @@ void sdl_help::calc_corners(){
 	tile_bag.set_area(area.width,area.height);
 
 }
+
+//############################ NON-MEMBER HELPERS ##########################################################
 
 bool compare_width(index_and_width& left, index_and_width& right){
 	if(left.width < right.width) return true;

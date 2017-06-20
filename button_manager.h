@@ -2,14 +2,16 @@
 #pragma once
 #include<SDL2/SDL.h>
 #include<SDL2/SDL_image.h>
-
+#include<SDL2/SDL_ttf.h>
 #include<iostream>
 #include<string>
 #include<fstream>
-#include "sdl_help.h"
+
 
 #include "button.h"
 #include "derived_buttons.h"
+
+#include "sdl_help.h"
 
 //! button_manager is a manager for the different derivations of class button
 /*! these buttons should either stay in a box below the tiles, OR be fixed to the window kind of like a HUD,
@@ -38,6 +40,13 @@ class button_manager{
 	/*! it also calls draw_tray() at the very beginning, so that the tray is drawn "below" the buttons */
 	void draw_buttons();
 
+	//! logic to handle sdl_inputs and backspaces is here
+	/*! it has to be here, because the text boxes do not have reference to all the other buttons
+	 *and can't draw them every frame, so whatever buttons you're not interacting with would disappear.
+	 *doing the loop in the button_manager should fix this issue. */
+	void text_box_loop(text_box_button* current_button,SDL_Event& event);
+
+
 	//! this member calls each button's virtual handle_click() member
 	/*! a notable exception is the 'exit dialogue' button, because it's logic is partially controlled
 	 *via main(), because it has special logic. It shouldn't be placed with the other buttons, as it
@@ -52,7 +61,7 @@ class button_manager{
 
 	std::string button_image_p;//!< this is a string that describes the path to the button's image files
 
-	sdl_help* sdl_helper;//!< this is a pointer to the main graphics class, for renderer access
+	sdl_help* sdl_helper;//!< this is a pointer to the main graphics class, for renderer and font access
   private:
 
 	SDL_Surface* button_tray_surf;//!< save the surface for the tray on which buttons sit
@@ -66,12 +75,14 @@ class button_manager{
 
 
 	button default_test;//!< example of a base class instantiation, not actually for use
-	button output_fname;//!< button to allow user to select where to output the HF input file
-	button t_coefficients;//!< button to allow user to select the input transmission coefficients file
+
+	output_file_button output_fname;//!< button to allow user to select where to output the HF input file
+
+	//! button to allow user to select the input transmission coefficients file
+	TC_input_file_button t_coefficients;
+
 	button lets_go;//!< button to generate output
 	graphing_button graphing_options;//!< button to allow user to select graphing options
 	exit_button exit_dialogue; //! first class that inherits from button default class, handles exiting
-	//button make_output;
-	//button output_file_set;
 
 };

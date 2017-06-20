@@ -57,7 +57,7 @@ class button{
 	/*! it uses virtual was_clicked() to figure out if the user actually clicked on it, and then
 	 *it calls virtual click_helper() to implement the "work" resultant of it being clicked
 	 *\param mouse_event is the SDL_Event that contains the click information */
-	virtual void handle_click(SDL_Event& mouse_event);
+	virtual bool handle_click(SDL_Event& mouse_event);
 	//! this virtual function does the boolean logic for handle_click()
 	/*! \param mouse_event is the SDL_Event that contains the click information */
 	virtual bool was_clicked(SDL_Event& mouse_event);
@@ -69,7 +69,8 @@ class button{
 	/*! \param image_name_in is what the name of the image will be set to, like "default_button.png"
 	 *\param image_p_in is what the path to the button's asset directory will be set to
 	 *\param sdl_help_in is the pointer to the main graphics class that will be saved in sdl_helper */
-	virtual void init(std::string image_name_in, std::string image_p_in,sdl_help* sdl_help_in);
+	virtual void init(const std::string& image_name_in,const std::string& image_p_in,
+			  sdl_help* sdl_help_in);
 
 	//##################### GETTERS AND SETTERS ###########################################
 	int get_xloc() { return xloc;}
@@ -115,9 +116,7 @@ struct active_area{
 	//! boolean variable to check mouse click coords against this active area's location
 	/*! \param event is the SDL event from main that contains the click information */
 	bool clicked(SDL_Event& event){
-		std::cout << "MOUSE " << event.button.x << ":" << event.button.y << std::endl;
-		std::cout << "My Area: X=" << xloc << "-" << xloc + width << " Y= " << yloc << "-" 
-			  << yloc + height << std::endl;
+
 		if( (event.button.x > xloc && event.button.x < xloc + width) &&
 		    (event.button.y > yloc && event.button.y < yloc + height) ){
 			return true;
@@ -137,6 +136,12 @@ struct active_area{
 	int width;//!< texture's width
 	int height;//!< texture's height
 };
+
+
+
+
+
+
 
 
 

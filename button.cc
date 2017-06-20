@@ -29,7 +29,7 @@ button::~button(){
 	SDL_DestroyTexture(button_texture);
 }
 
-void button::init(string image_name_in, string image_p_in,sdl_help* sdl_help_in){
+void button::init(const string& image_name_in,const string& image_p_in,sdl_help* sdl_help_in){
 
 	sdl_helper = sdl_help_in;
 
@@ -90,10 +90,12 @@ void button::force_corner_loc(int xloc_in, int yloc_in){
 }
 
 //################## virtual click members #############
-void button::handle_click(SDL_Event& mouse_event){
+bool button::handle_click(SDL_Event& mouse_event){
 	if( was_clicked(mouse_event) ){
 		click_helper(mouse_event);
+		return true;
 	}
+	return false;
 }
 
 bool button::was_clicked(SDL_Event& mouse_event){
@@ -105,7 +107,7 @@ bool button::was_clicked(SDL_Event& mouse_event){
 }
 
 void button::click_helper(SDL_Event& mouse_event){
-	cout << " you clicked me lmao" << endl;
+	cout << "default button click_helper" << endl;
 
 
 }
