@@ -7,12 +7,6 @@ andy_tile.png
 150
 50
 andy
-output
-c filename to output to
-andy_tile.png
-200
-75
-andy
 A
 c mass number of first compound nucleus
 andy_tile.png
@@ -53,7 +47,9 @@ andy_tile.png
 50
 andy
 ICM
-c reference frame of transmission coefficients: 0 = energies given in lab, 1 = energies given in center-of-mass
+c reference frame of transmission coefficients:
+c 0 = energies given in lab,
+c 1 = energies given in center-of-mass
 andy_tile.png
 150
 50
@@ -66,7 +62,8 @@ andy_tile.png
 50
 andy
 TCPR
-c 0 = do not print transmission coefficients, 1 = print transmission coefficients (title only) 
+c 0 = do not print transmission coefficients,
+c 1 = print transmission coefficients (title only) 
 c >1 print complete transmission of coefficients
 andy_tile.png
 150
@@ -117,11 +114,6 @@ andy_tile.png
 andy
 TTAB
 c transmission coefficient
-andy_tile.png
-150
-50
-andy
-no_desc
 andy_tile.png
 150
 50

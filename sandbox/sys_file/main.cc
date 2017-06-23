@@ -1,20 +1,26 @@
 #include<iostream>
 #include<fstream>
 #include<cstdlib>
+
 using namespace std;
 
-
+//this is a practise function sorts to see how parts of button and input_manager should work
 int main(){
 
-	int dir_results = system("mkdir output");
-	dir_results = system("touch output/output.txt");
-	cout << dir_results << endl;
-	fstream outs;
-	outs.open("./output/output.txt");
-
+	ofstream outs;
+	outs.open("./output/output.txt",std::fstream::trunc);
 	if(outs.fail()){
-		cout << "It didn't work..." << endl;
+		cout << "Out fstream failed." << endl;
+		cout << "./output/ dir probably doesn't exist, creating it..." << endl;
+		system("mkdir output");
+		outs.open("./output/output.txt",std::fstream::trunc);
+		if(!outs.fail()){
+			cout << "Made ./output/ dir, seems to be fixed." << endl;
+		} else {
+			cout << "File stream still failed." << endl;
+		}
 	}
+	//outs << "KONO DIO DA" << endl;
         outs << "There are countless ingredients that make up the human "
 	     << "body and mind, like \n"
 	     << "all components that make up me, as an individual.\n"

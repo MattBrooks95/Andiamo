@@ -181,6 +181,10 @@ class sdl_help{
 	//!this member is non-const getter for the tile_locations vector
 	//std::vector<SDL_Rect>& get_locations(){ return tile_locations;}
 
+	//! this member provides by-reference access to the input_maker object
+	input_maker& get_io_handler() { return io_handler; }
+
+
         //! This member is a const getter for the tile/card manager
 	/*! \return tile_bag is a const reference to the tile_bag field. It is accessed
 	 * some_object.get_mgr().tile_bag_member(). Tile bag may not be changed*/

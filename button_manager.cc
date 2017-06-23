@@ -253,6 +253,26 @@ void button_manager::click_handling(SDL_Event& mouse_event){
 
 }
 
+void button_manager::clean_up(){
+	input_maker& io_handler = sdl_helper->get_io_handler();
+
+	cout << "In clean up function." << endl;
+	cout << "Input makers output file name is: " << io_handler.output_file_name <<  endl;
+	cout << "Output file name buttons user-entered value is " << output_fname.my_text_box.text << endl;
+	if(output_fname.my_text_box.text.size() == 0 || output_fname.my_text_box.text == " "){
+		cout << "Output file name was not supplied, using default \"output.txt\"." << endl;
+
+	} else {
+
+		io_handler.output_file_name = output_fname.my_text_box.text;
+	}
+	cout << "Input maker's output path after change: " << io_handler.output_file_name << endl;
+
+
+}
+
+
+
 
 
 

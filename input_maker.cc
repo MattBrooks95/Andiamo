@@ -1,7 +1,13 @@
 //! \file input_maker.cc \brief implements the functions defined in input_maker.h
 
-#include "input_maker.h"
 #include<regex>
+#include<iomanip>
+
+#include "input_maker.h"
+
+
+#define F << setw(8) <<
+#define I << setw(5) <<
 using namespace std;
 
 input_maker::input_maker(string output_file_name_in,string config_file_name_in){
@@ -161,10 +167,17 @@ void input_maker::output(){
 	//and this class's output logic
 
 	ofstream outs;
-	outs.open( (output_p+output_file_name).c_str() );
+	outs.open( (output_p+output_file_name).c_str(),std::fstream::trunc );
 	if(outs.fail()) {
 		cout << "Error! Can not open/create output file: |" << output_p+output_file_name << "|" << endl;
-		return;
+		cout << "Attemping output directory creation." << endl;
+		system("mkdir output");
+		outs.open( (output_p+output_file_name).c_str(),std::fstream::trunc);
+		if(outs.fail()){
+			cout << "Opening output stream failed again." << endl;
+			return;
+		} 
+
 	}
 
 
@@ -173,28 +186,75 @@ void input_maker::output(){
 	unsigned int r8_index = 0; //as their index likely won't line up with names_in_order's
 	unsigned int str_index = 0;
 
-	for(unsigned int c = 0; c < names_in_order.size();c++){
+	//SET UP LINE 1##########################################################################################
+	if(string_params[0].name != "label" || string_params.size() == 0){
+		cout << "Error in input_maker, 'label' parameter not found in vector string_params "
+		     << "as it should be." << endl;
+		if( string_params.size() != 0 ){
+			cout << "Furthermore, the string_params vector is empty." << endl;
+			cout << "exiting" << endl;
+			return;
+		}
+	} else{
+
+		output_string(outs,string_params[0].size,string_params[0].value);
+		outs << "\n";
+	}
+	//#########################################################################################################
+
+	//SET UP LINE 2############################################################################################
+
+	//note, setw(something) needs to be called before every item is printed
+	//this is really annoying, so I have a macro up top where F = "<< setw(8) << setprecision(2)" for
+	//printing the real 8 values
+
+
+	//set up decimal place precision
+	outs << fixed << setprecision(1);
+	// ELAB A Z FNRME1 FNRMM1
+	outs F real8_params[0].value F real8_params[1].value F real8_params[2].value F real8_params[3].value
+	     F real8_params[4].value;
+
+	//I = "<< setw(5) <<" macro up top
+	//IENCH, ICM, NZ3, TCPR
+	outs I int4_params[0].value I int4_params[1].value I int4_params[2].value I int4_params[3].value;
+
+	//make field width 8 again, FNRME2
+	outs F real8_params[5].value;
+
+	//put width back to 5 for NGF
+	outs I int4_params[4].value;
+	//#########################################################################################################
+
+	/*for(unsigned int c = 0; c < names_in_order.size();c++){
 
 		if( int4_params[int_index].name == names_in_order[c] && !int4_params.empty() ){
 			//this matches the name of the parameter whose turn it is to be output to the file
-			outs << int4_params[int_index].name << "=" ;
+			//outs << int4_params[int_index].name << "=" ;
 			outs.width(5);
 			outs<< int4_params[int_index].value << endl;
 			int_index++;
 
 		} else if( real8_params[r8_index].name == names_in_order[c] && !real8_params.empty() ) {
 			//or this does
-			outs << real8_params[r8_index].name << "=";
+
+			//outs << real8_params[r8_index].name << "=";
 			outs.setf(std::ios_base::fixed);
 			outs.precision(2); outs.width(8); 
-			outs << real8_params[r8_index].value << endl;
+			outs << real8_params[r8_index].value << endl; 
+
 			r8_index++;
 
 			outs.unsetf(std::ios_base::fixed);
 
 		} else if( string_params[str_index].name == names_in_order[c] && !string_params.empty() ) {
 			//or this does
-			outs << string_params[str_index].name << "=" << string_params[str_index].value << endl;
+
+			//don't print the quotation marks that were used in the input to make regex easier
+			unsigned int end = string_params[str_index].value.size()-2;
+			string print_me = string_params[str_index].value.substr(1,end);
+
+			outs << string_params[str_index].name << "=" << print_me << endl;
 			str_index++;
 
 		} else {
@@ -204,11 +264,28 @@ void input_maker::output(){
 			     << " not found by name, file is likely erroneous." << endl;
 		}
 
-	}
+	}*/
+
+	//close the output file stream
 	outs.close();
 }
 
+void output_string(ofstream& outs,const unsigned int& size,string& string_in){
+	//set up output flags
+	outs << setw(size) << left;
+	//if string is in quotation marks, don't print them
+	if(string_in[0] == '\"' && string_in[string_in.size()-1] == '\"'){
+		//take out the "" that were used for the regular expression matching
+		string output_me = string_in.substr(1,string_in.size()-2);
+		//print to the file
+		outs << output_me;
+	} else {//elsewise, just print the string
 
+		outs << string_in;
+
+	}
+
+}
 
 
 

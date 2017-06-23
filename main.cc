@@ -14,6 +14,7 @@ using namespace std;
 //making this global and giving it a unique name, so the exit button can change it
 bool main_done = false;
 
+
  /*! main() handles sdl events (keypresses, mouse movements), instantiates an sdl_help object,
   *and calls its drawing functions per run of the loop. It will eventually have options for resizing
   *the window, and letting the user pick the frame rate.
@@ -121,6 +122,8 @@ int main(){
 	SDL_Delay(50);//this is an arbitrary number to slow down the loop speed
 		     //eventually this will vary intelligently based on desired framerate
   }//end of while loop
+  b_manager.clean_up();
+
   b_manager.print_buttons();
   sdl_helper.get_mgr().update_io_maker();
   //sdl_helper.print_size_info(cout);
@@ -132,3 +135,15 @@ int main(){
   
   return 0;//Exit success
 }
+
+
+
+
+
+
+
+
+
+
+
+

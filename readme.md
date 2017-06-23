@@ -28,7 +28,7 @@ on both. We are developing for Linux for now.
 The tools in use thus far are Doxygen http://www.stack.nl/~dimitri/doxygen/
 , SDL2 https://www.libsdl.org/ , SDL_Image https://www.libsdl.org/projects/SDL_image/ and Valgrind http://valgrind.org/
 If these tributes are not to the liking of these tool's respective creators please email me about how I can go 
-about fixing it. I believe people deserve credit when it is do, but I'm not sure how copyrights and licences 
+about fixing it. I believe people deserve credit when it is do, but I'm not sure how copyrights and licenses 
 work.
 
 Matt Brooks

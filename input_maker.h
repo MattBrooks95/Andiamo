@@ -7,6 +7,7 @@
 #include<iostream>
 #include<fstream>
 #include<regex>
+#include<cstdlib>
 
 #include "ftran_structs.h"
 #include "string+.h"
@@ -42,10 +43,12 @@ class input_maker{
 	//! return string_params BY REFERENCE
 	std::vector<param_string>& get_string_params(){return string_params;}
 
+	std::string output_file_name;//!< \brief name of the file in config_p's folder where output will be printed
+
   private:
 
 	std::string config_p; //!< \brief contains a string that provides the relative path to the config files
-	std::string output_file_name;//!< \brief name of the file in config_p's folder where output will be printed
+
 	std::string output_p; //!< \brief path to the output folder
 	std::string file_name; //!< \brief set by the constructor to tell it which config file to use
 
@@ -55,14 +58,35 @@ class input_maker{
 	std::vector<std::string> names_in_order;
 
 	//! contains a variable number of in4 fortran-style variables
-	/* it's length and contents should be specified in the config file */
+	/* its length and contents should be specified in the config file */
 	std::vector<param_int4> int4_params; 
 
 	//! contains a variable number of real8 fortran-style variables
-	/* it's length and contents should be specified in the config file */
+	/* its length and contents should be specified in the config file */
 	std::vector<param_real8> real8_params;
 
 	//! contains a variable number of c++ style strings, which should be fortran friendly with .c_str()
 	/* I think it'll play nicely with fortran just with .c_str() and .size() */
 	std::vector<param_string> string_params;
 };
+
+
+//! this is a helper function for input_maker::output(), it prints a string to the output file in the right format
+/*! \param outs is the fstream to print to (such as output/output.txt)
+ *\param size is the size read in by input_maker from the configuration file
+ *\param output_me is the ftran_struct string_param to print to the file */
+void output_string(std::ofstream& outs,const unsigned int& size,std::string& string_in); 
+
+
+
+
+
+
+
+
+
+
+
+
+
+

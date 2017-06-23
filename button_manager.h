@@ -46,6 +46,10 @@ class button_manager{
 	 *doing the loop in the button_manager should fix this issue. */
 	void text_box_loop(text_box_button* current_button,SDL_Event& event);
 
+	//! the clean up function lets input_maker know which options the user has selected
+	/*! this will be done by accessing input_maker through the button_managers sdl_helper pointer
+	 *and changing the output paths. */
+	void clean_up();
 
 	//! this member calls each button's virtual handle_click() member
 	/*! a notable exception is the 'exit dialogue' button, because it's logic is partially controlled
