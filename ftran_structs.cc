@@ -110,7 +110,17 @@ void param_real8::operator =(int other){
 }
 //########################################################################################
 
+//###################### INT4 ARRAY ######################################################
+param_int4_array::param_int4_array(unsigned int size_in,bool satisfied_in){
+	size = size_in;
+	satisfied = satisfied_in;
+}
 
+bool param_int4_array::is_satisfied(){
+	return satisfied;
+}
+	
+//########################################################################################
 
 
 

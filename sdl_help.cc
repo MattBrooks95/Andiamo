@@ -6,6 +6,11 @@
 #include<algorithm>
 #include<queue>
 
+//button manager is included here so that sdl_help can access button_manager::draw_buttons()
+//this include CAN'T be in the header file because it creates a circular dependency
+//more pre-project planning on my part would have avoided such a misfortune, I am sorry
+#include "button_manager.h"
+
 using namespace std;
 
 bool sdl_test = false;
@@ -290,14 +295,14 @@ void sdl_help::print_tile_locs(ostream& outs){
 	}
 }
 
-void sdl_help::click_detection(ostream& outs,SDL_Event& event, int click_x, int click_y){
+void sdl_help::click_detection(ostream& outs,SDL_Event& event,button_manager* b_manager, int click_x, int click_y){
 	for(unsigned int c = 0; c < tile_bag.tiles.size();c++){
 
 		if( in(click_x,click_y, tile_bag.tiles[c].get_rect() ) ){
 		//if the mouse click coordinates fall within a tile,
 			if( tile_bag.tiles[c].text_box_clicked(outs,click_x,click_y) ){
 				//if that click fell within the text box
-				text_box_mini_loop(outs,event, tile_bag.tiles[c]);
+				text_box_mini_loop(outs,event,b_manager, tile_bag.tiles[c]);
 
 			} else { //if that click didn't fall within the text box, enact clicked
 				tile_bag.tiles[c].clicked(outs,event,click_x,click_y);//enact that tiles clicked() member
@@ -311,7 +316,7 @@ void sdl_help::click_detection(ostream& outs,SDL_Event& event, int click_x, int 
 
 //thanks to http://lazyfoo.net/tutorials/SDL/32_text_input_and_clipboard_handling/index.php
 //which was used as a reference 
-void sdl_help::text_box_mini_loop(ostream& outs, SDL_Event& event,field& current_tile){
+void sdl_help::text_box_mini_loop(ostream& outs, SDL_Event& event,button_manager* b_manager,field& current_tile){
 
 	SDL_StartTextInput();//turn on the text input background functions
 
@@ -385,6 +390,7 @@ void sdl_help::text_box_mini_loop(ostream& outs, SDL_Event& event,field& current
 			//update picture
 			draw_tiles();
 			draw_sbars();
+			b_manager->draw_buttons();
 			text_was_changed = false;
 			//show updated picture
 			present();

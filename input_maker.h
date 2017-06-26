@@ -9,6 +9,10 @@
 #include<regex>
 #include<cstdlib>
 
+#include<map> //map is an associative array, like could be found in python or perl
+	      //items are accessed by name (key)
+
+
 #include "ftran_structs.h"
 #include "string+.h"
 
@@ -43,6 +47,7 @@ class input_maker{
 	//! return string_params BY REFERENCE
 	std::vector<param_string>& get_string_params(){return string_params;}
 
+
 	std::string output_file_name;//!< \brief name of the file in config_p's folder where output will be printed
 
   private:
@@ -68,15 +73,30 @@ class input_maker{
 	//! contains a variable number of c++ style strings, which should be fortran friendly with .c_str()
 	/* I think it'll play nicely with fortran just with .c_str() and .size() */
 	std::vector<param_string> string_params;
+
+	//std::vector<param_int4_array> int4_array_params;
+	
+	std::map<std::string,param_int4_array> int4_array_params;
+
 };
 
-
+//##################################  NON MEMBER HELPERS  #############################################################
 //! this is a helper function for input_maker::output(), it prints a string to the output file in the right format
 /*! \param outs is the fstream to print to (such as output/output.txt)
  *\param size is the size read in by input_maker from the configuration file
  *\param output_me is the ftran_struct string_param to print to the file */
-void output_string(std::ofstream& outs,const unsigned int& size,std::string& string_in); 
+void output_string(std::ofstream& outs,const unsigned int& size,const std::string& string_in); 
 
+//! this function sets up line one of the HF input file
+void do_line1(const std::vector<param_string>& string_params,std::ofstream& outs);
+
+//! this function sets up line two of the HF input file
+void do_line2(const std::vector<param_real8>& real8_params,const std::vector<param_int4> int4_params,
+	      std::ofstream& outs);
+
+
+
+//######################################################################################################################
 
 
 

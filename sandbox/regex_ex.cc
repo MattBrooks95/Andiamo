@@ -60,6 +60,24 @@ int main()
 	}
 
 
+	regex int_array_size("\\([0-9]+?\\)");
+	smatch size_match;
+
+	string array_size_test_string = "I4(1776) SHREK = 2001";
+
+	regex_search(array_size_test_string,size_match,int_array_size);
+
+	if(size_match.ready()){
+		string int_size_string = size_match[0].str();
+		cout << int_size_string << endl;
+
+	} else {
+		cout << "Error! No matches." << endl;
+
+	}
+
+
+
 /*
     string example = "HF2002";
     string example_2 = "HF2002.png";

@@ -90,3 +90,18 @@ class button_manager{
 	exit_button exit_dialogue; //! first class that inherits from button default class, handles exiting
 
 };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

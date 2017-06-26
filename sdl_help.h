@@ -10,6 +10,9 @@
 #include "manager.h"
 #include "input_maker.h"
 
+class button_manager; //forward declaration,so sdl can be passed a button_manager pointer without needing
+		      //to #include "button_manager.h", because doing so is a circular dependency
+
 
 //! this structure is used to store the dimensions of the window itself
 /*! eventually the user will be able to change this to a variety of sizes */
@@ -135,13 +138,13 @@ class sdl_help{
 	 *\param outs output stream to send messages to
 	 *\param click_x mouse click's x value (distance horizontaly from left side of window)
 	 *\param click_y mouse click's y value (distance vertically from top of window) */
-	void click_detection(std::ostream& outs, SDL_Event& event, int click_x, int click_y);
+	void click_detection(std::ostream& outs, SDL_Event& event,button_manager* b_manager, int click_x, int click_y);
 
 	//! this function handles the mini-loop where the user can edit the text box
 	/*! should turn off keybindings so keystrokes are interpreted as input to the respective fields
 	 *temporary storage string. This member started off being in class field, but I've since moved it to
 	 *sdl_help, because sdl_help needs to be able to draw in this loop */
-	void text_box_mini_loop(std::ostream& outs, SDL_Event& event, field& current_tile);
+	void text_box_mini_loop(std::ostream& outs, SDL_Event& event,button_manager* b_manager, field& current_tile);
 
 	//! this function helps text_box_mini_loop by doing the functions related to the text input event
 	void text_box_mini_loop_helper(SDL_Keysym& key,field& current_tile,bool& text_was_changed);

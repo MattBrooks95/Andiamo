@@ -25,6 +25,7 @@ input_maker::~input_maker(){
 void input_maker::init(){
 	bool init_test = false;
 
+
 	ifstream ins;
 	ins.open( (config_p+file_name).c_str() );
 	if(ins.fail()){
@@ -40,7 +41,7 @@ void input_maker::init(){
 	regex re_real8("\\s*?R8\\s+?[A-Za-z0-9]+?\\s+?=\\s+?[0-9]*?\\.[0-9]*?");
 
 	regex string_array_size_pattern("\\|\\d+?\\|");
-	regex int_array_size_pattern("");
+	regex int_array_size_pattern("\\([0-9]+?\\)");
 
 
 
@@ -144,12 +145,37 @@ void input_maker::init(){
 			
 		} else if( regex_match(temp_string,re_i4_array) ){
 			if(init_test) cout << "Is an array of integers!" << endl;
-			/*
-			cout << "This is that line split along spaces: " << endl;
+			
+			//cout << "This is that line split along spaces: " << endl;
 			vector<string> tokens = split(temp_string,' ');
+			/*
 			for(unsigned int c = 0; c < tokens.size() ;c++){
 				cout << tokens[c] << endl;
 			}*/
+
+			smatch size_match;//store numerical result of grabbing the array's size
+
+			//have regex search out the integer size value
+			regex_search(tokens[0],size_match,int_array_size_pattern);
+
+			//if a match was found
+			if( size_match.ready() ){
+
+				//create a string that contains just the size of the array
+				string temp_size_string = size_match[0].str().substr(1,size_match[0].str().size()-2);
+				int array_size = stoi(temp_size_string);
+				//cout << temp_size_string << endl;
+
+				
+
+			} else {
+				//if there was no match for some reason, print an error message
+				cout << "Error! Could not determine array size from int4 array"
+				     << " declaration line." << endl;
+			}
+
+
+
 
 		} else {
 			cout << "Error! Line type wasn't determined." << endl;
@@ -182,95 +208,20 @@ void input_maker::output(){
 
 
 
-	unsigned int int_index = 0; //keep track of the 'front' of the variable vectors
-	unsigned int r8_index = 0; //as their index likely won't line up with names_in_order's
-	unsigned int str_index = 0;
-
 	//SET UP LINE 1##########################################################################################
-	if(string_params[0].name != "label" || string_params.size() == 0){
-		cout << "Error in input_maker, 'label' parameter not found in vector string_params "
-		     << "as it should be." << endl;
-		if( string_params.size() != 0 ){
-			cout << "Furthermore, the string_params vector is empty." << endl;
-			cout << "exiting" << endl;
-			return;
-		}
-	} else{
-
-		output_string(outs,string_params[0].size,string_params[0].value);
-		outs << "\n";
-	}
+	do_line1(string_params,outs);
 	//#########################################################################################################
 
 	//SET UP LINE 2############################################################################################
-
-	//note, setw(something) needs to be called before every item is printed
-	//this is really annoying, so I have a macro up top where F = "<< setw(8) << setprecision(2)" for
-	//printing the real 8 values
-
-
-	//set up decimal place precision
-	outs << fixed << setprecision(1);
-	// ELAB A Z FNRME1 FNRMM1
-	outs F real8_params[0].value F real8_params[1].value F real8_params[2].value F real8_params[3].value
-	     F real8_params[4].value;
-
-	//I = "<< setw(5) <<" macro up top
-	//IENCH, ICM, NZ3, TCPR
-	outs I int4_params[0].value I int4_params[1].value I int4_params[2].value I int4_params[3].value;
-
-	//make field width 8 again, FNRME2
-	outs F real8_params[5].value;
-
-	//put width back to 5 for NGF
-	outs I int4_params[4].value;
+	do_line2(real8_params, int4_params, outs);
 	//#########################################################################################################
 
-	/*for(unsigned int c = 0; c < names_in_order.size();c++){
-
-		if( int4_params[int_index].name == names_in_order[c] && !int4_params.empty() ){
-			//this matches the name of the parameter whose turn it is to be output to the file
-			//outs << int4_params[int_index].name << "=" ;
-			outs.width(5);
-			outs<< int4_params[int_index].value << endl;
-			int_index++;
-
-		} else if( real8_params[r8_index].name == names_in_order[c] && !real8_params.empty() ) {
-			//or this does
-
-			//outs << real8_params[r8_index].name << "=";
-			outs.setf(std::ios_base::fixed);
-			outs.precision(2); outs.width(8); 
-			outs << real8_params[r8_index].value << endl; 
-
-			r8_index++;
-
-			outs.unsetf(std::ios_base::fixed);
-
-		} else if( string_params[str_index].name == names_in_order[c] && !string_params.empty() ) {
-			//or this does
-
-			//don't print the quotation marks that were used in the input to make regex easier
-			unsigned int end = string_params[str_index].value.size()-2;
-			string print_me = string_params[str_index].value.substr(1,end);
-
-			outs << string_params[str_index].name << "=" << print_me << endl;
-			str_index++;
-
-		} else {
-			//woops, error handling
-			cout << "Error in input_maker's output() function." 
-			     << " Variable " << names_in_order[c] 
-			     << " not found by name, file is likely erroneous." << endl;
-		}
-
-	}*/
 
 	//close the output file stream
 	outs.close();
 }
-
-void output_string(ofstream& outs,const unsigned int& size,string& string_in){
+//########################## NON MEMBER HELPERS #################################################################
+void output_string(ofstream& outs,const unsigned int& size,const string& string_in){
 	//set up output flags
 	outs << setw(size) << left;
 	//if string is in quotation marks, don't print them
@@ -287,7 +238,51 @@ void output_string(ofstream& outs,const unsigned int& size,string& string_in){
 
 }
 
+void do_line1(const vector<param_string>& string_params,ofstream& outs){
 
+	if(string_params[0].name != "label" || string_params.size() == 0){
+		cout << "Error in input_maker, 'label' parameter not found in vector string_params "
+		     << "as it should be." << endl;
+
+		if( string_params.size() != 0 ){
+			cout << "Furthermore, the string_params vector is empty." << endl;
+			cout << "exiting" << endl;
+			return;
+		}
+
+	} else{
+
+		output_string(outs,string_params[0].size,string_params[0].value);
+		outs << "\n";
+	}
+
+}
+
+void do_line2(const vector<param_real8>& real8_params,const vector<param_int4> int4_params, ofstream& outs){
+
+	//note, setw(something) needs to be called before every item is printed
+	//this is really annoying, so I have a macro up top where F = "<< setw(8) << " for
+	//printing the real 8 values
+
+	//set up decimal place precision
+	outs << fixed << setprecision(1);
+	// ELAB A Z FNRME1 FNRMM1
+	outs F real8_params[0].value F real8_params[1].value F real8_params[2].value F real8_params[3].value
+	     F real8_params[4].value;
+
+	//I = "<< setw(5) <<" macro up top
+	//IENCH, ICM, NZ3, TCPR
+	outs I int4_params[0].value I int4_params[1].value I int4_params[2].value I int4_params[3].value;
+
+	//make field width 8 again, FNRME2
+	outs F real8_params[5].value;
+
+	//put width back to 5 for NGF
+	outs I int4_params[4].value;
+}
+
+
+//#################################################################################################################
 
 
 

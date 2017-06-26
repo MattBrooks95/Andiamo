@@ -1,6 +1,7 @@
 //! \file ftran_structs.h declares some structs that make keeping track out outputs easy
 #pragma once
 #include<iostream>
+#include<vector> 
 
 //! param_int4 is a default c++ integer "and more"
 /*! it allows storage of a name that serves a contextual purpose, and a value that is compatible with Fortran INT*4 */
@@ -14,7 +15,7 @@ struct param_int4{
 
 	//! I don't know if this works
 	/*! Something like this will need to be done when/if we have Andiamo
-	 * running the feshbach code in place */
+	 * running the Hauser-Feshbach code in place */
 	int* get_ptr();
 
 	//! operator for setting value to be equivalent to a right hand param_real8
@@ -97,17 +98,21 @@ struct param_string{
 	std::string name; //!< is the contextual name for the variable, like the label line in an HF input file
 	std::string value; //!< is the actual string that should be output and cared about
 };
-//this needs implemented in some way at some point, but I'm not worrying about it now
+
 //! this struct contains the information about a fortran array given in HF_config
-/*struct param_int4_array{
-	
-	
+/*! the arrays here will not have a name field, I'm probably going to use <map>, and have input_maker
+  *store a map of these, so that they can be easily found with their 'key', most likely a string */
+struct param_int4_array{
+	param_int4_array(unsigned int size = 1,bool satisfied_in=false);
 
-	std::string name; //!< is the name for the parameter
-	int size;          //!< size of the array as specified by HF_config file
-	vector<int> values;//!< is the array of integers 
+	//! satisfied should start off false, then become true when size = values.size() (all values filled in)
+	bool is_satisfied();
+	
+	bool satisfied;
+	unsigned int size;          //!< size of the array as specified by HF_config file - should never change
 
-}; */
+	std::vector<int> values;//!< is the array of integers 
+};
 /*
 struct param_int8{
 	param_int8(std::string name_in,long long int val_in){

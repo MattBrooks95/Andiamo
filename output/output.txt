@@ -1,13 +1,2 @@
-label="Fe58(He-3,n)Fe58:HF2002 Calculations, Ed=10.0 MeV."
-ELAB=    9.90
-A=   61.00
-Z=   28.00
-FNRME1=    1.00
-FNRMM1=    1.00
-IENCH=    7
-ICM=    1
-NZ3=    1
-TCPR=    0
-FNRME2=    1.00
-NGF=    2
-TCTITLE="Why is this so slow"
+Fe58(He-3,n)Fe58:HF2002 Calculations, Ed=10.0 MeV.                             
+9.9     61.0    28.0    1.0     1.0     7    1    1    0    1.0     2    
