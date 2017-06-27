@@ -10,7 +10,10 @@ int main()
 	//set up regex matches
 	regex re_comment("\\s*?#.*");
 	regex int_four("\\s*?I4\\s+?[A-Za-z0-9]+?\\s+?=\\s+?[0-9]*");
-	regex int_array("\\s*?I4\\(\\s*?[0-9]+?\\s*?\\)\\s+?[A-Za-z0-9]+?\\s+?=\\s+?[0-9]*");
+
+	//regex int_array("\\s*?I4\\(\\s*?[0-9]+?\\s*?\\)\\s+?[A-Za-z0-9]+?\\s+?=\\s+?[0-9]*");
+	regex int_array("\\s*?I4\\(\\s*?[0-9]+?\\s*?\\)\\s*?[A-Za-z0-9]+?\\s*?=\\s*?\"(\\s*?[0-9]*?\\s*?,?)+?\"");
+	//#########################################################################^
 	regex char_array("\\s*?C\\*\\s*?[A-Za-z]+?\\|[0-9]+?\\|\\s*?=\\s*?\".+?\"");
 	regex real_eight("\\s*?R8\\s+?[A-Za-z0-9]+?\\s+?=\\s+?[0-9]*?\\.[0-9]*?");
 
@@ -22,7 +25,10 @@ int main()
 	string real8_2 = "R8 ROFL = 17.76";
 	string int4_ = "I4 IENCH = 7";
 	string int4_2 = "    I4        LMAO        =        123456789";
-	string int_array_line = "I4(7) NENT = 20";
+
+
+	//string int_array_line = "I4(7) NENT = \"20,20,0,0,0,20\"";
+	string int_array_line = "I4(7) NENT = \"20\"";
 
 	lines.push_back(real8_2);
 	lines.push_back(int4_2);
