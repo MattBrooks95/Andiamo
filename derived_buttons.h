@@ -2,6 +2,7 @@
 #pragma once
 #include "button.h"
 #include "text_box.h"
+#include "input_maker.h"
 //########################## EXIT BUTTON ###########################################################################
 
 //! this class describes the exit dialogue that pops up when the main loop encounters SDL_QUIT
@@ -75,7 +76,7 @@ class text_box_button : public button{
 	//! this is a pure virtual member
 	/*! it must be implemented in classes that inherit from this class, because some will want to
 	 *READ from the input file, and some will want to WRITE to the output file */
-	virtual int work() = 0;
+	virtual int work(input_maker& io_handler) = 0;
 
 
 	//! init also sets up the text box
@@ -96,7 +97,7 @@ class text_box_button : public button{
 class TC_input_file_button : public text_box_button{
   public:
 	//! this function should make sure that the transmission coefficients are read from the given file
-	int work();
+	int work(input_maker& io_helper);
   private:
 
 };
@@ -104,7 +105,7 @@ class TC_input_file_button : public text_box_button{
 class output_file_button : public text_box_button{
   public:
 	//! this function should make sure input_maker writes to the given file name
-	int work();
+	int work(input_maker& io_helper);
 
   private:
 
@@ -126,7 +127,7 @@ class graphing_button : public text_box_button{
 	void print_me();
 
 	//! this work function needs implemented to make sure graphing is output to the given file name
-	int work();
+	int work(input_maker& io_handler);
 
 	//! does button::init() and also sets up the checked texture
 	void init(const std::string& image_name_in, const std::string& image_p_in,sdl_help* sdl_help_in);

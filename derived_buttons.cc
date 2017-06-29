@@ -140,10 +140,35 @@ void text_box_button::force_corner_loc(int xloc_in, int yloc_in){
 }
 
 //###############################################################################################
+	/*
+	cout << "In clean up function." << endl;
+	cout << "Input maker's output file name is: " << io_handler.output_file_name <<  endl;
+	cout << "Input maker's TC input file name is: " << io_handler.TC_input_file_name << endl;
+	cout << "Output file name button's user-entered value is " << output_fname.my_text_box.text << endl;
+	cout << "TC file name button's user-entered value is " << t_coefficients.my_text_box.text << endl;
+	if(output_fname.my_text_box.text.size() == 0 || output_fname.my_text_box.text == " "){
+		cout << "Output file name was not supplied, using default \"output.txt\"." << endl;
 
+	} else {
+
+		io_handler.output_file_name = output_fname.my_text_box.text;
+	}
+	cout << "Input maker's output path after change: " << io_handler.output_file_name << endl;
+*/
 //###################### TRANSMISSION COEFFICIENTS FILE BUTTON ##################################
-int TC_input_file_button::work(){
+int TC_input_file_button::work(input_maker& io_handler){
 	cout << "Hi, I'm Paul! (from TC_input_file_button.work() )" << endl;
+	io_handler.TC_input_file_name = my_text_box.text;//set up the TC In put var in the
+							 //input maker
+	if(my_text_box.text.size() == 0 || my_text_box.text == " "){
+		cout << "No transmission coefficients file name was supplied." << endl;
+
+	} else {
+
+		io_handler.TC_input_file_name = my_text_box.text;//set up the file name from which
+							   //the coefficients will be read
+
+	}
 	return 0;
 }
 
@@ -151,8 +176,14 @@ int TC_input_file_button::work(){
 
 //######################## CREATED HF FILE OUTPUT BUTTON ########################################
 
-int output_file_button::work(){
-	cout << "Hi, I'm Paul! (from TC_input_file_button.work() )" << endl;
+int output_file_button::work(input_maker& io_handler){
+	cout << "Hi, I'm Paul! (from output_file_button.work() )" << endl;
+	if(my_text_box.text.size() == 0 || my_text_box.text == " "){
+		cout << "Output file name was not supplied, using the default \"output.txt\"." << endl;
+	} else {
+		io_handler.output_file_name = my_text_box.text;//set up the output file name var
+							       //in input maker
+	}
 	return 0;
 }
 
@@ -192,7 +223,7 @@ void graphing_button::print_me(){
 	check_box.print_me();
 }
 
-int graphing_button::work(){
+int graphing_button::work(input_maker& io_handler){
 	cout << "Hi, I'm Paul! (from graphing_button.work() )" << endl;
 	return 0;
 }

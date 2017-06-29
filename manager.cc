@@ -237,8 +237,18 @@ void manager::give_fields_defaults(){
 		if(!found){
 			//check the i4_array_params vector
 			try {
-				input_maker_hook->get_i4_array_params().at(tiles[c].tile_name);
-				//set up the fields other values
+				//input_maker_hook->get_i4_array_params().at(tiles[c].tile_name);
+
+				//following code is only ran if the map searching was successful
+				//set up the field's other values
+				tiles[c].int4_array_hook = &input_maker_hook->get_i4_array_params().at(tiles[c].tile_name);
+				//cout << "NENT or LMAX loc:" << &input_maker_hook->get_i4_array_params().at(tiles[c].tile_name);
+				//cout << "THAT TILE'S POINTER:" << tiles[c].int4_array_hook << endl;
+
+				tiles[c].temp_input = tiles[c].int4_array_hook->get_string();				
+
+				tiles[c].text_box_init(); //set up the text box surfaces and textures
+
 			} catch (out_of_range& not_found){
 
 				cout << "Tile name:" << tiles[c].tile_name << " not found in any input_maker vector.\n"
@@ -251,8 +261,7 @@ void manager::give_fields_defaults(){
 				    my_iterator++){
 					cout << "Key: " << my_iterator->first << "Name: "
 					     << my_iterator->second.name << endl;
-
-				}
+				} //testing for loop
 			}
 		}
 	}//big for

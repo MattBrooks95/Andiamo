@@ -122,7 +122,8 @@ int main(){
 	SDL_Delay(50);//this is an arbitrary number to slow down the loop speed
 		     //eventually this will vary intelligently based on desired framerate
   }//end of while loop
-  b_manager.clean_up();
+  b_manager.clean_up();//have the button manager set up the necessary file paths in input_maker so
+		       //update_io_maker can output/input things properly
 
   b_manager.print_buttons();
   sdl_helper.get_mgr().update_io_maker();

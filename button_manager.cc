@@ -255,10 +255,12 @@ void button_manager::click_handling(SDL_Event& mouse_event){
 
 void button_manager::clean_up(){
 	input_maker& io_handler = sdl_helper->get_io_handler();
-
+	/*
 	cout << "In clean up function." << endl;
-	cout << "Input makers output file name is: " << io_handler.output_file_name <<  endl;
-	cout << "Output file name buttons user-entered value is " << output_fname.my_text_box.text << endl;
+	cout << "Input maker's output file name is: " << io_handler.output_file_name <<  endl;
+	cout << "Input maker's TC input file name is: " << io_handler.TC_input_file_name << endl;
+	cout << "Output file name button's user-entered value is " << output_fname.my_text_box.text << endl;
+	cout << "TC file name button's user-entered value is " << t_coefficients.my_text_box.text << endl;
 	if(output_fname.my_text_box.text.size() == 0 || output_fname.my_text_box.text == " "){
 		cout << "Output file name was not supplied, using default \"output.txt\"." << endl;
 
@@ -268,6 +270,12 @@ void button_manager::clean_up(){
 	}
 	cout << "Input maker's output path after change: " << io_handler.output_file_name << endl;
 
+	if(t_coefficients.my_text_box.text == 0 || t_coefficients.my_text_box.text == 0){
+	*/
+	output_fname.work(io_handler); //set up input_makers output file location variable
+	t_coefficients.work(io_handler);//set up input_makers transmission coefficients input file location variable
+
+	
 
 }
 

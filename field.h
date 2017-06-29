@@ -164,10 +164,15 @@ class field{
 
 	//! access to this tile's fortran struct in input_maker vector. Set up by manager::give_fields_defaults
 	param_int4* int4_hook;
+
 	//! access to this tile's fortran struct in input_maker vector. Set up by manager::give_fields_defaults
 	param_real8* real8_hook;
+
 	//! access to this tile's fortran struct in input_maker vector. Set up by manager::give_fields_defaults
 	param_string* string_hook;
+
+	//! access to this tile's fortran struct in input_maker vector. Set up by manager::give_fields_defaults
+	param_int4_array* int4_array_hook;
 
 	//! stores text entered from the user overtop the default value which is loaded in with the appropriate ftran_struct hook
 	std::string temp_input;

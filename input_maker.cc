@@ -35,11 +35,11 @@ void input_maker::init(){
 
 	//set up regex matches
 	regex re_comment("\\s*?#.*");
-	regex re_i4("\\s*?I4\\s+?[A-Za-z0-9]+?\\s+?=\\s+?[0-9]*");
+	regex re_i4("\\s*?I4\\s+?[A-Za-z0-9]+?\\s+?=\\s+?[0-9]*\\s*");
 	//regex re_i4_array("\\s*?I4\\(\\s*?[0-9]+?\\s*?\\)\\s+?[A-Za-z0-9]+?\\s+?=\\s+?[0-9]*");
-	regex re_i4_array("\\s*?I4\\(\\s*?[0-9]+?\\s*?\\)\\s*?[A-Za-z0-9]+?\\s*?=\\s*?\"(\\s*?[0-9]*?\\s*?,?)+?\"");
-	regex re_string("\\s*?C\\*\\s*?[A-Za-z]+?\\|[0-9]+?\\|\\s*?=\\s*?\".+?\"");
-	regex re_real8("\\s*?R8\\s+?[A-Za-z0-9]+?\\s+?=\\s+?[0-9]*?\\.[0-9]*?");
+	regex re_i4_array("\\s*?I4\\(\\s*?[0-9]+?\\s*?\\)\\s*?[A-Za-z0-9]+?\\s*?=\\s*?\"(\\s*?[0-9]*?\\s*?,?)+?\"\\s*");
+	regex re_string("\\s*?C\\*\\s*?[A-Za-z]+?\\|[0-9]+?\\|\\s*?=\\s*?\".+?\"\\s*");
+	regex re_real8("\\s*?R8\\s+?[A-Za-z0-9]+?\\s+?=\\s+?[0-9]*?\\.[0-9]*?\\s*");
 
 	regex string_array_size_pattern("\\|\\d+?\\|");
 	regex int_array_size_pattern("\\([0-9]+?\\)");
@@ -222,13 +222,15 @@ void input_maker::output(){
 
 	//SET UP LINE 1##########################################################################################
 	do_line1(string_params,outs);
-	//#########################################################################################################
+	//#######################################################################################################
 
-	//SET UP LINE 2############################################################################################
+	//SET UP LINE 2##########################################################################################
 	do_line2(real8_params, int4_params, outs);
-	//#########################################################################################################
+	//#######################################################################################################
 
-
+	//SET UP LINE 3##########################################################################################
+	do_TC_coefficients(real8_params,int4_array_params,TC_input_file_name,outs);
+	//#######################################################################################################
 	//close the output file stream
 	outs.close();
 }
@@ -293,6 +295,19 @@ void do_line2(const vector<param_real8>& real8_params,const vector<param_int4> i
 	outs I int4_params[4].value;
 }
 
+void do_TC_coefficients(const std::vector<param_real8>& real8_params, const std::map<std::string,param_int4_array>& array_map,
+			std::string TC_input_file_name,std::ofstream& outs){
+	for(unsigned int i = 0; i < array_map.at("LMAX").values.size();i++){
+		for(unsigned int j = 0; j < array_map.at("NENT").values.size();j++){
+			cout << "READ IN TC TILE" << " i=" << i << " j=" << j << endl;
+
+		}
+
+	}//outer (LMAX) loop
+
+
+
+}
 
 //#################################################################################################################
 

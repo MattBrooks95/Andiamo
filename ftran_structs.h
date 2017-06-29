@@ -110,6 +110,14 @@ struct param_int4_array{
 	 *and false means that more inputs are needed */
 	bool is_satisfied();
 	
+	//! this function provides a string for the tile to default to
+	/*! this function is wierd compared to the other parameters because it is not a simple string
+	 *that can have the default value be stored in the field object. It stores an array of parameters,
+	 *so special care needs to be taken with how it is initialized to the default value from the config file
+	 *in input_maker, but then the field itself gets it in a simple string form. It will then need to be
+	 *changed back to a vector for the output functions */
+	std::string get_string();
+
 	//! satisfied should start off false, then become true when size = values.size() (all values filled in)
 	bool satisfied;
 	unsigned int size;          //!< size of the array as specified by HF_config file - should never change

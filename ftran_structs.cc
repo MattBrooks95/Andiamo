@@ -120,7 +120,17 @@ param_int4_array::param_int4_array(string name_in,unsigned int size_in,bool sati
 bool param_int4_array::is_satisfied(){
 	return satisfied;
 }
-	
+string param_int4_array::get_string(){
+	string return_me; //declare a string
+	for(unsigned int c = 0; c < values.size();c++){
+		if(c != values.size()-1){//add a comma to the end of all values but the last
+			return_me = return_me + to_string(values[c]) + ",";
+		} else {
+			return_me = return_me + to_string(values[c]);
+		}
+	}
+	return return_me;
+}
 //########################################################################################
 
 

@@ -89,36 +89,33 @@ andy_tile.png
 50
 andy
 TCTITLE
-c label for these transmission coefficients (optional)
+c label for these transmission coefficients
+c (optional per NENT and LMAX values)
+c you may be prompted to enter another label if you like,
+c while Andiamo is running
 andy_tile.png
 300
-50
-andy
-ETAB
-c energy
-andy_tile.png
-150
-50
-andy
-TTAB
-c transmission coefficient
-andy_tile.png
-150
 50
 andy
 LMAX
 c maximum value for transmission coefficients of each particle
 c LMAX needs a comma-separated list of integer values
 c they should be in the same order as NENT
+c for example:10,20,0,0,10
+c no spaces are permitted, and special characters
+c will cause undefined behavior
 andy_tile.png
 300
 50
 andy
 NENT
-c NENT needs a comma-separated list of integer energies in table
-c for each kind of particle
+c NENT needs a comma-separated list of integer
+c energies in table for each kind of particle
 c (7 <= NENT <= 20)
-c NENT's values need to be in the same order as those in LMAX
+c NENT's values need to be in the same order as
+c those in LMAX for example:20,20,0,0,0,20
+c no spaces are permitted, and special characters
+c will cause undefined behavior
 andy_tile.png
 300
 50

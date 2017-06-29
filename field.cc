@@ -42,6 +42,7 @@ field::field(string tile_name_in,string image_name_in, int width, int height){
 	int4_hook = NULL;
 	real8_hook = NULL;
 	string_hook = NULL;
+	int4_array_hook = NULL;
 
 }
 SDL_Rect field::get_rect() const{
@@ -252,7 +253,7 @@ bool field::text_box_clicked(std::ostream& outs, const int& click_x, const int& 
 	//atleast until it's fancy enough to place the cursor right or left based on how far to the right or left
 	//the user clicked - this is wrong
 	//turns out, I get false positives if I click in another box of the same row
-	if( int4_hook == NULL && real8_hook == NULL && string_hook == NULL){
+	if( int4_hook == NULL && real8_hook == NULL && string_hook == NULL && int4_array_hook == NULL){
 		//return false because there is no field to input_manager connection for the user to modify
 		return false;
 	}
@@ -295,7 +296,7 @@ void field::update_my_value(){
 	//cout << "Tile name: " << tile_name << endl;
 	//cout << "Hooks  int4:r8:string = " << int4_hook << ":" << real8_hook << ":" << string_hook << ":"
 	//     << endl;
-	if(int4_hook == NULL && real8_hook == NULL && string_hook == NULL){
+	if(int4_hook == NULL && real8_hook == NULL && string_hook == NULL && int4_array_hook == NULL){
 		cout << "ERROR! Tile " << tile_name << " has no association with a fortran struct"
 		     << " in input_maker's vectors. Please check that the tile's name in the tiles.txt"
 		     << " and HF_config.txt match each other.\n\n" << endl;
@@ -322,6 +323,16 @@ void field::update_my_value(){
 		trim(temp_string,balance_factor);
 		string_hook->value = temp_string;
 		cout << "Ftran String value after: " << string_hook->value << endl;
+	} else if(int4_array_hook != NULL){
+		//cout << "USER CHANGED VALUES FOR INT4 ARRAY:" << tile_name 
+		     //<< "\n" << temp_input << endl;
+		vector<string> user_entered_values = split(temp_input,',');//split the user's string across commas
+
+		//replace the default numbers in input_maker with the ones entered by the user
+		for(unsigned int c = 0; c < user_entered_values.size() && c < int4_array_hook->values.size();c++){
+			int4_array_hook->values[c] = stoi(user_entered_values[c]);
+		}
+
 	}
 
 

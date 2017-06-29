@@ -56,6 +56,7 @@ class input_maker{
 	//##############################################################################
 
 	std::string output_file_name;//!< \brief name of the file in config_p's folder where output will be printed
+	std::string TC_input_file_name;//!< \brief name of the file from which the transmission coefficients should be read
 
   private:
 
@@ -80,10 +81,14 @@ class input_maker{
 	//! contains a variable number of c++ style strings, which should be fortran friendly with .c_str()
 	/* I think it'll play nicely with fortran just with .c_str() and .size() */
 	std::vector<param_string> string_params;
-
-	//std::vector<param_int4_array> int4_array_params;
 	
+	//! this map contains the ftran_struct int4 array parameters
+	/*! a specific one can be accessed by using map's at(name_string) member function
+	 *this being a map allows parameters to be looked up by name */
 	std::map<std::string,param_int4_array> int4_array_params;
+
+	std::vector<param_real8> ETAB;//!< store the ETAB numbers read in from the TC file
+	std::vector<param_real8> TTAB;//!< store the TTAB numbers read in from the TC file
 
 };
 
@@ -101,8 +106,11 @@ void do_line1(const std::vector<param_string>& string_params,std::ofstream& outs
 void do_line2(const std::vector<param_real8>& real8_params,const std::vector<param_int4> int4_params,
 	      std::ofstream& outs);
 
-
-
+//! this function implements the reading loop over the transmission coefficients
+/* NENT, LMAX and NGF control the loops, and TC_input_file button sets this class's TC_input_file_name variable
+ *and the coefficients are read in from there */
+void do_TC_coefficients(const std::vector<param_real8>& real8_params, const std::map<std::string,param_int4_array>& array_map,
+			std::string TC_input_file_name, std::ofstream& outs);
 //######################################################################################################################
 
 
