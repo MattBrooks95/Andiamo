@@ -88,18 +88,6 @@ andy_tile.png
 150
 50
 andy
-NENT
-c number of energys in table for each l of the kth particle 7 <= NENT <= 20
-andy_tile.png
-150
-50
-andy
-LMAX
-c maximum l value for transmission coefficients of kth particle
-andy_tile.png
-150
-50
-andy
 TCTITLE
 c label for these transmission coefficients (optional)
 andy_tile.png
@@ -116,5 +104,22 @@ TTAB
 c transmission coefficient
 andy_tile.png
 150
+50
+andy
+LMAX
+c maximum value for transmission coefficients of each particle
+c LMAX needs a comma-separated list of integer values
+c they should be in the same order as NENT
+andy_tile.png
+300
+50
+andy
+NENT
+c NENT needs a comma-separated list of integer energies in table
+c for each kind of particle
+c (7 <= NENT <= 20)
+c NENT's values need to be in the same order as those in LMAX
+andy_tile.png
+300
 50
 andy

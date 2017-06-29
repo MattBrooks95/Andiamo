@@ -37,16 +37,23 @@ class input_maker{
 	 *and OS independent (I still need to do that to all the paths... */
 	void output();
 
-	//vector getters
+	//################ GETTERS AND SETTERS #########################################
+
 	//! return names_in_order BY REFERENCE
 	std::vector<std::string>& get_names_in_order(){return names_in_order;}
+
 	//! return int4_params BY REFERENCE
 	std::vector<param_int4>& get_int4_params(){return int4_params;}
+
 	//! return real8_params BY REFERENCE
 	std::vector<param_real8>& get_real8_params(){return real8_params;}
+
 	//! return string_params BY REFERENCE
 	std::vector<param_string>& get_string_params(){return string_params;}
 
+	//! return int4_array_params BY REFERENCE
+	std::map<std::string,param_int4_array>& get_i4_array_params(){return int4_array_params;}
+	//##############################################################################
 
 	std::string output_file_name;//!< \brief name of the file in config_p's folder where output will be printed
 

@@ -103,14 +103,18 @@ struct param_string{
 /*! the arrays here will not have a name field, I'm probably going to use <map>, and have input_maker
   *store a map of these, so that they can be easily found with their 'key', most likely a string */
 struct param_int4_array{
-	param_int4_array(unsigned int size = 1,bool satisfied_in=false);
+	param_int4_array(std::string name_in="no name given",unsigned int size = 1,bool satisfied_in=false);
 
-	//! satisfied should start off false, then become true when size = values.size() (all values filled in)
+	//! this returns the 'satisfied' boolean variable
+	/*! where true means enough inputs have been filled in
+	 *and false means that more inputs are needed */
 	bool is_satisfied();
 	
+	//! satisfied should start off false, then become true when size = values.size() (all values filled in)
 	bool satisfied;
 	unsigned int size;          //!< size of the array as specified by HF_config file - should never change
 
+	std::string name; //! contextual name for the array, like NENT or LMAX
 	std::vector<int> values;//!< is the array of integers 
 };
 /*

@@ -67,6 +67,33 @@ void trim(std::string& base_string,int remove_num){
 	cout << "Base string after: " << base_string << endl;
 }
 
+void handle_i4_array(std::string& string_in,vector<int>& fill_me){
+
+	if(!fill_me.empty()){
+		cout << "Error, handle_i4_array given a non-empty array as a parameter." << endl;
+	}
+
+	//cout << "handle_i4_array string in:" << string_in << endl;
+
+	//remove the quotation marks
+	string split_me = string_in.substr(1,string_in.length()-2);
+
+	//split the line into a vector of strings
+	vector<string> string_vec = split(split_me,',');
+
+	//cast the strings into integers, and fill the return vector
+	for(int c = 0; c < string_vec.size();c++){
+		fill_me.push_back( atoi( string_vec[c].c_str() ) );
+	}
+
+}
+
+
+
+
+
+
+
 
 
 

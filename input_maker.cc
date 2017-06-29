@@ -23,8 +23,8 @@ input_maker::~input_maker(){
 }
 
 void input_maker::init(){
-	bool init_test = false;
-
+	bool init_test = true;
+	if(init_test) cout << "########################### INPUT_MAKER INIT ################################" << endl;
 
 	ifstream ins;
 	ins.open( (config_p+file_name).c_str() );
@@ -147,13 +147,14 @@ void input_maker::init(){
 		} else if( regex_match(temp_string,re_i4_array) ){
 			if(init_test) cout << "Is an array of integers!" << endl;
 			
-			//cout << "This is that line split along spaces: " << endl;
+			if(init_test) cout << "This is that line split along spaces: " << endl;
 			vector<string> tokens = split(temp_string,' ');
-			/*
-			for(unsigned int c = 0; c < tokens.size() ;c++){
-				cout << tokens[c] << endl;
-			}*/
-
+			
+			if(init_test){
+				for(unsigned int c = 0; c < tokens.size() ;c++){
+					cout << tokens[c] << endl;
+				}
+			}
 			smatch size_match;//store numerical result of grabbing the array's size
 
 			//have regex search out the integer size value
@@ -161,21 +162,33 @@ void input_maker::init(){
 
 			//if a match was found
 			if( size_match.ready() ){
-
+				
 				//create a string that contains just the size of the array
 				string temp_size_string = size_match[0].str().substr(1,size_match[0].str().size()-2);
 				int array_size = stoi(temp_size_string);
-				//cout << temp_size_string << endl;
-
+				if(init_test) cout << temp_size_string << endl;
 				
+				//create the int4 array that will be pushed into input_maker's containing vector
+				//tokens[1] should be the string name given, array_size was determined by the size_match regex
+				//should not be satisfied from the start, although it would appear that it is OK for NENT
+				//to not have 7 values depending on some other variable.....
+				param_int4_array i4_array_push_me(tokens[1],array_size,false);
+				
+				handle_i4_array(tokens[3],i4_array_push_me.values);
+				if(init_test){
+					cout << "VECTOR OF INTS AS FOLLOWS: " << endl;
+					for(unsigned int c = 0; c < i4_array_push_me.values.size();c++){
+						cout << i4_array_push_me.values[c] << " ";
+					}
+				}
+				if(init_test) cout << endl;
+				int4_array_params.insert(std::pair<string,param_int4_array>(i4_array_push_me.name,i4_array_push_me));
 
 			} else {
 				//if there was no match for some reason, print an error message
 				cout << "Error! Could not determine array size from int4 array"
 				     << " declaration line." << endl;
 			}
-
-
 
 
 		} else {
@@ -185,7 +198,7 @@ void input_maker::init(){
 		getline(ins,temp_string);
 	}
 
-
+	if(init_test) cout << "##################### END INPUT MAKER INIT() ###############################" << endl;
 	ins.close();
 }
 
@@ -206,8 +219,6 @@ void input_maker::output(){
 		} 
 
 	}
-
-
 
 	//SET UP LINE 1##########################################################################################
 	do_line1(string_params,outs);

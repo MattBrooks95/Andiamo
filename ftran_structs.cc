@@ -111,7 +111,8 @@ void param_real8::operator =(int other){
 //########################################################################################
 
 //###################### INT4 ARRAY ######################################################
-param_int4_array::param_int4_array(unsigned int size_in,bool satisfied_in){
+param_int4_array::param_int4_array(string name_in,unsigned int size_in,bool satisfied_in){
+	name = name_in;
 	size = size_in;
 	satisfied = satisfied_in;
 }

@@ -46,7 +46,6 @@ class sdl_help{
 	sdl_help(std::string name_in = "Andiamo!",std::string HF_input_file_in = "HF_config.txt");
 
 	//!this overloaded constructor requires 3 arguments: window name, width and height
-	
 	sdl_help(std::string name_in,std::string HF_input_file_in, int width, int height);
 
 	//! This is a destructor member for the sdl_help class.
@@ -67,10 +66,9 @@ class sdl_help{
 	//! This member presents the renderer and all of it's current textures to the screen
 	void present();
 
-	//! This member traverses manager's vector and loads all of the tile's SDL Surfaces
-	/*! For now, this function is assuming that only two tile cards are going to happen per row
-	 * and that the tiles are the same size. It will be improved to allow for different tile sizes
-	 *using some sort of greedy algorithm to make sure they don't conflict with each other */
+	//! This member traverses manager's vector and calls the field's draw_me function
+	/*! it ensures that help boxes are always drawn above the tiles not in help mode
+	 * but they will sometimes conflict with eachother and overlap */
 	void draw_tiles();
 	//! This member enacts the draw members of vert_bar and horiz_bar
 	/* This should likely be called directly below every call to draw_tiles() */ 

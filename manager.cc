@@ -13,7 +13,7 @@ manager::manager(){
 	input_maker_hook = NULL; //should be overwritten when sdl_help's constructor calls give_manager_io
 }
 
-bool man_test = false;
+bool man_test = true;
 
 void manager::init(){
 	
@@ -104,6 +104,9 @@ void manager::init(){
 				if(man_test) cout << "Found tile height!: " << tile_h << endl;
 			} else {
 				cout << "Error! This line failed to hit a case in the regex checks." << endl;
+				cout << "It may be a missing 'Andy' separator in the tiles.txt config file." << endl;
+				return;
+				
 			}
 
 			getline(ins,temp_string);//read in again to update loop
@@ -174,59 +177,84 @@ void manager::give_fields_renderer(SDL_Renderer* sdl_help_renderer_in,string ima
 
 void manager::give_fields_defaults(){
 	//starting at 1 to skip over background tile
+
+
+	bool found = false; //turn to true when we find the correct tile and set its default values and
+			    //input maker hook. This way it doesn't bother continue searching
+
+
+	//loop over every name in the name vector
+	//and search all the parameter vectors for a parameter with the same name
 	for(unsigned int c = 1; c < tiles.size();c++){
-		for(unsigned int i = 0; i < input_maker_hook->get_int4_params().size();i++){
+		found = false; //reset the found boolean per run of the outer loop
+
+		//check the int4 params vector
+		for(unsigned int i = 0; i < input_maker_hook->get_int4_params().size() && !found;i++){
 
 			if(input_maker_hook->get_int4_params()[i].name == tiles[c].tile_name){
 				tiles[c].int4_hook = &(input_maker_hook->get_int4_params()[i]);
 				tiles[c].temp_input = to_string(input_maker_hook->get_int4_params()[i].value);
-				//cout << "Setting " << tiles[c].tile_name << "'s string field to "
-				     //<< to_string(input_maker_hook->get_int4_params()[i].value) << endl;
-				//cout << "And its value has been set to: " << tiles[c].temp_input << endl;
+				cout << "Setting " << tiles[c].tile_name << "'s string field to "
+				     << to_string(input_maker_hook->get_int4_params()[i].value) << endl;
+				cout << "And its value has been set to: " << tiles[c].temp_input << endl;
 
 				tiles[c].text_box_init();//now that input_maker hook is set, create surfaces and textures
-				continue;
+				found = true;//found the tile, don't let the other sub loops run
+				break;
 			}
-
 		}//inner for 1
 
-		for(unsigned int i = 0;i < input_maker_hook->get_real8_params().size();i++){
+		//check the real8_params vector
+		for(unsigned int i = 0;i < input_maker_hook->get_real8_params().size() && !found;i++){
 
 			if(input_maker_hook->get_real8_params()[i].name == tiles[c].tile_name){
 				tiles[c].real8_hook = &(input_maker_hook->get_real8_params()[i]);
 				tiles[c].temp_input = to_string(input_maker_hook->get_real8_params()[i].value);
 
 				tiles[c].text_box_init();//now that input_maker hook is set, create surfaces and textures
-				continue;
+				found = true;//found the tile, don't let the other sub loops run
+				break;
 			}
 		}//inner for 2
 
-		for(unsigned int i = 0;i < input_maker_hook->get_string_params().size();i++){
+		//check the string_params vector
+		for(unsigned int i = 0;i < input_maker_hook->get_string_params().size() && !found;i++){
 
-			//cout << " PARAM VEC SIZE: " << input_maker_hook->get_string_params().size() << endl;
+			cout << " PARAM VEC SIZE: " << input_maker_hook->get_string_params().size() << endl;
 			if(input_maker_hook->get_string_params()[i].name == tiles[c].tile_name){
-				//cout << "STRING HOOK: " << &(input_maker_hook->get_string_params()[i]) << endl;
+				cout << "STRING HOOK: " << &(input_maker_hook->get_string_params()[i]) << endl;
 				tiles[c].string_hook = &(input_maker_hook->get_string_params()[i]);
-				//cout << tiles[c].string_hook << endl;
+				cout << tiles[c].string_hook << endl;
 				tiles[c].temp_input = tiles[c].string_hook->value;
-				//cout << " STRING HOOK VALUE: " << input_maker_hook->get_string_params()[i].value << endl;
+				cout << " STRING HOOK VALUE: " << input_maker_hook->get_string_params()[i].value << endl;
 				tiles[c].text_box_init();//now that input_maker hook is set, create surfaces and textures
-				//cout << "SET STRING HOOK: " << tiles[c].string_hook << " = " << tiles[c].string_hook->value << endl;
-				continue;
+				cout << "SET STRING HOOK: " << tiles[c].string_hook << " = " << tiles[c].string_hook->value << endl;
+				found = true;
+				break;
 			}
-//don't set pointers to copy of values....I spent a lot of time debugging this part and it turned out to be an error
-//where input_maker's getters were by value instead of by reference....
-
-
-
-//if text_box_init is commented out
-//SET STRING HOOK: 0x3ec4df8 = ��=    1     Z=        0"
-
-//empty or diff every time if text_box_init is not commented out
-//SET STRING HOOK: 0x395ca18 = $��,� 6
-                                     // �����!
-
 		}//inner for 3
+		
+		if(!found){
+			//check the i4_array_params vector
+			try {
+				input_maker_hook->get_i4_array_params().at(tiles[c].tile_name);
+				//set up the fields other values
+			} catch (out_of_range& not_found){
+
+				cout << "Tile name:" << tiles[c].tile_name << " not found in any input_maker vector.\n"
+				     << "Check that names of parameters in HF_Config match names in tile_Input/tiles.txt"
+				     << " exactly." << endl;
+				cout << "Map is as follows:" << endl;
+				map<string,param_int4_array>::iterator my_iterator;
+				for(my_iterator = input_maker_hook->get_i4_array_params().begin();
+				    my_iterator != input_maker_hook->get_i4_array_params().end();
+				    my_iterator++){
+					cout << "Key: " << my_iterator->first << "Name: "
+					     << my_iterator->second.name << endl;
+
+				}
+			}
+		}
 	}//big for
 
 }

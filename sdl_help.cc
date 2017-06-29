@@ -66,6 +66,7 @@ sdl_help::sdl_help(string name_in,string HF_input_file_in){
 	x_scroll = 0; y_scroll = 0; //set scrolling variables to 0
 
 	tile_bag.init();
+
 	//give vertical scroll bar the addresses of the info it needs from the sdl_help object
 	vert_bar.init(&x_scroll,&y_scroll,&area.width,&area.height,
 		      &window_s.width,&window_s.height, renderer,"v_ou_dark_green_quarter.png");
