@@ -62,6 +62,7 @@ class exit_button : public button{
 };
 //##################################################################################################################
 
+
 //##################################################################################################################
 
 class text_box_button : public button{
@@ -97,6 +98,9 @@ class text_box_button : public button{
 class TC_input_file_button : public text_box_button{
   public:
 	//! this function should make sure that the transmission coefficients are read from the given file
+	/*! it modifies the transmission coefficient input file name variable in input_maker
+	 *in the event that the text box for the file name is empty, it will return -1 and
+	 *prevent button_manager::clean_up() from executing */
 	int work(input_maker& io_helper);
   private:
 

@@ -26,15 +26,15 @@ class input_maker{
 	//! the destructor calls the output() member, to make sure only the most recent data is output
 	/*! I have it this way for now because I can imagine myself or someone else forgetting to call it
 	 * from main before the whole program terminates */
-	~input_maker();
+	//~input_maker();
 
 	//! init() sets up the parameter vectors to the specifications of the config file
 	/*! It uses regular expressions, and the split functions in string+.h*/
 	void init();
 
 	//! output() prints out the information in the order and format needed to be used by HF
-	/*! for now it defaults to printing to ./output/output.txt, but this will be made more dynamic and
-	 *and OS independent (I still need to do that to all the paths... */
+	/*! for now it defaults to printing to ./output/output.txt, the output file can be specified
+	 *by the output_fname button in class button_manager*/
 	void output();
 
 	//################ GETTERS AND SETTERS #########################################

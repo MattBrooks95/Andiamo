@@ -18,9 +18,11 @@ input_maker::input_maker(string output_file_name_in,string config_file_name_in){
 
 	//init();//parse config file
 }
+
+/*
 input_maker::~input_maker(){
 	output();
-}
+}*/
 
 void input_maker::init(){
 	bool init_test = true;
@@ -231,6 +233,9 @@ void input_maker::output(){
 	//SET UP LINE 3##########################################################################################
 	do_TC_coefficients(real8_params,int4_array_params,TC_input_file_name,outs);
 	//#######################################################################################################
+	
+	outs.flush();//push changes to file, if this is not here C++ will wait to do the writing until
+		     //the program is terminated
 	//close the output file stream
 	outs.close();
 }

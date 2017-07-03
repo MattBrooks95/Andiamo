@@ -239,7 +239,16 @@ void button_manager::click_handling(SDL_Event& mouse_event){
 	}
 	if(!done_something && lets_go.shown){
 		if( lets_go.handle_click(mouse_event) ){
-			done_something = true;
+			//if everything is in place, go ahead and make the file
+			if( clean_up() == 0){
+
+				//update input_maker's info from the tiles
+				sdl_helper->get_mgr().update_io_maker();
+				//have input_maker output to the file
+				sdl_helper->get_io_handler().output();
+				done_something = true;
+			}
+			done_something = true; //don't consider the other cases, this one has been hit
 		}
 	}
 	if(!done_something && graphing_options.shown){
@@ -253,30 +262,25 @@ void button_manager::click_handling(SDL_Event& mouse_event){
 
 }
 
-void button_manager::clean_up(){
+int button_manager::clean_up(){
 	input_maker& io_handler = sdl_helper->get_io_handler();
-	/*
-	cout << "In clean up function." << endl;
-	cout << "Input maker's output file name is: " << io_handler.output_file_name <<  endl;
-	cout << "Input maker's TC input file name is: " << io_handler.TC_input_file_name << endl;
-	cout << "Output file name button's user-entered value is " << output_fname.my_text_box.text << endl;
-	cout << "TC file name button's user-entered value is " << t_coefficients.my_text_box.text << endl;
-	if(output_fname.my_text_box.text.size() == 0 || output_fname.my_text_box.text == " "){
-		cout << "Output file name was not supplied, using default \"output.txt\"." << endl;
 
-	} else {
 
-		io_handler.output_file_name = output_fname.my_text_box.text;
+	//set up input_makers output file location variable
+	if(output_fname.work(io_handler) != 0){
+		//exit, if no transmission coefficient file is supplied, cancel the "let's go!" process
+		return -1;
 	}
-	cout << "Input maker's output path after change: " << io_handler.output_file_name << endl;
 
-	if(t_coefficients.my_text_box.text == 0 || t_coefficients.my_text_box.text == 0){
-	*/
-	output_fname.work(io_handler); //set up input_makers output file location variable
-	t_coefficients.work(io_handler);//set up input_makers transmission coefficients input file location variable
+	//set up input_makers transmission coefficients input file location variable
+	if(t_coefficients.work(io_handler) != 0){
+		//exit if t_coefficients.work returns a bad number
+		//but it defaults to "output.txt", so it should just run 
+		return -1;
+	}
 
 	
-
+	return 0;//successful exit
 }
 
 
