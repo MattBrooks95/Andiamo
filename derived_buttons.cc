@@ -161,27 +161,9 @@ int TC_input_file_button::work(input_maker& io_handler){
 	io_handler.TC_input_file_name = my_text_box.text;//set up the TC In put var in the
 							 //input maker
 	if(my_text_box.text.size() == 0 || my_text_box.text == " "){
-			//need to figure out how this should work
-			/*
-			SDL_Surface* TC_error_box = IMG_Load("Assets/Images/Buttons/TC_input_err.png");
-			SDL_Texture* TC_error_box_texture = SDL_CreateTextureFromSurface(sdl_helper->renderer,
-								TC_error_box);
-
-			//draw error message to screen
-			SDL_Rect dest = {0,0,0,0};
-
-			//figure out size of error message box
-			SDL_QueryTexture(TC_error_box_texture,NULL,NULL,&dest.w,&dest.h);
-
-			//prepare to center message in screen
-			dest.x = sdl_helper->get_win_size()->width/2 - dest.w/2;
-			dest.y = sdl_helper->get_win_size()->height/2 - dest.h/2;
-
-			//draw it to screen, leave function
-			SDL_RenderCopy(sdl_helper->renderer,TC_error_box_texture,NULL,&dest);
-
-			SDL_FreeSurface(TC_error_box);
-			SDL_DestroyTexture(TC_error_box_texture);//free up memory */
+			//return -1 to let button_manager.clean_up() know that a TC input file has not
+			//been supplied. This should halt output, because there's no reason to make
+			//an HF calculation without transmission coefficients (I think)
 			return -1;
 
 	} else {
@@ -201,6 +183,7 @@ int output_file_button::work(input_maker& io_handler){
 	cout << "Hi, I'm Paul! (from output_file_button.work() )" << endl;
 	if(my_text_box.text.size() == 0 || my_text_box.text == " "){
 		cout << "Output file name was not supplied, using the default \"output.txt\"." << endl;
+		return -1;
 	} else {
 		io_handler.output_file_name = my_text_box.text;//set up the output file name var
 							       //in input maker

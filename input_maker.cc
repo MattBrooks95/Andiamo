@@ -16,6 +16,8 @@ input_maker::input_maker(string output_file_name_in,string config_file_name_in){
 	output_file_name = output_file_name_in;
 	file_name = config_file_name_in;
 
+	output_was_made = false;//start off false, become positive when output() is ran
+
 	//init();//parse config file
 }
 
@@ -238,6 +240,8 @@ void input_maker::output(){
 		     //the program is terminated
 	//close the output file stream
 	outs.close();
+	output_was_made = true;//make this boolean true, so that during the closing process we know that we don't
+			       //need to remind the user to generate an input file first
 }
 //########################## NON MEMBER HELPERS #################################################################
 void output_string(ofstream& outs,const unsigned int& size,const string& string_in){

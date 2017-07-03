@@ -51,6 +51,12 @@ class button_manager{
 	 *and changing the output paths. */
 	int clean_up();
 
+	//! this function displays some warning messages about why output file generation may have failed
+	/*! it is a helper function for button_manager::clean_up(). It mostly just displays some
+	 *premade error message boxes on the screen for a couple of seconds before the program
+	 *resumes it's regular processes */
+	void clean_up_warnings(bool bad_output_fname,bool bad_tc_input_fname);
+
 	//! this member calls each button's virtual handle_click() member
 	/*! a notable exception is the 'exit dialogue' button, because it's logic is partially controlled
 	 *via main(), because it has special logic. It shouldn't be placed with the other buttons, as it

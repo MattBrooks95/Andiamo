@@ -264,24 +264,126 @@ void button_manager::click_handling(SDL_Event& mouse_event){
 
 int button_manager::clean_up(){
 	input_maker& io_handler = sdl_helper->get_io_handler();
-
+	bool bad_output_fname = false;
+	bool bad_tc_input_fname = false;
 
 	//set up input_makers output file location variable
 	if(output_fname.work(io_handler) != 0){
-		//exit, if no transmission coefficient file is supplied, cancel the "let's go!" process
-		return -1;
+		bad_output_fname = true;
 	}
 
 	//set up input_makers transmission coefficients input file location variable
 	if(t_coefficients.work(io_handler) != 0){
 		//exit if t_coefficients.work returns a bad number
 		//but it defaults to "output.txt", so it should just run 
-		return -1;
+		bad_tc_input_fname = true;
 	}
 
-	
+	//if either 'bad' flag is true, make the warnings
+	if(bad_output_fname || bad_tc_input_fname){
+		clean_up_warnings(bad_output_fname,bad_tc_input_fname);
+	}
+
+	if(bad_tc_input_fname){
+		return -1;//return with error, TC input file must be given
+	}
+	//elsewise, exit normally
 	return 0;//successful exit
 }
+
+void button_manager::clean_up_warnings(bool bad_output_fname,bool bad_tc_input_fname){
+	SDL_Surface* tc_input_error_surf = NULL;
+	SDL_Texture* tc_input_error_texture = NULL;
+
+	SDL_Surface* output_fname_error_surf = NULL;
+	SDL_Texture* output_fname_error_texture = NULL;
+
+
+
+
+	//make the error message for the output file name
+	if(bad_output_fname){
+
+		output_fname_error_surf = IMG_Load("Assets/Images/Buttons/output_fname_err.png");
+		if(output_fname_error_surf == NULL) cout << SDL_GetError() << endl;
+
+		output_fname_error_texture = SDL_CreateTextureFromSurface(sdl_helper->renderer,output_fname_error_surf);
+		if(output_fname_error_texture == NULL) cout << SDL_GetError() << endl;
+
+		//plan where to draw image
+		SDL_Rect dest = {0,0,0,0};
+		//get image dimensions
+		SDL_QueryTexture(output_fname_error_texture,NULL,NULL,&dest.w,&dest.h);
+		
+		//yloc should stay the same
+		dest.y = sdl_helper->get_win_size()->height/2 - dest.h/2;
+		//if we are also going to make an error message box for the transmission coefficient input file
+		//we will have to draw to the right of the center of the window
+		if(bad_tc_input_fname){
+			dest.x = sdl_helper->get_win_size()->width/2 + 5;//constant 5 is padding
+
+		} else {
+			//if this is the only error messaeg being printed, draw it dead center
+			dest.x = sdl_helper->get_win_size()->width/2 - (dest.w/2);
+		}
+
+		SDL_RenderCopy(sdl_helper->renderer,output_fname_error_texture,NULL,&dest);
+
+	}
+
+	//make the error message for the transmission coefficient input file name
+	if(bad_tc_input_fname){
+
+		tc_input_error_surf = IMG_Load("Assets/Images/Buttons/TC_input_err.png");
+		if(tc_input_error_surf == NULL) cout << SDL_GetError() << endl;
+		tc_input_error_texture = SDL_CreateTextureFromSurface(sdl_helper->renderer,tc_input_error_surf);
+		if(tc_input_error_texture == NULL) cout << SDL_GetError() << endl;
+
+		SDL_Rect dest = {0,0,0,0};
+
+		//plan out where to draw the error message
+
+		//this gets us the texture's width and height
+		SDL_QueryTexture(tc_input_error_texture,NULL,NULL,&dest.w,&dest.h);
+
+		//height should stay the same no matter how many error messages are made
+		dest.y = sdl_helper->get_win_size()->height/2-dest.h/2;
+
+		//if both output messages have been made, this one will need to the left of the center
+		if(bad_output_fname){
+			dest.x = sdl_helper->get_win_size()->width/2 - (dest.w + 5);//constant 5 is padding
+
+		} else {
+			//if this is the only error message, then it can be exactly centered
+			dest.x = sdl_helper->get_win_size()->width/2 - dest.w/2;
+
+		}
+
+		SDL_RenderCopy(sdl_helper->renderer,tc_input_error_texture,NULL,&dest);
+	}
+
+
+	sdl_helper->present();//show the error messages to the screen
+	SDL_Delay(5000);//delay for 5 seconds, so they can read the messages
+
+	//free up memory, this stuff is temporary
+	if(output_fname_error_surf != NULL) SDL_FreeSurface(output_fname_error_surf);
+	if(output_fname_error_texture != NULL) SDL_DestroyTexture(output_fname_error_texture);
+
+	if(tc_input_error_surf != NULL) SDL_FreeSurface(tc_input_error_surf);
+	if(tc_input_error_texture != NULL) SDL_DestroyTexture(tc_input_error_texture);
+}
+
+
+
+
+
+
+
+
+
+
+
 
 
 

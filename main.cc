@@ -14,6 +14,9 @@ using namespace std;
 //making this global and giving it a unique name, so the exit button can change it
 bool main_done = false;
 
+/*! in the event the user tries to quit andiamo without having first made an output file,
+ *this function displays a message */
+void no_work_done_message(sdl_help& sdl_helper);
 
  /*! main() handles sdl events (keypresses, mouse movements), instantiates an sdl_help object,
   *and calls its drawing functions per run of the loop. It will eventually have options for resizing
@@ -65,7 +68,7 @@ int main(){
 		     //do a mini loop until the left mouse button is released
 		scrolling_mini_loop(big_event,sdl_helper,b_manager,'h');
 		sdl_helper.get_h_bar().scroll_mode_change(false);//stop h scroll bar mode
-		SDL_FlushEvents(0,1000);//is this necessary?
+		SDL_FlushEvents(0,1000);//remove all events from event queue
 
 	} else
 	switch(big_event.type){ //switch controlled by the 'type' of input given, like the mouse moving
@@ -75,6 +78,9 @@ int main(){
 		case SDL_QUIT:
 			//does a mini loop that implements exit_button's functionality
 			//where the user has to click yes or no for it to go away
+			if(!sdl_helper.get_io_handler().output_was_made){
+				no_work_done_message(sdl_helper);
+			}
 			b_manager.get_exit_dialogue().handle_click(big_event);
 			//main_done = true;
 			break;
@@ -122,7 +128,7 @@ int main(){
 	SDL_Delay(50);//this is an arbitrary number to slow down the loop speed
 		     //eventually this will vary intelligently based on desired framerate
   }//end of while loop
-  b_manager.clean_up();//have the button manager set up the necessary file paths in input_maker so
+  //b_manager.clean_up();//have the button manager set up the necessary file paths in input_maker so
 		       //update_io_maker can output/input things properly
 
   b_manager.print_buttons();
@@ -139,7 +145,33 @@ int main(){
 
 
 
+void no_work_done_message(sdl_help& sdl_helper){
 
+	SDL_Surface* no_work_surf = NULL;
+	SDL_Texture* no_work_texture = NULL;
+
+	no_work_surf = IMG_Load("Assets/Images/no_work_done_msg.png");
+	if(no_work_surf == NULL) cout << SDL_GetError() << endl;
+
+	no_work_texture = SDL_CreateTextureFromSurface(sdl_helper.renderer,no_work_surf);
+	if(no_work_texture == NULL) cout << SDL_GetError() << endl;
+	//plan where to draw
+	SDL_Rect dest = {0,0,0,0};
+	//get size of image
+	SDL_QueryTexture(no_work_texture,NULL,NULL,&dest.w,&dest.h);
+
+	dest.x = sdl_helper.get_win_size()->width / 2 - dest.w/2;
+	dest.y = sdl_helper.get_win_size()->height / 2 - (dest.h + 50);
+
+
+
+	SDL_RenderCopy(sdl_helper.renderer,no_work_texture,NULL,&dest);
+
+
+	if(no_work_surf != NULL) SDL_FreeSurface(no_work_surf);
+	if(no_work_texture != NULL) SDL_DestroyTexture(no_work_texture);
+
+}
 
 
 

@@ -58,6 +58,12 @@ class input_maker{
 	std::string output_file_name;//!< \brief name of the file in config_p's folder where output will be printed
 	std::string TC_input_file_name;//!< \brief name of the file from which the transmission coefficients should be read
 
+	//! starts off false, then goes positive the user generates an input file
+	/*! this way, if an output file has not yet been made, we can make the user aware of that
+	 *when they try to exit the program */
+	bool output_was_made;
+
+
   private:
 
 	std::string config_p; //!< \brief contains a string that provides the relative path to the config files
