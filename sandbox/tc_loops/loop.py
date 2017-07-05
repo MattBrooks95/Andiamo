@@ -1,8 +1,18 @@
 import array
 import random
+import sys
 from datetime import datetime
 
 def main():
+
+  ##############################################################################################################
+  #this block allows for the output file path to be given as an argument to the script
+  if len(sys.argv) > 1:
+    output_file = sys.argv[1]
+  else:#if one is not defined it defaults to this
+    output_file = "output.txt"
+  ##############################################################################################################
+
   random.seed(datetime.now())
 
   NENT = array.array('I')
@@ -28,37 +38,49 @@ def main():
     print("\n")
 
 
-  for c in range(6):
+  for c in range(6):#run for LMAX's size
     temp_ETAB = 0.0
     temp_TTAB = 0.0
     nent_index = 0.0
-    nent_lmax_label_temp = '{:10d}{:10d}'.format(NENT[c],LMAX[c])
+    nent_lmax_label_temp = '{:10d}{:10d}'.format(NENT[c],LMAX[c]) #push the labels into the arrays to be printed l8er
     print(nent_lmax_label_temp)
     nent_lmax_label.append(str(nent_lmax_label_temp))
- 
-    for l_control in range(LMAX[c]+1):
+    for l_control in range(LMAX[c]+1):#loop over each lmax value
       temp_ETAB = 0.0
       temp_TTAB = 0.0
-      for n_control in range(NENT[c]):
+      for n_control in range(NENT[c]):#generating lmax things
         temp_ETAB = temp_ETAB + .97
         temp_TTAB = random.normalvariate(.6,.2)
+        if temp_ETAB < 0:#make sure we only get positive values
+          temp_ETAB *= -1
+        if temp_TTAB < 0:
+          temp_TTAB *= -1
         ETAB.append(temp_ETAB)
         TTAB.append(temp_TTAB)
         third_value.append(l_control)
-        nent_lmax_label.append(" ")
-    nent_lmax_label.pop()
 
-  output_f = open("output.txt",'w')
+  output_f = open(output_file,'w')
 
-  index = 0
-  for e_control in ETAB:
-    if not(nent_lmax_label[index] == " "):
-      output_f.write(nent_lmax_label[index]+"\n")
-    line_out = '{:10.2f}{:10.2f}{:5d}'.format(e_control,TTAB[index],third_value[index])
-    output_f.write(line_out+"\n")
-    index += 1
+  for c in range(6):
+    output_f.write(nent_lmax_label[c] + "\n")
+    for l_control in range(LMAX[c]+1):
+      for n_control in range(NENT[c]):
+        temp_ETAB = '{:10.2f}'.format(ETAB[n_control])
+        temp_TTAB = '{:10.2f}'.format(TTAB[n_control])
+        temp_third_value = '{:5d}'.format(l_control)
+        output_f.write(temp_ETAB + temp_TTAB + temp_third_value+"\n")
 
 
 
 
 main()
+
+
+
+
+
+
+
+
+
+

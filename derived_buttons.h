@@ -1,5 +1,7 @@
 //! \file declares the classes that inherit from button.h's button class
 #pragma once
+#include<fstream>
+
 #include "button.h"
 #include "text_box.h"
 #include "input_maker.h"

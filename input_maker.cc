@@ -301,20 +301,50 @@ void do_line2(const vector<param_real8>& real8_params,const vector<param_int4> i
 	outs F real8_params[5].value;
 
 	//put width back to 5 for NGF
-	outs I int4_params[4].value;
+	outs I int4_params[4].value << endl;
 }
 
 void do_TC_coefficients(const std::vector<param_real8>& real8_params, const std::map<std::string,param_int4_array>& array_map,
 			std::string TC_input_file_name,std::ofstream& outs){
-	for(unsigned int i = 0; i < array_map.at("LMAX").values.size();i++){
-		for(unsigned int j = 0; j < array_map.at("NENT").values.size();j++){
-			cout << "READ IN TC TILE" << " i=" << i << " j=" << j << endl;
+	ifstream ins;
+	ins.open("./TC_files/"+TC_input_file_name);
+	if(ins.fail()){
+		cout << "Error! File:" << "./TC_files/"+TC_input_file_name << " could not be found." << endl;
+	}
 
+	vector<string> lines_in;
+	string temp_string;//handy temporary string
+
+	
+	while(!ins.eof()){
+		if(ins.fail()){
+			break;//leave loop, file is tapped out
 		}
 
-	}//outer (LMAX) loop
+		getline(ins,temp_string);//yank line from file
+		lines_in.push_back(temp_string);//shove it into the array
+	}
+	
+	//this will be the case where the exact TC file was given, just mirror it
+	cout << "#################### PRINTING TC ##################################" << endl;
+	for(unsigned int c = 0; c < lines_in.size();c++){
+		cout << lines_in[c] << endl;
+		outs << lines_in[c] << endl;
+	}
 
 
+
+
+	//#######################################################################
+
+	//here be the case where we have to use ESIS to do it ###################
+
+
+
+	//#######################################################################
+	
+
+	ins.close();
 
 }
 

@@ -56,6 +56,7 @@ class input_maker{
 	//##############################################################################
 
 	std::string output_file_name;//!< \brief name of the file in config_p's folder where output will be printed
+
 	std::string TC_input_file_name;//!< \brief name of the file from which the transmission coefficients should be read
 
 	//! starts off false, then goes positive the user generates an input file

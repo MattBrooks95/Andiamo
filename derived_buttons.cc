@@ -166,12 +166,17 @@ int TC_input_file_button::work(input_maker& io_handler){
 			//an HF calculation without transmission coefficients (I think)
 			return -1;
 
-	} else {
+	}
+	ifstream ins_test;
+	ins_test.open("./TC_files/"+io_handler.TC_input_file_name);
+        if(ins_test.fail()){
 
-		io_handler.TC_input_file_name = my_text_box.text;//set up the file name from which
-							   //the coefficients will be read
+		//return -1, failed to open file
+		return -1;
 
 	}
+	ins_test.close();
+	//if we make it this far, we're good. Return a good message
 	return 0;
 }
 
