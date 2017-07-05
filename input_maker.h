@@ -118,6 +118,10 @@ void do_line2(const std::vector<param_real8>& real8_params,const std::vector<par
  *and the coefficients are read in from there */
 void do_TC_coefficients(const std::vector<param_real8>& real8_params, const std::map<std::string,param_int4_array>& array_map,
 			std::string TC_input_file_name, std::ofstream& outs);
+
+//! this function outputs the variables found in line 4 of the input description manual
+void do_line4(const std::vector<param_real8>& real8_params, const std::vector<param_int4>& int4_params,std::ofstream& outs);
+
 //######################################################################################################################
 
 

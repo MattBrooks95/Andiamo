@@ -32,3 +32,10 @@ I4 NGF = 2
 I4(7) NENT = "20,20,0,0,0,20"
 I4(6) LMAX = "10,10,0,0,0,10"
 C* TCTITLE|60| = "ProjecA=    1     Z=        0"
+
+#line 4
+R8 FJTAR = 0.0
+R8 FCMJMAX = 10.0
+R8 FRESIDMAX = 10.0
+I4 ITARPR = 1
+I4 NG = 0

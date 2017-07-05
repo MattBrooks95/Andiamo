@@ -224,6 +224,12 @@ void input_maker::output(){
 
 	}
 
+	//note that in these functions, the variables that are being printed are found in the order they are
+	//found in the HF_config/config.txt file, based off of the input manual that I was given
+	//so if a new line is inserted, care to adjust the indices. Adding new lines to the end shouldn't
+	//change the lines above them, though
+
+
 	//SET UP LINE 1##########################################################################################
 	do_line1(string_params,outs);
 	//#######################################################################################################
@@ -235,6 +241,12 @@ void input_maker::output(){
 	//SET UP LINE 3##########################################################################################
 	do_TC_coefficients(real8_params,int4_array_params,TC_input_file_name,outs);
 	//#######################################################################################################
+
+	//SET UP LINE 4##########################################################################################
+	do_line4(real8_params,int4_params,outs);
+	//#######################################################################################################
+
+
 	
 	outs.flush();//push changes to file, if this is not here C++ will wait to do the writing until
 		     //the program is terminated
@@ -286,6 +298,8 @@ void do_line2(const vector<param_real8>& real8_params,const vector<param_int4> i
 	//note, setw(something) needs to be called before every item is printed
 	//this is really annoying, so I have a macro up top where F = "<< setw(8) << " for
 	//printing the real 8 values
+
+	outs << right;//right justify data in it's width field
 
 	//set up decimal place precision
 	outs << fixed << setprecision(1);
@@ -345,6 +359,15 @@ void do_TC_coefficients(const std::vector<param_real8>& real8_params, const std:
 	
 
 	ins.close();
+
+}
+
+void do_line4(const std::vector<param_real8>& real8_params,const std::vector<param_int4>& int4_params,ofstream& outs){
+
+	outs << right;
+	//     FJTAR               FCMJMAX          FRESIDEMAX         ITARPR               NG             
+	outs F real8_params[6].value F real8_params[7].value F real8_params[8].value I int4_params[5].value I int4_params[6].value << endl;
+
 
 }
 

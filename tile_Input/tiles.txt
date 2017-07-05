@@ -31,6 +31,12 @@ andy_tile.png
 150
 50
 andy
+FNRME2
+c normalization factor for E2 strength
+andy_tile.png
+150
+50
+andy
 label
 c label that will be echoed on output
 andy_tile.png
@@ -65,12 +71,6 @@ TCPR
 c 0 = do not print transmission coefficients,
 c 1 = print transmission coefficients (title only) 
 c >1 print complete transmission of coefficients
-andy_tile.png
-150
-50
-andy
-FNRME2
-c normalization factor for E2 strength
 andy_tile.png
 150
 50
@@ -118,5 +118,47 @@ c no spaces are permitted, and special characters
 c will cause undefined behavior
 andy_tile.png
 300
+50
+andy
+FJTAR
+c FJTAR is the spin of the target
+andy_tile.png
+150
+50
+andy
+FCMJMAX
+c FCMJMAX is the maximum compound nuclear
+c spin to include. Should be
+c  LMAX in entrance channel
+c plus FJTAR plus FJPAR
+andy_tile.png
+150
+50
+andy
+FRESIDMAX
+c FRESIDMAX is the maximum residual
+c nuclear spin allowed. This
+c should be about 10 for A,
+c about 30 and about 20 A
+c about 200?
+andy_tile.png
+150
+50
+andy
+ITARPR
+c ITARPR is the parity (+1) or (-1)
+c of the target ground state
+andy_tile.png
+150
+50
+andy
+NG
+c NG is gamma emission
+c = 0 allow gamma emmission, where
+c energy allows
+c = 1 suppress gamma emmission when EX is
+c greater than 10MeV
+andy_tile.png
+150
 50
 andy
