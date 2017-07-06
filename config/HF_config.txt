@@ -39,3 +39,16 @@ R8 FCMJMAX = 10.0
 R8 FRESIDMAX = 10.0
 I4 ITARPR = 1
 I4 NG = 0
+
+#line 4-A
+R8 APAR   = 3.00
+R8 ZPAR   = 2.00
+R8 QIN    = 17.00
+R8 FJPAR  = .50
+R8 FPRPAR = 1.00
+I4 NLIN   = 9
+
+#line 4-B
+
+
+

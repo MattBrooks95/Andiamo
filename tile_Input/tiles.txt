@@ -162,3 +162,51 @@ andy_tile.png
 150
 50
 andy
+APAR
+c only needed if IENCH = 7
+c A of incident particle
+andy_tile.png
+150
+50
+andy
+ZPAR
+c only needed if IENCH = 7
+c Z of incident particle
+andy_tile.png
+150
+50
+andy
+QIN
+c only needed if IENCH = 7
+c binding energy of incident particle
+c in compound nucleus
+andy_tile.png
+150
+50
+andy
+FJPAR
+c only needed if IENCH = 7
+c spin of the projectile
+andy_tile.png
+150
+50
+andy
+FPRPAR
+c parity of (+1 or -1) of projectile
+c only needed if IENCH = 7
+c in ground state
+andy_tile.png
+150
+50
+andy
+NLIN
+c only needed if IENCH = 7
+c maximum l of transmission coefficients
+andy_tile.png
+150
+50
+andy
+
+
+
+

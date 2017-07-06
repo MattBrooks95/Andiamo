@@ -122,6 +122,8 @@ void do_TC_coefficients(const std::vector<param_real8>& real8_params, const std:
 //! this function outputs the variables found in line 4 of the input description manual
 void do_line4(const std::vector<param_real8>& real8_params, const std::vector<param_int4>& int4_params,std::ofstream& outs);
 
+//! this function outputs the variables in line 4A
+void do_line4A(const std::vector<param_real8>& real8_params,const std::vector<param_int4>& int4_params,std::ofstream& outs);
 //######################################################################################################################
 
 

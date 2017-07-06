@@ -7,7 +7,10 @@
 
 
 #define F << setw(8) <<
+#define F10 << setw(10) <<
+#define F5 << setw(5) <<
 #define I << setw(5) <<
+#define I10 << setw(10) <<
 using namespace std;
 
 input_maker::input_maker(string output_file_name_in,string config_file_name_in){
@@ -244,6 +247,8 @@ void input_maker::output(){
 
 	//SET UP LINE 4##########################################################################################
 	do_line4(real8_params,int4_params,outs);
+
+	do_line4A(real8_params,int4_params,outs);
 	//#######################################################################################################
 
 
@@ -341,11 +346,19 @@ void do_TC_coefficients(const std::vector<param_real8>& real8_params, const std:
 	
 	//this will be the case where the exact TC file was given, just mirror it
 	cout << "#################### PRINTING TC ##################################" << endl;
+	cout << right;
+	outs << right;
 	for(unsigned int c = 0; c < lines_in.size();c++){
-		cout << lines_in[c] << endl;
-		outs << lines_in[c] << endl;
-	}
+		cout << lines_in[c];
+		outs << lines_in[c];
 
+		if(c < lines_in.size() - 1){
+			cout << endl;
+			outs << endl;
+		}
+
+	}
+	cout << "#################### DONE PRINTING TC #############################" << endl;
 
 
 
@@ -366,11 +379,14 @@ void do_line4(const std::vector<param_real8>& real8_params,const std::vector<par
 
 	outs << right;
 	//     FJTAR               FCMJMAX          FRESIDEMAX         ITARPR               NG             
-	outs F real8_params[6].value F real8_params[7].value F real8_params[8].value I int4_params[5].value I int4_params[6].value << endl;
-
-
+	outs F10 real8_params[6].value F10 real8_params[7].value F10 real8_params[8].value I int4_params[5].value I int4_params[6].value << endl;
 }
 
+void do_line4A(const vector<param_real8>& real8_params,const vector<param_int4>& int4_params,ofstream& outs){
+	outs << fixed << setprecision(2);
+	outs F5 real8_params[9].value F5 real8_params[10].value F5 real8_params[11].value F5 real8_params[12].value F5 real8_params[13].value;
+	outs I int4_params[7].value;
+}
 //#################################################################################################################
 
 
