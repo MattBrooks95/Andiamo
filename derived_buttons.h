@@ -81,6 +81,8 @@ class text_box_button : public button{
 	 *READ from the input file, and some will want to WRITE to the output file */
 	virtual int work(input_maker& io_handler) = 0;
 
+	//! overload parent's handle_resize() function, also updates the text box coordinates
+	void handle_resize(int yloc_in);
 
 	//! init also sets up the text box
 	void init(const std::string& image_name_in,const std::string& image_p_in,sdl_help* sdl_help_in);

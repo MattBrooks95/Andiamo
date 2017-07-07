@@ -30,6 +30,10 @@ class button_manager{
 
 	//! this member displays the tray to the screen
 	void draw_tray();
+
+	//! this member updates the tray's location in response to a window size change
+	void location_update();
+
 	//##############################################################################################//
 	//! this member calls the virtual init() memeber on each of button_manager's private buttons
 	void init_buttons();
@@ -39,6 +43,7 @@ class button_manager{
 	//! this member calls each button's virtual draw_me() member
 	/*! it also calls draw_tray() at the very beginning, so that the tray is drawn "below" the buttons */
 	void draw_buttons();
+
 
 	//! logic to handle sdl_inputs and backspaces is here
 	/*! it has to be here, because the text boxes do not have reference to all the other buttons

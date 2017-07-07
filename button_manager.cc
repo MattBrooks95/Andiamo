@@ -50,7 +50,29 @@ void button_manager::init_tray(){
 	tray_rect.y = sdl_helper->get_h_bar().get_top() - (tray_rect.h + 10);//set it to be just above the bottom scroll bar
 
 }
+//this follows the logic used in init_buttons
+//there is a lot of hard coded stuff, but I'm hoping the button manager won't need changed often
+void button_manager::location_update(){
+	int new_y = sdl_helper->get_h_bar().get_top() - (tray_rect.h + 10);
 
+	//move buttons to fit the tray
+	//+7 is padding from the top of the button tray
+
+	default_test.handle_resize(new_y+7);
+
+
+	output_fname.handle_resize(new_y+7);
+	//make sure t_coefficients stays in the same place relative to output_fname
+	t_coefficients.handle_resize(new_y+output_fname.get_height()+17);
+
+
+	graphing_options.handle_resize(new_y+7);
+
+	lets_go.handle_resize(new_y+7);
+
+	tray_rect.y = new_y;
+
+}
 
 void button_manager::init_buttons(){
 	//initialize the placeholder buttons
@@ -204,7 +226,7 @@ void button_manager::text_box_loop(text_box_button* current_button,SDL_Event& ev
 		}
 
 		//c++;
-		SDL_Delay(50);
+		//SDL_Delay(50);
 	}//end of loop
 	SDL_StopTextInput();//stop text input functionality because it slows down the app
 

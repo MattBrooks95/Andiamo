@@ -46,8 +46,11 @@ class scroll_bar{
 	//! draw_me uses it's own information to draw itself to the renderer used by the sdl_help object
 	void draw_me();
 
-	/*! this member should update the scroll bar's location and size in response to a (window resize
-	 *or?) scroll */
+	//! this function should be called whenever the window in sdl_help is resized
+	/*! it updates the scroll bars's coordinates */
+	void handle_resize();
+
+	/*! this member should update the scroll bar's location*/
 	void update();
 	//! boolean helper for clicked. Returns true if a clicks x&y values fall within the texture's area
 	bool in(int click_x, int click_y) const;

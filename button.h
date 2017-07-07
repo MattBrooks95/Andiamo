@@ -52,6 +52,9 @@ class button{
 	/*! an example would be button_manager calling this to move the buttons on top of the button tray */
 	virtual void force_corner_loc(int xloc_in, int yloc_in);
 
+	//! update y location in response to the window getting taller or shorter
+	virtual void handle_resize(int yloc_in);
+
 	//###########################################################
 	//! this virtual function handles the button being clicked
 	/*! it uses virtual was_clicked() to figure out if the user actually clicked on it, and then

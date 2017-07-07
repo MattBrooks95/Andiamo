@@ -153,6 +153,21 @@ bool scroll_bar::clicked(ostream& outs, int click_x, int click_y) const{
 	return was_clicked;
 }
 
+void scroll_bar::handle_resize(){
+
+	if(width > height){//dealing with horizontal scroll bar, because it is wider than it is tall
+		yloc = *window_height - height;//situate self at very bottom of the window
+		xloc = 0;//start on the very leftmost edge
+
+
+	} else if(height > width) {//dealing with vertical scroll bar, because it is taller than it is wide
+		yloc = 0;//situate self at top of screen
+		xloc = *window_width - width;//situate self at very right of window
+
+
+	}
+
+}
 
 
 

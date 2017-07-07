@@ -114,6 +114,13 @@ void text_box_button::draw_me(){
 		my_text_box.draw_me();
 	}
 }
+void text_box_button::handle_resize(int yloc_in){
+	button::handle_resize(yloc_in);//do parent's work
+	my_text_box.yloc = yloc_in + height - 25;
+	my_text_box.make_rect();
+
+
+}
 
 void text_box_button::print_me(){
 	button::print_me();

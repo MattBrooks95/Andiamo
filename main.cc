@@ -15,8 +15,9 @@ using namespace std;
 bool main_done = false;
 
 /*! in the event the user tries to quit andiamo without having first made an output file,
- *this function displays a message */
-void no_work_done_message(sdl_help& sdl_helper);
+ *this function displays a message. It is passed a reference to the exit button,
+ *that way the message can always be in the same location relative to the button */
+void no_work_done_message(sdl_help& sdl_helper,exit_button& exit_dialogue);
 
  /*! main() handles sdl events (keypresses, mouse movements), instantiates an sdl_help object,
   *and calls its drawing functions per run of the loop. It will eventually have options for resizing
@@ -43,19 +44,17 @@ int main(){
   b_manager.draw_buttons();
 
   sdl_helper.present();
-
   
   SDL_Event big_event; //pre-loop drawing commands, so screen comes up near instantly
   SDL_SetEventFilter(filter_mouse_move,NULL);
 
-  //bool done = false; //this will need to be changed to true when the user clicks on the 'x'
   while(!main_done){
 	//apparently if there is no new event big_event keeps that last value, so it scrolls indefinitely for
 	//example, so for now I'm using 1776 as a "no operation" flag
 	if(!SDL_PollEvent(&big_event)){
 		big_event.type = 1776;
 	}
-	//cout << "EVENT = " << big_event.type << endl;
+	cout << "EVENT = " << big_event.type << endl;
 
 	if(sdl_helper.get_v_bar().is_scrolling()){//if the vertical scroll bar is in "scroll mode"
 		   //do a mini loop until the left mouse button is released
@@ -79,12 +78,11 @@ int main(){
 			//does a mini loop that implements exit_button's functionality
 			//where the user has to click yes or no for it to go away
 			if(!sdl_helper.get_io_handler().output_was_made){
-				no_work_done_message(sdl_helper);
+				no_work_done_message(sdl_helper,b_manager.get_exit_dialogue());
 			}
 			b_manager.get_exit_dialogue().handle_click(big_event);
 			//main_done = true;
 			break;
-
 
 		case SDL_KEYDOWN:
 			handle_key_down(big_event,sdl_helper);
@@ -98,7 +96,7 @@ int main(){
 
 		case SDL_MOUSEBUTTONDOWN:
 			//this function handles left/right mouse button down clicks, and mousewheel clicks
-			handle_mouseb_down(big_event,sdl_helper,b_manager); 
+			handle_mouseb_down(big_event,sdl_helper,b_manager);
 			break;
 
 		case SDL_MOUSEBUTTONUP:
@@ -109,6 +107,18 @@ int main(){
 			handle_mouse_wheel(big_event,sdl_helper);
 			SDL_FlushEvent(SDL_MOUSEWHEEL);//make it not get flooded with scroll commands
 			break;
+
+		case SDL_WINDOWEVENT:
+			cout << "WINDOW EVENT ####################################################" << endl;
+			cout << "EVENT Num:" << big_event.type << endl;
+			if(big_event.window.event == SDL_WINDOWEVENT_SIZE_CHANGED){
+				cout << big_event.window.data1 << ":" << big_event.window.data2 << endl;
+				sdl_helper.window_update(big_event.window.data1,big_event.window.data2);
+				b_manager.location_update();
+			}
+
+			break;
+
 		case 1776: //no new event this time, don't just keep repeating the last event
 			break;
 
@@ -123,10 +133,8 @@ int main(){
 	//sdl_helper.print_tile_locs(cout);
 	sdl_helper.present();  //and all positions have been calculated
 
-	//sdl_helper.get_win_size()->print(); //testing
+	SDL_Delay(50);//slow down loop speed if work was done
 
-	SDL_Delay(50);//this is an arbitrary number to slow down the loop speed
-		     //eventually this will vary intelligently based on desired framerate
   }//end of while loop
   //b_manager.clean_up();//have the button manager set up the necessary file paths in input_maker so
 		       //update_io_maker can output/input things properly
@@ -145,7 +153,7 @@ int main(){
 
 
 
-void no_work_done_message(sdl_help& sdl_helper){
+void no_work_done_message(sdl_help& sdl_helper,exit_button& exit_dialogue){
 
 	SDL_Surface* no_work_surf = NULL;
 	SDL_Texture* no_work_texture = NULL;
@@ -160,8 +168,10 @@ void no_work_done_message(sdl_help& sdl_helper){
 	//get size of image
 	SDL_QueryTexture(no_work_texture,NULL,NULL,&dest.w,&dest.h);
 
-	dest.x = sdl_helper.get_win_size()->width / 2 - dest.w/2;
-	dest.y = sdl_helper.get_win_size()->height / 2 - (dest.h + 50);
+	//this math just "squares up" the error message nicely with the exit button
+	int width_offset = (dest.w - exit_dialogue.get_width()) / 2;
+	dest.x = exit_dialogue.get_xloc() - width_offset;
+	dest.y = exit_dialogue.get_yloc() - dest.h;
 
 
 

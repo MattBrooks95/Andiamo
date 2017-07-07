@@ -51,7 +51,7 @@ sdl_help::sdl_help(string name_in,string HF_input_file_in){
         };
 
 	//cout << display.w << " " << display.h << endl;;
-	window = SDL_CreateWindow(window_name.c_str(), 0, 0, display.w * .5, display.h * .75, 0);
+	window = SDL_CreateWindow(window_name.c_str(), 0, 0, display.w * .5, display.h * .75, SDL_WINDOW_RESIZABLE);
 	renderer = SDL_CreateRenderer(window,-1,SDL_RENDERER_PRESENTVSYNC);
  //(font_p + "LiberationSerif-Regular.tff").c_str()
 	font = TTF_OpenFont( "./Assets/fonts/LiberationSerif-Regular.ttf", 22);//set up pointer to font from file
@@ -160,7 +160,8 @@ void sdl_help::quit(){
 void sdl_help::window_update(int width_in, int height_in){
 	window_s.width = width_in; //update sdl class's window size variables
 	window_s.height = height_in;
-
+	vert_bar.handle_resize();
+	horiz_bar.handle_resize();
 	tile_bag.update_win(width_in,height_in);
 }
 //prints area window size and display 
