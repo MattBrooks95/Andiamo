@@ -16,8 +16,12 @@ std::vector<std::string> split(std::string split_me, char delim);
  *in input_maker's fortran string struct
  * \param base_string the string who will lose size(string_remove) characters
  * \param remove_num integer value that is the n characters to be "lopped off" the end of the string */
-void trim(std::string& base_string,int remove_num);
+void trim(std::string& base_string,unsigned int remove_num);
 
 //! this function splits a comma-separated list of numbers (in a string) and fills a passed vector with the numbers
 /*! it removes the quotation marks, then splits along the commas and fills the passed vector with integers */
 void handle_i4_array(std::string& string_in,std::vector<int>& fill_me);
+
+//! this function splits a comma-separate dlist of numbers (in a string) and fills a passed vector with the numbers
+/*! it removes the quotation marks, then splits along commas and fills the passed vector with doubles */
+void handle_e_array(std::string& string_in,std::vector<double>& fill_me);

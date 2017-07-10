@@ -205,35 +205,37 @@ void manager::give_fields_defaults(){
 		}//inner for 1
 
 		//check the real8_params vector
-		for(unsigned int i = 0;i < input_maker_hook->get_real8_params().size() && !found;i++){
+		if(!found){
+			for(unsigned int i = 0;i < input_maker_hook->get_real8_params().size() && !found;i++){
 
-			if(input_maker_hook->get_real8_params()[i].name == tiles[c].tile_name){
-				tiles[c].real8_hook = &(input_maker_hook->get_real8_params()[i]);
-				tiles[c].temp_input = to_string(input_maker_hook->get_real8_params()[i].value);
+				if(input_maker_hook->get_real8_params()[i].name == tiles[c].tile_name){
+					tiles[c].real8_hook = &(input_maker_hook->get_real8_params()[i]);
+					tiles[c].temp_input = to_string(input_maker_hook->get_real8_params()[i].value);
 
-				tiles[c].text_box_init();//now that input_maker hook is set, create surfaces and textures
-				found = true;//found the tile, don't let the other sub loops run
-				break;
-			}
-		}//inner for 2
+					tiles[c].text_box_init();//now that input_maker hook is set, create surfaces and textures
+					found = true;//found the tile, don't let the other sub loops run
+					break;
+				}
+			}//inner for 2
+		}
+		if(!found){
+			//check the string_params vector
+			for(unsigned int i = 0;i < input_maker_hook->get_string_params().size() && !found;i++){
 
-		//check the string_params vector
-		for(unsigned int i = 0;i < input_maker_hook->get_string_params().size() && !found;i++){
-
-			cout << " PARAM VEC SIZE: " << input_maker_hook->get_string_params().size() << endl;
-			if(input_maker_hook->get_string_params()[i].name == tiles[c].tile_name){
-				cout << "STRING HOOK: " << &(input_maker_hook->get_string_params()[i]) << endl;
-				tiles[c].string_hook = &(input_maker_hook->get_string_params()[i]);
-				cout << tiles[c].string_hook << endl;
-				tiles[c].temp_input = tiles[c].string_hook->value;
-				cout << " STRING HOOK VALUE: " << input_maker_hook->get_string_params()[i].value << endl;
-				tiles[c].text_box_init();//now that input_maker hook is set, create surfaces and textures
-				cout << "SET STRING HOOK: " << tiles[c].string_hook << " = " << tiles[c].string_hook->value << endl;
-				found = true;
-				break;
-			}
-		}//inner for 3
-		
+				cout << " PARAM VEC SIZE: " << input_maker_hook->get_string_params().size() << endl;
+				if(input_maker_hook->get_string_params()[i].name == tiles[c].tile_name){
+					cout << "STRING HOOK: " << &(input_maker_hook->get_string_params()[i]) << endl;
+					tiles[c].string_hook = &(input_maker_hook->get_string_params()[i]);
+					cout << tiles[c].string_hook << endl;
+					tiles[c].temp_input = tiles[c].string_hook->value;
+					cout << " STRING HOOK VALUE: " << input_maker_hook->get_string_params()[i].value << endl;
+					tiles[c].text_box_init();//now that input_maker hook is set, create surfaces and textures
+					cout << "SET STRING HOOK: " << tiles[c].string_hook << " = " << tiles[c].string_hook->value << endl;
+					found = true;
+					break;
+				}
+			}//inner for 3
+		}
 		if(!found){
 			//check the i4_array_params vector
 			try {
@@ -259,10 +261,36 @@ void manager::give_fields_defaults(){
 				for(my_iterator = input_maker_hook->get_i4_array_params().begin();
 				    my_iterator != input_maker_hook->get_i4_array_params().end();
 				    my_iterator++){
-					cout << "Key: " << my_iterator->first << "Name: "
+					cout << "Key: " << my_iterator->first << " Name: "
 					     << my_iterator->second.name << endl;
 				} //testing for loop
 			}
+		}
+
+		//check e_params map 
+		if(!found){
+			try{
+				tiles[c].e_array_hook = &input_maker_hook->get_e_params().at(tiles[c].tile_name);
+				tiles[c].temp_input = tiles[c].e_array_hook->get_string();
+				tiles[c].text_box_init(); //set up text box's surfaces and textures
+
+			} catch (out_of_range& not_found){
+				cout << "Tile name:" << tiles[c].tile_name << " not found in any input_maker vector.\n"
+				     << "Check that names of parameters in HF_Config match names in tile_Input/tiles.txt"
+				     << "exactly." << endl;
+				cout << "Map is as follows:" << endl;
+				map<string,param_e_array>::iterator my_iterator;
+				for(my_iterator = input_maker_hook->get_e_params().begin();
+				    my_iterator != input_maker_hook->get_e_params().end();
+				    my_iterator++){
+				    cout << "Key: " << my_iterator->first << " Name: "
+						    << my_iterator->second.name << endl;
+				}
+
+			}
+
+
+
 		}
 	}//big for
 

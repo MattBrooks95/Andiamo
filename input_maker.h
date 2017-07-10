@@ -53,6 +53,9 @@ class input_maker{
 
 	//! return int4_array_params BY REFERENCE
 	std::map<std::string,param_int4_array>& get_i4_array_params(){return int4_array_params;}
+
+	//! return e_params map BY REFERENCE
+	std::map<std::string,param_e_array>& get_e_params(){return e_params;}
 	//##############################################################################
 
 	std::string output_file_name;//!< \brief name of the file in config_p's folder where output will be printed
@@ -94,6 +97,11 @@ class input_maker{
 	 *this being a map allows parameters to be looked up by name */
 	std::map<std::string,param_int4_array> int4_array_params;
 
+	//! this map contains the ftran_struct e_params
+	std::map<std::string, param_e_array> e_params;
+
+
+
 	std::vector<param_real8> ETAB;//!< store the ETAB numbers read in from the TC file
 	std::vector<param_real8> TTAB;//!< store the TTAB numbers read in from the TC file
 
@@ -124,6 +132,8 @@ void do_line4(const std::vector<param_real8>& real8_params, const std::vector<pa
 
 //! this function outputs the variables in line 4A
 void do_line4A(const std::vector<param_real8>& real8_params,const std::vector<param_int4>& int4_params,std::ofstream& outs);
+
+void do_line4B(std::map<std::string, param_e_array>& e_params,std::ofstream& outs);
 //######################################################################################################################
 
 

@@ -43,6 +43,7 @@ field::field(string tile_name_in,string image_name_in, int width, int height){
 	real8_hook = NULL;
 	string_hook = NULL;
 	int4_array_hook = NULL;
+	e_array_hook = NULL;
 
 }
 SDL_Rect field::get_rect() const{
@@ -319,7 +320,7 @@ void field::update_my_value(){
 		//cout << "Ftran string name before: " << string_hook->name << endl;
 		//cout << "Ftran string size before: " << string_hook->size << endl;
 		string temp_string = temp_input;
-		int balance_factor = temp_string.length() - string_hook->value.length();
+		unsigned int balance_factor = temp_string.length() - string_hook->value.length();
 		trim(temp_string,balance_factor);
 		string_hook->value = temp_string;
 		cout << "Ftran String value after: " << string_hook->value << endl;

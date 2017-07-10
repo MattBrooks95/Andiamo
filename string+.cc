@@ -54,7 +54,7 @@ vector<string> split(string split_me, char delim){
 	return return_me;
 }
 
-void trim(std::string& base_string,int remove_num){
+void trim(std::string& base_string,unsigned int remove_num){
 	cout << "Base string before: " << base_string << endl;
 	if(remove_num > base_string.length()){
 		return;
@@ -82,10 +82,25 @@ void handle_i4_array(std::string& string_in,vector<int>& fill_me){
 	vector<string> string_vec = split(split_me,',');
 
 	//cast the strings into integers, and fill the return vector
-	for(int c = 0; c < string_vec.size();c++){
+	for(unsigned int c = 0; c < string_vec.size();c++){
 		fill_me.push_back( atoi( string_vec[c].c_str() ) );
 	}
 
+}
+
+void handle_e_array(string& string_in,vector<double>& fill_me){
+	if(!fill_me.empty()){
+		cout << "Error, handle_e_array given a non-empty array as a parameter." << endl;
+	}
+	//remove quotes
+	string split_me = string_in.substr(1,string_in.length()-2);
+
+	//split the line into a vector of strings
+	vector<string> string_vec = split(split_me,',');
+
+	for(unsigned int c = 0; c < string_vec.size();c++){
+		fill_me.push_back( atof(string_vec[c].c_str()) ) ;
+	}
 }
 
 

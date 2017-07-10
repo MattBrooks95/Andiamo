@@ -54,7 +54,7 @@ int main(){
 	if(!SDL_PollEvent(&big_event)){
 		big_event.type = 1776;
 	}
-	cout << "EVENT = " << big_event.type << endl;
+	//cout << "EVENT = " << big_event.type << endl;
 
 	if(sdl_helper.get_v_bar().is_scrolling()){//if the vertical scroll bar is in "scroll mode"
 		   //do a mini loop until the left mouse button is released
@@ -133,7 +133,7 @@ int main(){
 	//sdl_helper.print_tile_locs(cout);
 	sdl_helper.present();  //and all positions have been calculated
 
-	SDL_Delay(50);//slow down loop speed if work was done
+	//SDL_Delay(50);//slow down loop speed if work was done
 
   }//end of while loop
   //b_manager.clean_up();//have the button manager set up the necessary file paths in input_maker so

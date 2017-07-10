@@ -11,6 +11,7 @@
 #define F5 << setw(5) <<
 #define I << setw(5) <<
 #define I10 << setw(10) <<
+#define E << setw(10) <<
 using namespace std;
 
 input_maker::input_maker(string output_file_name_in,string config_file_name_in){
@@ -51,6 +52,7 @@ void input_maker::init(){
 	regex string_array_size_pattern("\\|\\d+?\\|");
 	regex int_array_size_pattern("\\([0-9]+?\\)");
 
+	regex e_array("\\s*?E\\(\\s*[0-9]+?\\s*?\\)\\s*?[A-Za-z0-9]+?\\s*?=\\s*?\"(\\s*?[0-9]+?\\.[0-9]+?,?)+?\"");
 
 
 	string temp_string;
@@ -198,6 +200,36 @@ void input_maker::init(){
 			}
 
 
+		} else if( regex_match(temp_string,e_array) ){
+			cout << "LINE:" << temp_string << "is an E array!" << endl; 
+			vector<string> tokens = split(temp_string,' ');//split across spaces
+			/*for(unsigned int c = 0; c < tokens.size(); c++){
+				cout << tokens[c] << endl;
+
+			}*/
+			string name = tokens[1];//token 1 should be just the variable name 
+			int array_size = 0;//fill this value later
+			vector<double> values; //fill this with what's in the comma separated list
+
+			//rip array size out of type declaration part E(size) "E(8) some array name = " " "
+			smatch size_match;//contain result of regex search for size
+			regex_search(tokens[0],size_match,int_array_size_pattern);
+			if(size_match.ready()){
+				string temp_size_string = size_match[0].str().substr(1,size_match[0].str().size()-2);
+				array_size = stoi(temp_size_string);
+			} else {
+
+				cout << "Error! Could not determine array size of E array (TIN?)"
+				     << "declaration line." << endl;
+			}
+			param_e_array e_array_push_me(name,array_size,false);//create object to be shoved into the map for E arrays
+			handle_e_array(tokens[3],e_array_push_me.values);
+			/*cout << "Vector of Es? Doubles? As follows:" << endl;
+			for(unsigned int c = 0; c < e_array_push_me.values.size();c++){
+				cout << e_array_push_me.values[c] << endl;
+			}*/
+
+			e_params.insert(std::pair<string,param_e_array>(name,e_array_push_me));//shove object into the map for E arrays
 		} else {
 			cout << "Error! Line type wasn't determined." << endl;
 		}
@@ -245,13 +277,39 @@ void input_maker::output(){
 	do_TC_coefficients(real8_params,int4_array_params,TC_input_file_name,outs);
 	//#######################################################################################################
 
-	//SET UP LINE 4##########################################################################################
-	do_line4(real8_params,int4_params,outs);
+	//IF IENCH = 7 ##########################################################################################
+	bool do_4_5 = false;
+	for(unsigned int c = 0; c < int4_params.size();c++){
+		if(int4_params[c].name == "IENCH" && int4_params[c].value == 7){
+			do_4_5 = true;
+			break;
+		}
+	}
+	/*if(do_4_5){
+		cout << "IENCH VALUE: " << 7 << endl;	
+		cout << "Lines 4 and 5 will be done." << endl;
+	} else {
+		cout << "IENCH VALUE: not 7" << endl;
+		cout << "Lines 4 and 5 will not be done." << endl;
 
-	do_line4A(real8_params,int4_params,outs);
-	//#######################################################################################################
+	}*/
+	//only do the following lines if IENCH == 7, per the input manual
+	if(do_4_5){
+		//SET UP LINE 4##################################################################################
+		do_line4(real8_params,int4_params,outs);
 
+		do_line4A(real8_params,int4_params,outs);
 
+		do_line4B(e_params,outs);
+		//###############################################################################################
+
+		//SET UP LINE 5##################################################################################
+		//do_line
+
+		//###############################################################################################
+
+	}
+	//####################### IENCH = 7 LINES ###############################################################
 	
 	outs.flush();//push changes to file, if this is not here C++ will wait to do the writing until
 		     //the program is terminated
@@ -385,7 +443,18 @@ void do_line4(const std::vector<param_real8>& real8_params,const std::vector<par
 void do_line4A(const vector<param_real8>& real8_params,const vector<param_int4>& int4_params,ofstream& outs){
 	outs << fixed << setprecision(2);
 	outs F5 real8_params[9].value F5 real8_params[10].value F5 real8_params[11].value F5 real8_params[12].value F5 real8_params[13].value;
-	outs I int4_params[7].value;
+	outs I int4_params[7].value << endl;
+}
+void do_line4B(map<std::string, param_e_array>& e_params,std::ofstream& outs){
+	outs << right;//set orientation
+	outs << setprecision(3);//set # of decimal places
+	for(unsigned int c = 0; c < e_params.at("TIN").values.size();c++){
+		outs E e_params.at("TIN").values[c];
+		if(c == e_params.at("TIN").values.size()-1){
+		outs << endl;
+		}
+
+	}
 }
 //#################################################################################################################
 

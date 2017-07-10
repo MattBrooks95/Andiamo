@@ -409,11 +409,3 @@ void button_manager::clean_up_warnings(bool bad_output_fname,bool bad_tc_input_f
 
 
 
-
-
-
-
-
-
-
-

@@ -100,8 +100,8 @@ struct param_string{
 };
 
 //! this struct contains the information about a fortran array given in HF_config
-/*! the arrays here will not have a name field, I'm probably going to use <map>, and have input_maker
-  *store a map of these, so that they can be easily found with their 'key', most likely a string */
+/*! I'm using c++'s <map> library, so input_maker can store a map of these.
+  *That way, they can be easily found with their 'key', most likely a string */
 struct param_int4_array{
 	param_int4_array(std::string name_in="no name given",unsigned int size = 1,bool satisfied_in=false);
 
@@ -124,6 +124,22 @@ struct param_int4_array{
 
 	std::string name; //! contextual name for the array, like NENT or LMAX
 	std::vector<int> values;//!< is the array of integers 
+};
+//! this struct contains the information about a the fortran values in line 4-B in the input manual
+/*! these data types will function largely the same as param_int4_array, but will need different formating.
+ *I'm not really sure what 8E10.3 means, so I'm going to operate under the assumption that it means
+ *8 floating point numbers with a field width of 10 and 3 decimal places. */
+struct param_e_array{
+	param_e_array(std::string name_in ="no name given", unsigned int size_in = 1, bool satisfied_in=false);
+	
+	//! this member convers the vector of double values into a single, comma separated list contained in a string
+	std::string get_string();
+
+	bool satisfied; //!< should be true if array has the correct size and legal values, false elsewise
+	std::vector<double> values;//!< store an indefinite amount of numbers with decimal places
+	std::string name; //!< contextual name for the parameter, TIN in this case
+	unsigned int size;//! size of the arrayf
+
 };
 /*
 struct param_int8{

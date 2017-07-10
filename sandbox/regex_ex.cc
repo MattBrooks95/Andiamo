@@ -17,6 +17,9 @@ int main()
 	regex char_array("\\s*?C\\*\\s*?[A-Za-z]+?\\|[0-9]+?\\|\\s*?=\\s*?\".+?\"");
 	regex real_eight("\\s*?R8\\s+?[A-Za-z0-9]+?\\s+?=\\s+?[0-9]*?\\.[0-9]*?");
 
+	regex e_array("\\s*?E\\(\\s*[0-9]+?\\s*?\\)\\s*?[A-Za-z0-9]+?\\s*?=\\s*?\"(\\s*?[0-9]+?\\.[0-9]+?,?)+?\"");
+
+
 	vector<string> lines;	
 	string comment = "#some comment here";
 	string comment2 = "    #this one has spaces, and is more tricky";
@@ -25,10 +28,10 @@ int main()
 	string real8_2 = "R8 ROFL = 17.76";
 	string int4_ = "I4 IENCH = 7";
 	string int4_2 = "    I4        LMAO        =        123456789";
+	string e_example = "E(8) TIN = \"0.831,0.803,0.742,0.630,0.460,0.290,0.140,0.061,0.022,0.007\"";
 
-
-	//string int_array_line = "I4(7) NENT = \"20,20,0,0,0,20\"";
-	string int_array_line = "I4(7) NENT = \"20\"";
+	string int_array_line = "I4(7) NENT = \"20,20,0,0,0,20\"";
+	//string int_array_line = "I4(7) NENT = \"20\"";
 
 	lines.push_back(real8_2);
 	lines.push_back(int4_2);
@@ -38,6 +41,7 @@ int main()
 	lines.push_back(real8_);
 	lines.push_back(int4_);
 	lines.push_back(int_array_line);
+	lines.push_back(e_example);
 
 	for(unsigned int c = 0; c < lines.size();c++){
 		bool found = false;
@@ -57,6 +61,10 @@ int main()
 		} if(regex_match(lines[c],char_array)){
 			cout << "Is a character array!\n" << endl;
 			found = true;
+		} if( regex_match(lines[c],e_array) ){
+			cout << "Is an array of E!" << endl;
+			found = true;
+
 		}
 		if(!found){
 			cout << "Wow, this line didn't hit any cases! You must "
@@ -65,7 +73,7 @@ int main()
 
 	}
 
-
+	/*
 	regex int_array_size("\\([0-9]+?\\)");
 	smatch size_match;
 
@@ -80,7 +88,7 @@ int main()
 	} else {
 		cout << "Error! No matches." << endl;
 
-	}
+	}*/
 
 
 

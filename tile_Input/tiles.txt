@@ -43,15 +43,6 @@ andy_tile.png
 550
 50
 andy
-IENCH
-c entrance channel:
-c 1 = neutron, 2 = proton, 3 = deuteron
-c 4 = triton, 5 = helium-3, 6 = alpha 
-c 7 = incident particle with A > 4
-andy_tile.png
-150
-50
-andy
 ICM
 c reference frame of transmission coefficients:
 c 0 = energies given in lab,
@@ -162,6 +153,15 @@ andy_tile.png
 150
 50
 andy
+IENCH
+c entrance channel:
+c 1 = neutron, 2 = proton, 3 = deuteron
+c 4 = triton, 5 = helium-3, 6 = alpha 
+c 7 = incident particle with A > 4
+andy_tile.png
+150
+50
+andy
 APAR
 c only needed if IENCH = 7
 c A of incident particle
@@ -206,7 +206,14 @@ andy_tile.png
 150
 50
 andy
-
+TIN
+c comma-separated list of transmission coefficients
+c ordered in l of the incident particle
+c at the incident energy
+800
+50
+andy_tile.png
+andy
 
 
 
