@@ -133,7 +133,7 @@ int main(){
 	//sdl_helper.print_tile_locs(cout);
 	sdl_helper.present();  //and all positions have been calculated
 
-	//SDL_Delay(50);//slow down loop speed if work was done
+	SDL_Delay(50);//slow down loop speed if work was done
 
   }//end of while loop
   //b_manager.clean_up();//have the button manager set up the necessary file paths in input_maker so
