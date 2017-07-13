@@ -43,11 +43,11 @@ void input_maker::init(){
 
 	//set up regex matches
 	regex re_comment("\\s*?#.*");
-	regex re_i4("\\s*?I4\\s+?[A-Za-z0-9]+?\\s+?=\\s+?[0-9]*\\s*");
+	regex re_i4("\\s*?I4\\s+?[A-Za-z0-9]+?\\s+?=\\s+?-?[0-9]*\\s*");
 	//regex re_i4_array("\\s*?I4\\(\\s*?[0-9]+?\\s*?\\)\\s+?[A-Za-z0-9]+?\\s+?=\\s+?[0-9]*");
-	regex re_i4_array("\\s*?I4\\(\\s*?[0-9]+?\\s*?\\)\\s*?[A-Za-z0-9]+?\\s*?=\\s*?\"(\\s*?[0-9]*?\\s*?,?)+?\"\\s*");
+	regex re_i4_array("\\s*?I4\\(\\s*?[0-9]+?\\s*?\\)\\s*?[A-Za-z0-9]+?\\s*?=\\s*?\"(\\s*?-?[0-9]*?\\s*?,?)+?\"\\s*");
 	regex re_string("\\s*?C\\*\\s*?[A-Za-z]+?\\|[0-9]+?\\|\\s*?=\\s*?\".+?\"\\s*");
-	regex re_real8("\\s*?R8\\s+?[A-Za-z0-9]+?\\s+?=\\s+?[0-9]*?\\.[0-9]*?\\s*");
+	regex re_real8("\\s*?R8\\s+?[A-Za-z0-9]+?\\s+?=\\s+?-?[0-9]*?\\.[0-9]*?\\s*");
 
 	regex string_array_size_pattern("\\|\\d+?\\|");
 	regex int_array_size_pattern("\\([0-9]+?\\)");

@@ -157,11 +157,11 @@ void scroll_bar::handle_resize(){
 
 	if(width > height){//dealing with horizontal scroll bar, because it is wider than it is tall
 		yloc = *window_height - height;//situate self at very bottom of the window
-		xloc = 0;//start on the very leftmost edge
+		//xloc = 0;//start on the very leftmost edge
 
 
 	} else if(height > width) {//dealing with vertical scroll bar, because it is taller than it is wide
-		yloc = 0;//situate self at top of screen
+		//yloc = 0;//situate self at top of screen
 		xloc = *window_width - width;//situate self at very right of window
 
 
