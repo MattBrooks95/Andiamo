@@ -8,6 +8,8 @@ int main(){
 	string test2 = "This_sentence_should_be_split_along_underscores.";
 	string test3 = "This should be split along spaces, \"but this should be one item\"";
 
+	string test4 = "       400       x500  ";
+
 	vector<string> result1 = split(test,' ');
 	vector<string> result2 = split(test2,'_');
 	vector<string> result3 = split(test3,' ');
@@ -23,6 +25,10 @@ int main(){
 	for(unsigned int c = 0; c < result3.size();c++){
 		cout << result3[c] << endl;
 	}
+
+	cout << "strip_char before:" << test4 << endl;
+	strip_char(test4,' ');
+	cout << "strip_char test after:" << test4 << endl;
 
 
 

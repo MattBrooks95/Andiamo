@@ -540,8 +540,6 @@ void sdl_help::calc_corners(){
 
 		prev_height = prev_height + max_height; //update prev_height with new row's max value
 	}//loop until done
-	//this call sets the area struct
-	tile_bag.set_area(area.width,area.height);
 
 }
 

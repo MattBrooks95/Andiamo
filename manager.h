@@ -2,6 +2,8 @@
 
 #pragma once
 #include<vector>
+#include<map>
+
 
 #include "field.h"
 #include "input_maker.h"
@@ -20,16 +22,13 @@ class manager{
 	//! destructor is left empty for now.
 	~manager();
 
-	//! This member loads a given tile into the vector
-	/*! It doesn't do anything special right now, but later it may have to
-	 *implement some other book keeping, so it gets its own function 
-         *\param temp is the temporary tile that is passed by value, and shoved into the tiles vector */
-	void new_tile(field temp);
-
-	//! this member goes through all the tiles and keeps track of the rightmost and bottom most edges
-	/* area isn't being used right now, but I feel it may be a useful metric to have. It exists in
-	 * sdl_help, but the scroll bars have pointers to these values as well. */
-	void set_area(int& sdl_max_width, int& sdl_max_height);
+	//! This member loads a map of parameters into the map of lines
+	/*! this way, when the parameters are output to the HF file,
+	 *the desired line can be referenced by its name, like "5A", and then the parameter can be referenced by its name
+	 *like "IENCH".
+	 *\param line_name is the name of the map that will be put into the map of lines
+	 *\param line_map is a map of the parameter's name, and their corresponding field*/
+	void new_line(const std::string& line_name,const std::map<std::string,field>& line_map);
 
 	//! this member is called by sdl_help's constructor, and sets up input_maker object pointer
 	void set_input_maker_hook(input_maker* input_maker_hook_in);
@@ -58,8 +57,8 @@ class manager{
 	 *sdl_help's draw_tiles() function*/
 	void init();
 
-	//! This runs through the vector and enacts each of the field element's print members
-	/*! \param outs is the output stream that the info should be sent to */
+	//! this function runs through the 2d map, and prints all of the lines and their fields
+	/* \param outs is the output stream that will be printed to */
 	void print_all(std::ostream& outs);
 
 	//! This member updates the window's dimension values win_w and win_h
@@ -69,7 +68,8 @@ class manager{
 	 *\param height_in is the desired new height */
 	void update_win(int width_in, int height_in);
 
-	std::vector<field> tiles;//!< vector of tile information is public for easier access from sdl_help
+	std::map<std::string,std::map<std::string,field>> fields;//!< trying something new, to keep relevant tiles together
+	//std::vector<field> tiles;//!< vector of tile information is public for easier access from sdl_help
 
   private:
 	input_maker* input_maker_hook; //!< allows manager access to sdl_help's input_maker object

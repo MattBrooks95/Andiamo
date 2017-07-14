@@ -11,7 +11,7 @@
  *the meaningful information, or it will likely return a bad vector */
 std::vector<std::string> split(std::string split_me, char delim);
 
-//! this function trims the first argument's size by the lenght of the second argument.
+//! this function trims the first argument's size by the length of the second argument.
 /* this function is used to ensure that the character array field::temp_input is the same size as the one expected
  *in input_maker's fortran string struct
  * \param base_string the string who will lose size(string_remove) characters
@@ -25,3 +25,8 @@ void handle_i4_array(std::string& string_in,std::vector<int>& fill_me);
 //! this function splits a comma-separate dlist of numbers (in a string) and fills a passed vector with the numbers
 /*! it removes the quotation marks, then splits along commas and fills the passed vector with doubles */
 void handle_e_array(std::string& string_in,std::vector<double>& fill_me);
+
+//! this function loops over the passed in string, and builds a new string that excludes the past character
+/*! \param string_in will be looped over, and the good characters stored in an accumulator string that is assigned to string_in at the end of the functoin
+ *\param strip_me is the character that will not be in the "new" string */
+void strip_char(std::string& string_in,char strip_me);

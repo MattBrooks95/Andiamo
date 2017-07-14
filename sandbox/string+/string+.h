@@ -2,6 +2,7 @@
 #include<vector>
 std::vector<std::string> split(std::string split_me = "", char delim = ' ');
 
+void strip_char(std::string& string_in,char strip_me);
 /* old version
 	std::vector<std::string> return_me;
 	if(split_me.empty()) return return_me;
