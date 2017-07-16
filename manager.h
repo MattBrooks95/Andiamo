@@ -45,6 +45,18 @@ class manager{
 	 *because the field's pointer points to the vector's old location. */
 	void give_fields_defaults();
 
+	//############# GIVE_FIELDS_DEFAULTS() HELPERS ########################################################//
+	void give_int4_fields_defaults();
+	void give_int4_array_fields_defaults();
+
+	void give_real8_fields_defaults();
+
+	void give_string_fields_defaults();
+
+	void give_e_array_fields_defaults();
+
+	//####################################################################################################//
+
 	//! this function updates input_maker's vectors with the field's new values (from user)
 	void update_io_maker();
 

@@ -153,41 +153,26 @@ void manager::set_input_maker_hook(input_maker* input_maker_hook_in){
 
 void manager::give_fields_renderer(SDL_Renderer* sdl_help_renderer_in,string image_p_in,
 				   int* xscroll_in, int* yscroll_in,TTF_Font* font_in){
-	for(unsigned int c = 0; c < tiles.size();c++){
-		tiles[c].graphics_init(sdl_help_renderer_in,image_p_in,xscroll_in,yscroll_in,font_in);
-	}
+	//loop over each map in the map
+	for(map<string,map<string,field>>::iterator big_it = fields.begin();
+	    big_it != fields.end();
+	    big_it++){
+	    for(map<string,field>::iterator small_it = big_it->second.begin();
+		small_it != big_it->second.end();
+		small_it++){
+		small_it->second.graphics_init(sdl_help_renderer_in,image_p_in,xscroll_in,
+					       yscroll_in,font_in);
+	    }
 
+	}
 }
 
 void manager::give_fields_defaults(){
-	//starting at 1 to skip over background tile
 
+	//call helper function for connecting the int4 params with their graphical tiles
+	give_int4_fields_defaults();
 
-	bool found = false; //turn to true when we find the correct tile and set its default values and
-			    //input maker hook. This way it doesn't bother continue searching
-
-
-	//loop over every name in the name vector
-	//and search all the parameter vectors for a parameter with the same name
-	for(unsigned int c = 1; c < tiles.size();c++){
-		found = false; //reset the found boolean per run of the outer loop
-
-		//check the int4 params vector
-		for(unsigned int i = 0; i < input_maker_hook->get_int4_params().size() && !found;i++){
-
-			if(input_maker_hook->get_int4_params()[i].name == tiles[c].tile_name){
-				tiles[c].int4_hook = &(input_maker_hook->get_int4_params()[i]);
-				tiles[c].temp_input = to_string(input_maker_hook->get_int4_params()[i].value);
-				cout << "Setting " << tiles[c].tile_name << "'s string field to "
-				     << to_string(input_maker_hook->get_int4_params()[i].value) << endl;
-				cout << "And its value has been set to: " << tiles[c].temp_input << endl;
-
-				tiles[c].text_box_init();//now that input_maker hook is set, create surfaces and textures
-				found = true;//found the tile, don't let the other sub loops run
-				break;
-			}
-		}//inner for 1
-
+	/*
 		//check the real8_params vector
 		if(!found){
 			for(unsigned int i = 0;i < input_maker_hook->get_real8_params().size() && !found;i++){
@@ -276,13 +261,99 @@ void manager::give_fields_defaults(){
 
 
 		}
-	}//big for
+	}//big for */
+
+}
+//################ GIVE_FIELDS_DEFAULTS() HELPERS #######################################################//
+void manager::give_int4_fields_defaults(){
+	//this looks dense, but is simple
+	//the outer loop just runs over every integer in the integer map that needs output to the HF file,
+	//and then runs through each line's map in the manager::fields map looking for the correct parameter name for that int4
+	//param. It's better to go through input_maker's parameters and find them in the fields map than it is to loop through
+	//the fields map and find the parameters. This is because the second way would involve checking each map in input_maker,
+	//when the first way just checks the 2d map in the manager object
+	for(map<string,param_int4>::iterator big_it = input_maker_hook->get_int4_params().begin();
+		big_it != input_maker_hook->get_int4_params().end();
+		big_it++){
+		bool found = false; //start off false, turn to true if the desired parameter is found
+		for(map<string,map<string,field>>::iterator line_it = fields.begin();
+			line_it != fields.end();
+			line_it++){
+		  //try to find the desired parameter in this line
+		  try {
+			found = true; //we found it, so make the flag good
+		    	line_it->second.at(big_it->first).int4_hook = &big_it->second; //let the field reference it's place in the
+										       //input_maker map, so it can output the new
+										       //given to it by the user, to the HF output
+			line_it->second.at(big_it->first).temp_input = big_it->second.value;//set the default value so it's displayed
+											    //in the window
+			line_it->second.at(big_it->first).text_box_init();//set up the texxt box
+			break;//leave this loop early, we don't need to check the other line's maps
+
+		  //if it fails, need to check a different line's map in the manager object
+		  } catch (out_of_range& not_found){
+
+			continue;//if it isn't found, just check the next line's map
+		  }
+
+
+		}
+		if(!found){
+			cout << "Error! Failed to find parameter:" << big_it->first << "'s tile in the fields map."
+			     << "\nPlease make sure that its entries in tile_Input/tiles.txt and HF_Config/config.txt"
+			     << "\n have matching names." << endl;
+
+		}
+
+
+	}
+}
+
+void manager::give_int4_array_fields_defaults(){
+	for(map<string,param_real8>::iterator big_it = input_maker_hook->get_real8_params().begin();
+		big_it != input_maker_hook->get_real8_params().end;
+	   	big_it++;){
+		for(map<string,map<string,fields>>::iterator line_it = fields.begin();
+			line_it != fields.end();
+			line_it++){
+
+		}	
+
+	}
+
 
 }
 
+void manager::give_real8_fields_defaults(){
+
+}
+
+void manager::give_string_fields_defaults(){
+
+}
+
+void manager::give_e_array_fields_defaults(){
+
+}
+
+//########################################################################################################//
+
+
+
+
+
 void manager::update_io_maker(){
-	for(unsigned int c = 1; c < tiles.size();c++){
-		tiles[c].update_my_value();
+	//for(unsigned int c = 1; c < tiles.size();c++){
+	//	tiles[c].update_my_value();
+	//}
+	for(map<string,map<string,field>>::iterator big_it = fields.begin();
+	    big_it != fields.end();
+	    big_it++){
+		for(map<string,field>::iterator small_it;
+		    small_it != big_it->second.end();
+		    small_it++){
+			small_it->second.update_my_value();
+		}
 	}
 
 }

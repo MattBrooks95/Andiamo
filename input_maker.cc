@@ -44,7 +44,6 @@ void input_maker::init(){
 	//set up regex matches
 	regex re_comment("\\s*?#.*");
 	regex re_i4("\\s*?I4\\s+?[A-Za-z0-9]+?\\s+?=\\s+?-?[0-9]*\\s*");
-	//regex re_i4_array("\\s*?I4\\(\\s*?[0-9]+?\\s*?\\)\\s+?[A-Za-z0-9]+?\\s+?=\\s+?[0-9]*");
 	regex re_i4_array("\\s*?I4\\(\\s*?[0-9]+?\\s*?\\)\\s*?[A-Za-z0-9]+?\\s*?=\\s*?\"(\\s*?-?[0-9]*?\\s*?,?)+?\"\\s*");
 	regex re_string("\\s*?C\\*\\s*?[A-Za-z]+?\\|[0-9]+?\\|\\s*?=\\s*?\".+?\"\\s*");
 	regex re_real8("\\s*?R8\\s+?[A-Za-z0-9]+?\\s+?=\\s+?-?[0-9]*?\\.[0-9]*?\\s*");
@@ -92,8 +91,9 @@ void input_maker::init(){
 			} else {
 				double value = stod(tokens[3]);
 				param_real8 new_param(var_name,value);
-				names_in_order.push_back(var_name);//update bookkeeping vector
-				real8_params.push_back(new_param);//push into real 8 vector 
+				//names_in_order.push_back(var_name);//update bookkeeping vector
+				real8_params.emplace(var_name,new_param);
+				//real8_params.push_back(new_param);//push into real 8 vector 
 			}
 
 		} else if( regex_match(temp_string,re_i4) ){//logics for reading in fortran integer 4's
@@ -106,9 +106,9 @@ void input_maker::init(){
 			} else {
 				int value = stoi(tokens[3]);
 				param_int4 new_param(var_name,value);
-
-				names_in_order.push_back(var_name);//update bookkeeping vector
-				int4_params.push_back(new_param);//push into the i4 vector
+				int4_params.emplace(var_name,new_param);
+				//names_in_order.push_back(var_name);//update bookkeeping vector
+				//int4_params.push_back(new_param);//push into the i4 vector
 			}
 
 		} else if( regex_match(temp_string,re_string) ){//logics for reading in fortran strings
@@ -144,13 +144,14 @@ void input_maker::init(){
 				string name = tokens[1].substr(0,tokens[1].size()- temp_string.size());
 
 				//make sure bookkeeping vector knows what is going on
-				names_in_order.push_back(name);
+				//names_in_order.push_back(name);
 
 				//create new ftran struct
 				//cout << "CHARACTER ARRAY VALUE = " << tokens[tokens.size()-1] << endl; 
 				param_string push_me(name,tokens[tokens.size()-1],size);
 				//save this new param value in its vector
-				string_params.push_back(push_me);	
+				//string_params.push_back(push_me);	
+				string_params.emplace(name,push_me);
 			}
 			
 		} else if( regex_match(temp_string,re_i4_array) ){
@@ -279,12 +280,18 @@ void input_maker::output(){
 
 	//IF IENCH = 7 ##########################################################################################
 	bool do_4_5 = false;
-	for(unsigned int c = 0; c < int4_params.size();c++){
+	/*for(unsigned int c = 0; c < int4_params.size();c++){
 		if(int4_params[c].name == "IENCH" && int4_params[c].value == 7){
 			do_4_5 = true;
 			break;
 		}
+	}*/
+
+	if(int4_params.at("IENCH").value == 7){
+		do_4_5 = true;
 	}
+
+
 	/*if(do_4_5){
 		cout << "IENCH VALUE: " << 7 << endl;	
 		cout << "Lines 4 and 5 will be done." << endl;
@@ -336,27 +343,37 @@ void output_string(ofstream& outs,const unsigned int& size,const string& string_
 
 }
 
-void do_line1(const vector<param_string>& string_params,ofstream& outs){
+void do_line1(const map<string,param_string>& string_params,ofstream& outs){
 
-	if(string_params[0].name != "label" || string_params.size() == 0){
+	//if(string_params[0].name != "label" || string_params.size() == 0){
+	try{
+		output_string(outs,string_params.at("label").size,string_params.at("label").value);
+		outs << "\n";
+
+	} catch( out_of_range& not_found ){
+
 		cout << "Error in input_maker, 'label' parameter not found in vector string_params "
 		     << "as it should be." << endl;
 
-		if( string_params.size() != 0 ){
-			cout << "Furthermore, the string_params vector is empty." << endl;
-			cout << "exiting" << endl;
-			return;
-		}
 
-	} else{
-
-		output_string(outs,string_params[0].size,string_params[0].value);
-		outs << "\n";
 	}
+
+
+
+		//if( string_params.size() != 0 ){
+		//	cout << "Furthermore, the string_params vector is empty." << endl;
+		//	cout << "exiting" << endl;
+		//	return;
+		//}
+
+	//} else{
+
+
+	//}
 
 }
 
-void do_line2(const vector<param_real8>& real8_params,const vector<param_int4> int4_params, ofstream& outs){
+void do_line2(const map<string,param_real8>& real8_params,const map<string,param_int4> int4_params, ofstream& outs){
 
 	//note, setw(something) needs to be called before every item is printed
 	//this is really annoying, so I have a macro up top where F = "<< setw(8) << " for
@@ -366,23 +383,32 @@ void do_line2(const vector<param_real8>& real8_params,const vector<param_int4> i
 
 	//set up decimal place precision
 	outs << fixed << setprecision(1);
-	// ELAB A Z FNRME1 FNRMM1
-	outs F real8_params[0].value F real8_params[1].value F real8_params[2].value F real8_params[3].value
-	     F real8_params[4].value;
 
-	//I = "<< setw(5) <<" macro up top
-	//IENCH, ICM, NZ3, TCPR
-	outs I int4_params[0].value I int4_params[1].value I int4_params[2].value I int4_params[3].value;
+	try{
+		// ELAB A Z FNRME1 FNRMM1
+		outs F real8_params.at("ELAB").value F real8_params.at("A") F real8_params.at("Z").value
+		     F real8_params.at("FNRME1").value F real8_params.at("FNRMM1").value;
 
-	//make field width 8 again, FNRME2
-	outs F real8_params[5].value;
+		//I = "<< setw(5) <<" macro up top
+		//IENCH, ICM, NZ3, TCPR
+		outs I int4_params.at("IENCH").value I int4_params.at("ICM").value I int4_params.at("NZ3").value
+		     I int4_params.at("TCPR").value;
 
-	//put width back to 5 for NGF
-	outs I int4_params[4].value << endl;
+		//make field width 8 again, FNRME2
+		outs F real8_params.at("FNRME2").value;
+
+		//put width back to 5 for NGF
+		outs I int4_params.at("NGF").value << endl;
+	} catch(out_of_range& not_found) {
+
+
+
+	}
+
 }
 
-void do_TC_coefficients(const std::vector<param_real8>& real8_params, const std::map<std::string,param_int4_array>& array_map,
-			std::string TC_input_file_name,std::ofstream& outs){
+void do_TC_coefficients(const map<string,param_real8>& real8_params, const map<string,param_int4_array>& array_map,
+			string TC_input_file_name,ofstream& outs){
 	ifstream ins;
 	ins.open("./TC_files/"+TC_input_file_name);
 	if(ins.fail()){
@@ -433,19 +459,21 @@ void do_TC_coefficients(const std::vector<param_real8>& real8_params, const std:
 
 }
 
-void do_line4(const std::vector<param_real8>& real8_params,const std::vector<param_int4>& int4_params,ofstream& outs){
+void do_line4(const map<string,param_real8>& real8_params,const map<string,param_int4>& int4_params,ofstream& outs){
 
 	outs << right;
 	//     FJTAR               FCMJMAX          FRESIDEMAX         ITARPR               NG             
-	outs F10 real8_params[6].value F10 real8_params[7].value F10 real8_params[8].value I int4_params[5].value I int4_params[6].value << endl;
+	outs F10 real8_params.at("FJTAR").value F10 real8_params.at("FCMJMAX").value F10 real8_params.at("FRESIDEMAX").value
+	     I int4_params.at("ITARPR").value I int4_params.at("NG").value << endl;
 }
 
-void do_line4A(const vector<param_real8>& real8_params,const vector<param_int4>& int4_params,ofstream& outs){
+void do_line4A(const map<string,param_real8>& real8_params,const map<string,param_int4>& int4_params,ofstream& outs){
 	outs << fixed << setprecision(2);
-	outs F5 real8_params[9].value F5 real8_params[10].value F5 real8_params[11].value F5 real8_params[12].value F5 real8_params[13].value;
-	outs I int4_params[7].value << endl;
+	outs F5 real8_params.at("APAR").value F5 real8_params.at("ZPAR").value F5 real8_params.at("QIN").value 
+	     F5 real8_params.at("FJPAR").value F5 real8_params.at("FPRPAR").value;
+	outs I int4_params.at("NLIN").value << endl;
 }
-void do_line4B(map<std::string, param_e_array>& e_params,std::ofstream& outs){
+void do_line4B(map<string, param_e_array>& e_params,std::ofstream& outs){
 	outs << right;//set orientation
 	outs << setprecision(3);//set # of decimal places
 	for(unsigned int c = 0; c < e_params.at("TIN").values.size();c++){
