@@ -32,7 +32,7 @@ win_size* sdl_help::get_win_size(){
 //######################### WIN SIZE STRUCT ################################################################
 
 //######################### SDL_HELP CONSTRUCTORS/DESTRUCTORS ##############################################
-sdl_help::sdl_help(string name_in,string HF_input_file_in){
+sdl_help::sdl_help(string name_in,string HF_input_file_in,string bg_image_name_in){
 	SDL_Init(SDL_INIT_TIMER | SDL_INIT_EVENTS|SDL_INIT_VIDEO);//for now, timer,video and keyboard
 	IMG_Init(IMG_INIT_PNG);//allows use of .png files
 	if(TTF_Init() != 0){ //allows sdl to print text to the screen using .ttf files
@@ -44,6 +44,10 @@ sdl_help::sdl_help(string name_in,string HF_input_file_in){
 	hf_input_p = "./HF_Input/";
 
 	frame_count = 0;
+
+
+	bg_image_name = bg_image_name_in;
+
 
 	if(SDL_GetCurrentDisplayMode(0,&display) < 0){
 		cout << "Get current display mode error" << endl;
@@ -64,6 +68,16 @@ sdl_help::sdl_help(string name_in,string HF_input_file_in){
 	window_update(display.w / 2,display.h * .75);//this call updates sdl_help and manager's
 					           // dimension window fields
 	x_scroll = 0; y_scroll = 0; //set scrolling variables to 0
+
+
+
+	//################ background image initialization ############################//
+	bg_surface = IMG_Load( ("Assets/Images/Backgrounds/"+bg_image_name).c_str() );
+	if(bg_surface == NULL) cout << SDL_GetError() << endl;
+	bg_texture = SDL_CreateTextureFromSurface(renderer,bg_surface);
+	if(bg_surface == NULL) cout << SDL_GetError() << endl;
+
+
 
 	tile_bag.init();
 
@@ -141,6 +155,11 @@ sdl_help::sdl_help(std::string name_in,string HF_input_file_in,
 }
 
 sdl_help::~sdl_help(){
+
+	SDL_FreeSurface(bg_surface);
+	SDL_DestroyTexture(bg_texture);//free up the memory from the background image
+
+
 	SDL_DestroyRenderer(renderer);//stops memory leaks
 	SDL_DestroyWindow(window);
 	TTF_CloseFont(font);//give back memory from the font pointer
@@ -179,23 +198,36 @@ void sdl_help::give_manager_io(input_maker* input_maker_hook_in){
 void sdl_help::present(){
 	SDL_RenderPresent(renderer);
 }
-//arrange the tiles and draw their textures, for now just doing two tiles per row, with their locations
-//being just a fraction of the screen size for testing
+//draws all of the fields. It makes sure to draw field's help dialog boxes on top of themselves or other fields
 void sdl_help::draw_tiles(){
 	SDL_RenderClear(renderer);//clear off the renderer, to prepare to re-draw
 
-	vector<unsigned int> help_indices;
-	for(unsigned int c = 0; c < tile_bag.tiles.size();c++){
-		if(!tile_bag.tiles[c].is_help_mode()){ //draw tiles NOT in help mode first, so that the help mode boxes
-			tile_bag.tiles[c].draw_me(); //are always on top
-		} else {
-			help_indices.push_back(c);//save this index, so that the field tiles in help mode can
-						  //be drawn without re-iterating over the entire vector
+	//draw the background image to the screen
+	SDL_RenderCopy(renderer,bg_texture,NULL,NULL);
+
+	vector<field*> drawn_second;
+
+	for(map<string,map<string,field>>::iterator lines_it = tile_bag.fields.begin();
+	    lines_it != tile_bag.fields.end();
+	    lines_it++){
+		for(map<string,field>::iterator fields_it = lines_it->second.begin();
+		    fields_it != lines_it->second.end();	
+		    fields_it++){
+
+			if( !fields_it->second.is_help_mode() ){ //don't draw it if it's in help mode, help mode tiles need to be drawn second
+								 //so they aren't overdrawn by other tiles not in help mode
+				fields_it->second.draw_me();//have the field draw itself to the screen
+
+			} else {
+				drawn_second.push_back(&fields_it->second);
+
+			}
 		}
 	}
-	//loop over vector of indices that still need drawn, drawing those tiles with help boxes on top
-	for(unsigned int c = 0; c < help_indices.size(); c++){
-		tile_bag.tiles[help_indices[c]].draw_me();
+
+
+	for(unsigned int c = 0; c < drawn_second.size();c++){
+		drawn_second[c]->draw_me();//now the help mode tiles can be drawn
 	}
 
 	frame_count++;//increment the frame counter
@@ -214,24 +246,36 @@ void sdl_help::draw_sbars(){
 // scrolling a bit sooner or later
 void sdl_help::most(int& rightmost,int& leftmost,int& upmost,int& downmost){
 	//note that we are starting at 1 to avoid the massive background tile messing up this calculation
-	for(unsigned int c = 1; c < tile_bag.tiles.size();c++){
-		if(tile_bag.tiles[c].yloc + y_scroll < upmost){ //highest tile corner means LEAST Y value
-			upmost = tile_bag.tiles[c].yloc + y_scroll;
+
+
+	for(map<string,map<string,field>>::iterator lines_it = tile_bag.fields.begin();
+	    lines_it != tile_bag.fields.end();
+	    lines_it++){
+		for(map<string,field>::iterator params_it = lines_it->second.begin();
+		    params_it != lines_it->second.end();
+		    params_it++){
+			if(params_it->second.yloc + y_scroll < upmost){ //least y value means it is the highest corner
+				upmost = params_it->second.yloc + y_scroll;	
+			}
+
+			if(params_it->second.yloc + y_scroll > downmost ){ //the lowest point will be the lowest corner + that texture's height
+				downmost = params_it->second.yloc + y_scroll + params_it->second.get_size().height;
+			}
+
+			if(params_it->second.xloc + x_scroll < leftmost){
+				leftmost = params_it->second.xloc + x_scroll;
+			}
+
+			if(params_it->second.xloc + x_scroll + params_it->second.get_size().width > rightmost){
+				rightmost = params_it->second.xloc + x_scroll + params_it->second.get_size().width;
+			}
+
 		}
-		if(tile_bag.tiles[c].yloc + y_scroll + tile_bag.tiles[c].get_size().height > downmost){
-			//save lowest tile corner + that texture's height
-			downmost = tile_bag.tiles[c].yloc + y_scroll + tile_bag.tiles[c].get_size().height;
-		}
-		if(tile_bag.tiles[c].xloc + x_scroll < leftmost){// save leftmost tile corner
-			leftmost = tile_bag.tiles[c].xloc + x_scroll;
-		}
-		if(tile_bag.tiles[c].xloc + x_scroll +  tile_bag.tiles[c].get_size().width > rightmost){
-			//save rightmost tile corner + texture width
-			rightmost = tile_bag.tiles[c].xloc + x_scroll + tile_bag.tiles[c].get_size().width;
-		}
+
 	}
-	//cout << "Rightmost: " << rightmost << " Leftmost: " << leftmost
-	     //<< "Upmost: " << upmost << "Downmost: " << downmost << endl;
+	cout << "Rightmost: " << rightmost << " Leftmost: " << leftmost
+	     << "Upmost: " << upmost << "Downmost: " << downmost << endl;
+
 }
 
 //can detect when we should stop scrolling, but allows no scrolling afterwards, not even in the opposite
@@ -290,30 +334,42 @@ int sdl_help::scroll_clicked(ostream& outs,int click_x, int click_y) const{
 //********************************************************************************************/
 
 void sdl_help::print_tile_locs(ostream& outs){
-	for(unsigned int c = 0; c < tile_bag.tiles.size();c++){
-		outs << "Corner= " << tile_bag.tiles[c].xloc << ":" << tile_bag.tiles[c].xloc
-		     << " tile dimensions= " << tile_bag.tiles[c].get_size().width << ":"
-		     << tile_bag.tiles[c].get_size().height << endl;
+
+	for(map<string,map<string,field>>::iterator lines_it = tile_bag.fields.begin();
+	    lines_it != tile_bag.fields.end();
+	    lines_it++){
+		for(map<string,field>::iterator params_it = lines_it->second.begin();
+		    params_it != lines_it->second.end();
+		    params_it++){
+			params_it->second.print(cout);
+		}
 	}
+
 }
 
 void sdl_help::click_detection(ostream& outs,SDL_Event& event,button_manager* b_manager, int click_x, int click_y){
-	for(unsigned int c = 0; c < tile_bag.tiles.size();c++){
+	for(map<string,map<string,field>>::iterator lines_it = tile_bag.fields.begin();
+	    lines_it != tile_bag.fields.end();
+	    lines_it++){
+		for(map<string,field>::iterator params_it = lines_it->second.begin();
+		    params_it != lines_it->second.end();
+		    params_it++){
 
-		if( in(click_x,click_y, tile_bag.tiles[c].get_rect() ) ){
-		//if the mouse click coordinates fall within a tile,
-			if( tile_bag.tiles[c].text_box_clicked(outs,click_x,click_y) ){
-				//if that click fell within the text box
-				text_box_mini_loop(outs,event,b_manager, tile_bag.tiles[c]);
+			//if the mouse click coordinates fall within a tile
+			if( in( click_x,click_y, params_it->second.get_rect() ) ){
 
-			} else { //if that click didn't fall within the text box, enact clicked
-				tile_bag.tiles[c].clicked(outs,event,click_x,click_y);//enact that tiles clicked() member
+				if(params_it->second.text_box_clicked(outs,click_x,click_y) ){
+					//if the click fell within the text box
+					//go into text entry loop
+					text_box_mini_loop(outs,event,b_manager,params_it->second);
+				} else {
+					//if the click was not on the text box, enact clicked()
+				 	params_it->second.clicked(outs,event,click_x,click_y);
+				}
 
 			}
-		}//endif	
-
+		}
 	}
-
 }
 
 //thanks to http://lazyfoo.net/tutorials/SDL/32_text_input_and_clipboard_handling/index.php
@@ -436,15 +492,25 @@ bool sdl_help::in(int click_x, int click_y,const SDL_Rect& rect) const{
 
 void sdl_help::calc_corners(){
 	//cout << tile_locations.size() << endl;
-	vector<index_and_width> candidates;//will be filled up with the width of each tile in the tile bag
+	vector<names_and_width> candidates;//will be filled up with the width of each tile in the tile bag
 				       //and the index IN THE TILE BAG that corresponds to it
 
-	//start counting at 1 because the background tile is taken care of by field constructor
-	for(unsigned int c = 1; c < tile_bag.tiles.size();c++){
-		index_and_width push_me;
-		push_me.width = tile_bag.tiles[c].get_size().width;
-		push_me.index = c;
-		candidates.push_back(push_me);
+	//traverse over all tiles, saving their widths and names in the vector
+	for(map<string,map<string,field>>::iterator lines_it = tile_bag.fields.begin();
+	    lines_it != tile_bag.fields.end();
+	    lines_it++){
+		for(map<string,field>::iterator params_it = lines_it->second.begin();
+		    params_it != lines_it->second.end();
+		    params_it++){
+			
+
+
+			names_and_width push_me;
+			push_me.width = params_it->second.get_size().width;
+			push_me.line_name = lines_it->first; //save line name and parameter name, so they can
+			push_me.param_name = params_it->first;//be accessed later
+			candidates.push_back(push_me);
+		}
 	}
 	sort(candidates.begin(),candidates.end(),compare_width);//sort the candidates such that they are in
 								//ascending order based on width
@@ -452,7 +518,7 @@ void sdl_help::calc_corners(){
 	vector<int> processed(candidates.size(),0);//"boolean" vector, I don't want to use the optimized
 						   //stl vector<bool> here, initialize to 0 = false
 
-	queue<index_and_width> row;//temporarily hold the info of tiles about to be added to a row
+	queue<names_and_width> row;//temporarily hold the info of tiles about to be added to a row
 
 	unsigned int curr_width = 0;//keep track of the current row's width
 	unsigned int max_height = 0;//keep track of the current row's height
@@ -509,8 +575,11 @@ void sdl_help::calc_corners(){
 			curr_width = curr_width + candidates[i].width + horiz_padding;
 
 			//similarly keep track of the height of this row , account for padding
-			unsigned int temp_height = tile_bag.tiles[candidates[i].index].get_size().height +
-					  + vert_padding;
+			unsigned int temp_height =
+				tile_bag.fields.at(candidates[i].line_name).at(candidates[i].param_name).get_size().height
+				 + vert_padding;
+			//unsigned int temp_height = tile_bag.tiles[candidates[i].index].get_size().height +
+			//		  + vert_padding;
 			if(temp_height > max_height) {//save new max height
 				max_height = temp_height;
 				//cout << " NEW MAX HEIGHT: " << temp_height << endl;
@@ -526,15 +595,15 @@ void sdl_help::calc_corners(){
 		int row_width = 5; //first tile starts off at the left edge of the screen - with some padding
 		while( !row.empty() ){
 			//cout << "QUEUE SIZE= " << row.size() << endl;
-			index_and_width temp = row.front(); //copy element in the front of the queue
+			names_and_width temp = row.front(); //copy element in the front of the queue
 			row.pop();  //pop out biggest tile
 
-			tile_bag.tiles[temp.index].xloc = row_width;
-			tile_bag.tiles[temp.index].yloc = prev_height;
+			tile_bag.fields.at(temp.line_name).at(temp.param_name).xloc = row_width;
+			tile_bag.fields.at(temp.line_name).at(temp.param_name).yloc = prev_height;
 
 
 			//calc xloc for next tile
-			row_width = row_width + tile_bag.tiles[temp.index].get_size().width + horiz_padding;
+			row_width = row_width + tile_bag.fields.at(temp.line_name).at(temp.param_name).get_size().width + horiz_padding;
 			done++;//increment our progress counter
 		}//loop for putting the row into tile_locations
 
@@ -545,13 +614,10 @@ void sdl_help::calc_corners(){
 
 //############################ NON-MEMBER HELPERS ##########################################################
 
-bool compare_width(index_and_width& left, index_and_width& right){
+bool compare_width(names_and_width& left, names_and_width& right){
 	if(left.width < right.width) return true;
 	return false;
 }
-
-
-
 
 
 

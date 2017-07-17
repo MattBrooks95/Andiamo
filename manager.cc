@@ -24,16 +24,8 @@ void manager::init(){
 	if(ins.fail()){ //if something went wrong, print an error message to console
  		cout << "Fatal error: Failed to open tile input file: " << tile_input_p + "tiles.txt";
 	}
-	
-
-	string bg_name = "bad bg name"; //name of the bg tile that the user will see
-	string bg_img = "bad bg image"; //name of the bg image file that will be loaded by sdl
-
 
 	string temp_string;//used to store unidentified line
-
-	getline(ins,temp_string);//if it was formatted properly, read the next line which should
-					 // be meaningful
 
 	regex img_pattern("\\s*?.*\\.png\\s*?"); //this line specifies an image name
 	regex field_size_pattern("\\s*?[0-9]+?\\s*?x\\s*?[0-9]+?\\s*?");//this recognizes lines that specify tile size
@@ -45,7 +37,7 @@ void manager::init(){
 		//describes a pattern for tile/input descriptors that starts with a 'c'
 		//and is followed by exactly one space, then contains any number of any characters
 
-	regex line_separator("\\line_[0-9]+?[A-Z]?\\.*"); //this line recognizes the lines that separate
+	regex line_separator("\\s*?line_[0-9]+?[A-Z]?.*"); //this line recognizes the lines that separate
 		//the parameters into lines that correspond with the input manual,
 		//so they can be stored together and easily (and readably) printed to the HF file later
 
@@ -101,9 +93,6 @@ void manager::init(){
 					description = temp_string.erase(0,2);//remove 'c ' at start of desc lines
 					temp_descriptions.push_back(temp_string);
 
-				} else if( regex_match(temp_string,name_pattern) ){
-					if(man_test) cout << "Found a tile name!: " << temp_string << endl;
-					tile_name = temp_string;
 
 				} else if( regex_match(temp_string,field_size_pattern) ){
 
@@ -112,6 +101,10 @@ void manager::init(){
 					vector<string> dimensions = split(temp_string,'x');   //split into a vector of strings
 					tile_w = stoi(dimensions[0]); //first number in the line is the width
 					tile_h = stoi(dimensions[1]); //second number in the line is the width
+
+				}  else if( regex_match(temp_string,name_pattern) ){
+					if(man_test) cout << "Found a tile name!: " << temp_string << endl;
+					tile_name = temp_string;
 
 				} else {
 					cout << "Error! This line failed to hit a case in the regex checks." << endl;
@@ -172,96 +165,17 @@ void manager::give_fields_defaults(){
 	//call helper function for connecting the int4 params with their graphical tiles
 	give_int4_fields_defaults();
 
-	/*
-		//check the real8_params vector
-		if(!found){
-			for(unsigned int i = 0;i < input_maker_hook->get_real8_params().size() && !found;i++){
+	//call helper function for connecting real8 params with their graphical tiles
+	give_real8_fields_defaults();
 
-				if(input_maker_hook->get_real8_params()[i].name == tiles[c].tile_name){
-					tiles[c].real8_hook = &(input_maker_hook->get_real8_params()[i]);
-					tiles[c].temp_input = to_string(input_maker_hook->get_real8_params()[i].value);
+	//call helper function connecting int4 arrays to their graphical tiles
+	give_int4_array_fields_defaults();
 
-					tiles[c].text_box_init();//now that input_maker hook is set, create surfaces and textures
-					found = true;//found the tile, don't let the other sub loops run
-					break;
-				}
-			}//inner for 2
-		}
-		if(!found){
-			//check the string_params vector
-			for(unsigned int i = 0;i < input_maker_hook->get_string_params().size() && !found;i++){
+	//call helper function connecting string params to their graphical tiles
+	give_string_fields_defaults();
 
-				cout << " PARAM VEC SIZE: " << input_maker_hook->get_string_params().size() << endl;
-				if(input_maker_hook->get_string_params()[i].name == tiles[c].tile_name){
-					cout << "STRING HOOK: " << &(input_maker_hook->get_string_params()[i]) << endl;
-					tiles[c].string_hook = &(input_maker_hook->get_string_params()[i]);
-					cout << tiles[c].string_hook << endl;
-					tiles[c].temp_input = tiles[c].string_hook->value;
-					cout << " STRING HOOK VALUE: " << input_maker_hook->get_string_params()[i].value << endl;
-					tiles[c].text_box_init();//now that input_maker hook is set, create surfaces and textures
-					cout << "SET STRING HOOK: " << tiles[c].string_hook << " = " << tiles[c].string_hook->value << endl;
-					found = true;
-					break;
-				}
-			}//inner for 3
-		}
-		if(!found){
-			//check the i4_array_params vector
-			try {
-				//input_maker_hook->get_i4_array_params().at(tiles[c].tile_name);
-
-				//following code is only ran if the map searching was successful
-				//set up the field's other values
-				tiles[c].int4_array_hook = &input_maker_hook->get_i4_array_params().at(tiles[c].tile_name);
-				//cout << "NENT or LMAX loc:" << &input_maker_hook->get_i4_array_params().at(tiles[c].tile_name);
-				//cout << "THAT TILE'S POINTER:" << tiles[c].int4_array_hook << endl;
-
-				tiles[c].temp_input = tiles[c].int4_array_hook->get_string();				
-
-				tiles[c].text_box_init(); //set up the text box surfaces and textures
-
-			} catch (out_of_range& not_found){
-
-				cout << "Tile name:" << tiles[c].tile_name << " not found in any input_maker vector.\n"
-				     << "Check that names of parameters in HF_Config match names in tile_Input/tiles.txt"
-				     << " exactly." << endl;
-				cout << "Map is as follows:" << endl;
-				map<string,param_int4_array>::iterator my_iterator;
-				for(my_iterator = input_maker_hook->get_i4_array_params().begin();
-				    my_iterator != input_maker_hook->get_i4_array_params().end();
-				    my_iterator++){
-					cout << "Key: " << my_iterator->first << " Name: "
-					     << my_iterator->second.name << endl;
-				} //testing for loop
-			}
-		}
-
-		//check e_params map 
-		if(!found){
-			try{
-				tiles[c].e_array_hook = &input_maker_hook->get_e_params().at(tiles[c].tile_name);
-				tiles[c].temp_input = tiles[c].e_array_hook->get_string();
-				tiles[c].text_box_init(); //set up text box's surfaces and textures
-
-			} catch (out_of_range& not_found){
-				cout << "Tile name:" << tiles[c].tile_name << " not found in any input_maker vector.\n"
-				     << "Check that names of parameters in HF_Config match names in tile_Input/tiles.txt"
-				     << "exactly." << endl;
-				cout << "Map is as follows:" << endl;
-				map<string,param_e_array>::iterator my_iterator;
-				for(my_iterator = input_maker_hook->get_e_params().begin();
-				    my_iterator != input_maker_hook->get_e_params().end();
-				    my_iterator++){
-				    cout << "Key: " << my_iterator->first << " Name: "
-						    << my_iterator->second.name << endl;
-				}
-
-			}
-
-
-
-		}
-	}//big for */
+	//call helper function connecting 'e' parameters to their tiles
+	give_e_array_fields_defaults();
 
 }
 //################ GIVE_FIELDS_DEFAULTS() HELPERS #######################################################//
@@ -271,7 +185,7 @@ void manager::give_int4_fields_defaults(){
 	//and then runs through each line's map in the manager::fields map looking for the correct parameter name for that int4
 	//param. It's better to go through input_maker's parameters and find them in the fields map than it is to loop through
 	//the fields map and find the parameters. This is because the second way would involve checking each map in input_maker,
-	//when the first way just checks the 2d map in the manager object
+	//when the first way just checks the 2d map in the manager object - these may actually be the same thing now that I think about it
 	for(map<string,param_int4>::iterator big_it = input_maker_hook->get_int4_params().begin();
 		big_it != input_maker_hook->get_int4_params().end();
 		big_it++){
@@ -281,13 +195,15 @@ void manager::give_int4_fields_defaults(){
 			line_it++){
 		  //try to find the desired parameter in this line
 		  try {
-			found = true; //we found it, so make the flag good
+
 		    	line_it->second.at(big_it->first).int4_hook = &big_it->second; //let the field reference it's place in the
 										       //input_maker map, so it can output the new
 										       //given to it by the user, to the HF output
 			line_it->second.at(big_it->first).temp_input = big_it->second.value;//set the default value so it's displayed
 											    //in the window
-			line_it->second.at(big_it->first).text_box_init();//set up the texxt box
+			line_it->second.at(big_it->first).text_box_init();//set up the text box
+			found = true; //we found it, so make the flag good
+
 			break;//leave this loop early, we don't need to check the other line's maps
 
 		  //if it fails, need to check a different line's map in the manager object
@@ -310,30 +226,151 @@ void manager::give_int4_fields_defaults(){
 }
 
 void manager::give_int4_array_fields_defaults(){
-	for(map<string,param_real8>::iterator big_it = input_maker_hook->get_real8_params().begin();
-		big_it != input_maker_hook->get_real8_params().end;
-	   	big_it++;){
-		for(map<string,map<string,fields>>::iterator line_it = fields.begin();
-			line_it != fields.end();
-			line_it++){
 
-		}	
+	for(map<string,param_int4_array>::iterator big_it = input_maker_hook->get_i4_array_params().begin();
+	    big_it != input_maker_hook->get_i4_array_params().end();
+	    big_it++){
+		bool found = false;
+		for(map<string,map<string,field>>::iterator line_it = fields.begin();
+		    line_it != fields.end();
+		    line_it++){
+		  try{
+			line_it->second.at(big_it->first).int4_array_hook = &big_it->second;
+								// &input_maker_hook->get_i4_array_params().at(big_it->first).values;
+			line_it->second.at(big_it->first).temp_input = big_it->second.get_string(); //let it point to it's value in input_maker
+			line_it->second.at(big_it->first).text_box_init(); //run the text box's init function
 
+			found = true;
+			break;
+		  } catch (out_of_range& not_found){
+			continue;//check other line maps
+		  }
+
+		}
+		if(!found){
+			cout << "Error! Failed to find parameter:" << big_it->first << "'s tile in the fields map."
+			     << "\nPlease make sure that its entries in tile_Input/tiles.txt and HF_Config/config.txt"
+			     << "\n have matching names." << endl;
+		}
 	}
-
 
 }
 
 void manager::give_real8_fields_defaults(){
 
+	for(map<string,param_real8>::iterator big_it = input_maker_hook->get_real8_params().begin();
+	    big_it != input_maker_hook->get_real8_params().end();
+	    big_it++){
+
+		bool found = false;
+		for(map<string,map<string,field>>::iterator line_it = fields.begin();
+		    line_it != fields.end();
+		    line_it++){
+		  try{
+			line_it->second.at(big_it->first).real8_hook = &big_it->second;//give field pointer access
+										       //to it's value in input_maker
+			line_it->second.at(big_it->first).temp_input = big_it->second.value;//set up the default value
+			line_it->second.at(big_it->first).text_box_init();//set up the text box
+
+			found = true;//set the flag to true, because we found the param we were looking for
+			break;
+		  } catch (out_of_range& not_found){
+
+			continue;//it wasn't found, so check next line's map
+
+		  }
+		  if(!found){
+			cout << "Error! Failed to find parameter:" << big_it->first << "'s tile in the fields map."
+			     << "\nPlease make sure that its entries in tile_Input/tiles.txt and HF_Config/config.txt"
+			     << "\n have matching names." << endl;
+
+		  }
+
+		}	
+
+	}
 }
 
 void manager::give_string_fields_defaults(){
 
+	for(map<string,param_string>::iterator big_it = input_maker_hook->get_string_params().begin();
+	    big_it != input_maker_hook->get_string_params().end();
+	    big_it++){
+		bool found = false;
+		for(map<string,map<string,field>>::iterator line_it = fields.begin();
+		    line_it != fields.end();
+		    line_it++){
+		  try{
+			line_it->second.at(big_it->first).string_hook = &big_it->second;  //set up the pointer to the parameter in input_maker
+			line_it->second.at(big_it->first).temp_input =  big_it->second.value; //set up the default value
+			line_it->second.at(big_it->first).text_box_init();//set up the text box
+			found = true;
+			break;
+		  } catch (out_of_range& not_found){
+			continue;//check the other lines
+		  }
+		}
+		if(!found){
+			cout << "Error! Failed to find parameter:" << big_it->first << "'s tile in the fields map."
+			     << "\nPlease make sure that its entries in tile_Input/tiles.txt and HF_Config/config.txt"
+			     << "\n have matching names." << endl;
+
+		}
+
+	}
+
 }
 
 void manager::give_e_array_fields_defaults(){
+	for(map<string,param_e_array>::iterator big_it = input_maker_hook->get_e_params().begin();
+	    big_it != input_maker_hook->get_e_params().end();
+	    big_it++){
+		bool found = false;
+		for(map<string,map<string,field>>::iterator lines_it = fields.begin();
+		    lines_it != fields.end();
+		    lines_it++){
+		  try{
+			lines_it->second.at(big_it->first).e_array_hook = &big_it->second; //set pointer to parameter in input maker
+			lines_it->second.at(big_it->first).temp_input = big_it->second.get_string();//change array into comma separated list in a string
+			lines_it->second.at(big_it->first).text_box_init(); //set up text box
+			found = true;
+			break;//stop checking lines
+		  } catch (out_of_range& not_found){
+			continue;//check other lines
+		  }			
 
+		}
+		if(!found){
+			cout << "Error! Failed to find parameter:" << big_it->first << "'s tile in the fields map."
+			     << "\nPlease make sure that its entries in tile_Input/tiles.txt and HF_Config/config.txt"
+			     << "\n have matching names." << endl;
+		}
+
+	}
+
+/*
+		//check e_params map 
+		if(!found){
+			try{
+				tiles[c].e_array_hook = &input_maker_hook->get_e_params().at(tiles[c].tile_name);
+				tiles[c].temp_input = tiles[c].e_array_hook->get_string();
+				tiles[c].text_box_init(); //set up text box's surfaces and textures
+
+			} catch (out_of_range& not_found){
+				cout << "Tile name:" << tiles[c].tile_name << " not found in any input_maker vector.\n"
+				     << "Check that names of parameters in HF_Config match names in tile_Input/tiles.txt"
+				     << "exactly." << endl;
+				cout << "Map is as follows:" << endl;
+				map<string,param_e_array>::iterator my_iterator;
+				for(my_iterator = input_maker_hook->get_e_params().begin();
+				    my_iterator != input_maker_hook->get_e_params().end();
+				    my_iterator++){
+				    cout << "Key: " << my_iterator->first << " Name: "
+						    << my_iterator->second.name << endl;
+				}
+
+			}
+*/
 }
 
 //########################################################################################################//

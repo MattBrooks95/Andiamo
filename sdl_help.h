@@ -28,10 +28,12 @@ struct win_size{
 	int height; //! < holds the height of the window, which is different than the info in display
 };
 //! the following struct is used by calc_corners to remember the tiles it's currently considering
-struct index_and_width{
-	unsigned int index; unsigned int width;
+struct names_and_width{
+	std::string line_name;
+	std::string param_name;
+	unsigned int width;
 };
-bool compare_width(index_and_width& left, index_and_width& right);
+bool compare_width(names_and_width& left, names_and_width& right);
 
 //! Contains sdl objects and members to act on them.
 /*! sdl_help objects are mostly a container for sdl renderers and the window. Functionality that requires 
@@ -43,7 +45,7 @@ class sdl_help{
 	/*! It initializes SDL and SDL image. Window size is based on a
 	 *SDL_GetCurrentDisplayMode call. \param name_in is the desired name of
          * the window.*/
-	sdl_help(std::string name_in = "Andiamo!",std::string HF_input_file_in = "HF_config.txt");
+	sdl_help(std::string name_in = "Andiamo!",std::string HF_input_file_in = "HF_config.txt",std::string bg_image_name_in = "hubble_deep_field.png");
 
 	//!this overloaded constructor requires 3 arguments: window name, width and height
 	sdl_help(std::string name_in,std::string HF_input_file_in, int width, int height);
@@ -219,6 +221,10 @@ class sdl_help{
 	std::string hf_input_p; //!< \brief a path string to the algorithm's input file folder 
 	std::string font_p;//!< \brief a path string to the font folder
 
+	std::string bg_image_name;
+	SDL_Surface* bg_surface;
+	SDL_Texture* bg_texture;
+
 
 	/***************** FIELDS THAT PERTAIN TO SCROLLING ********************************/
 	scroll_bar vert_bar;/*!< \brief contains functions to act on, and draw, the vertical
@@ -249,5 +255,29 @@ class sdl_help{
 	input_maker io_handler; //!< object that manages the config and output files for HF relevant stuff
 	//#######################################################################################
 };
+
+//################### non member helpers ########################################//
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
