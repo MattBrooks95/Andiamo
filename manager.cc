@@ -31,7 +31,7 @@ void manager::init(){
 	regex field_size_pattern("\\s*?[0-9]+?\\s*?x\\s*?[0-9]+?\\s*?");//this recognizes lines that specify tile size
 					 //lines should be of the form widthxheight EX:100x100
 
-	regex name_pattern("\\s*?[a-z0-9_A-Z]?+\\s*?"); //this line specifies a tile name
+	regex name_pattern("\\s*?[a-z0-9_A-Z]+?\\s*?"); //this line specifies a tile name
 
 	regex desc_pattern("c .*");
 		//describes a pattern for tile/input descriptors that starts with a 'c'
@@ -45,6 +45,7 @@ void manager::init(){
 	std::map<std::string,std::map<std::string,field>> fields;//!< trying something new, to keep relevant tiles together
 	*/
 
+	getline(ins,temp_string);//priming read
 	//loop over the entire tile_Input/tiles.txt configuration file
 	while(!ins.eof()){
 		if(ins.fail()) break;//get out on potentially erroneous last run
@@ -52,17 +53,20 @@ void manager::init(){
 		//reset new line container each run of loop
 		map<string,field> new_line;
 		string line_name;
-		getline(ins,line_name);
-		while( !ins.eof() && !regex_match(line_name,line_separator) ){ //read until a line start indicator/separator is found
-			if( ins.fail() ){
+
+		while( !ins.eof() && !regex_match(temp_string,line_separator) ){ //read until a line start indicator/separator is found
+			if( ins.fail() || temp_string.empty() ){
 				//we may not necessarily find this case in error, as the very last group in the config file won't
 				//end with a line separator, because no line will come after it
 				return;//ran out of file, get out of this function
 			}
-			getline(ins,line_name);
+			getline(ins,temp_string);
 		}
 		//once we've reached this point, we have found a line_name
-
+		//cout << "Found a line name:" << temp_string << endl;
+		strip_char(temp_string,'#');
+		line_name = temp_string;//save line name for later
+		getline(ins,temp_string);//grab a new line
 
 		//outer loop runs over the # of grouped parameters (lines in HF input)
 		while( !regex_match(temp_string,line_separator) ){
@@ -78,32 +82,32 @@ void manager::init(){
 
 
 			//inner loop runs name -> andy as many times as needed, until a line separator is found
-			while(temp_string != "andy"){ //loop until separator 'andy' is found
-				if(man_test) cout << "LINE:" << temp_string << "|" << endl;
+			while(temp_string != "andy" && !ins.fail()){ //loop until separator 'andy' is found
+				//if(man_test) cout << "LINE:" << temp_string << "|" << endl;
 
 
 				if( regex_match(temp_string,img_pattern) ){ //if this line has '.png' in it, 
 									    //process it as an input picture name
-					if(man_test) cout << "Found an image name!: " << temp_string << endl;
+					//if(man_test) cout << "Found an image name!: " << temp_string << endl;
 					img_name = temp_string;
 
 				} else if( regex_match(temp_string,desc_pattern)){
 
-					if(man_test) cout << "Found a description line.: " << temp_string << endl;
+					//if(man_test) cout << "Found a description line.: " << temp_string << endl;
 					description = temp_string.erase(0,2);//remove 'c ' at start of desc lines
 					temp_descriptions.push_back(temp_string);
 
 
 				} else if( regex_match(temp_string,field_size_pattern) ){
 
-					if(man_test) cout << "Found field size specification!: " << temp_string << endl;
+					//if(man_test) cout << "Found field size specification!: " << temp_string << endl;
 					strip_char(temp_string,' '); //remove spaces
 					vector<string> dimensions = split(temp_string,'x');   //split into a vector of strings
 					tile_w = stoi(dimensions[0]); //first number in the line is the width
 					tile_h = stoi(dimensions[1]); //second number in the line is the width
 
 				}  else if( regex_match(temp_string,name_pattern) ){
-					if(man_test) cout << "Found a tile name!: " << temp_string << endl;
+					//if(man_test) cout << "Found a tile name!: " << temp_string << endl;
 					tile_name = temp_string;
 
 				} else {
@@ -113,19 +117,32 @@ void manager::init(){
 				
 				}
 
-				getline(ins,temp_string);//read in again to update loop
-				if(temp_string == "") getline(ins,temp_string);//skip empty lines
+
+				if( !ins.fail() ){
+					getline(ins,temp_string);//read in again to update loop
+				} else {
+					break;
+				}
 			}
 			//field(std::string tile_name_in,std::string image_name_in, int width, int height);
 			field temp_field(tile_name,img_name,tile_w,tile_h);
-			new_line.emplace(line_name,temp_field);//push the field into the map for that parameter's line
-
-
+			new_line.emplace(tile_name,temp_field);//push the field into the map for that parameter's line
+			if( !ins.fail() ){
+				getline(ins,temp_string);//"andy" is the current line, so go ahead and read the next one
+			} else {
+				break; //if it's not andy, something is awry or we're at end of file
+			}
 		}
 		//at this point, we have hit the separator for another group of parameters
 		fields.emplace(line_name,new_line);//store the map of parameters in the map of lines, and give it the name we found earlier
 	}
 	ins.close(); //close the file
+
+	/*if(man_test){
+		cout << "FIELD MAP AFTER MANAGER.init():" << endl;
+		print_all(cout);
+		cout << "####################################################" << endl;
+	}*/
 }
 
 manager::~manager(){
@@ -412,7 +429,7 @@ void manager::print_all(ostream& outs){
 	//loop over every line map
 	for(map<string,map<string,field>>::iterator big_it = fields.begin(); big_it != fields.end() ;big_it++){
 		//loop over every parameter map
-		for(map<string,field>::iterator small_it = fields.at(big_it->first).begin(); small_it != fields.at(big_it->first).end(); small_it++){
+		for(map<string,field>::iterator small_it = big_it->second.begin(); small_it != big_it->second.end(); small_it++){
 			small_it->second.print(outs);
 		}
 

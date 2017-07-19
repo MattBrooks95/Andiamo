@@ -26,7 +26,7 @@ void handle_i4_array(std::string& string_in,std::vector<int>& fill_me);
 /*! it removes the quotation marks, then splits along commas and fills the passed vector with doubles */
 void handle_e_array(std::string& string_in,std::vector<double>& fill_me);
 
-//! this function loops over the passed in string, and builds a new string that excludes the past character
+//! this function loops over the passed in string, and builds a new string that excludes the passed character
 /*! \param string_in will be looped over, and the good characters stored in an accumulator string that is assigned to string_in at the end of the functoin
  *\param strip_me is the character that will not be in the "new" string */
 void strip_char(std::string& string_in,char strip_me);

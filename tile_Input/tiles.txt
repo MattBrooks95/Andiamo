@@ -105,8 +105,6 @@ c while Andiamo is running
 andy_tile.png
 300x50
 andy
-#line_3B############################################################################################################
-#ETAB and TTAB lines are read in LMAX*NENT times per particle type, entering them in Andiamo is impossible
 line_4##############################################################################################################
 FJTAR
 c FJTAR is the spin of the target
@@ -238,7 +236,6 @@ andy_tile.png
 150x50
 andy
 line_5A############################################################################################################
-#line_5A should always be present, but only useful if ILV1 = 6
 ACON
 c small a = ACON x A
 andy_tile.png
