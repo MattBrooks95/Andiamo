@@ -124,8 +124,14 @@ void manager::init(){
 					break;
 				}
 			}
-			//field(std::string tile_name_in,std::string image_name_in, int width, int height);
 			field temp_field(tile_name,img_name,tile_w,tile_h);
+			//copy the saved description lines to the new field before it is placed in the map
+			for(unsigned int c = 0; c < temp_descriptions.size();c++){
+				temp_field.descriptions.push_back(temp_descriptions[c]);
+			}
+
+
+
 			new_line.emplace(tile_name,temp_field);//push the field into the map for that parameter's line
 			if( !ins.fail() ){
 				getline(ins,temp_string);//"andy" is the current line, so go ahead and read the next one
@@ -216,7 +222,7 @@ void manager::give_int4_fields_defaults(){
 		    	line_it->second.at(big_it->first).int4_hook = &big_it->second; //let the field reference it's place in the
 										       //input_maker map, so it can output the new
 										       //given to it by the user, to the HF output
-			line_it->second.at(big_it->first).temp_input = big_it->second.value;//set the default value so it's displayed
+			line_it->second.at(big_it->first).temp_input = to_string(big_it->second.value);//set the default value so it's displayed
 											    //in the window
 			line_it->second.at(big_it->first).text_box_init();//set up the text box
 			found = true; //we found it, so make the flag good
@@ -286,7 +292,7 @@ void manager::give_real8_fields_defaults(){
 		  try{
 			line_it->second.at(big_it->first).real8_hook = &big_it->second;//give field pointer access
 										       //to it's value in input_maker
-			line_it->second.at(big_it->first).temp_input = big_it->second.value;//set up the default value
+			line_it->second.at(big_it->first).temp_input = to_string(big_it->second.value);//set up the default value
 			line_it->second.at(big_it->first).text_box_init();//set up the text box
 
 			found = true;//set the flag to true, because we found the param we were looking for
@@ -365,29 +371,6 @@ void manager::give_e_array_fields_defaults(){
 
 	}
 
-/*
-		//check e_params map 
-		if(!found){
-			try{
-				tiles[c].e_array_hook = &input_maker_hook->get_e_params().at(tiles[c].tile_name);
-				tiles[c].temp_input = tiles[c].e_array_hook->get_string();
-				tiles[c].text_box_init(); //set up text box's surfaces and textures
-
-			} catch (out_of_range& not_found){
-				cout << "Tile name:" << tiles[c].tile_name << " not found in any input_maker vector.\n"
-				     << "Check that names of parameters in HF_Config match names in tile_Input/tiles.txt"
-				     << "exactly." << endl;
-				cout << "Map is as follows:" << endl;
-				map<string,param_e_array>::iterator my_iterator;
-				for(my_iterator = input_maker_hook->get_e_params().begin();
-				    my_iterator != input_maker_hook->get_e_params().end();
-				    my_iterator++){
-				    cout << "Key: " << my_iterator->first << " Name: "
-						    << my_iterator->second.name << endl;
-				}
-
-			}
-*/
 }
 
 //########################################################################################################//
@@ -403,7 +386,7 @@ void manager::update_io_maker(){
 	for(map<string,map<string,field>>::iterator big_it = fields.begin();
 	    big_it != fields.end();
 	    big_it++){
-		for(map<string,field>::iterator small_it;
+		for(map<string,field>::iterator small_it = big_it->second.begin();
 		    small_it != big_it->second.end();
 		    small_it++){
 			small_it->second.update_my_value();

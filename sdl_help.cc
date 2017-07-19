@@ -82,11 +82,9 @@ sdl_help::sdl_help(string name_in,string HF_input_file_in,string bg_image_name_i
 	tile_bag.init();
 
 	//give vertical scroll bar the addresses of the info it needs from the sdl_help object
-	vert_bar.init(&x_scroll,&y_scroll,&area.width,&area.height,
-		      &window_s.width,&window_s.height, renderer,"v_ou_dark_green_quarter.png");
+	vert_bar.init(&x_scroll,&y_scroll, &window_s.width, &window_s.height, renderer,"v_ou_dark_green_quarter.png");
 	//give horizontal scroll bar the address of the info it needs from the sdl_help object
-	horiz_bar.init(&x_scroll,&y_scroll,&area.width,&area.height,
-		      &window_s.width,&window_s.height, renderer,"h_ou_grey_quarter.png");
+	horiz_bar.init(&x_scroll,&y_scroll, &window_s.width, &window_s.height, renderer,"h_ou_grey_quarter.png");
 
 	vert_bar.print(cout);
 	horiz_bar.print(cout);
@@ -95,62 +93,6 @@ sdl_help::sdl_help(string name_in,string HF_input_file_in,string bg_image_name_i
 	tile_bag.give_fields_renderer(renderer,image_p,&x_scroll,&y_scroll,font);//give fields rendering and font info
 
 	io_handler.init();
-	give_manager_io(&io_handler);
-}
-
-sdl_help::sdl_help(std::string name_in,string HF_input_file_in,
-		   int width, int height){
-	SDL_Init(SDL_INIT_TIMER | SDL_INIT_EVENTS|SDL_INIT_VIDEO);//for now, timer and keyboard
-	IMG_Init(IMG_INIT_PNG);//allows use of .png files
-	if(TTF_Init() != 0){//allows sdl to print text using .ttf files
-		cout << "Error in TTF_Init()! " << endl;
-	}
-	window_name = name_in;
-	image_p = "./Assets/Images/";
-	hf_input_p = "./HF_Input/";
-	font_p = "./Assets/fonts/";
-	frame_count = 0;
-
-	//this call is to make sure refresh_rate and driverdata are handled
-	if(SDL_GetCurrentDisplayMode(0,&display) < 0){
-		cout << "Get current display mode error" << endl;
-		cout << SDL_GetError();
-	}
-	//initializing them twice is an obvious waste of time, consider a more elegant solution
-
-	//init displaymode values
-	display.w = width;
-	display.h = height; //overrite previous height and width values to the user's preference
-
-	window_update(display.w/2,display.h);//this call updates sdl_help and manager's window dimension 
-                                             //fields tile_bag.update_win(display.w,display.h);
-
-	window = SDL_CreateWindow(window_name.c_str(), 0, 0, display.w, display.h, 0); //set up the window pointer
-	renderer = SDL_CreateRenderer(window,-1,SDL_RENDERER_PRESENTVSYNC); //set up the renderer pointer
-	font = TTF_OpenFont( (font_p+"LiberationSerif-Regular.ttf").c_str(),22);//"Aller_Bd.ttf"
-	if(font == NULL) {
-		cout << "Error in opening font! " << SDL_GetError() << endl;
-	}
-
-	x_scroll = 0; y_scroll = 0; //set scrolling values to 0
-
-	tile_bag.init();
-
-	//give vertical scroll bar the addresses of the info it needs from the sdl_help object
-	vert_bar.init(&x_scroll,&y_scroll,&area.width,&area.height,
-		      &window_s.width,&window_s.height, renderer,"v_ou_dark_green_quarter.png");
-	//give horizontal scroll bar the address of the info it needs from the sdl_help object
-	horiz_bar.init(&x_scroll,&y_scroll,&area.width,&area.height,
-		      &window_s.width,&window_s.height, renderer,"h_ou_grey_quarter.png");
-
-	vert_bar.print(cout);
-	horiz_bar.print(cout);
-
-	calc_corners();//set up tile_locations with the field's corner locations
-	tile_bag.give_fields_renderer(renderer,image_p,&x_scroll,&y_scroll,font);//give fields their rendering and
-										 //font info
-
-	//io_handler.init();
 	give_manager_io(&io_handler);
 }
 
@@ -187,7 +129,6 @@ void sdl_help::window_update(int width_in, int height_in){
 void sdl_help::print_size_info(std::ostream& outs){
 
 	outs << "Printing window size: "; window_s.print(outs);
-	outs << "Printing actual size: "; area.print(outs);
 	outs << "Printing display info: " << display.w << "x" << display.h << endl;
 }
 
@@ -258,7 +199,8 @@ void sdl_help::most(int& rightmost,int& leftmost,int& upmost,int& downmost){
 				upmost = params_it->second.yloc + y_scroll;	
 			}
 
-			if(params_it->second.yloc + y_scroll > downmost ){ //the lowest point will be the lowest corner + that texture's height
+			if(params_it->second.yloc + y_scroll + params_it->second.get_size().height > downmost ){
+				//the lowest point will be the lowest corner + that texture's height
 				downmost = params_it->second.yloc + y_scroll + params_it->second.get_size().height;
 			}
 
@@ -274,7 +216,7 @@ void sdl_help::most(int& rightmost,int& leftmost,int& upmost,int& downmost){
 
 	}
 	cout << "Rightmost: " << rightmost << " Leftmost: " << leftmost
-	     << "Upmost: " << upmost << "Downmost: " << downmost << endl;
+	     << " Upmost: " << upmost << " Downmost: " << downmost << endl;
 
 }
 

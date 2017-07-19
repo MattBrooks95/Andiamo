@@ -30,6 +30,45 @@ input_maker::~input_maker(){
 	output();
 }*/
 
+void input_maker::check_map(std::ostream& outs){
+	cout << "########### INPUT MAKER INT4 PARAMS MAP ##############################" << endl;
+	for(map<string,param_int4>::iterator int_it = int4_params.begin();
+	    int_it != int4_params.end();
+	    int_it++){
+		outs << int_it->second << "   ";
+	}
+	outs << "\n######### INPUT MAKER R8 PARAMS MAP #################################\n";
+	for(map<string,param_real8>::iterator r8_it = real8_params.begin();
+	    r8_it != real8_params.end();
+	    r8_it++){
+		outs << r8_it->second << ":";
+	}
+	outs << "\n######### INPUT MAKER STRING PARAMS MAP #############################\n";
+	for(map<string,param_string>::iterator string_it = string_params.begin();
+	    string_it != string_params.end();
+	    string_it++){
+		outs << string_it->first << ":" << string_it->second.value << "   ";
+	}
+	outs << "\n######### INPUT MAKER INT4 ARRAY MAP ###############################\n";
+	for(map<string,param_int4_array>::iterator int4_array_it = int4_array_params.begin();
+	    int4_array_it != int4_array_params.begin();
+	    int4_array_it++){
+		outs << int4_array_it->first << ":" << int4_array_it->second.get_string() << "   ";
+	}
+	outs << "\n######### INPUT MAKER E_ARRAY MAP ##################################\n";
+	for(map<string,param_e_array>::iterator e_array_it = e_params.begin();
+	    e_array_it != e_params.end();
+	    e_array_it++){
+		outs << e_array_it->first << ":" << e_array_it->second.get_string() << "   " << endl;
+	}
+
+}
+
+
+
+
+
+
 void input_maker::init(){
 	bool init_test = true;
 	if(init_test) cout << "########################### INPUT_MAKER INIT ################################" << endl;
@@ -324,6 +363,7 @@ void input_maker::output(){
 	outs.close();
 	output_was_made = true;//make this boolean true, so that during the closing process we know that we don't
 			       //need to remind the user to generate an input file first
+	check_map(cout);
 }
 //########################## NON MEMBER HELPERS #################################################################
 void output_string(ofstream& outs,const unsigned int& size,const string& string_in){
@@ -359,18 +399,6 @@ void do_line1(const map<string,param_string>& string_params,ofstream& outs){
 	}
 
 
-
-		//if( string_params.size() != 0 ){
-		//	cout << "Furthermore, the string_params vector is empty." << endl;
-		//	cout << "exiting" << endl;
-		//	return;
-		//}
-
-	//} else{
-
-
-	//}
-
 }
 
 void do_line2(const map<string,param_real8>& real8_params,const map<string,param_int4> int4_params, ofstream& outs){
@@ -386,7 +414,7 @@ void do_line2(const map<string,param_real8>& real8_params,const map<string,param
 
 	try{
 		// ELAB A Z FNRME1 FNRMM1
-		outs F real8_params.at("ELAB").value F real8_params.at("A") F real8_params.at("Z").value
+		outs F real8_params.at("ELAB").value F real8_params.at("A").value F real8_params.at("Z").value
 		     F real8_params.at("FNRME1").value F real8_params.at("FNRMM1").value;
 
 		//I = "<< setw(5) <<" macro up top
@@ -460,20 +488,30 @@ void do_TC_coefficients(const map<string,param_real8>& real8_params, const map<s
 }
 
 void do_line4(const map<string,param_real8>& real8_params,const map<string,param_int4>& int4_params,ofstream& outs){
-
+  try{
 	outs << right;
 	//     FJTAR               FCMJMAX          FRESIDEMAX         ITARPR               NG             
-	outs F10 real8_params.at("FJTAR").value F10 real8_params.at("FCMJMAX").value F10 real8_params.at("FRESIDEMAX").value
+	outs F10 real8_params.at("FJTAR").value F10 real8_params.at("FCMJMAX").value F10 real8_params.at("FRESIDMAX").value
 	     I int4_params.at("ITARPR").value I int4_params.at("NG").value << endl;
+  } catch (out_of_range& not_found){
+	cout << "Error in do_line4: parameter not found in the map!" << endl;
+  }
+
+
 }
 
 void do_line4A(const map<string,param_real8>& real8_params,const map<string,param_int4>& int4_params,ofstream& outs){
+  try{
 	outs << fixed << setprecision(2);
 	outs F5 real8_params.at("APAR").value F5 real8_params.at("ZPAR").value F5 real8_params.at("QIN").value 
 	     F5 real8_params.at("FJPAR").value F5 real8_params.at("FPRPAR").value;
 	outs I int4_params.at("NLIN").value << endl;
+  } catch (out_of_range& not_found){
+	cout << "Error in do_line4A: parameter not found in the map!" << endl;
+  }
 }
 void do_line4B(map<string, param_e_array>& e_params,std::ofstream& outs){
+  try{
 	outs << right;//set orientation
 	outs << setprecision(3);//set # of decimal places
 	for(unsigned int c = 0; c < e_params.at("TIN").values.size();c++){
@@ -483,6 +521,9 @@ void do_line4B(map<string, param_e_array>& e_params,std::ofstream& outs){
 		}
 
 	}
+  } catch (out_of_range& not_found){
+	cout << "Error! Parameter in do_line4B not found in the map!" << endl;
+  }
 }
 //#################################################################################################################
 

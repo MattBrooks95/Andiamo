@@ -114,7 +114,7 @@ andy
 FCMJMAX
 c FCMJMAX is the maximum compound nuclear
 c spin to include. Should be
-c  LMAX in entrance channel
+c LMAX in entrance channel
 c plus FJTAR plus FJPAR
 andy_tile.png
 150x50

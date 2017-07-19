@@ -34,9 +34,8 @@ class scroll_bar{
 	 *\param window_height_in integer pointer to the containing sdl_help object's window_s.height field
 	 *\param renderer_in SDL_Renderer pointer to the containing sdl_help object's renderer pointer
 	 *\param image_p_in string that contains the desired image name */ 
-	void init(int* x_scroll_in, int* y_scroll_in, const int* area_width_in, const int* area_height_in,  
-		const int* window_width_in, const int* window_height_in,SDL_Renderer* renderer_in,
-		std::string image_p_in);
+	void init(int* x_scroll_in, int* y_scroll_in, const int* window_width_in,
+		  const int* window_height_in,SDL_Renderer* renderer_in, std::string image_p_in);
 	/*! print() prints, to the given stream, this scroll bar's personal info, like location and image 
          *path, but also prints the values of that its pointer fields point to, to make sure they line up
          *with the sdl_help object's fields (they should point to the same location in memory
@@ -99,8 +98,6 @@ class scroll_bar{
 	//**************** SDL STUFF ****************************************/
 	int* x_scroll;
 	int* y_scroll;
-	const int* area_width;
-	const int* area_height;
 	const int* window_width;
 	const int* window_height;
 	SDL_Renderer* renderer;

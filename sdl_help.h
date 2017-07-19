@@ -47,9 +47,6 @@ class sdl_help{
          * the window.*/
 	sdl_help(std::string name_in = "Andiamo!",std::string HF_input_file_in = "HF_config.txt",std::string bg_image_name_in = "hubble_deep_field.png");
 
-	//!this overloaded constructor requires 3 arguments: window name, width and height
-	sdl_help(std::string name_in,std::string HF_input_file_in, int width, int height);
-
 	//! This is a destructor member for the sdl_help class.
 	/*! It enacts SDL_Quit() and IMG_Quit(). */
 	~sdl_help();
@@ -79,8 +76,6 @@ class sdl_help{
 	/**************************SCROLLING FUNCTIONS ************************************************/
 	//! calc_corners implements a guessing algorithm that tries to place tiles in a space-efficient way
 	void calc_corners();
-
-
 
 	//! This member changes this class's x_scroll and y_scroll values to the given parameters
 	/*! This is being called from the handlers.cc implementations most of the time.
@@ -237,8 +232,8 @@ class sdl_help{
 
 	/************************************************************************************/
 
-	win_size area;/*!< \brief a win_size struct that contains the dimensions for the entire area,
-		       *not just what is seen */
+	//win_size area;/*!< \brief a win_size struct that contains the dimensions for the entire area,
+	//	       *not just what is seen */
 	win_size window_s; /*!< \brief a win_size struct that contains the window's current width and 
 			    *height, this window limits what the user can see */
 

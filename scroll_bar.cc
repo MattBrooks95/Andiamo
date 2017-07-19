@@ -19,8 +19,6 @@ scroll_bar::scroll_bar(){
 	//null out references to sdl_help members until the init function is ran
 	x_scroll = NULL;
 	y_scroll = NULL;
-	area_width = NULL;
-	area_height = NULL;
 	window_width = NULL;
 	window_height = NULL;
 	renderer = NULL;
@@ -78,13 +76,10 @@ void scroll_bar::init_corner_texture(){
 		yloc = 0;//similarly start at the top of the screen
 	}
 }
-void scroll_bar::init(int* x_scroll_in, int* y_scroll_in, const int* area_width_in,const int* area_height_in,
-		      const int* window_width_in, const int* window_height_in, SDL_Renderer* renderer_in,
-		      string image_p_in){
+void scroll_bar::init(int* x_scroll_in, int* y_scroll_in, const int* window_width_in, const int* window_height_in,
+		      SDL_Renderer* renderer_in,string image_p_in){
 	x_scroll = x_scroll_in; //initialize members that point to sdl_help object's members
 	y_scroll = y_scroll_in;
-	area_width = area_width_in;
-	area_height = area_height_in;
 	window_width = window_width_in;
 	window_height = window_height_in;
 	renderer = renderer_in;
@@ -94,19 +89,14 @@ void scroll_bar::init(int* x_scroll_in, int* y_scroll_in, const int* area_width_
 
 }
 void scroll_bar::print(ostream& outs){
-	if( x_scroll == NULL || y_scroll == NULL || area_width == NULL || area_height == NULL ||
-	    window_width == NULL || window_height == NULL || renderer == NULL) {
+	if( x_scroll == NULL || y_scroll == NULL || window_width == NULL || window_height == NULL || renderer == NULL) {
 		cout << "ERROR! One of the scrollbar's pointers to sdl_help fields is NULL."
 		     << "Exiting scroll_bar::print() early " << endl;
-		delete x_scroll; delete y_scroll; delete area_width; delete area_height;
+		delete x_scroll; delete y_scroll;
 		delete window_width; delete window_height;
 		return;//get outta here
 	}
-/*	cout << "x_scroll = " << *x_scroll << " | " << "y_scroll = " << *y_scroll << endl;
-	cout << "area_width = " << *area_width << " | " << "area_height = " << *area_height << endl;
-	cout << "window_width = " << *window_width << " | " << "window_height = " << *window_height << endl;
-	cout << "renderer = " << renderer << endl;
-	cout << "scroll bar dims = " << width << ":" << height << endl; */
+
 }
 
 void scroll_bar::draw_me(){
@@ -115,15 +105,14 @@ void scroll_bar::draw_me(){
 }
 
 void scroll_bar::update(){
-	if(x_scroll == NULL || y_scroll == NULL || window_height == NULL || window_width == NULL ||
-	   area_width == NULL || area_height == NULL){
+	if(x_scroll == NULL || y_scroll == NULL || window_height == NULL || window_width == NULL){
 		cout << "Error in scroll_bar::update(), x_scroll, y_scroll,"
-		     << " window_width, window_height, area_width or area_height are NULL " << endl;
+		     << " window_width, or window_height pointers are null" << endl;
 		return;
 	}
 	if(width > height){//logic for horizontal bar
-		xloc = int(-(*x_scroll) * ((*window_width) / ((*area_width)*1.0)));//move as a function of
-									    //screen size vs scrollabe size
+		xloc = int(-(*x_scroll));
+
 		if(xloc + width > *window_width){
 			xloc = *window_width - width;//don't go past right side of the screen
 		} else if(xloc < 0){
@@ -132,8 +121,8 @@ void scroll_bar::update(){
 	} else {//logic for vertical bar
 
 		//move as a function of screen size vs scrollable size
-		cout << (*y_scroll) << " " << (*window_height) << ":" << (*area_height) << endl;
-		yloc =  int(-(*y_scroll) * ((*window_height) / ((*area_height)*1.0)));
+		//cout << (*y_scroll) << " " << (*window_height) << ":" << (*area_height) << endl;
+		yloc =  int( -(*y_scroll)); 
 		if(yloc < 0){
 			yloc = 0;//don't go above the top of the window
 		} else if(yloc + height > (*window_height)){ //don't go below bottom of the window
@@ -142,6 +131,7 @@ void scroll_bar::update(){
 	}
 	cout << xloc << ":" <<  yloc << endl;
 }
+
 bool scroll_bar::in(int click_x,int click_y) const{
 	if( (click_x > xloc && click_x < xloc+width) &&
 	    (click_y > yloc && click_y < yloc+height) ) return true;

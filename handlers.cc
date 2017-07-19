@@ -134,11 +134,12 @@ void handle_mouseb_down( SDL_Event& big_event, sdl_help& sdl_help,button_manager
 				}
 
 			} else if( which_bar == 0){//no scroll bar was clicked, look at other things
+				//or buttons
+				b_manager.click_handling(big_event);
 				//like tiles
 				sdl_help.click_detection(cout,big_event,&b_manager, 
 							big_event.button.x,big_event.button.y);
-				//or buttons
-				b_manager.click_handling(big_event);
+
 			} else {//if which_bar is still -1, something is wrong
 				cout << "Error in left mouse button case, sdl_help::scroll_clicked "
 				     << "has a bad value." << endl;

@@ -36,6 +36,10 @@ class input_maker{
 	/*! for now it defaults to printing to ./output/output.txt, the output file can be specified
 	 *by the output_fname button in class button_manager*/
 	void output();
+	
+	//! check_map() traverses all of the maps in this object, and prints them to the given stream
+	/*\param outs is the output stream to send the information to */
+	void check_map(std::ostream& outs);
 
 	//################ GETTERS AND SETTERS #########################################
 

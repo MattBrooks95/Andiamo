@@ -68,7 +68,7 @@ param_real8::param_real8(string name_in,double val_in){
 }
 
 ostream& operator <<(ostream& outs, const param_real8& rhs){
-	outs << /*rhs.name << " " <<*/ rhs.value;
+	outs << rhs.value << " " << rhs.name;
 	return outs;
 }
 
