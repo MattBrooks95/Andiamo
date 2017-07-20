@@ -44,10 +44,9 @@ void manager::init(){
 	/*  This map of maps needs to be filled by this subroutine
 	std::map<std::string,std::map<std::string,field>> fields;//!< trying something new, to keep relevant tiles together
 	*/
-
 	getline(ins,temp_string);//priming read
 	//loop over the entire tile_Input/tiles.txt configuration file
-	while(!ins.eof()){
+	while(!ins.eof() ){
 		if(ins.fail()) break;//get out on potentially erroneous last run
 
 		//reset new line container each run of loop
@@ -69,7 +68,7 @@ void manager::init(){
 		getline(ins,temp_string);//grab a new line
 
 		//outer loop runs over the # of grouped parameters (lines in HF input)
-		while( !regex_match(temp_string,line_separator) ){
+		while( !regex_match(temp_string,line_separator) && !ins.eof()){
 
 			//these parameter should be re-declared for each field
 			string tile_name = "bad tile name";//names for generalized tiles
@@ -130,25 +129,26 @@ void manager::init(){
 				temp_field.descriptions.push_back(temp_descriptions[c]);
 			}
 
-
+			cout << "##########PUSHING FIELD###################" << endl;
+			temp_field.print(cout);
+			cout << "##########################################" << endl;
 
 			new_line.emplace(tile_name,temp_field);//push the field into the map for that parameter's line
 			if( !ins.fail() ){
 				getline(ins,temp_string);//"andy" is the current line, so go ahead and read the next one
-			} else {
-				break; //if it's not andy, something is awry or we're at end of file
 			}
 		}
+
 		//at this point, we have hit the separator for another group of parameters
 		fields.emplace(line_name,new_line);//store the map of parameters in the map of lines, and give it the name we found earlier
 	}
 	ins.close(); //close the file
 
-	/*if(man_test){
+	if(man_test){
 		cout << "FIELD MAP AFTER MANAGER.init():" << endl;
 		print_all(cout);
 		cout << "####################################################" << endl;
-	}*/
+	}
 }
 
 manager::~manager(){

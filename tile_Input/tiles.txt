@@ -276,7 +276,7 @@ andy_tile.png
 150x50
 andy
 C3
-c used in parity ration
+c used in parity ratio
 c P.R. = 0.5 ? (1 (+/-) 1/(1 + EXP (C3 ? (E - DELP)))
 andy_tile.png
 150x50
