@@ -397,7 +397,7 @@ void sdl_help::text_box_mini_loop(ostream& outs, SDL_Event& event,button_manager
 		}
 
 		//c++;
-		SDL_Delay(50);
+		//SDL_Delay(50);
 	}//end of loop
 	SDL_StopTextInput();//stop text input functionality because it slows down the app
 
@@ -433,6 +433,22 @@ bool sdl_help::in(int click_x, int click_y,const SDL_Rect& rect) const{
 
 
 void sdl_help::calc_corners(){
+	cout << "################# IN CALC CORNERS ##########################################" << endl;
+	//this variable keeps track of where the next line should start being placed. The helper function
+	//should set it to be just below the newly created section of tiles, and some padding value
+	unsigned int row_height = 5;//5 pixel buffer from top of window
+
+	for(map<string,map<string,field>>::iterator line_it = tile_bag.fields.begin();
+	    line_it != tile_bag.fields.end();
+	    line_it++){
+		calc_corners_helper(line_it->first,line_it->second,row_height);
+
+
+
+
+	}
+	cout << "################# END CALC CORNERS ############################################" << endl;
+/*
 	//cout << tile_locations.size() << endl;
 	vector<names_and_width> candidates;//will be filled up with the width of each tile in the tile bag
 				       //and the index IN THE TILE BAG that corresponds to it
@@ -551,9 +567,62 @@ void sdl_help::calc_corners(){
 
 		prev_height = prev_height + max_height; //update prev_height with new row's max value
 	}//loop until done
+*/
+}
+void sdl_help::calc_corners_helper(const string line_in, map<std::string,field>& map_in, unsigned int& start_height){
+	cout << "In calc_corners_helper()! Line in progress is:" << line_in << endl;
+
+
+	int window_w = window_s.width;//keep track of the window size
+
+	int x_corner = 0;
+	int y_corner = start_height;//save the starting position to be used to set the corner coordinates for fields
+				    //but this variable can be changed if the current line map takes up more than
+				    // one row in the window
+
+
+	 //save the lowest ylocation + height value there is, so we can update start_height
+	//when this function is done, to allow other rows to know where to begin placing fields
+	int lowest_point = 0;
+
+	for(map<string,field>::iterator param_it = map_in.begin(); param_it != map_in.end();param_it++){
+		cout << "PARAM:" << param_it->first << endl;
+
+		//this is the case where the tile can stay in the current row 
+		if(x_corner + param_it->second.get_size().width < window_w){
+
+			param_it->second.xloc = x_corner;
+			param_it->second.yloc = y_corner;
+
+
+			x_corner = param_it->second.xloc + param_it->second.get_size().width + 5;//literal 5 for 5 pixel offset
+
+			if(param_it->second.yloc + param_it->second.get_size().height + 5 > lowest_point){
+				lowest_point = param_it->second.yloc + param_it->second.get_size().height + 5;
+			}
+		//this is the case where the tile needs to be placed into a new row (because there's not enough width left)
+		} else {
+			param_it->second.xloc = 0;//place it on the left edge
+			x_corner = param_it->second.xloc + param_it->second.get_size().width + 5;//save it's leftmost edge + padding
+										      //to be used to place the next tile
+
+			param_it->second.yloc = lowest_point; //place it just below the previous row
+
+			y_corner = lowest_point; //set that lowest point as the new y coordinate for the
+						 //fields in this row
+
+			lowest_point = param_it->second.yloc + param_it->second.get_size().height + 5;//save new lowest point
+
+		}		
+
+
+
+
+	}
+
+	start_height = lowest_point + 5;//save the the start location for the next row
 
 }
-
 //############################ NON-MEMBER HELPERS ##########################################################
 
 bool compare_width(names_and_width& left, names_and_width& right){

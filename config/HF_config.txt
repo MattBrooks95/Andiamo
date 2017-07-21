@@ -58,7 +58,7 @@ I4 ILVL3 = 9
 I4 ILVL4 = 0
 I4 ILVL5 = 2
 
-#line 6 - if ILVL1 = 6
+#line 5a- if ILVL1 = 6
 R8 ACON = 0.10
 R8 GAM  = 0.0
 R8 FCON = 1.00
@@ -67,3 +67,19 @@ R8 C10  = -0.43
 R8 C11  = -0.25
 R8 C12  = 1.34
 R8 C3   = -0.1
+
+#line 5b
+#line 5c
+#line 5d
+#line 5e
+#line 6
+I4 ICNTRL1  = 1
+I4 ICNTRL2  = 1
+I4 ICNTRL3  = 0
+I4 ICNTRL4  = 1
+I4 ICNTRL5  = 2
+I4 ICNTRL6  = 0
+I4 ICNTRL7  = 3
+I4 ICNTRL8  = 9
+I4 ICNTRL9  = 0
+I4 ICNTRL10 = 0
