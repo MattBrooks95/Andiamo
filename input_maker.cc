@@ -82,15 +82,15 @@ void input_maker::init(){
 
 	//set up regex matches
 	regex re_comment("\\s*?#.*");
-	regex re_i4("\\s*?I4\\s+?[A-Za-z0-9]+?\\s+?=\\s+?-?[0-9]*\\s*");
-	regex re_i4_array("\\s*?I4\\(\\s*?[0-9]+?\\s*?\\)\\s*?[A-Za-z0-9]+?\\s*?=\\s*?\"(\\s*?-?[0-9]*?\\s*?,?)+?\"\\s*");
-	regex re_string("\\s*?C\\*\\s*?[A-Za-z]+?\\|[0-9]+?\\|\\s*?=\\s*?\".+?\"\\s*");
-	regex re_real8("\\s*?R8\\s+?[A-Za-z0-9]+?\\s+?=\\s+?-?[0-9]*?\\.[0-9]*?\\s*");
+	regex re_i4("\\s*?I4\\s+?[A-Za-z0-9_]+?\\s+?=\\s+?-?[0-9]*\\s*");
+	regex re_i4_array("\\s*?I4\\(\\s*?[0-9]+?\\s*?\\)\\s*?[A-Za-z0-9_]+?\\s*?=\\s*?\"(\\s*?-?[0-9]*?\\s*?,?)+?\"\\s*");
+	regex re_string("\\s*?C\\*\\s*?[A-Za-z_]+?\\|[0-9]+?\\|\\s*?=\\s*?\".+?\"\\s*");
+	regex re_real8("\\s*?R8\\s+?[A-Za-z0-9_]+?\\s+?=\\s+?-?[0-9]*?\\.[0-9]*?\\s*");
 
 	regex string_array_size_pattern("\\|\\d+?\\|");
 	regex int_array_size_pattern("\\([0-9]+?\\)");
 
-	regex e_array("\\s*?E\\(\\s*[0-9]+?\\s*?\\)\\s*?[A-Za-z0-9]+?\\s*?=\\s*?\"(\\s*?[0-9]+?\\.[0-9]+?,?)+?\"");
+	regex e_array("\\s*?E\\(\\s*[0-9]+?\\s*?\\)\\s*?[A-Za-z0-9_]+?\\s*?=\\s*?\"(\\s*?[0-9]+?\\.[0-9]+?,?)+?\"");
 
 
 	string temp_string;
@@ -357,6 +357,20 @@ void input_maker::output(){
 	}
 	//####################### IENCH = 7 LINES ###############################################################
 	
+
+	//do line 6
+	do_line6(int4_params,outs);
+
+	//do line 7
+	do_line7(real8_params,outs);
+
+	//if the conditions from the input manual are met
+	if( int4_params.at("ICNTRL4").value != 0 ){
+		//do line 8
+		do_line8(int4_params,outs);
+	}//elsewise, don't do line 8
+
+
 	outs.flush();//push changes to file, if this is not here C++ will wait to do the writing until
 		     //the program is terminated
 	//close the output file stream
@@ -401,7 +415,7 @@ void do_line1(const map<string,param_string>& string_params,ofstream& outs){
 
 }
 
-void do_line2(const map<string,param_real8>& real8_params,const map<string,param_int4> int4_params, ofstream& outs){
+void do_line2(const map<string,param_real8>& real8_params,const map<string,param_int4>& int4_params, ofstream& outs){
 
 	//note, setw(something) needs to be called before every item is printed
 	//this is really annoying, so I have a macro up top where F = "<< setw(8) << " for
@@ -510,7 +524,7 @@ void do_line4A(const map<string,param_real8>& real8_params,const map<string,para
 	cout << "Error in do_line4A: parameter not found in the map!" << endl;
   }
 }
-void do_line4B(map<string, param_e_array>& e_params,std::ofstream& outs){
+void do_line4B(const map<string, param_e_array>& e_params,std::ofstream& outs){
   try{
 	outs << right;//set orientation
 	outs << setprecision(3);//set # of decimal places
@@ -525,6 +539,42 @@ void do_line4B(map<string, param_e_array>& e_params,std::ofstream& outs){
 	cout << "Error! Parameter in do_line4B not found in the map!" << endl;
   }
 }
+
+void do_line6(const map<string,param_int4>& int4_params,ofstream& outs){
+	outs << right;
+  try{
+	outs I int4_params.at("ICNTRL1").value I int4_params.at("ICNTRL2").value I int4_params.at("ICNTRL3").value
+	     I int4_params.at("ICNTRL4").value I int4_params.at("ICNTRL5").value I int4_params.at("ICNTRL6").value
+	     I int4_params.at("ICNTRL7").value I int4_params.at("ICNTRL8").value
+	     I int4_params.at("ICNTRL9").value I int4_params.at("ICNTRL10").value << endl;
+  } catch (out_of_range& not_found){
+	cout << "Error! Parameter in do_line6 not found in the map!" << endl;
+  }
+}
+
+
+
+void do_line7(const map<string,param_real8>& real8_params,ofstream& outs){
+  try{
+	outs << right;	//set the justification
+	outs << setprecision(2);//set precision for 2 points past the decimal
+	outs F5 real8_params.at("FMU").value F5 real8_params.at("FCON_").value << endl;
+  } catch (out_of_range& not_found){
+	cout <<"Error! Parameter in do_line7 not found in the map!" << endl;
+  }
+
+}
+
+void do_line8(const map<string,param_int4>& int4_params,ofstream& outs){
+  try{
+	outs << right;	//set the justification
+
+	outs I int4_params.at("ICH4").value I int4_params.at("NCH4").value << endl;
+  } catch(out_of_range& not_found){
+	cout << "Error! Parameter in do_line8 not found in the map!" << endl;
+  }
+}
+
 //#################################################################################################################
 
 

@@ -65,8 +65,9 @@ class button_manager{
 	//! this member calls each button's virtual handle_click() member
 	/*! a notable exception is the 'exit dialogue' button, because it's logic is partially controlled
 	 *via main(), because it has special logic. It shouldn't be placed with the other buttons, as it
-	 *only shows up when the user tries to quit the project */
-	void click_handling(SDL_Event& mouse_event);
+	 *only shows up when the user tries to quit the project. Returns true if a button was clicked,
+	 *and false elsewise */
+	bool click_handling(SDL_Event& mouse_event);
 
 	//GETTERS AND SETTERS
 	//! this member returns the exit button by reference, so its members can be called by other things
@@ -97,7 +98,7 @@ class button_manager{
 	TC_input_file_button t_coefficients;
 
 	button lets_go;//!< button to generate output
-	graphing_button graphing_options;//!< button to allow user to select graphing options
+	//graphing_button graphing_options;//!< button to allow user to select graphing options
 	exit_button exit_dialogue; //! first class that inherits from button default class, handles exiting
 
 };

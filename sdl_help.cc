@@ -448,126 +448,7 @@ void sdl_help::calc_corners(){
 
 	}
 	cout << "################# END CALC CORNERS ############################################" << endl;
-/*
-	//cout << tile_locations.size() << endl;
-	vector<names_and_width> candidates;//will be filled up with the width of each tile in the tile bag
-				       //and the index IN THE TILE BAG that corresponds to it
 
-	//traverse over all tiles, saving their widths and names in the vector
-	for(map<string,map<string,field>>::iterator lines_it = tile_bag.fields.begin();
-	    lines_it != tile_bag.fields.end();
-	    lines_it++){
-		for(map<string,field>::iterator params_it = lines_it->second.begin();
-		    params_it != lines_it->second.end();
-		    params_it++){
-			
-
-
-			names_and_width push_me;
-			push_me.width = params_it->second.get_size().width;
-			push_me.line_name = lines_it->first; //save line name and parameter name, so they can
-			push_me.param_name = params_it->first;//be accessed later
-			candidates.push_back(push_me);
-		}
-	}
-	sort(candidates.begin(),candidates.end(),compare_width);//sort the candidates such that they are in
-								//ascending order based on width
-
-	vector<int> processed(candidates.size(),0);//"boolean" vector, I don't want to use the optimized
-						   //stl vector<bool> here, initialize to 0 = false
-
-	queue<names_and_width> row;//temporarily hold the info of tiles about to be added to a row
-
-	unsigned int curr_width = 0;//keep track of the current row's width
-	unsigned int max_height = 0;//keep track of the current row's height
-
-	unsigned int horiz_padding = 20; //distance between columns
-	unsigned int vert_padding = 20; //distance between rows
-
-
-	unsigned int width_limit = window_s.width;
-
-	unsigned int done = 0;//keep track of how many tiles have their base corner location stored
-
-
-	unsigned int prev_height = 0; //keep track of the height of the previous rows
-	//cout << "done: " << done << " candidate size: " << candidates.size() << endl;
-	while(done < candidates.size()){ //stop when every tile has been placed
-		//cout << "DONE: " << done << endl;
-		curr_width = 0;//each new row begins with 0 width, which is filled in as tiles are chosen
-		max_height = 0;//reset this variable here, to be sure rows aren't affecting subsequent row's height
-
-		int j = 0;
-		while( (processed[j]) && j < processed.size()-1) j++ ;  //get index of lowest width tile that hasn't
-								 //been processed yet
-
-
-		while( (width_limit - curr_width) > candidates[j].width ){
-
-			//cout << "WIDTH_LIMIT - CURR_WIDTH= " << width_limit - curr_width << endl;
-			//cout << "SMALLEST TILE= " << candidates[j].width << endl;
-
-
-			//start at the end of the array (where the highest values are) and walk backgrounds
-			//until a tile that hasn't been processed has been found
-			int i = candidates.size() - 1;
-			while( i > -1 ){
-			  //if this tile won't fit, move on
-			  if( (!processed[i]) ){ //if it hasn't been processed yet, consider it
-				//if it doesn't fit, move on
-				if(curr_width + candidates[i].width + horiz_padding > width_limit){
-					i--;
-				} else break; //elsewise we can leave this loop, i is where it needs to be
-			  } else i--; //keep going until an unprocessed candidate has been found
-			}
-			//cout << "I candidate that may work i= " << i << " width = " << candidates[i].width
-			//     << endl;
-
-			//the i index for the very last run of this loop is bad, so we need to leave early
-			//the queue is set up at this point so the while(!row.empty()) loop will finish up
-			if(i == -1){
-				//cout << "row queue size when i = -1 : " << row.size() << endl;
-				break; //we have placed all tiles, exit
-			}
-			//keep track of how much space has been used, account for padding
-			curr_width = curr_width + candidates[i].width + horiz_padding;
-
-			//similarly keep track of the height of this row , account for padding
-			unsigned int temp_height =
-				tile_bag.fields.at(candidates[i].line_name).at(candidates[i].param_name).get_size().height
-				 + vert_padding;
-			//unsigned int temp_height = tile_bag.tiles[candidates[i].index].get_size().height +
-			//		  + vert_padding;
-			if(temp_height > max_height) {//save new max height
-				max_height = temp_height;
-				//cout << " NEW MAX HEIGHT: " << temp_height << endl;
-			}
-			//don't look at this tile again, set it to "true" in the "boolean" vector
-			processed[i] = 1;
-
-			row.push(candidates[i]);//add it on to the pending row
-		} //loop for planning a row and filling in the queue
-		//should be ready to add a row once the above mini loop is done
-
-
-		int row_width = 5; //first tile starts off at the left edge of the screen - with some padding
-		while( !row.empty() ){
-			//cout << "QUEUE SIZE= " << row.size() << endl;
-			names_and_width temp = row.front(); //copy element in the front of the queue
-			row.pop();  //pop out biggest tile
-
-			tile_bag.fields.at(temp.line_name).at(temp.param_name).xloc = row_width;
-			tile_bag.fields.at(temp.line_name).at(temp.param_name).yloc = prev_height;
-
-
-			//calc xloc for next tile
-			row_width = row_width + tile_bag.fields.at(temp.line_name).at(temp.param_name).get_size().width + horiz_padding;
-			done++;//increment our progress counter
-		}//loop for putting the row into tile_locations
-
-		prev_height = prev_height + max_height; //update prev_height with new row's max value
-	}//loop until done
-*/
 }
 void sdl_help::calc_corners_helper(const string line_in, map<std::string,field>& map_in, unsigned int& start_height){
 	cout << "In calc_corners_helper()! Line in progress is:" << line_in << endl;
@@ -575,8 +456,13 @@ void sdl_help::calc_corners_helper(const string line_in, map<std::string,field>&
 
 	int window_w = window_s.width;//keep track of the window size
 
-	int x_corner = 0;
-	int y_corner = start_height;//save the starting position to be used to set the corner coordinates for fields
+	int x_buffer = 5;//distance between the left edge and the tiles, and the distance between two tiles 
+			  //horizontally
+
+	int x_corner = x_buffer;
+
+	int y_corner = start_height;
+				    //save the starting position to be used to set the corner coordinates for fields
 				    //but this variable can be changed if the current line map takes up more than
 				    // one row in the window
 
@@ -595,15 +481,16 @@ void sdl_help::calc_corners_helper(const string line_in, map<std::string,field>&
 			param_it->second.yloc = y_corner;
 
 
-			x_corner = param_it->second.xloc + param_it->second.get_size().width + 5;//literal 5 for 5 pixel offset
+			x_corner = param_it->second.xloc + param_it->second.get_size().width + x_buffer;//literal 5 for 5 pixel offset
 
 			if(param_it->second.yloc + param_it->second.get_size().height + 5 > lowest_point){
 				lowest_point = param_it->second.yloc + param_it->second.get_size().height + 5;
 			}
 		//this is the case where the tile needs to be placed into a new row (because there's not enough width left)
 		} else {
-			param_it->second.xloc = 0;//place it on the left edge
-			x_corner = param_it->second.xloc + param_it->second.get_size().width + 5;//save it's leftmost edge + padding
+			param_it->second.xloc = x_buffer;//place it on the left edge
+			x_corner = param_it->second.xloc + param_it->second.get_size().width + x_buffer;
+										      //save it's leftmost edge + padding
 										      //to be used to place the next tile
 
 			param_it->second.yloc = lowest_point; //place it just below the previous row

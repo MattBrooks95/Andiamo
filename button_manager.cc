@@ -66,7 +66,7 @@ void button_manager::location_update(){
 	t_coefficients.handle_resize(new_y+output_fname.get_height()+17);
 
 
-	graphing_options.handle_resize(new_y+7);
+	//graphing_options.handle_resize(new_y+7);
 
 	lets_go.handle_resize(new_y+7);
 
@@ -79,7 +79,7 @@ void button_manager::init_buttons(){
 	default_test.init("default_button.png",button_image_p,sdl_helper);
 	output_fname.init("output_name_button.png",button_image_p,sdl_helper);
 	t_coefficients.init("tc_file_button.png",button_image_p,sdl_helper);
-	graphing_options.init("graphing_options.png",button_image_p,sdl_helper);
+	//graphing_options.init("graphing_options.png",button_image_p,sdl_helper);
 	lets_go.init("lets_go.png",button_image_p,sdl_helper);
 
 	//exit dialogue is a special snowflake, handles its own location
@@ -99,9 +99,9 @@ void button_manager::init_buttons(){
 
 		end_of_last_button = end_of_last_button+5+output_fname.get_width();
 
-	graphing_options.force_corner_loc(end_of_last_button+5,tray_rect.y + 7);
+	//graphing_options.force_corner_loc(end_of_last_button+5,tray_rect.y + 7);
 
-		end_of_last_button = end_of_last_button+5+graphing_options.get_width();
+		//end_of_last_button = end_of_last_button+5+graphing_options.get_width();
 
 	lets_go.force_corner_loc( end_of_last_button+5, tray_rect.y + 7 );
 
@@ -119,7 +119,7 @@ void button_manager::print_buttons(){
 	cout << endl;
 	lets_go.print_me();
 	cout << endl;
-	graphing_options.print_me();
+	//graphing_options.print_me();
 	cout << endl;
 	cout << "####################### DONE PRINTING BUTTONS #######################" << endl;
 }
@@ -135,7 +135,7 @@ void button_manager::draw_buttons(){
 	default_test.draw_me();
 	output_fname.draw_me();	
 	t_coefficients.draw_me();
-	graphing_options.draw_me();
+	//graphing_options.draw_me();
 	lets_go.draw_me();
 
 }
@@ -232,7 +232,7 @@ void button_manager::text_box_loop(text_box_button* current_button,SDL_Event& ev
 
 }
 
-void button_manager::click_handling(SDL_Event& mouse_event){
+bool button_manager::click_handling(SDL_Event& mouse_event){
 	bool done_something = false;//turn off when a button has actually been clicked
 			 	    //no need to check all buttons if one has already been clicked
 			 	    //shouldn't be possible to click two at the same time
@@ -273,15 +273,16 @@ void button_manager::click_handling(SDL_Event& mouse_event){
 			done_something = true; //don't consider the other cases, this one has been hit
 		}
 	}
-	if(!done_something && graphing_options.shown){
+	/*if(!done_something && graphing_options.shown){
 		//needs text input handling and needs to do handle_click for check box
 		graphing_options.handle_click(mouse_event);
 		if( graphing_options.my_text_box.was_clicked(mouse_event) ) {
 			text_box_loop(&graphing_options,mouse_event);
+			done_something = true;
 		}
-	}
+	}*/
 	cout << "DONE HANDLING BUTTON CLICKS" << endl;
-
+	return done_something;//let main know if it should check tiles or not
 }
 
 int button_manager::clean_up(){
