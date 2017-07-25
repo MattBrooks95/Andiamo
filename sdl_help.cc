@@ -343,7 +343,7 @@ void sdl_help::text_box_mini_loop(ostream& outs, SDL_Event& event,button_manager
 		  case SDL_MOUSEBUTTONDOWN:
 			//if the click was within the text box, move the cursor maybe
 		  	if( current_tile.text_box_clicked(outs,event.button.x,event.button.y) ){
-				//cout << "Text box click at " << event.button.x << ":" << event.button.y << endl;
+				cout << "Text box click at " << event.button.x << ":" << event.button.y << endl;
 		  	} else { //elsewise exit text input mode, user clicked off the text box
 		  		//cout << "Clicked outside of the text box, exiting mini-loop" << endl;
 				SDL_PushEvent(&event);//doing this allows the user to 'hop' to another text box

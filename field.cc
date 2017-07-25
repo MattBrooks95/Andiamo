@@ -16,7 +16,10 @@ field::field(string tile_name_in,string image_name_in, int width, int height){
 
 	temp_input = "temp_input -> default failure"; //start off input blank. Default value loaded in by input
 		    //manager, overridden by user
-	
+	text_width = 0;
+	text_height = 0;	
+
+
 	xloc = 0;//these will be taken care of by calc_corners()
 	yloc = 0;
 
@@ -365,6 +368,12 @@ void field::text_box_init(){
 	if(text_box.box_tex == NULL) cout << "Error in text_box_init! " << SDL_GetError() << endl;
 
 
+	text_box.cursor_surface = IMG_Load("Assets/Images/cursor.png");
+	if(text_box.cursor_surface == NULL) cout << SDL_GetError() << endl;
+	text_box.cursor_texture = SDL_CreateTextureFromSurface(sdl_help_renderer,text_box.cursor_surface);
+	if(text_box.cursor_texture == NULL) cout << SDL_GetError() << endl;
+
+
 	//set up text box text
 	text_box.text_surf = TTF_RenderUTF8_Blended(sdl_font,temp_input.c_str(),color);
 
@@ -374,7 +383,7 @@ void field::text_box_init(){
 	if(text_box.text_surf == NULL) cout << "Error in text_box_init! " << SDL_GetError() << endl;
 	text_box.text_tex = SDL_CreateTextureFromSurface(sdl_help_renderer,text_box.text_surf);
 	if(text_box.text_tex == NULL) cout << "Error in text_box_init! " << SDL_GetError() << endl;
-
+	editing_location = temp_input.size();
 }
 
 sdl_text_box::sdl_text_box(){
@@ -384,6 +393,10 @@ sdl_text_box::sdl_text_box(){
 
 	text_surf = NULL;
 	text_tex = NULL;
+
+	cursor_surface = NULL;
+	cursor_texture = NULL;
+
 
 	text_color = {0,0,0,0};
 
@@ -396,6 +409,8 @@ sdl_text_box::~sdl_text_box(){
 	SDL_FreeSurface(text_surf);
 	SDL_DestroyTexture(box_tex);
 	SDL_DestroyTexture(text_tex);
+	SDL_FreeSurface(cursor_surface);
+	SDL_DestroyTexture(cursor_texture);
 }
 
 

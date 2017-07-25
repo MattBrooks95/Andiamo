@@ -21,7 +21,7 @@ text_box::text_box(sdl_help* sdl_help_in,TTF_Font* font_in, string text_in, int 
 	yloc = yloc_in;
 
 	width = width_in;
-	height = height_in;
+	height = height_in; 
 
 }
 

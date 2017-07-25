@@ -74,6 +74,13 @@ struct text_box{
 
 	SDL_Surface* text_surface;//!< surface for the text
 	SDL_Texture* text_texture;//!< texture for the tex
+
+
+	int editing_index; //!< keep track of the insertion point for text
+
+	SDL_Surface* cursor_surface;//!< surface for the text entry cursor
+	SDL_Texture* cursor_texture;//!< texture for the text entry cursor
+	bool cursor_show;//!< toggled to simulate the cursor "blinking"
 };
 
 

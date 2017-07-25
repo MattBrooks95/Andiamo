@@ -31,6 +31,9 @@ struct sdl_text_box{
 	SDL_Surface* text_surf; //!< keep track of the surface for the current text in the text box
 	SDL_Texture* text_tex;  //!< keep track of the texture for the current text in the text box
 
+	SDL_Surface* cursor_surface;//!< save the surface for the text entry indicator
+	SDL_Texture* cursor_texture;//!< save the texture for text entry indicator
+
 };
 
 //! tile_size is a struct that contains height and width parameters for the main window
@@ -178,7 +181,10 @@ class field{
 
 	//! stores text entered from the user overtop the default value which is loaded in with the appropriate ftran_struct hook
 	std::string temp_input;
+	int editing_location;//!< save the text entry location
 
+	int text_width;
+	int text_height;
 
 	////! this is the input that is set to a default value and overridden by input manager
 	//std::string input;
