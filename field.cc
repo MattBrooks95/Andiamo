@@ -16,9 +16,12 @@ field::field(string tile_name_in,string image_name_in, int width, int height){
 
 	temp_input = "temp_input -> default failure"; //start off input blank. Default value loaded in by input
 		    //manager, overridden by user
-	text_width = 0;
-	text_height = 0;	
+	editing_location = 0;
+	text_dims.w = 0;
+	text_dims.h = 0;
 
+	text_dims.x = 0;
+	text_dims.y = 0;
 
 	xloc = 0;//these will be taken care of by calc_corners()
 	yloc = 0;
@@ -189,15 +192,15 @@ void field::draw_me(){
 		//text was too big in cases, now text won't show at all. I'm pretty sure it's a texture source_rect issue
 		//but who knows... - fixed, see below comment
 
-		SDL_Rect text_box_text_src = {0,0,0,0};
-		TTF_SizeText(sdl_font,temp_input.c_str(),&text_box_text_src.w,&text_box_text_src.h);
+		//SDL_Rect text_box_text_src = {0,0,0,0}; //become -> text_dims in field class
+		//TTF_SizeText(sdl_font,temp_input.c_str(),&text_dims.w,&text_dims.h);
 		SDL_Rect text_box_text_dest = {xloc+(*sdl_xscroll), yloc + text_box.y_offset + (*sdl_yscroll),0,0};
 
 		//I had a "funny" bug here where I was drawing the text box's text using the dimensions of the 
-		//TILE NAME'S TEXTURE INSTEAD OF THE TEXT BOXE'S AHOFEHF*($H(HFO(HEDASUIOFHW(((((DFH(H&*()Q
+		//TILE NAME'S TEXTURE INSTEAD OF THE TEXT BOX'S
 		//causing blurry text and such...changing it to text_box.text_text fixed it. Unfortunate naming scheme
 		SDL_QueryTexture(text_box.text_tex,NULL,NULL,&text_box_text_dest.w,&text_box_text_dest.h);
-		SDL_RenderCopy(sdl_help_renderer,text_box.text_tex,&text_box_text_src,&text_box_text_dest);
+		SDL_RenderCopy(sdl_help_renderer,text_box.text_tex,&text_dims,&text_box_text_dest);
 		//###########################################################################################
 
 
@@ -252,11 +255,7 @@ void field::clicked(ostream& outs,SDL_Event& event, const int& click_x,const int
 }
 
 bool field::text_box_clicked(std::ostream& outs, const int& click_x, const int& click_y){
-	//note that in order to be in this function, the tile MUST have been clicked in the text boxes x values,
-	//as the text boxes are the same width as the tiles they sit on, so only the height needs checked
-	//atleast until it's fancy enough to place the cursor right or left based on how far to the right or left
-	//the user clicked - this is wrong
-	//turns out, I get false positives if I click in another box of the same row
+
 	if( int4_hook == NULL && real8_hook == NULL && string_hook == NULL && int4_array_hook == NULL){
 		//return false because there is no field to input_manager connection for the user to modify
 		return false;
@@ -270,22 +269,78 @@ bool field::text_box_clicked(std::ostream& outs, const int& click_x, const int& 
 }
 
 void field::back_space(){
-	if(temp_input.length() > 0){
-		//cout << "BEFORE DELETE: " << temp_input << endl;
-		temp_input.pop_back();
-		//cout << "AFTER DELETE: " << temp_input << endl;
+	if(editing_location > 0){
+		temp_input.erase(editing_location-1,1);//erase from current editing location
+		editing_location--;//decrement editing location
 	}
+	//if(temp_input.length() > 0){
+		//cout << "BEFORE DELETE: " << temp_input << endl;
+	//	temp_input.pop_back();
+		//cout << "AFTER DELETE: " << temp_input << endl;
+	//}
+	//update the cursor's size information
+	TTF_SizeText(sdl_font,temp_input.c_str(),&text_dims.w,&text_dims.h);
+
 	update_texture();
+}
+//this is pretty much update_temp_input, but modified to be a helper function for manager::give_defaults
+//that way it can set up the text and update the text's size saving variable
+void field::init_temp_input(string data){
+	temp_input = data;
+	TTF_SizeText(sdl_font,temp_input.c_str(),&text_dims.w,&text_dims.h);
+	editing_location = temp_input.size()-1;//start editing at end of the string by default
+	update_texture(); // update the texture
 }
 
 void field::update_temp_input(SDL_Event& event){
 	
 	//cout << "Stuff to change text and update surfaces here" << endl;
 	//cout << "OLD LINE: " << temp_input << endl;
-	temp_input.append( event.text.text );
+	//temp_input.append( event.text.text );
+
+	temp_input.insert(editing_location,event.text.text);
+	editing_location += strlen(event.text.text);
+
+	TTF_SizeText(sdl_font,temp_input.c_str(),&text_dims.w,&text_dims.h);
 	//cout << "AFTER APPEND: " << temp_input << endl;
 	update_texture();
 }
+
+void field::draw_cursor(){
+
+
+	//do the math to figure out where the cursor should be placed
+
+	int start_to_edit, no_point; //start_to_edit is the width of temp_input's text -1 character,
+				     //and no_point is a dummy, because SizeText expects 2 ints
+
+	TTF_SizeText(sdl_font, (temp_input.substr(0,editing_location)).c_str(),
+					&start_to_edit,&no_point);
+
+	//grab the cursor's width
+	int char_width;
+	TTF_SizeText(sdl_font, (temp_input.substr(editing_location,1)).c_str(),&char_width,&no_point);
+
+	SDL_Rect cursor_dest;//save the coordinates and dimensions for the cursor
+	if(editing_location != temp_input.size()){
+		cursor_dest = {xloc + (*sdl_xscroll) + start_to_edit, yloc + text_box.y_offset + (*sdl_yscroll),
+				char_width,text_dims.h};
+	} else {
+		//when the cursor is at the very end of the string, render a square of arbitrary size
+		cursor_dest = {xloc+ (*sdl_xscroll) + text_dims.w, yloc + text_box.y_offset + (*sdl_yscroll),
+				6,text_dims.h};
+	}
+
+
+
+
+	if( SDL_RenderCopy(sdl_help_renderer,text_box.cursor_texture,NULL,&cursor_dest) ){
+
+		cout << SDL_GetError() << endl;
+	}
+
+}
+
 //I need to find a way to save time, it's slow when the user is typing
 void field::update_texture(){
 		//cout << "Texture has been updated, but can you draw it?" << endl;
@@ -293,7 +348,9 @@ void field::update_texture(){
 		SDL_DestroyTexture(text_box.text_tex);//prevent memory loss
 
 		text_box.text_surf = TTF_RenderUTF8_Blended(sdl_font,temp_input.c_str(),text_box.text_color);
+		if(text_box.text_surf == NULL) cout << SDL_GetError() << endl;
 		text_box.text_tex = SDL_CreateTextureFromSurface(sdl_help_renderer,text_box.text_surf);
+		if(text_box.text_surf == NULL) cout << SDL_GetError() << endl;
 }
 //this function updates this fields ftran_struct in the input_maker vectors
 void field::update_my_value(){
@@ -316,12 +373,6 @@ void field::update_my_value(){
 			real8_hook->value = stod(temp_input);
 		}
 	} else if(string_hook != NULL){
-		//cout << string_hook << endl;
-		//char junk;
-		//cin >> junk;
-		//cout << "Ftran String value before: " << string_hook->value << endl;
-		//cout << "Ftran string name before: " << string_hook->name << endl;
-		//cout << "Ftran string size before: " << string_hook->size << endl;
 		string temp_string = temp_input;
 		unsigned int balance_factor = temp_string.length() - string_hook->value.length();
 		trim(temp_string,balance_factor);
@@ -373,7 +424,6 @@ void field::text_box_init(){
 	text_box.cursor_texture = SDL_CreateTextureFromSurface(sdl_help_renderer,text_box.cursor_surface);
 	if(text_box.cursor_texture == NULL) cout << SDL_GetError() << endl;
 
-
 	//set up text box text
 	text_box.text_surf = TTF_RenderUTF8_Blended(sdl_font,temp_input.c_str(),color);
 
@@ -396,7 +446,6 @@ sdl_text_box::sdl_text_box(){
 
 	cursor_surface = NULL;
 	cursor_texture = NULL;
-
 
 	text_color = {0,0,0,0};
 

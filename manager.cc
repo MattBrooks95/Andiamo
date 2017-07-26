@@ -13,7 +13,7 @@ manager::manager(){
 	input_maker_hook = NULL; //should be overwritten when sdl_help's constructor calls give_manager_io
 }
 
-bool man_test = true;
+bool man_test = false;
 
 void manager::init(){
 	
@@ -129,9 +129,9 @@ void manager::init(){
 				temp_field.descriptions.push_back(temp_descriptions[c]);
 			}
 
-			cout << "##########PUSHING FIELD###################" << endl;
-			temp_field.print(cout);
-			cout << "##########################################" << endl;
+			//cout << "##########PUSHING FIELD###################" << endl;
+			//temp_field.print(cout);
+			//cout << "##########################################" << endl;
 
 			new_line.emplace(tile_name,temp_field);//push the field into the map for that parameter's line
 			if( !ins.fail() ){
@@ -222,7 +222,8 @@ void manager::give_int4_fields_defaults(){
 		    	line_it->second.at(big_it->first).int4_hook = &big_it->second; //let the field reference it's place in the
 										       //input_maker map, so it can output the new
 										       //given to it by the user, to the HF output
-			line_it->second.at(big_it->first).temp_input = to_string(big_it->second.value);//set the default value so it's displayed
+			line_it->second.at(big_it->first).init_temp_input(to_string(big_it->second.value));
+			//line_it->second.at(big_it->first).temp_input = to_string(big_it->second.value);//set the default value so it's displayed
 											    //in the window
 			line_it->second.at(big_it->first).text_box_init();//set up the text box
 			found = true; //we found it, so make the flag good
@@ -260,7 +261,8 @@ void manager::give_int4_array_fields_defaults(){
 		  try{
 			line_it->second.at(big_it->first).int4_array_hook = &big_it->second;
 								// &input_maker_hook->get_i4_array_params().at(big_it->first).values;
-			line_it->second.at(big_it->first).temp_input = big_it->second.get_string(); //let it point to it's value in input_maker
+			line_it->second.at(big_it->first).init_temp_input(big_it->second.get_string());
+			//line_it->second.at(big_it->first).temp_input = big_it->second.get_string(); //let it point to it's value in input_maker
 			line_it->second.at(big_it->first).text_box_init(); //run the text box's init function
 
 			found = true;
@@ -292,7 +294,9 @@ void manager::give_real8_fields_defaults(){
 		  try{
 			line_it->second.at(big_it->first).real8_hook = &big_it->second;//give field pointer access
 										       //to it's value in input_maker
-			line_it->second.at(big_it->first).temp_input = to_string(big_it->second.value);//set up the default value
+			line_it->second.at(big_it->first).init_temp_input(to_string(big_it->second.value));
+			//line_it->second.at(big_it->first).temp_input = to_string(big_it->second.value);//set up the default value
+
 			line_it->second.at(big_it->first).text_box_init();//set up the text box
 
 			found = true;//set the flag to true, because we found the param we were looking for
@@ -325,7 +329,8 @@ void manager::give_string_fields_defaults(){
 		    line_it++){
 		  try{
 			line_it->second.at(big_it->first).string_hook = &big_it->second;  //set up the pointer to the parameter in input_maker
-			line_it->second.at(big_it->first).temp_input =  big_it->second.value; //set up the default value
+			line_it->second.at(big_it->first).init_temp_input(big_it->second.value);
+			//line_it->second.at(big_it->first).temp_input =  big_it->second.value; //set up the default value
 			line_it->second.at(big_it->first).text_box_init();//set up the text box
 			found = true;
 			break;
@@ -354,7 +359,8 @@ void manager::give_e_array_fields_defaults(){
 		    lines_it++){
 		  try{
 			lines_it->second.at(big_it->first).e_array_hook = &big_it->second; //set pointer to parameter in input maker
-			lines_it->second.at(big_it->first).temp_input = big_it->second.get_string();//change array into comma separated list in a string
+			lines_it->second.at(big_it->first).init_temp_input(big_it->second.get_string());
+			//lines_it->second.at(big_it->first).temp_input = big_it->second.get_string();//change array into comma separated list in a string
 			lines_it->second.at(big_it->first).text_box_init(); //set up text box
 			found = true;
 			break;//stop checking lines

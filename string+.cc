@@ -55,7 +55,7 @@ vector<string> split(string split_me, char delim){
 }
 
 void trim(std::string& base_string,unsigned int remove_num){
-	cout << "Base string before: " << base_string << endl;
+	//cout << "Base string before: " << base_string << endl;
 	if(remove_num > base_string.length()){
 		return;
 	} else {
@@ -64,7 +64,7 @@ void trim(std::string& base_string,unsigned int remove_num){
 
 	}
 
-	cout << "Base string after: " << base_string << endl;
+	//cout << "Base string after: " << base_string << endl;
 }
 
 void handle_i4_array(std::string& string_in,vector<int>& fill_me){
@@ -104,7 +104,7 @@ void handle_e_array(string& string_in,vector<double>& fill_me){
 }
 
 void strip_char(std::string& string_in,char strip_me){
-	cout << "String passed to strip_me:" << string_in << endl;
+	//cout << "String passed to strip_me:" << string_in << endl;
 		//cout << "String passed to strip_me:" << string_in << endl;
 	string temp_string;
 	for(unsigned int c = 0; c < string_in.size();c++){
@@ -114,7 +114,7 @@ void strip_char(std::string& string_in,char strip_me){
 	}
 	//cout << "String at end of function:" << string_in << endl;
 	string_in = temp_string;
-	cout << "String at end of function:" << string_in << endl;
+	//cout << "String at end of function:" << string_in << endl;
 }
 
 

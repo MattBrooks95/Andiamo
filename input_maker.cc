@@ -31,7 +31,7 @@ input_maker::~input_maker(){
 }*/
 
 void input_maker::check_map(std::ostream& outs){
-	cout << "########### INPUT MAKER INT4 PARAMS MAP ##############################" << endl;
+	outs << "########### INPUT MAKER INT4 PARAMS MAP ##############################" << endl;
 	for(map<string,param_int4>::iterator int_it = int4_params.begin();
 	    int_it != int4_params.end();
 	    int_it++){
@@ -70,7 +70,7 @@ void input_maker::check_map(std::ostream& outs){
 
 
 void input_maker::init(){
-	bool init_test = true;
+	bool init_test = false;
 	if(init_test) cout << "########################### INPUT_MAKER INIT ################################" << endl;
 
 	ifstream ins;
@@ -241,7 +241,7 @@ void input_maker::init(){
 
 
 		} else if( regex_match(temp_string,e_array) ){
-			cout << "LINE:" << temp_string << "is an E array!" << endl; 
+			//cout << "LINE:" << temp_string << "is an E array!" << endl; 
 			vector<string> tokens = split(temp_string,' ');//split across spaces
 			/*for(unsigned int c = 0; c < tokens.size(); c++){
 				cout << tokens[c] << endl;

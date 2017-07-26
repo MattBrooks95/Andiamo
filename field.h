@@ -119,6 +119,12 @@ class field{
 	 *frame is drawn */
 	void update_temp_input(SDL_Event& event);
 
+	//! this function is used by manager::give_fields_defaults to set the text as read in from the HF config file
+	/*! this helper will also update the text's surface dimensions, to be used when the text is drawn to the screen */
+	void init_temp_input(std::string data);
+
+
+
 	//! this function copies the temp value that was likely entered by the user into the output vectors
 	/*! because these fields have direct pointer access to their ftran_struct in input_maker's vectors,
 	 *input_maker's size should not be changed after the initial function calls when the program starts.
@@ -181,13 +187,19 @@ class field{
 
 	//! stores text entered from the user overtop the default value which is loaded in with the appropriate ftran_struct hook
 	std::string temp_input;
-	int editing_location;//!< save the text entry location
 
-	int text_width;
-	int text_height;
+	//! save the text entry location
+	/*! this controls the cursor when the user is typing */
+	unsigned int editing_location;
 
-	////! this is the input that is set to a default value and overridden by input manager
-	//std::string input;
+	//! this function draws the indicator as to where the current editing location is
+	void draw_cursor();
+
+	//! save the dimensions of the text in the box
+	/* useful when drawing the text editing cursor */
+	SDL_Rect text_dims;
+
+	
 
 	int xloc; //!< the field keeps track of the xcoordinate of its upper right corner
 	int yloc; //!< the field keeps track of the ycoordinate of its upper right corner

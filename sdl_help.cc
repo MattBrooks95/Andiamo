@@ -86,8 +86,8 @@ sdl_help::sdl_help(string name_in,string HF_input_file_in,string bg_image_name_i
 	//give horizontal scroll bar the address of the info it needs from the sdl_help object
 	horiz_bar.init(&x_scroll,&y_scroll, &window_s.width, &window_s.height, renderer,"h_ou_grey_quarter.png");
 
-	vert_bar.print(cout);
-	horiz_bar.print(cout);
+	//vert_bar.print(cout);
+	//horiz_bar.print(cout);
 
 	calc_corners(); //set up tile locations with the field's corner location 
 	tile_bag.give_fields_renderer(renderer,image_p,&x_scroll,&y_scroll,font);//give fields rendering and font info
@@ -215,8 +215,8 @@ void sdl_help::most(int& rightmost,int& leftmost,int& upmost,int& downmost){
 		}
 
 	}
-	cout << "Rightmost: " << rightmost << " Leftmost: " << leftmost
-	     << " Upmost: " << upmost << " Downmost: " << downmost << endl;
+	/*cout << "Rightmost: " << rightmost << " Leftmost: " << leftmost
+	     << " Upmost: " << upmost << " Downmost: " << downmost << endl;*/
 
 }
 
@@ -385,16 +385,17 @@ void sdl_help::text_box_mini_loop(ostream& outs, SDL_Event& event,button_manager
 
 		//if something actually changed, re-draw
 		//elsewise don't do it to try and save time
-		if(text_was_changed){
+		//if(text_was_changed){
 			//cout << "HAVING TO REDRAW" << endl;
 			//update picture
 			draw_tiles();
 			draw_sbars();
 			b_manager->draw_buttons();
-			text_was_changed = false;
+			current_tile.draw_cursor();
+			//text_was_changed = false;
 			//show updated picture
 			present();
-		}
+		//}
 
 		//c++;
 		//SDL_Delay(50);
@@ -406,15 +407,33 @@ void sdl_help::text_box_mini_loop(ostream& outs, SDL_Event& event,button_manager
 void sdl_help::text_box_mini_loop_helper(SDL_Keysym& key,field& current_tile,bool& text_was_changed){
 	cout << key.sym << endl;
 	switch( key.sym ){
-	  case SDLK_BACKSPACE:
-	  	//cout << "BACKSPACE" << endl;
-		//delete last character, unless it's empty already than do nothing
-		if( current_tile.temp_input.size() > 0 ){
-			current_tile.back_space();//delete a character, update text's graphics
-			text_was_changed = true;
-		}
-		break;
-
+		case SDLK_BACKSPACE:
+			//cout << "BACKSPACE" << endl;
+			//delete last character, unless it's empty already than do nothing
+			if( current_tile.temp_input.size() > 0 ){
+				current_tile.back_space();//delete a character, update text's graphics
+				text_was_changed = true;
+			}
+			break;
+	
+		case SDLK_LEFT:
+			//cout << "Left arrow key" << endl;
+			//if we are not already at the very left of the text, move the editing position
+			//one to the left
+			if(current_tile.editing_location > 0){
+				current_tile.editing_location--;
+				text_was_changed = true;
+			}
+			break;
+		case SDLK_RIGHT:
+			//cout << "Right arrow key" << endl;
+			//if we are not already at the very end of the text, move the editing position
+			//one to the right
+			if(current_tile.editing_location < current_tile.temp_input.size()){
+				current_tile.editing_location++;
+				text_was_changed = true;
+			}
+			break;
 	  default:
 	  	break;
 
@@ -433,7 +452,7 @@ bool sdl_help::in(int click_x, int click_y,const SDL_Rect& rect) const{
 
 
 void sdl_help::calc_corners(){
-	cout << "################# IN CALC CORNERS ##########################################" << endl;
+	//cout << "################# IN CALC CORNERS ##########################################" << endl;
 	//this variable keeps track of where the next line should start being placed. The helper function
 	//should set it to be just below the newly created section of tiles, and some padding value
 	unsigned int row_height = 5;//5 pixel buffer from top of window
@@ -447,11 +466,11 @@ void sdl_help::calc_corners(){
 
 
 	}
-	cout << "################# END CALC CORNERS ############################################" << endl;
+	//cout << "################# END CALC CORNERS ############################################" << endl;
 
 }
 void sdl_help::calc_corners_helper(const string line_in, map<std::string,field>& map_in, unsigned int& start_height){
-	cout << "In calc_corners_helper()! Line in progress is:" << line_in << endl;
+	//cout << "In calc_corners_helper()! Line in progress is:" << line_in << endl;
 
 
 	int window_w = window_s.width;//keep track of the window size
@@ -472,7 +491,7 @@ void sdl_help::calc_corners_helper(const string line_in, map<std::string,field>&
 	int lowest_point = 0;
 
 	for(map<string,field>::iterator param_it = map_in.begin(); param_it != map_in.end();param_it++){
-		cout << "PARAM:" << param_it->first << endl;
+		//cout << "PARAM:" << param_it->first << endl;
 
 		//this is the case where the tile can stay in the current row 
 		if(x_corner + param_it->second.get_size().width < window_w){

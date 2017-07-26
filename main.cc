@@ -33,7 +33,7 @@ int main(){
   button_manager b_manager(&sdl_helper);
   b_manager.init_tray();
   b_manager.init_buttons();
-  b_manager.print_buttons();
+  //b_manager.print_buttons();
   //sdl_helper.get_mgr().print_all(cout);
 
   //sdl_helper.print_tile_locs(cout);
@@ -109,8 +109,8 @@ int main(){
 			break;
 
 		case SDL_WINDOWEVENT:
-			cout << "WINDOW EVENT ####################################################" << endl;
-			cout << "EVENT Num:" << big_event.type << endl;
+			//cout << "WINDOW EVENT ####################################################" << endl;
+			//cout << "EVENT Num:" << big_event.type << endl;
 			if(big_event.window.event == SDL_WINDOWEVENT_SIZE_CHANGED){
 				cout << big_event.window.data1 << ":" << big_event.window.data2 << endl;
 				sdl_helper.window_update(big_event.window.data1,big_event.window.data2);
@@ -139,9 +139,9 @@ int main(){
   //b_manager.clean_up();//have the button manager set up the necessary file paths in input_maker so
 		       //update_io_maker can output/input things properly
 
-  b_manager.print_buttons();
+  //b_manager.print_buttons();
   //sdl_helper.get_mgr().update_io_maker();
-  sdl_helper.print_size_info(cout);
+  //sdl_helper.print_size_info(cout);
   //sdl_helper.get_h_bar().print(cout);//make sure that these values are updating in the bars as
   //sdl_helper.get_v_bar().print(cout);//they are updated in the sdl_helper object
 
