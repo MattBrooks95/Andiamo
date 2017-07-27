@@ -49,7 +49,7 @@ field::field(string tile_name_in,string image_name_in, int width, int height){
 	real8_hook = NULL;
 	string_hook = NULL;
 	int4_array_hook = NULL;
-	e_array_hook = NULL;
+	r8_array_hook = NULL;
 
 }
 SDL_Rect field::get_rect() const{
@@ -256,7 +256,8 @@ void field::clicked(ostream& outs,SDL_Event& event, const int& click_x,const int
 
 bool field::text_box_clicked(std::ostream& outs, const int& click_x, const int& click_y){
 
-	if( int4_hook == NULL && real8_hook == NULL && string_hook == NULL && int4_array_hook == NULL){
+	if( int4_hook == NULL && real8_hook == NULL && string_hook == NULL && int4_array_hook == NULL &&
+	    r8_array_hook == NULL){
 		//return false because there is no field to input_manager connection for the user to modify
 		return false;
 	}
@@ -357,7 +358,8 @@ void field::update_my_value(){
 	//cout << "Tile name: " << tile_name << endl;
 	//cout << "Hooks  int4:r8:string = " << int4_hook << ":" << real8_hook << ":" << string_hook << ":"
 	//     << endl;
-	if(int4_hook == NULL && real8_hook == NULL && string_hook == NULL && int4_array_hook == NULL){
+	if(int4_hook == NULL && real8_hook == NULL && string_hook == NULL && int4_array_hook == NULL &&
+	   r8_array_hook == NULL){
 		cout << "ERROR! Tile " << tile_name << " has no association with a fortran struct"
 		     << " in input_maker's vectors. Please check that the tile's name in the tiles.txt"
 		     << " and HF_config.txt match each other.\n\n" << endl;
@@ -388,8 +390,12 @@ void field::update_my_value(){
 			int4_array_hook->values[c] = stoi(user_entered_values[c]);
 		}
 
+	} else if(r8_array_hook != NULL){
+		vector<string> user_entered_values = split(temp_input,',');
+		for(unsigned int c = 0; c < user_entered_values.size() && c < r8_array_hook->values.size();c++){
+			r8_array_hook->values[c] = stod(user_entered_values[c]);
+		}
 	}
-
 
 }
 

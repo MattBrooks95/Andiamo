@@ -24,7 +24,7 @@ void handle_i4_array(std::string& string_in,std::vector<int>& fill_me);
 
 //! this function splits a comma-separate dlist of numbers (in a string) and fills a passed vector with the numbers
 /*! it removes the quotation marks, then splits along commas and fills the passed vector with doubles */
-void handle_e_array(std::string& string_in,std::vector<double>& fill_me);
+void handle_r8_array(std::string& string_in,std::vector<double>& fill_me);
 
 //! this function loops over the passed in string, and builds a new string that excludes the passed character
 /*! \param string_in will be looped over, and the good characters stored in an accumulator string that is assigned to string_in at the end of the functoin

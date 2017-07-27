@@ -11,7 +11,7 @@
 #define F5 << setw(5) <<
 #define I << setw(5) <<
 #define I10 << setw(10) <<
-#define E << setw(10) <<
+
 using namespace std;
 
 input_maker::input_maker(string output_file_name_in,string config_file_name_in){
@@ -51,15 +51,15 @@ void input_maker::check_map(std::ostream& outs){
 	}
 	outs << "\n######### INPUT MAKER INT4 ARRAY MAP ###############################\n";
 	for(map<string,param_int4_array>::iterator int4_array_it = int4_array_params.begin();
-	    int4_array_it != int4_array_params.begin();
+	    int4_array_it != int4_array_params.end();
 	    int4_array_it++){
 		outs << int4_array_it->first << ":" << int4_array_it->second.get_string() << "   ";
 	}
-	outs << "\n######### INPUT MAKER E_ARRAY MAP ##################################\n";
-	for(map<string,param_e_array>::iterator e_array_it = e_params.begin();
-	    e_array_it != e_params.end();
-	    e_array_it++){
-		outs << e_array_it->first << ":" << e_array_it->second.get_string() << "   " << endl;
+	outs << "\n######### INPUT MAKER R8_ARRAY MAP ##################################\n";
+	for(map<string,param_r8_array>::iterator r8_array_it = r8_array_params.begin();
+	    r8_array_it != r8_array_params.end();
+	    r8_array_it++){
+		outs << r8_array_it->first << ":" << r8_array_it->second.get_string() << "   " << endl;
 	}
 
 }
@@ -90,7 +90,7 @@ void input_maker::init(){
 	regex string_array_size_pattern("\\|\\d+?\\|");
 	regex int_array_size_pattern("\\([0-9]+?\\)");
 
-	regex e_array("\\s*?E\\(\\s*[0-9]+?\\s*?\\)\\s*?[A-Za-z0-9_]+?\\s*?=\\s*?\"(\\s*?[0-9]+?\\.[0-9]+?,?)+?\"");
+	regex r8_array("\\s*?R8\\(\\s*[0-9]+?\\s*?\\)\\s*?[A-Za-z0-9_]+?\\s*?=\\s*?\"(\\s*?[0-9]+?\\.[0-9]+?,?)+?\"");
 
 
 	string temp_string;
@@ -240,7 +240,7 @@ void input_maker::init(){
 			}
 
 
-		} else if( regex_match(temp_string,e_array) ){
+		} else if( regex_match(temp_string,r8_array) ){
 			//cout << "LINE:" << temp_string << "is an E array!" << endl; 
 			vector<string> tokens = split(temp_string,' ');//split across spaces
 			/*for(unsigned int c = 0; c < tokens.size(); c++){
@@ -262,14 +262,14 @@ void input_maker::init(){
 				cout << "Error! Could not determine array size of E array (TIN?)"
 				     << "declaration line." << endl;
 			}
-			param_e_array e_array_push_me(name,array_size,false);//create object to be shoved into the map for E arrays
-			handle_e_array(tokens[3],e_array_push_me.values);
+			param_r8_array r8_array_push_me(name,array_size,false);//create object to be shoved into the map for E arrays
+			handle_r8_array(tokens[3],r8_array_push_me.values);
 			/*cout << "Vector of Es? Doubles? As follows:" << endl;
 			for(unsigned int c = 0; c < e_array_push_me.values.size();c++){
 				cout << e_array_push_me.values[c] << endl;
 			}*/
 
-			e_params.insert(std::pair<string,param_e_array>(name,e_array_push_me));//shove object into the map for E arrays
+			r8_array_params.insert(std::pair<string,param_r8_array>(name,r8_array_push_me));//shove object into the map for E arrays
 		} else {
 			cout << "Error! Line type wasn't determined." << endl;
 		}
@@ -346,7 +346,7 @@ void input_maker::output(){
 
 		do_line4A(real8_params,int4_params,outs);
 
-		do_line4B(e_params,outs);
+		do_line4B(r8_array_params,outs);
 		//###############################################################################################
 
 		//SET UP LINE 5##################################################################################
@@ -524,13 +524,13 @@ void do_line4A(const map<string,param_real8>& real8_params,const map<string,para
 	cout << "Error in do_line4A: parameter not found in the map!" << endl;
   }
 }
-void do_line4B(const map<string, param_e_array>& e_params,std::ofstream& outs){
+void do_line4B(const map<string, param_r8_array>& r8_array_params,std::ofstream& outs){
   try{
 	outs << right;//set orientation
 	outs << setprecision(3);//set # of decimal places
-	for(unsigned int c = 0; c < e_params.at("TIN").values.size();c++){
-		outs E e_params.at("TIN").values[c];
-		if(c == e_params.at("TIN").values.size()-1){
+	for(unsigned int c = 0; c < r8_array_params.at("TIN").values.size();c++){
+		outs F10 r8_array_params.at("TIN").values[c];
+		if(c == r8_array_params.at("TIN").values.size()-1){
 		outs << endl;
 		}
 

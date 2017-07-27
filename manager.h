@@ -53,7 +53,7 @@ class manager{
 
 	void give_string_fields_defaults();
 
-	void give_e_array_fields_defaults();
+	void give_r8_array_fields_defaults();
 
 	//####################################################################################################//
 

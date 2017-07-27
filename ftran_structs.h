@@ -129,8 +129,8 @@ struct param_int4_array{
 /*! these data types will function largely the same as param_int4_array, but will need different formating.
  *I'm not really sure what 8E10.3 means, so I'm going to operate under the assumption that it means
  *8 floating point numbers with a field width of 10 and 3 decimal places. */
-struct param_e_array{
-	param_e_array(std::string name_in ="no name given", unsigned int size_in = 1, bool satisfied_in=false);
+struct param_r8_array{
+	param_r8_array(std::string name_in ="no name given", unsigned int size_in = 1, bool satisfied_in=false);
 	
 	//! this member convers the vector of double values into a single, comma separated list contained in a string
 	std::string get_string();

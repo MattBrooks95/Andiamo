@@ -59,7 +59,7 @@ class input_maker{
 	std::map<std::string,param_int4_array>& get_i4_array_params(){ return int4_array_params;}
 
 	//! return e_params map BY REFERENCE
-	std::map<std::string,param_e_array>& get_e_params(){ return e_params;}
+	std::map<std::string,param_r8_array>& get_r8_array_params(){ return r8_array_params;}
 	//##############################################################################
 
 	std::string output_file_name;//!< \brief name of the file in config_p's folder where output will be printed
@@ -105,7 +105,7 @@ class input_maker{
 	std::map<std::string,param_int4_array> int4_array_params;
 
 	//! this map contains the ftran_struct e_params
-	std::map<std::string, param_e_array> e_params;
+	std::map<std::string, param_r8_array> r8_array_params;
 
 
 
@@ -141,7 +141,7 @@ void do_line4(const std::map<std::string,param_real8>& real8_params, const std::
 void do_line4A(const std::map<std::string,param_real8>& real8_params,const std::map<std::string,param_int4>& int4_params,std::ofstream& outs);
 
 //! this helper outputs the variables in line 4B (if IENCH = 7,logic in output() )
-void do_line4B(const std::map<std::string, param_e_array>& e_params, std::ofstream& outs);
+void do_line4B(const std::map<std::string, param_r8_array>& e_params, std::ofstream& outs);
 
 //! this helper outputs the values for the parameters in line 6
 void do_line6(const std::map<std::string,param_int4>& int4_params, std::ofstream& outs);

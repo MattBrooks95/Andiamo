@@ -198,7 +198,7 @@ void manager::give_fields_defaults(){
 	give_string_fields_defaults();
 
 	//call helper function connecting 'e' parameters to their tiles
-	give_e_array_fields_defaults();
+	give_r8_array_fields_defaults();
 
 }
 //################ GIVE_FIELDS_DEFAULTS() HELPERS #######################################################//
@@ -349,16 +349,16 @@ void manager::give_string_fields_defaults(){
 
 }
 
-void manager::give_e_array_fields_defaults(){
-	for(map<string,param_e_array>::iterator big_it = input_maker_hook->get_e_params().begin();
-	    big_it != input_maker_hook->get_e_params().end();
+void manager::give_r8_array_fields_defaults(){
+	for(map<string,param_r8_array>::iterator big_it = input_maker_hook->get_r8_array_params().begin();
+	    big_it != input_maker_hook->get_r8_array_params().end();
 	    big_it++){
 		bool found = false;
 		for(map<string,map<string,field>>::iterator lines_it = fields.begin();
 		    lines_it != fields.end();
 		    lines_it++){
 		  try{
-			lines_it->second.at(big_it->first).e_array_hook = &big_it->second; //set pointer to parameter in input maker
+			lines_it->second.at(big_it->first).r8_array_hook = &big_it->second; //set pointer to parameter in input maker
 			lines_it->second.at(big_it->first).init_temp_input(big_it->second.get_string());
 			//lines_it->second.at(big_it->first).temp_input = big_it->second.get_string();//change array into comma separated list in a string
 			lines_it->second.at(big_it->first).text_box_init(); //set up text box

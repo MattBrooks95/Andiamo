@@ -133,14 +133,14 @@ string param_int4_array::get_string(){
 }
 //########################################################################################
 
-//################## E? ARRAY ############################################################
-param_e_array::param_e_array(string name_in, unsigned int size_in, bool satisfied_in){
+//################## R8 ARRAY ############################################################
+param_r8_array::param_r8_array(string name_in, unsigned int size_in, bool satisfied_in){
 	name = name_in;
 	satisfied = satisfied_in;
 	size = size_in;
 
 }
-string param_e_array::get_string(){
+string param_r8_array::get_string(){
 	string return_me;
 	for(unsigned int c = 0; c < values.size();c++){
 		string number_bit =  to_string(values[c]);

@@ -88,7 +88,7 @@ void handle_i4_array(std::string& string_in,vector<int>& fill_me){
 
 }
 
-void handle_e_array(string& string_in,vector<double>& fill_me){
+void handle_r8_array(string& string_in,vector<double>& fill_me){
 	if(!fill_me.empty()){
 		cout << "Error, handle_e_array given a non-empty array as a parameter." << endl;
 	}

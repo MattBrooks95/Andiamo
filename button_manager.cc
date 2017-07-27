@@ -23,12 +23,12 @@ button_manager::button_manager(sdl_help* sdl_helper_in){
 }
 
 button_manager::~button_manager(){
-	if(button_tray_surf == NULL || button_tray_texture == NULL){
-		cout << "WEIRD, DESTRUCTOR HAS BEEN CALLED TWICE" << endl;
-		char junk;
-		cin >> junk;
+	//if(button_tray_surf == NULL || button_tray_texture == NULL){
+	//	cout << "WEIRD, DESTRUCTOR HAS BEEN CALLED TWICE" << endl;
+	//	char junk;
+	//	cin >> junk;
 
-	} //else {
+	//} //else {
 		//cout << "B_MANAGER'S DESTRUCTOR RUNNING" << endl;
 	//}
 	SDL_FreeSurface(button_tray_surf);
@@ -120,7 +120,7 @@ void button_manager::print_buttons(){
 	lets_go.print_me();
 	cout << endl;
 	//graphing_options.print_me();
-	cout << endl;
+	//cout << endl;
 	cout << "####################### DONE PRINTING BUTTONS #######################" << endl;
 }
 
