@@ -38,6 +38,9 @@ struct text_box{
 	//! this function draws the text box to the screen
 	void draw_me();
 
+	//! this function draws the text editing cursor
+	void draw_cursor();
+
 	//! this function updates the SDL_Rect storage of the text boxes location, for rendering
 	void make_rect();
 
@@ -61,7 +64,12 @@ struct text_box{
 	int width;//!< the width should be set by the init function or the constructor
 	int height;//!< the height should be set by the init function or the constructor
 
+	//! save the dimensions of the text in the button
+	SDL_Rect text_dims;
+	SDL_Surface* cursor_surface;//!< save the surface for the text editing surface
+	SDL_Texture* cursor_texture;//!< save the texture for the text editing surface
 
+	int editing_location;//!< saves the insertion and deletion point
 	std::string text;//!< the text that is rendered to the screen and changed by the user
 
 
@@ -78,9 +86,6 @@ struct text_box{
 
 	int editing_index; //!< keep track of the insertion point for text
 
-	SDL_Surface* cursor_surface;//!< surface for the text entry cursor
-	SDL_Texture* cursor_texture;//!< texture for the text entry cursor
-	bool cursor_show;//!< toggled to simulate the cursor "blinking"
 };
 
 

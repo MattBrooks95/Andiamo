@@ -183,6 +183,24 @@ void manager::give_fields_renderer(SDL_Renderer* sdl_help_renderer_in,string ima
 	}
 }
 
+int manager::get_widest_tile_width(){
+	int max_width = 0;
+	for(map<string,map<string,field>>::iterator lines_it = fields.begin();
+	    lines_it != fields.end();
+	    lines_it++){
+		for(map<string,field>::iterator params_it = lines_it->second.begin();
+		    params_it != lines_it->second.end();
+		    params_it++){
+			int candidate_width = params_it->second.get_size().width;
+			if(candidate_width > max_width){
+				max_width = candidate_width; 
+			}
+
+		}
+
+	}
+	return max_width;
+}
 void manager::give_fields_defaults(){
 
 	//call helper function for connecting the int4 params with their graphical tiles

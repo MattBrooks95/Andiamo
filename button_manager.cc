@@ -189,12 +189,24 @@ void button_manager::text_box_loop(text_box_button* current_button,SDL_Event& ev
 			break;
 
 		  case SDL_KEYDOWN:
+			
 		  	//cout << " Key pressed: " << event.key.keysym.sym << endl;
 			if(event.key.keysym.sym == SDLK_BACKSPACE){
 				//they hit backspace, so delete the end character if it is non-empty
 				current_button->my_text_box.back_space();
 				text_was_changed = true;
+			} else if(event.key.keysym.sym == SDLK_LEFT){
+				if(current_button->my_text_box.editing_location > 0){
+					current_button->my_text_box.editing_location--;
+					text_was_changed = true;
+				}
+			} else if(event.key.keysym.sym == SDLK_RIGHT){
+				if(current_button->my_text_box.editing_location < current_button->my_text_box.text.size()){
+					current_button->my_text_box.editing_location++;
+					text_was_changed = true;
+				}
 			}
+				
 			SDL_FlushEvent(SDL_KEYDOWN); //prevent event flooding
 		  	break;
 		  case SDL_QUIT:

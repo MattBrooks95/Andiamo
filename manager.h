@@ -37,6 +37,8 @@ class manager{
 	/*! it also allows fields to access sdl_help's scroll values and font pointer */
 	void give_fields_renderer(SDL_Renderer* sdl_help_renderer_in,std::string image_p_in,
 				  int* xscroll_in, int* yscroll_in,TTF_Font* font_in);
+	//! this function walks the map, and returns the width of the widest tile
+	int get_widest_tile_width();
 
 	//! this function "fills" each non-background tile with it's default value as a string
 	/* it also gives them a pointer reference to their position in input_maker's vector

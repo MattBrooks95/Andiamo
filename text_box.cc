@@ -23,6 +23,11 @@ text_box::text_box(sdl_help* sdl_help_in,TTF_Font* font_in, string text_in, int 
 	width = width_in;
 	height = height_in; 
 
+
+	cursor_surface = NULL;
+	cursor_texture = NULL;
+	editing_location = 0;
+
 }
 
 
@@ -32,6 +37,9 @@ text_box::~text_box(){
 
 	SDL_FreeSurface(text_surface);
 	SDL_DestroyTexture(text_texture);
+
+	SDL_FreeSurface(cursor_surface);
+	SDL_DestroyTexture(cursor_texture);
 }
 
 void text_box::init(sdl_help* sdl_help_in,TTF_Font* font_in, string text_in, int xloc_in, int yloc_in,
@@ -66,6 +74,12 @@ void text_box::init(sdl_help* sdl_help_in,TTF_Font* font_in, string text_in, int
 	text_texture = SDL_CreateTextureFromSurface(sdl_helper->renderer,text_surface);
 	if(text_texture == NULL) cout << SDL_GetError() << endl;
 
+	TTF_SizeText(sdl_help_font,text.c_str(),&text_dims.w,&text_dims.h);
+
+	cursor_surface = IMG_Load("Assets/Images/cursor.png");
+	if(cursor_surface == NULL) cout << SDL_GetError() << endl;
+	cursor_texture = SDL_CreateTextureFromSurface(sdl_helper->renderer,cursor_surface);
+	if(cursor_texture == NULL) cout << SDL_GetError() << endl;
 }
 
 void text_box::print_me(){
@@ -94,6 +108,30 @@ void text_box::draw_me(){
 
 		SDL_RenderCopy(sdl_helper->renderer,text_texture,&text_source,&text_destination);//render the text
 	}
+	draw_cursor();
+}
+
+void text_box::draw_cursor(){
+
+	int start_to_edit, no_point;//start_to_edit is length of string to edit point
+				    //no point is a dummy, needed by SizeText
+	TTF_SizeText(sdl_helper->font, text.substr(0,editing_location).c_str(),
+				&start_to_edit,&no_point);
+
+	int char_width;//grab the cursor's width
+	TTF_SizeText(sdl_helper->font,(text.substr(editing_location,1)).c_str(),
+				&char_width,&no_point);
+
+	SDL_Rect cursor_dest;//save the coordinates and dimensions for the cursor
+	if(editing_location != text.size()){
+		cursor_dest = {xloc + start_to_edit, yloc,char_width, text_dims.h};
+	} else {
+		cursor_dest = {xloc+text_dims.w, yloc, 6, text_dims.h};
+	}
+
+	if( SDL_RenderCopy(sdl_helper->renderer,cursor_texture,NULL,&cursor_dest) ){
+		cout << SDL_GetError() << endl;
+	}
 }
 
 void text_box::make_rect(){
@@ -106,7 +144,9 @@ void text_box::make_rect(){
 
 void text_box::update_text(string& new_text){
 	//add to the string
-	text.append(new_text);
+	text.insert(editing_location,new_text);
+	editing_location += strlen(new_text.c_str());
+	TTF_SizeText(sdl_helper->font,text.c_str(),&text_dims.w,&text_dims.h);
 	//update the texture for the text
 	update_texture();
 }
@@ -122,9 +162,12 @@ void text_box::update_texture(){
 }
 
 void text_box::back_space(){
-	if(text.length() > 0){
-		text.pop_back();
+	if(editing_location > 0){
+		text.erase(editing_location-1,1);//erase from current editing location
+		editing_location--;//decrement editing location
 	}
+	//update cursor size information
+	TTF_SizeText(sdl_help_font,text.c_str(),&text_dims.w,&text_dims.h);
 	update_texture();
 
 }

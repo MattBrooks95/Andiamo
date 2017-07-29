@@ -54,8 +54,10 @@ sdl_help::sdl_help(string name_in,string HF_input_file_in,string bg_image_name_i
 		cout << SDL_GetError();
         };
 
+	int temp_window_w = display.w *.5;
+	int temp_window_h = display.h * .75;
 	//cout << display.w << " " << display.h << endl;;
-	window = SDL_CreateWindow(window_name.c_str(), 0, 0, display.w * .5, display.h * .75, SDL_WINDOW_RESIZABLE);
+	window = SDL_CreateWindow(window_name.c_str(), 0, 0,temp_window_w,temp_window_h, SDL_WINDOW_RESIZABLE);
 	renderer = SDL_CreateRenderer(window,-1,SDL_RENDERER_PRESENTVSYNC);
  //(font_p + "LiberationSerif-Regular.tff").c_str()
 	font = TTF_OpenFont( "./Assets/fonts/LiberationSerif-Regular.ttf", 22);//set up pointer to font from file
@@ -65,7 +67,7 @@ sdl_help::sdl_help(string name_in,string HF_input_file_in,string bg_image_name_i
         if(sdl_test) cout << "Enacting tile_bag update with values: " << display.w / 2 << " "
                           << display.h << endl;
 
-	window_update(display.w / 2,display.h * .75);//this call updates sdl_help and manager's
+	window_update(temp_window_w,temp_window_h);//this call updates sdl_help and manager's
 					           // dimension window fields
 	x_scroll = 0; y_scroll = 0; //set scrolling variables to 0
 
@@ -457,23 +459,35 @@ void sdl_help::calc_corners(){
 	//should set it to be just below the newly created section of tiles, and some padding value
 	unsigned int row_height = 5;//5 pixel buffer from top of window
 
+	int row_limit;//this variable limits the width of the rows
+
+	int widest_tile = tile_bag.get_widest_tile_width();
+	cout << "WIDEST TILE: " << widest_tile << endl;
+	if(widest_tile > window_s.width){
+		cout << "USING WIDEST TILE TO LIMIT ROWS" << endl;
+		row_limit = widest_tile;//if a single tile is bigger than the window, use it for logic
+					//because the window is likely so small the normal row placement logic won't work				
+	} else {
+		cout << "USING WINDOW SIZE TO LIMIT ROWS" << endl;
+		row_limit = window_s.width;//else wise, fill up the window as best it can 
+	}
+
+
+
 	for(map<string,map<string,field>>::iterator line_it = tile_bag.fields.begin();
 	    line_it != tile_bag.fields.end();
 	    line_it++){
-		calc_corners_helper(line_it->first,line_it->second,row_height);
-
-
-
+		calc_corners_helper(line_it->first,line_it->second,row_height,row_limit);
 
 	}
 	//cout << "################# END CALC CORNERS ############################################" << endl;
 
 }
-void sdl_help::calc_corners_helper(const string line_in, map<std::string,field>& map_in, unsigned int& start_height){
+void sdl_help::calc_corners_helper(const string line_in, map<std::string,field>& map_in, unsigned int& start_height,
+				   int row_limit){
 	//cout << "In calc_corners_helper()! Line in progress is:" << line_in << endl;
 
 
-	int window_w = window_s.width;//keep track of the window size
 
 	int x_buffer = 5;//distance between the left edge and the tiles, and the distance between two tiles 
 			  //horizontally
@@ -488,13 +502,13 @@ void sdl_help::calc_corners_helper(const string line_in, map<std::string,field>&
 
 	 //save the lowest ylocation + height value there is, so we can update start_height
 	//when this function is done, to allow other rows to know where to begin placing fields
-	int lowest_point = 0;
+	int lowest_point = start_height;
 
 	for(map<string,field>::iterator param_it = map_in.begin(); param_it != map_in.end();param_it++){
 		//cout << "PARAM:" << param_it->first << endl;
 
 		//this is the case where the tile can stay in the current row 
-		if(x_corner + param_it->second.get_size().width < window_w){
+		if(x_corner + param_it->second.get_size().width < row_limit){
 
 			param_it->second.xloc = x_corner;
 			param_it->second.yloc = y_corner;
@@ -502,8 +516,12 @@ void sdl_help::calc_corners_helper(const string line_in, map<std::string,field>&
 
 			x_corner = param_it->second.xloc + param_it->second.get_size().width + x_buffer;//literal 5 for 5 pixel offset
 
+			
+
 			if(param_it->second.yloc + param_it->second.get_size().height + 5 > lowest_point){
+				cout << "OLD lowest_point:" << lowest_point;
 				lowest_point = param_it->second.yloc + param_it->second.get_size().height + 5;
+				cout << " NEW lowest_piont:" << lowest_point << endl;
 			}
 		//this is the case where the tile needs to be placed into a new row (because there's not enough width left)
 		} else {

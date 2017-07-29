@@ -84,7 +84,7 @@ class sdl_help{
 	 *This is what will allow the lines to not overlap each other. Before this function exits,
 	 *it should update the start_height value to account for the then completed field placement. */
 	void calc_corners_helper(const std::string line_in, std::map<std::string,field>& map_in,
-				 unsigned int& start_height);
+				 unsigned int& start_height,int row_limit);
 
 	//! This member changes this class's x_scroll and y_scroll values to the given parameters
 	/*! This is being called from the handlers.cc implementations most of the time.
