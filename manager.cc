@@ -111,6 +111,7 @@ void manager::init(){
 
 				} else {
 					cout << "Error! This line failed to hit a case in the regex checks." << endl;
+					cout << "Line:" << temp_string << endl;
 					cout << "It may be a missing 'Andy' separator in the tiles.txt config file." << endl;
 					return;
 				
@@ -140,6 +141,7 @@ void manager::init(){
 		}
 
 		//at this point, we have hit the separator for another group of parameters
+		line_order.push_back(line_name);//save the order of the lines, so they can be drawn in order to the screen
 		fields.emplace(line_name,new_line);//store the map of parameters in the map of lines, and give it the name we found earlier
 	}
 	ins.close(); //close the file
@@ -240,9 +242,15 @@ void manager::give_int4_fields_defaults(){
 		    	line_it->second.at(big_it->first).int4_hook = &big_it->second; //let the field reference it's place in the
 										       //input_maker map, so it can output the new
 										       //given to it by the user, to the HF output
-			line_it->second.at(big_it->first).init_temp_input(to_string(big_it->second.value));
-			//line_it->second.at(big_it->first).temp_input = to_string(big_it->second.value);//set the default value so it's displayed
-											    //in the window
+			//-1804 means that this parameter shouldn't have a default value, so set the text box's text
+			//to a message instead
+			if(big_it->second.value == -1804) {
+				line_it->second.at(big_it->first).init_temp_input("no default");
+			} else {
+				line_it->second.at(big_it->first).init_temp_input(to_string(big_it->second.value));
+			}
+
+
 			line_it->second.at(big_it->first).text_box_init();//set up the text box
 			found = true; //we found it, so make the flag good
 
@@ -312,8 +320,14 @@ void manager::give_real8_fields_defaults(){
 		  try{
 			line_it->second.at(big_it->first).real8_hook = &big_it->second;//give field pointer access
 										       //to it's value in input_maker
-			line_it->second.at(big_it->first).init_temp_input(to_string(big_it->second.value));
-			//line_it->second.at(big_it->first).temp_input = to_string(big_it->second.value);//set up the default value
+
+			//-180.4 is the float version of the no applicable default flag, so set text box
+			//to be a message instead 
+			if(big_it->second.value == -180.4){
+				line_it->second.at(big_it->first).init_temp_input("no default");
+			} else {
+				line_it->second.at(big_it->first).init_temp_input(to_string(big_it->second.value));
+			}
 
 			line_it->second.at(big_it->first).text_box_init();//set up the text box
 

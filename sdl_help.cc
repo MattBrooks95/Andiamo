@@ -472,14 +472,28 @@ void sdl_help::calc_corners(){
 		row_limit = window_s.width;//else wise, fill up the window as best it can 
 	}
 
+	//just traversing the maps causes line10 to be placed before line 2, because map contents
+	//are traversed alphabetically by the iterator, so this won't work well
 
+	//for(map<string,map<string,field>>::iterator line_it = tile_bag.fields.begin();
+	    //line_it != tile_bag.fields.end();
+	    //line_it++){
 
-	for(map<string,map<string,field>>::iterator line_it = tile_bag.fields.begin();
-	    line_it != tile_bag.fields.end();
-	    line_it++){
-		calc_corners_helper(line_it->first,line_it->second,row_height,row_limit);
+		//calc_corners_helper(line_it->first,line_it->second,row_height,row_limit);
+
+	//}	
+
+	//but, I saved the line names as they were read in my manager::init(), so we can just walk that
+	//vector and ensure that lines are placed in the same order in which they were read
+	for(unsigned int c = 0; c < tile_bag.line_order.size();c++){
+		calc_corners_helper(tile_bag.line_order[c],tile_bag.fields.at(tile_bag.line_order[c]),
+				    row_height, row_limit);
+
 
 	}
+
+
+
 	//cout << "################# END CALC CORNERS ############################################" << endl;
 
 }

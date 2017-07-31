@@ -151,6 +151,10 @@ void do_line7(const std::map<std::string,param_real8>& real8_params, std::ofstre
 
 //! this helper outputs the variables in line 8, if ICNTRL4 != 0 (logic should be in output(), which calls this)
 void do_line8(const std::map<std::string,param_int4>& int4_params, std::ofstream& outs);
+
+//! this helper outputs the variables in line 9
+void do_line9(const std::map<std::string,param_int4>& int4_params,const std::map<std::string,param_real8>& real8_params,
+	      std::ofstream& outs);
 //######################################################################################################################
 
 

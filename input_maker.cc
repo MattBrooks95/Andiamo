@@ -70,7 +70,7 @@ void input_maker::check_map(std::ostream& outs){
 
 
 void input_maker::init(){
-	bool init_test = false;
+	bool init_test = true;
 	if(init_test) cout << "########################### INPUT_MAKER INIT ################################" << endl;
 
 	ifstream ins;
@@ -82,16 +82,16 @@ void input_maker::init(){
 
 	//set up regex matches
 	regex re_comment("\\s*?#.*");
-	regex re_i4("\\s*?I4\\s+?[A-Za-z0-9_]+?\\s+?=\\s+?-?[0-9]*\\s*");
+	regex re_i4("\\s*?I4\\s+?[A-Za-z0-9_]+?\\s+?=\\s+?-?(([0-9]*)|(nodef))\\s*");
 	regex re_i4_array("\\s*?I4\\(\\s*?[0-9]+?\\s*?\\)\\s*?[A-Za-z0-9_]+?\\s*?=\\s*?\"(\\s*?-?[0-9]*?\\s*?,?)+?\"\\s*");
 	regex re_string("\\s*?C\\*\\s*?[A-Za-z_]+?\\|[0-9]+?\\|\\s*?=\\s*?\".+?\"\\s*");
-	regex re_real8("\\s*?R8\\s+?[A-Za-z0-9_]+?\\s+?=\\s+?-?[0-9]*?\\.[0-9]*?\\s*");
+	regex re_real8("\\s*?R8\\s+?[A-Za-z0-9_]+?\\s+?=\\s+?((-?[0-9]*?\\.[0-9]*?)|(nodef))\\s*");
 
 	regex string_array_size_pattern("\\|\\d+?\\|");
 	regex int_array_size_pattern("\\([0-9]+?\\)");
 
 	regex r8_array("\\s*?R8\\(\\s*[0-9]+?\\s*?\\)\\s*?[A-Za-z0-9_]+?\\s*?=\\s*?\"(\\s*?[0-9]+?\\.[0-9]+?,?)+?\"");
-
+	regex nad_flag("nodef");
 
 	string temp_string;
 	string temp_name;
@@ -127,27 +127,39 @@ void input_maker::init(){
 			string var_name = tokens[1];
 			if(tokens[2] != "="){
 				cout << "Missing '=' in R8 param declaration!" << endl;
-			} else {
+			} else if( !regex_search(temp_string,nad_flag) ){
 				double value = stod(tokens[3]);
 				param_real8 new_param(var_name,value);
 				//names_in_order.push_back(var_name);//update bookkeeping vector
 				real8_params.emplace(var_name,new_param);
 				//real8_params.push_back(new_param);//push into real 8 vector 
+			} else {
+				if(init_test) cout << "And it has no applicable default" << endl;
+				param_real8 new_param(var_name,-180.4);
+				real8_params.emplace(var_name,new_param);
+
+
 			}
 
 		} else if( regex_match(temp_string,re_i4) ){//logics for reading in fortran integer 4's
 			if(init_test) cout << "Is an int4 line!" << endl;
-
+				
 			vector<string> tokens = split(temp_string,' ');			
 			string var_name = tokens[1];
 			if(tokens[2] != "="){
 				cout << "Missing '=' in I4 param declaration!" << endl;
-			} else {
+			} else if( !regex_search(temp_string,nad_flag) ){
 				int value = stoi(tokens[3]);
 				param_int4 new_param(var_name,value);
 				int4_params.emplace(var_name,new_param);
 				//names_in_order.push_back(var_name);//update bookkeeping vector
 				//int4_params.push_back(new_param);//push into the i4 vector
+
+			} else {
+				if(init_test) cout << "And it has no applicable default." << endl;
+				param_int4 new_param(var_name,-1804);//give it a -1
+				int4_params.emplace(var_name,new_param);
+
 			}
 
 		} else if( regex_match(temp_string,re_string) ){//logics for reading in fortran strings
@@ -371,6 +383,9 @@ void input_maker::output(){
 	}//elsewise, don't do line 8
 
 
+	//do line 9
+	do_line9(int4_params,real8_params,outs);
+
 	outs.flush();//push changes to file, if this is not here C++ will wait to do the writing until
 		     //the program is terminated
 	//close the output file stream
@@ -572,6 +587,21 @@ void do_line8(const map<string,param_int4>& int4_params,ofstream& outs){
 	outs I int4_params.at("ICH4").value I int4_params.at("NCH4").value << endl;
   } catch(out_of_range& not_found){
 	cout << "Error! Parameter in do_line8 not found in the map!" << endl;
+  }
+}
+
+void do_line9(const map<string,param_int4>& int4_params,const map<string,param_real8>& real8_params,
+	      ofstream& outs){
+  try{
+	outs << right;
+	outs << setprecision(2);                         //set precision to 2 points past decimal
+	outs F5 real8_params.at("ECH4").value << "     ";//5 literal spaces as described in input manual pg 8
+	outs << setprecision(1);                         //next few real8's need only 1 digit past decimal
+	outs F5 real8_params.at("FJCH4").value << "     ";
+	outs I int4_params.at("IPAR4").value << "     ";
+	outs F5 real8_params.at("FIS4").value << endl;    //no spaces afterwards, end this line
+  } catch(out_of_range& not_found){
+	cout << "Error! Parameter in do_line9 not found in the map!" << endl;
   }
 }
 

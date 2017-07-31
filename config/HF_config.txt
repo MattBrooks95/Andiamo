@@ -9,6 +9,7 @@
         #double format is R8 var_name = default value 
 #integer format is I4 var_name = default value
 
+#nodef = no default
 
 C* label|79|      = "Fe58(He-3,n)Fe58:HF2002 Calculations, Ed=10.0 MeV."
 
@@ -91,3 +92,16 @@ R8 FCON_ = 0.00
 #line 8
 I4 ICH4 = 5
 I4 NCH4 = 1
+
+#line 9
+R8 ECH4  = 0.0
+R8 FJCH4 = 0.0
+I4 IPAR4 = 1
+R8 FIS4  = 1.0
+
+#line 10 - if ICNTRL6 > 0
+I4 ITER = nodef
+I4 INM1 = nodef
+I4 INM2 = nodef
+
+#line 11  - is this feasible to enter by hand

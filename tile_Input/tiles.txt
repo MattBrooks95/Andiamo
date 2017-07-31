@@ -397,3 +397,49 @@ c NCH4 = number of separate levels
 andy_tile.png
 150x50
 andy
+line_9###############################################################################
+ECH4
+c ECH4 energy of the level in MeV
+andy_tile.png
+150x50
+andy
+FJCH4
+c FJCH4 spin of the level
+andy_tile.png
+150x50
+andy
+IPAR4
+c HF variable name:IPAR4
+c parity of the level
+andy_tile.png
+150x50
+andy
+FIS4
+c HF variable name: FIS4
+c isospin of the level
+andy_tile.png
+150x50
+andy
+line_10########################################################################################
+ITER
+c HF variable name:ITER
+c number of iterations in search
+andy_tile.png
+150x50
+andy
+INM1
+c HF variable name:INM1
+c number of spectra to fit (n,p, , etc)
+andy_tile.png
+150x50
+andy
+INM2
+c HF variable name:INM2
+c number of integrated cross sections
+c to fit(n,p), (n, 2n) etc. These are
+c what are usually termed activation
+c cross sections, i.e., (n,𝜶) is added
+c to (n,np) and (n,pn), for example
+andy_tile.png
+150x50
+andy

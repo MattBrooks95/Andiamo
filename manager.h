@@ -82,6 +82,7 @@ class manager{
 	 *\param height_in is the desired new height */
 	void update_win(int width_in, int height_in);
 
+	std::vector<std::string> line_order;//!< save the order in which the lines occur, maps don't do it automatically
 	std::map<std::string,std::map<std::string,field>> fields;//!< trying something new, to keep relevant tiles together
 	//std::vector<field> tiles;//!< vector of tile information is public for easier access from sdl_help
 

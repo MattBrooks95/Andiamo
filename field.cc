@@ -351,7 +351,7 @@ void field::update_texture(){
 		text_box.text_surf = TTF_RenderUTF8_Blended(sdl_font,temp_input.c_str(),text_box.text_color);
 		if(text_box.text_surf == NULL) cout << SDL_GetError() << endl;
 		text_box.text_tex = SDL_CreateTextureFromSurface(sdl_help_renderer,text_box.text_surf);
-		if(text_box.text_surf == NULL) cout << SDL_GetError() << endl;
+		if(text_box.text_tex == NULL) cout << SDL_GetError() << endl;
 }
 //this function updates this fields ftran_struct in the input_maker vectors
 void field::update_my_value(){
