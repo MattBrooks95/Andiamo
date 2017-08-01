@@ -3,8 +3,11 @@
 
 using namespace std;
 
-field::field(string tile_name_in,string image_name_in, int width, int height){
+field::field(string tile_name_in,string display_name_in,string image_name_in, int width, int height){
 	tile_name = tile_name_in;
+	display_name = display_name_in;
+
+
 	image_name = image_name_in;
 	//description = description_in;
 	//cout << "DESCRIPTION IN: " << description << endl;
@@ -368,11 +371,23 @@ void field::update_my_value(){
 
 	if(int4_hook != NULL){
 		if( !temp_input.empty() ){
+		  try{
 			int4_hook->value = stoi(temp_input);
+		  } catch( invalid_argument& error ){
+			cout << "Error! int4 parameter provided with an illegal string.";
+			cout << " Tile name:" << tile_name << endl; 
+			int4_hook->value = -1804;
+		  }
 		}
 	} else if(real8_hook != NULL){
 		if( !temp_input.empty() ){
-			real8_hook->value = stod(temp_input);
+			try{
+			  real8_hook->value = stod(temp_input);
+			} catch(invalid_argument& error){
+			  cout << "Error in field::update_my_value(), illegal value entered:";
+			  cout << temp_input << endl;
+			  real8_hook->value = -180.4;
+			}
 		}
 	} else if(string_hook != NULL){
 		string temp_string = temp_input;
@@ -387,13 +402,24 @@ void field::update_my_value(){
 
 		//replace the default numbers in input_maker with the ones entered by the user
 		for(unsigned int c = 0; c < user_entered_values.size() && c < int4_array_hook->values.size();c++){
-			int4_array_hook->values[c] = stoi(user_entered_values[c]);
+			try{
+			  int4_array_hook->values[c] = stoi(user_entered_values[c]);
+		  	} catch (invalid_argument& error){
+			  cout << "Error! Int4 array value is an illegal string";
+			  cout << "Tile name:" << tile_name;
+			  cout << " Array index:" << c << endl;
+			}
 		}
 
 	} else if(r8_array_hook != NULL){
 		vector<string> user_entered_values = split(temp_input,',');
 		for(unsigned int c = 0; c < user_entered_values.size() && c < r8_array_hook->values.size();c++){
-			r8_array_hook->values[c] = stod(user_entered_values[c]);
+			try {
+			  r8_array_hook->values[c] = stod(user_entered_values[c]);
+			} catch(invalid_argument& error){
+			  cout << "Error! real 8 array given illegal value:";
+			  cout << user_entered_values[c] << " at index:" << c << endl;
+			}
 		}
 	}
 

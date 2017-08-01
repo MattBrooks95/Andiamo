@@ -69,7 +69,7 @@ class field{
 	 *\param image_name_in is the name of the actual image used. This must be correct.
 	 *\param width is the width of the image supplied for the tile (and the tile width)
 	 *\param height is the height of the image supplied for the title (and the tile height) */
-	field(std::string tile_name_in,std::string image_name_in, int width, int height);
+	field(std::string tile_name_in,std::string display_name_in,std::string image_name_in, int width, int height);
 
 	//! fields should save their render information to save time and readability in main loop and drawing
 	/*! this is not done, and will likely change the structure of the program. This function now also allows
@@ -164,10 +164,13 @@ class field{
 
 	std::string get_img_name(){ return image_name;}//!< getter for private image name field
 
-	//!< the tile_name should be a parameter name for an HF_input file
+	//! the tile_name should be a parameter name for an HF_input file
 	/*! this name should correspond to a parameter name in the HF_config file. They are associated by 
 	 *this parameter name */
 	std::string tile_name;
+
+	//! the display name is a name that takes the place of the variable's acronym in the graphics
+	std::string display_name;
 
 	std::vector<std::string> descriptions; //!< input description lines
 

@@ -31,8 +31,8 @@ void manager::init(){
 	regex field_size_pattern("\\s*?[0-9]+?\\s*?x\\s*?[0-9]+?\\s*?");//this recognizes lines that specify tile size
 					 //lines should be of the form widthxheight EX:100x100
 
-	regex name_pattern("\\s*?[a-z0-9_A-Z]+?\\s*?"); //this line specifies a tile name
-
+	regex name_pattern("\\s*?([a-z0-9_A-Z]+?):?(.*)?\\s*?"); //this line specifies a tile name
+	regex semi_pattern(":");//used to tell if the name line is of the form ->   HFvariable:EnglishVariable
 	regex desc_pattern("c .*");
 		//describes a pattern for tile/input descriptors that starts with a 'c'
 		//and is followed by exactly one space, then contains any number of any characters
@@ -72,6 +72,7 @@ void manager::init(){
 
 			//these parameter should be re-declared for each field
 			string tile_name = "bad tile name";//names for generalized tiles
+			string display_name = "no display name";//display name for tiles, may or may not be used
 			string img_name = "bad image name";//names for tile's picture file
 			string description; //description for this input tile
 			vector<string> temp_descriptions;//save all lines for description of tile
@@ -102,13 +103,24 @@ void manager::init(){
 					//if(man_test) cout << "Found field size specification!: " << temp_string << endl;
 					strip_char(temp_string,' '); //remove spaces
 					vector<string> dimensions = split(temp_string,'x');   //split into a vector of strings
-					tile_w = stoi(dimensions[0]); //first number in the line is the width
-					tile_h = stoi(dimensions[1]); //second number in the line is the width
-
+					try{
+					  tile_w = stoi(dimensions[0]); //first number in the line is the width
+					  tile_h = stoi(dimensions[1]); //second number in the line is the width
+					} catch (invalid_argument& error){
+						cout << "Error in manager::init(), tile given illegal size parameters: ";
+						cout << dimensions[0] << "x" << dimensions[1] << endl;
+					}
 				}  else if( regex_match(temp_string,name_pattern) ){
-					//if(man_test) cout << "Found a tile name!: " << temp_string << endl;
-					tile_name = temp_string;
+					 cout << "Found a tile name!: " << temp_string << endl;
+					if( regex_search(temp_string,semi_pattern) ){
+						vector<string> tokens = split(temp_string,':');
+						tile_name = tokens[0];
+						display_name = tokens[1];
+					} else {
 
+						tile_name = temp_string;
+						display_name = temp_string;
+					}
 				} else {
 					cout << "Error! This line failed to hit a case in the regex checks." << endl;
 					cout << "Line:" << temp_string << endl;
@@ -124,7 +136,7 @@ void manager::init(){
 					break;
 				}
 			}
-			field temp_field(tile_name,img_name,tile_w,tile_h);
+			field temp_field(tile_name,display_name,img_name,tile_w,tile_h);
 			//copy the saved description lines to the new field before it is placed in the map
 			for(unsigned int c = 0; c < temp_descriptions.size();c++){
 				temp_field.descriptions.push_back(temp_descriptions[c]);

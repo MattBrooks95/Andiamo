@@ -128,7 +128,15 @@ void input_maker::init(){
 			if(tokens[2] != "="){
 				cout << "Missing '=' in R8 param declaration!" << endl;
 			} else if( !regex_search(temp_string,nad_flag) ){
-				double value = stod(tokens[3]);
+				double value;
+				try {
+				  value = stod(tokens[3]);
+				  
+				} catch (invalid_argument& error){
+				  cout << "Error in input_maker::init(), real 8 parameter given bad initial value:";
+				  cout << tokens[3] << endl;
+				  value = -180.4;
+				}
 				param_real8 new_param(var_name,value);
 				//names_in_order.push_back(var_name);//update bookkeeping vector
 				real8_params.emplace(var_name,new_param);
@@ -149,7 +157,16 @@ void input_maker::init(){
 			if(tokens[2] != "="){
 				cout << "Missing '=' in I4 param declaration!" << endl;
 			} else if( !regex_search(temp_string,nad_flag) ){
-				int value = stoi(tokens[3]);
+				int value;
+				try{
+				  value = stoi(tokens[3]);
+				} catch(invalid_argument& error){
+				  cout << "Error in input_maker::init()!";
+				  cout << " Illegal value in int4 declaration:" << tokens[3] << endl;
+				  value = -1804;//give it a bad value as an indication that something went wrong				
+				}
+
+
 				param_int4 new_param(var_name,value);
 				int4_params.emplace(var_name,new_param);
 				//names_in_order.push_back(var_name);//update bookkeeping vector
@@ -187,7 +204,14 @@ void input_maker::init(){
 
 				string temp_string = number_matches[0].str(); //put it into a string
 				//convert the string to an integer
-				int size = stoi( temp_string.substr(1,temp_string.length()-1));
+				int size;
+				try {
+				  size = stoi( temp_string.substr(1,temp_string.length()-1));
+				} catch(invalid_argument& error){
+				  cout << "Error! Illegal string size value in input_maker::init() :";
+				  cout << temp_string.substr(1,temp_string.length()-1) << endl;
+				  size = 0;
+				}
 				//cout << "CHARACTER ARRAY SIZE = " << size << endl;
 				//cout << "CHARACTER ARRAY NAME = " << tokens[1].substr(0,tokens[1].size()-
 				//temp_string.size()) << endl;
@@ -226,7 +250,14 @@ void input_maker::init(){
 				
 				//create a string that contains just the size of the array
 				string temp_size_string = size_match[0].str().substr(1,size_match[0].str().size()-2);
-				int array_size = stoi(temp_size_string);
+				int array_size;
+				try {
+				  array_size = stoi(temp_size_string);
+				} catch(invalid_argument& error){
+				  cout << "Error in input_maker::init(), i4 array size given illegal value:";
+				  cout << temp_size_string << endl;
+				  array_size = 0;
+				}
 				if(init_test) cout << temp_size_string << endl;
 				
 				//create the int4 array that will be pushed into input_maker's containing vector
@@ -268,8 +299,13 @@ void input_maker::init(){
 			regex_search(tokens[0],size_match,int_array_size_pattern);
 			if(size_match.ready()){
 				string temp_size_string = size_match[0].str().substr(1,size_match[0].str().size()-2);
-				array_size = stoi(temp_size_string);
-			} else {
+				try {
+				  array_size = stoi(temp_size_string);
+				} catch (invalid_argument& error){
+				  cout << "Error in input_maker::init, real 8 array given illegal size:";
+				  cout << temp_size_string << endl;
+				}
+			} else {	
 
 				cout << "Error! Could not determine array size of E array (TIN?)"
 				     << "declaration line." << endl;
