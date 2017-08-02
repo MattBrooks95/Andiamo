@@ -273,14 +273,19 @@ bool button_manager::click_handling(SDL_Event& mouse_event){
 	}
 	if(!done_something && lets_go.shown){
 		if( lets_go.handle_click(mouse_event) ){
+			vector<string> bad_input_list;//filled up by update_io_maker if there are issues
+						      //that way user can be given a list of errors
 			//if everything is in place, go ahead and make the file
 			if( clean_up() == 0){
 
 				//update input_maker's info from the tiles
-				sdl_helper->get_mgr().update_io_maker();
-				//have input_maker output to the file
-				sdl_helper->get_io_handler().output();
-				done_something = true;
+				if( !sdl_helper->get_mgr().update_io_maker(bad_input_list) ){
+					//if something went wrong, this code is executed
+					bad_tile_input_warnings(bad_input_list);
+				} else { //if there were no errors, this is ran
+					//have input_maker output to the file
+					sdl_helper->get_io_handler().output();
+				}
 			}
 			done_something = true; //don't consider the other cases, this one has been hit
 		}
@@ -325,7 +330,32 @@ int button_manager::clean_up(){
 	//elsewise, exit normally
 	return 0;//successful exit
 }
+void button_manager::bad_tile_input_warnings(vector<string>& bad_input_list){
+	//sdl_helper
+	SDL_Surface* bad_input_msg_surface = IMG_Load("Assets/Images/bad_input_message.png");
+	if(bad_input_msg_surface == NULL) cout << SDL_GetError() << endl;
+	SDL_Texture* bad_input_msg_texture = SDL_CreateTextureFromSurface(sdl_helper->renderer,bad_input_msg_surface);
+	if(bad_input_msg_surface == NULL) cout << SDL_GetError() << endl;
+	
+	SDL_Rect msg_dest;//calculate where to put the error message
+	SDL_QueryTexture(bad_input_msg_texture,NULL,NULL,&msg_dest.w,&msg_dest.h);
+	msg_dest.x = (sdl_helper->get_win_size()->width / 2 ) - (.5 * msg_dest.w);
+	msg_dest.y = (sdl_helper->get_win_size()->height / 2) - (.5 * msg_dest.h);
+	SDL_RenderCopy(sdl_helper->renderer,bad_input_msg_texture,NULL,&msg_dest);
+	
+	sdl_helper->present();//update the screen to show the message
+	SDL_Delay(5000);//delay for 3 seconds so they can read the message
 
+
+
+
+	SDL_FreeSurface(bad_input_msg_surface);
+	SDL_DestroyTexture(bad_input_msg_texture);//free memory back up
+
+
+
+
+}
 void button_manager::clean_up_warnings(bool bad_output_fname,bool bad_tc_input_fname){
 	SDL_Surface* tc_input_error_surf = NULL;
 	SDL_Texture* tc_input_error_texture = NULL;

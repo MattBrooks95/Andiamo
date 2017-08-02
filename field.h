@@ -129,9 +129,17 @@ class field{
 	/*! because these fields have direct pointer access to their ftran_struct in input_maker's vectors,
 	 *input_maker's size should not be changed after the initial function calls when the program starts.
 	 *the reason being that if it resizes, it will be re-copied to another location, and the fields pointer
-	 *will go bad. This would cause illegal reads of memory, and mayhem. */
-	void update_my_value();
+	 *will go bad. This would cause illegal reads of memory, and mayhem.
+	 *\return true if everything went well, false if an illegal string issue occured */
+	bool update_my_value();
+	//! this function is used to swap the box background texture to red
+	/*! this is enacted by the manager when this tile fails to convert the user's information
+	 *with stoi or stod. It serves as an error indicator for the fields that failed the test. */
+	void go_red();
 
+	//! this function returns a tile to normal after it is given proper input and "Let's Go" has been clicked
+	/*! basically undos field::go_red(), which is used to signal errors */
+	void go_back();
 
 	//! this function updates the texture for the text box
 	/*! this means that the information's changes by update_temp_input or back_space are reflected graphically
@@ -202,6 +210,7 @@ class field{
 	/* useful when drawing the text editing cursor */
 	SDL_Rect text_dims;
 
+	bool is_red;//!< is this tile in error mode or not
 	
 
 	int xloc; //!< the field keeps track of the xcoordinate of its upper right corner

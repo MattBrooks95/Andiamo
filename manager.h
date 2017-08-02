@@ -60,7 +60,9 @@ class manager{
 	//####################################################################################################//
 
 	//! this function updates input_maker's vectors with the field's new values (from user)
-	void update_io_maker();
+	/*\return true means that there was no errors in string->data conversion
+	 *\return false means that an stoi/stod function failed, and the file wasn't created */
+	bool update_io_maker(std::vector<std::string>& bad_input_list);
 
 	//! this member loads in tiles from the tile input file using regular expressions and file i/o
 	/*! this init member uses fstream and regex to open and process a text file, which for now defaults

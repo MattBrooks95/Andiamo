@@ -429,20 +429,33 @@ void manager::give_r8_array_fields_defaults(){
 
 
 
-void manager::update_io_maker(){
+bool manager::update_io_maker(vector<string>& bad_input_list){
 	//for(unsigned int c = 1; c < tiles.size();c++){
 	//	tiles[c].update_my_value();
 	//}
+	bool success = true;
+
 	for(map<string,map<string,field>>::iterator big_it = fields.begin();
 	    big_it != fields.end();
 	    big_it++){
 		for(map<string,field>::iterator small_it = big_it->second.begin();
 		    small_it != big_it->second.end();
 		    small_it++){
-			small_it->second.update_my_value();
+
+			//update the input_maker class with the user's entered values
+			//if an error occurs, update_my_value() returns false, and the body is executed
+			if(!small_it->second.update_my_value()){
+				bad_input_list.push_back(small_it->first);//put tile name that caused error in list
+				small_it->second.go_red();
+				success = false;
+			} else if(small_it->second.is_red){
+				//if it worked and the tile was previously red, put it back to normal
+				small_it->second.go_back();
+
+			}
 		}
 	}
-
+	return success;//let button manager know that errors occured
 }
 
 void manager::new_line(const string& line_name,const map<string,field>& line_map){

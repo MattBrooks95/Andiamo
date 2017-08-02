@@ -62,6 +62,11 @@ class button_manager{
 	 *resumes it's regular processes */
 	void clean_up_warnings(bool bad_output_fname,bool bad_tc_input_fname);
 
+	//! this function displays a warning message when tiles fail to convert user inputs to scientific values
+	/*! it used the vector of strings created by manger::update_io_maker to print the names of the
+	 * tiles in question, and also changes them to be red, for a visual indicator */
+	void bad_tile_input_warnings(std::vector<std::string>& bad_tile_input_warnings);
+
 	//! this member calls each button's virtual handle_click() member
 	/*! a notable exception is the 'exit dialogue' button, because it's logic is partially controlled
 	 *via main(), because it has special logic. It shouldn't be placed with the other buttons, as it

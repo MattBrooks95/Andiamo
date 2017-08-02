@@ -17,6 +17,8 @@ field::field(string tile_name_in,string display_name_in,string image_name_in, in
 
 	help_mode = false; //start off in normal mode
 
+	is_red = false; //not in error mode at default
+
 	temp_input = "temp_input -> default failure"; //start off input blank. Default value loaded in by input
 		    //manager, overridden by user
 	editing_location = 0;
@@ -97,7 +99,7 @@ void field::text_init(){
 
 	//this part sets up the tile title surface
 	SDL_Color color= {0,0,0,0}; //black text
-	my_text_surf = TTF_RenderUTF8_Blended(sdl_font,(tile_name+" = ").c_str(),color);
+	my_text_surf = TTF_RenderUTF8_Blended(sdl_font,(display_name+" = ").c_str(),color);
 	if(my_text_surf == NULL) cout << "Error in field.cc's graphics init() function: " << SDL_GetError() << endl;
 	my_text_tex = SDL_CreateTextureFromSurface(sdl_help_renderer,my_text_surf);
 	if(my_text_tex == NULL) cout << "Error in field.cc's graphics init() function: " << SDL_GetError() << endl;
@@ -357,16 +359,21 @@ void field::update_texture(){
 		if(text_box.text_tex == NULL) cout << SDL_GetError() << endl;
 }
 //this function updates this fields ftran_struct in the input_maker vectors
-void field::update_my_value(){
+bool field::update_my_value(){
 	//cout << "Tile name: " << tile_name << endl;
 	//cout << "Hooks  int4:r8:string = " << int4_hook << ":" << real8_hook << ":" << string_hook << ":"
 	//     << endl;
+
+
+	bool success = true;//set to false to flag that stoi/stod failed
+
+
 	if(int4_hook == NULL && real8_hook == NULL && string_hook == NULL && int4_array_hook == NULL &&
 	   r8_array_hook == NULL){
 		cout << "ERROR! Tile " << tile_name << " has no association with a fortran struct"
 		     << " in input_maker's vectors. Please check that the tile's name in the tiles.txt"
 		     << " and HF_config.txt match each other.\n\n" << endl;
-		return;
+		return false;
 	}
 
 	if(int4_hook != NULL){
@@ -377,6 +384,7 @@ void field::update_my_value(){
 			cout << "Error! int4 parameter provided with an illegal string.";
 			cout << " Tile name:" << tile_name << endl; 
 			int4_hook->value = -1804;
+			success = false;
 		  }
 		}
 	} else if(real8_hook != NULL){
@@ -387,6 +395,7 @@ void field::update_my_value(){
 			  cout << "Error in field::update_my_value(), illegal value entered:";
 			  cout << temp_input << endl;
 			  real8_hook->value = -180.4;
+			  success = false;
 			}
 		}
 	} else if(string_hook != NULL){
@@ -408,6 +417,7 @@ void field::update_my_value(){
 			  cout << "Error! Int4 array value is an illegal string";
 			  cout << "Tile name:" << tile_name;
 			  cout << " Array index:" << c << endl;
+			  success = false;
 			}
 		}
 
@@ -419,11 +429,46 @@ void field::update_my_value(){
 			} catch(invalid_argument& error){
 			  cout << "Error! real 8 array given illegal value:";
 			  cout << user_entered_values[c] << " at index:" << c << endl;
+			  success = false;
 			}
 		}
 	}
+	return success;//let manager know if it worked or not
+}
+
+void field::go_red(){
+	SDL_FreeSurface(my_surf); //free memory from previous look
+	SDL_DestroyTexture(my_tex);
+	my_surf = NULL; //null out the pointers for safety
+	my_tex = NULL;
+
+	my_surf = IMG_Load( (image_p+"bad_tile.png").c_str() );//load up error indicating surface
+	if(my_surf == NULL){
+		cout << "Error changing tile:" << display_name << " to red." << endl;
+		cout << SDL_GetError() << endl;
+	}
+	my_tex = SDL_CreateTextureFromSurface(sdl_help_renderer,my_surf);//turn that surface into a texture
+	if(my_tex == NULL){
+		cout << "Error changing tile:" << display_name << " to red." << endl;
+		cout << SDL_GetError() << endl;
+	}
+	is_red = true;
+}
+
+void field::go_back(){
+	SDL_FreeSurface(my_surf);
+	SDL_DestroyTexture(my_tex);//free up old memory
+
+	my_surf = NULL;//set pointers to nothing for safety
+	my_tex = NULL;
+
+	my_surf = IMG_Load(image_name.c_str());//go back to original texture & surface
+	if(my_surf == NULL) cout << "Error in field::go_back() function: " << SDL_GetError() << endl;
+	my_tex = SDL_CreateTextureFromSurface(sdl_help_renderer,my_surf);
+	if(my_tex == NULL) cout << "Error in field::go_back() function: " << SDL_GetError() << endl;
 
 }
+
 
 field::~field(){
 	SDL_FreeSurface(my_text_surf);//give back memory
