@@ -1,5 +1,6 @@
 //! \file field.cc implements the functions declared in field.h
 #include "field.h"
+#include <regex>
 
 using namespace std;
 
@@ -363,7 +364,10 @@ bool field::update_my_value(){
 	//cout << "Tile name: " << tile_name << endl;
 	//cout << "Hooks  int4:r8:string = " << int4_hook << ":" << real8_hook << ":" << string_hook << ":"
 	//     << endl;
+	regex bad_int("\\D");
+	regex bad_real8("[A-Za-z _]");
 
+	regex good_string("\".*?\"");
 
 	bool success = true;//set to false to flag that stoi/stod failed
 
@@ -379,7 +383,12 @@ bool field::update_my_value(){
 	if(int4_hook != NULL){
 		if( !temp_input.empty() ){
 		  try{
-			int4_hook->value = stoi(temp_input);
+			if( !regex_search(temp_input,bad_int) ){
+				int4_hook->value = stoi(temp_input);
+			} else {
+				cout << display_name << " has an illegal string:" << temp_input << endl;
+				success = false;
+			}
 		  } catch( invalid_argument& error ){
 			cout << "Error! int4 parameter provided with an illegal string.";
 			cout << " Tile name:" << tile_name << endl; 
@@ -390,7 +399,12 @@ bool field::update_my_value(){
 	} else if(real8_hook != NULL){
 		if( !temp_input.empty() ){
 			try{
-			  real8_hook->value = stod(temp_input);
+				if( !regex_search(temp_input,bad_real8) ){
+					real8_hook->value = stod(temp_input);
+				} else {
+					cout << display_name << " has an illegal string:" << temp_input << endl;
+					success = false;
+				}
 			} catch(invalid_argument& error){
 			  cout << "Error in field::update_my_value(), illegal value entered:";
 			  cout << temp_input << endl;
@@ -399,11 +413,19 @@ bool field::update_my_value(){
 			}
 		}
 	} else if(string_hook != NULL){
-		string temp_string = temp_input;
-		unsigned int balance_factor = temp_string.length() - string_hook->value.length();
-		trim(temp_string,balance_factor);
-		string_hook->value = temp_string;
-		cout << "Ftran String value after: " << string_hook->value << endl;
+
+		if( regex_match(temp_input,good_string) ){
+			string temp_string = temp_input;
+			unsigned int balance_factor = temp_string.length() - string_hook->value.length();
+			trim(temp_string,balance_factor);
+			string_hook->value = temp_string;
+			cout << "Ftran String value after: " << string_hook->value << endl;
+		} else {
+			cout << "Error! String " << display_name << " is likely missing quotation marks." << endl;
+			success = false;
+
+		}
+
 	} else if(int4_array_hook != NULL){
 		//cout << "USER CHANGED VALUES FOR INT4 ARRAY:" << tile_name 
 		     //<< "\n" << temp_input << endl;
@@ -514,7 +536,6 @@ void field::text_box_init(){
 }
 
 sdl_text_box::sdl_text_box(){
-
 	box_surf = NULL;
 	box_tex = NULL;
 
@@ -527,7 +548,6 @@ sdl_text_box::sdl_text_box(){
 	text_color = {0,0,0,0};
 
 	y_offset = 0;
-
 }
 
 sdl_text_box::~sdl_text_box(){

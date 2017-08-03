@@ -7,7 +7,7 @@ vtool = --tool=memcheck
 vopt = --log-file="memory_check.txt" --leak-check=full
 
 #object files
-objects = main.o handlers.o manager.o ftran_structs.o field.o sdl_help.o scroll_bar.o input_maker.o string+.o button_manager.o button.o derived_buttons.o text_box.o
+objects = main.o handlers.o manager.o ftran_structs.o field.o sdl_help.o scroll_bar.o input_maker.o string+.o button_manager.o button.o derived_buttons.o text_box.o logger.o
 
 #executable name
 name = andiamo
@@ -18,7 +18,7 @@ browser = firefox
 andiamo: $(objects)
 	g++  -o $(name) $(objects) $(SDL_inc)
 
-main.o: main.cc sdl_help.h handlers.h input_maker.h button_manager.h
+main.o: main.cc sdl_help.h handlers.h input_maker.h button_manager.h field.h logger.h
 	g++ $(c_flg) -c main.cc
 
 handlers.o: handlers.cc handlers.h sdl_help.h button_manager.h
@@ -53,6 +53,9 @@ input_maker.o: input_maker.cc input_maker.h string+.h
 
 text_box.o: text_box.cc text_box.h sdl_help.h
 	g++ $(c_flg) -c text_box.cc
+
+logger.o: logger.cc logger.h
+	g++ $(c_flg) -c logger.cc
 
 string.o: string+.cc string+.h
 	g++ $(c_flg) -c string+.cc

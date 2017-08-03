@@ -9,7 +9,11 @@
 #include "handlers.h"
 #include "input_maker.h"
 #include "button_manager.h"
+#include "logger.h"
 using namespace std;
+
+
+logger error_logger; //global object used for error message output
 
 //making this global and giving it a unique name, so the exit button can change it
 bool main_done = false;
