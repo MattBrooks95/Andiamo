@@ -27,12 +27,21 @@ void no_work_done_message(sdl_help& sdl_helper,exit_button& exit_dialogue);
   *and calls its drawing functions per run of the loop. It will eventually have options for resizing
   *the window, and letting the user pick the frame rate.
   */
-int main(){
+int main(int argc, char *argv[]){
 
-  cout << "And where does the newborn go from here? The net is vast and infinite." << endl;
+  if(argc == 2){
+  	string argument = argv[1];
+	if(argument.compare("-v") == 0){
+		//if -v is appended at the command line, have the error logger also print
+		error_logger.verbose = true; //runtime debugging messages
+				   
+	} else {//if some arg exists but is not -v, make an error message
+		error_logger.push_error("Supplied useless command line argument");
+	}
+  }
+  error_logger.push_msg("And where does the newborn go from here? The net is vast and infinite.");
 
   sdl_help sdl_helper("Andiamo!");
-  //cout << "Now past the sdl_help constructor." << endl;
 
   button_manager b_manager(&sdl_helper);
   b_manager.init_tray();
@@ -40,7 +49,7 @@ int main(){
   //b_manager.print_buttons();
   //sdl_helper.get_mgr().print_all(cout);
 
-  //sdl_helper.print_tile_locs(cout);
+  sdl_helper.print_tile_locs(cout);
 
   //graphics class initializations
   sdl_helper.draw_tiles();
@@ -58,7 +67,6 @@ int main(){
 	if(!SDL_PollEvent(&big_event)){
 		big_event.type = 1776;
 	}
-	//cout << "EVENT = " << big_event.type << endl;
 
 	if(sdl_helper.get_v_bar().is_scrolling()){//if the vertical scroll bar is in "scroll mode"
 		   //do a mini loop until the left mouse button is released
@@ -113,10 +121,11 @@ int main(){
 			break;
 
 		case SDL_WINDOWEVENT:
-			//cout << "WINDOW EVENT ####################################################" << endl;
-			//cout << "EVENT Num:" << big_event.type << endl;
+			error_logger.push_msg("WINDOW EVENT ####################################################");
+			error_logger.push_msg("EVENT Num:"+to_string(big_event.type));
 			if(big_event.window.event == SDL_WINDOWEVENT_SIZE_CHANGED){
-				cout << big_event.window.data1 << ":" << big_event.window.data2 << endl;
+				error_logger.push_msg(to_string(big_event.window.data1)+":"+
+						       to_string(big_event.window.data2));
 				sdl_helper.window_update(big_event.window.data1,big_event.window.data2);
 				b_manager.location_update();
 			}
@@ -130,11 +139,9 @@ int main(){
 			break;
 	}//event handling switch
 
-	//sdl_helper.get_mgr().print_all(cout);
 	sdl_helper.draw_tiles(); //re-draw the screen once all events have been handled
 	sdl_helper.draw_sbars(); //draw the scroll bars
 	b_manager.draw_buttons(); //draw visible/on buttons
-	//sdl_helper.print_tile_locs(cout);
 	sdl_helper.present();  //and all positions have been calculated
 
 	SDL_Delay(50);//slow down loop speed if work was done
@@ -145,9 +152,8 @@ int main(){
 
   //b_manager.print_buttons();
   //sdl_helper.get_mgr().update_io_maker();
-  //sdl_helper.print_size_info(cout);
-  //sdl_helper.get_h_bar().print(cout);//make sure that these values are updating in the bars as
-  //sdl_helper.get_v_bar().print(cout);//they are updated in the sdl_helper object
+  sdl_helper.print_size_info();
+
 
   //SDL_Delay(5000);
 
@@ -163,10 +169,10 @@ void no_work_done_message(sdl_help& sdl_helper,exit_button& exit_dialogue){
 	SDL_Texture* no_work_texture = NULL;
 
 	no_work_surf = IMG_Load("Assets/Images/no_work_done_msg.png");
-	if(no_work_surf == NULL) cout << SDL_GetError() << endl;
+	if(no_work_surf == NULL) error_logger.push_error(SDL_GetError());
 
 	no_work_texture = SDL_CreateTextureFromSurface(sdl_helper.renderer,no_work_surf);
-	if(no_work_texture == NULL) cout << SDL_GetError() << endl;
+	if(no_work_texture == NULL) error_logger.push_error(SDL_GetError());
 	//plan where to draw
 	SDL_Rect dest = {0,0,0,0};
 	//get size of image

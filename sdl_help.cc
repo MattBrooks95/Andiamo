@@ -6,6 +6,7 @@
 #include<algorithm>
 #include<queue>
 
+
 //button manager is included here so that sdl_help can access button_manager::draw_buttons()
 //this include CAN'T be in the header file because it creates a circular dependency
 //more pre-project planning on my part would have avoided such a misfortune, I am sorry
@@ -13,7 +14,6 @@
 
 using namespace std;
 
-bool sdl_test = false;
 
 
 //######################### WIN SIZE STRUCT ################################################################
@@ -21,8 +21,8 @@ win_size::win_size(){//initialize window dimensions to bad values so they must b
 	width = -1;
 	height = -1;
 }
-void win_size::print(ostream& outs){
-	outs << width << "x" << height << endl;
+void win_size::print(){
+	error_logger.push_msg(to_string(width)+"x"+to_string(height));
 }
 
 win_size* sdl_help::get_win_size(){
@@ -36,7 +36,7 @@ sdl_help::sdl_help(string name_in,string HF_input_file_in,string bg_image_name_i
 	SDL_Init(SDL_INIT_TIMER | SDL_INIT_EVENTS|SDL_INIT_VIDEO);//for now, timer,video and keyboard
 	IMG_Init(IMG_INIT_PNG);//allows use of .png files
 	if(TTF_Init() != 0){ //allows sdl to print text to the screen using .ttf files
-		cout << "Error in TTF_Init()! " << endl;
+		error_logger.push_error("Error in TTF_Init()!");
 	}
 	window_name = name_in; //set window name
 	image_p = "./Assets/Images/";
@@ -45,27 +45,28 @@ sdl_help::sdl_help(string name_in,string HF_input_file_in,string bg_image_name_i
 
 	frame_count = 0;
 
+	error_logger.push_msg("this is merely a test of the logger");
 
 	bg_image_name = bg_image_name_in;
 
 
 	if(SDL_GetCurrentDisplayMode(0,&display) < 0){
-		cout << "Get current display mode error" << endl;
-		cout << SDL_GetError();
+		error_logger.push_error("Get current display mode error:");
+		error_logger.push_error(SDL_GetError());
         };
 
 	int temp_window_w = display.w *.5;
 	int temp_window_h = display.h * .75;
-	//cout << display.w << " " << display.h << endl;;
+	error_logger.push_msg( "display width: " + to_string(display.w) + "display height:" + to_string(display.h));
 	window = SDL_CreateWindow(window_name.c_str(), 0, 0,temp_window_w,temp_window_h, SDL_WINDOW_RESIZABLE);
 	renderer = SDL_CreateRenderer(window,-1,SDL_RENDERER_PRESENTVSYNC);
  //(font_p + "LiberationSerif-Regular.tff").c_str()
 	font = TTF_OpenFont( "./Assets/fonts/LiberationSerif-Regular.ttf", 22);//set up pointer to font from file
 	if(font == NULL) {
-		cout << "Error in opening font! " << SDL_GetError() << endl;
+		error_logger.push_error(SDL_GetError());
 	}
-        if(sdl_test) cout << "Enacting tile_bag update with values: " << display.w / 2 << " "
-                          << display.h << endl;
+        error_logger.push_msg("Enacting tile_bag update with values: " + to_string(display.w / 2) + " " + 
+                              to_string(display.h) );
 
 	window_update(temp_window_w,temp_window_h);//this call updates sdl_help and manager's
 					           // dimension window fields
@@ -75,9 +76,9 @@ sdl_help::sdl_help(string name_in,string HF_input_file_in,string bg_image_name_i
 
 	//################ background image initialization ############################//
 	bg_surface = IMG_Load( ("Assets/Images/Backgrounds/"+bg_image_name).c_str() );
-	if(bg_surface == NULL) cout << SDL_GetError() << endl;
+	if(bg_surface == NULL) error_logger.push_error(SDL_GetError());
 	bg_texture = SDL_CreateTextureFromSurface(renderer,bg_surface);
-	if(bg_surface == NULL) cout << SDL_GetError() << endl;
+	if(bg_surface == NULL) error_logger.push_error(SDL_GetError());
 
 
 
@@ -87,9 +88,6 @@ sdl_help::sdl_help(string name_in,string HF_input_file_in,string bg_image_name_i
 	vert_bar.init(&x_scroll,&y_scroll, &window_s.width, &window_s.height, renderer,"v_ou_dark_green_quarter.png");
 	//give horizontal scroll bar the address of the info it needs from the sdl_help object
 	horiz_bar.init(&x_scroll,&y_scroll, &window_s.width, &window_s.height, renderer,"h_ou_grey_quarter.png");
-
-	//vert_bar.print(cout);
-	//horiz_bar.print(cout);
 
 	calc_corners(); //set up tile locations with the field's corner location 
 	tile_bag.give_fields_renderer(renderer,image_p,&x_scroll,&y_scroll,font);//give fields rendering and font info
@@ -108,7 +106,6 @@ sdl_help::~sdl_help(){
 	SDL_DestroyWindow(window);
 	TTF_CloseFont(font);//give back memory from the font pointer
 
-	//cout << "I'm dying. You killed me. Final frame count= " << frame_count << endl;
 	TTF_Quit();
 	IMG_Quit();
 	SDL_Quit();
@@ -128,10 +125,11 @@ void sdl_help::window_update(int width_in, int height_in){
 	tile_bag.update_win(width_in,height_in);
 }
 //prints area window size and display 
-void sdl_help::print_size_info(std::ostream& outs){
+void sdl_help::print_size_info(){
 
-	outs << "Printing window size: "; window_s.print(outs);
-	outs << "Printing display info: " << display.w << "x" << display.h << endl;
+	error_logger.push_msg("Printing window size: ");
+	window_s.print();
+	error_logger.push_msg("Printing display info: "+to_string(display.w)+"x"+to_string(display.h));
 }
 
 void sdl_help::give_manager_io(input_maker* input_maker_hook_in){
@@ -217,8 +215,6 @@ void sdl_help::most(int& rightmost,int& leftmost,int& upmost,int& downmost){
 		}
 
 	}
-	/*cout << "Rightmost: " << rightmost << " Leftmost: " << leftmost
-	     << " Upmost: " << upmost << " Downmost: " << downmost << endl;*/
 
 }
 
@@ -230,26 +226,26 @@ void sdl_help::update_scroll(int x_scroll_in, int y_scroll_in){
 
 	if( (rightmost + x_scroll_in) <= 0){
 		x_scroll = x_scroll + abs(0-rightmost);
-		//cout << "Hit right scrolling barrier." << endl;
+		error_logger.push_msg("Hit right scrolling barrier.");
 	}
 	if( (leftmost + x_scroll_in) >= window_s.width){
 		x_scroll = x_scroll - (/*window_s.width - leftmost*/ leftmost-window_s.width);
-		//cout << "Hit left scrolling barrier." << endl;
+		error_logger.push_msg("Hit left scrolling barrier.");
 	} //mid-statement commented regions are previous values, they were buggy so trying them switched
 	  //seems to have fixed it, but commented regions stay until more strenuously tested
 	if( (upmost + y_scroll_in) >= window_s.height){
 		y_scroll = y_scroll - (/*window_s.height - upmost*/ upmost-window_s.height);
-		//cout << "Hit up scrolling barrier." << endl;
+		error_logger.push_msg("Hit up scrolling barrier.");
 	}
 	if( (downmost + y_scroll_in) <= 0){
 		y_scroll = y_scroll + abs(0-downmost);
-		//cout << "Hit down scrolling barrier." << endl;
+		error_logger.push_msg("Hit down scrolling barrier.");
 	}
 	//it would make sense to be able to scroll like this 
-		//cout << "x_scroll increased by " << x_scroll_in << "| " << x_scroll << "-> "
-		//     << x_scroll + x_scroll_in << endl;
-		//cout << "y_scroll increased by " << y_scroll_in << "| " << y_scroll << "-> "
-		//     << y_scroll + y_scroll_in << endl;
+		error_logger.push_msg("x_scroll increased by " + to_string(x_scroll_in) + "| " + to_string(x_scroll)
+				       + "-> " + to_string(x_scroll + x_scroll_in));
+		error_logger.push_msg("y_scroll increased by " + to_string(y_scroll_in) + "| " + to_string(y_scroll)
+				      + "-> " + to_string(y_scroll+y_scroll_in));
 		x_scroll = x_scroll + x_scroll_in;
 		y_scroll = y_scroll + y_scroll_in;
 
@@ -328,9 +324,7 @@ void sdl_help::text_box_mini_loop(ostream& outs, SDL_Event& event,button_manager
 	bool text_was_changed = false;
 
 	while(!done){
-		//if(c >= 10) return;
-		//do stuff
-		//cout << " in text input mini loop " << c << endl;
+
 
 		if( !SDL_PollEvent(&event) ){
 			event.type = 1776; //dummy event to stop it from printing default message every frame
@@ -339,15 +333,14 @@ void sdl_help::text_box_mini_loop(ostream& outs, SDL_Event& event,button_manager
 
 		switch(event.type){
 		  case SDL_MOUSEMOTION:
-			cout << "Mouse motion for some reason.... " << endl;
 			break;
 
 		  case SDL_MOUSEBUTTONDOWN:
 			//if the click was within the text box, move the cursor maybe
 		  	if( current_tile.text_box_clicked(outs,event.button.x,event.button.y) ){
-				cout << "Text box click at " << event.button.x << ":" << event.button.y << endl;
+				error_logger.push_msg("Text box click at " + to_string(event.button.x) + ":"
+						       + to_string(event.button.y) );
 		  	} else { //elsewise exit text input mode, user clicked off the text box
-		  		//cout << "Clicked outside of the text box, exiting mini-loop" << endl;
 				SDL_PushEvent(&event);//doing this allows the user to 'hop' to another text box
 						      //directly from editing another box
 				done = true;
@@ -355,7 +348,6 @@ void sdl_help::text_box_mini_loop(ostream& outs, SDL_Event& event,button_manager
 		  	break;
 
 		  case SDL_TEXTINPUT:
-		  	cout << " I guess this was an SDL_TEXTINPUT event... " << endl;
 			current_tile.update_temp_input(event);
 			text_was_changed = true;
 		  	//here this actually causes a loss of letters, so the event flooding is necessary, don't flush
@@ -363,13 +355,11 @@ void sdl_help::text_box_mini_loop(ostream& outs, SDL_Event& event,button_manager
 			break;
 
 		  case SDL_KEYDOWN:
-		  	//cout << " Key pressed: " << event.key.keysym.sym << endl;
 			text_box_mini_loop_helper(event.key.keysym,current_tile,text_was_changed);
 
 			SDL_FlushEvent(SDL_KEYDOWN); //prevent event flooding
 		  	break;
 		  case SDL_QUIT:
-			//cout << "exiting from text entry" << endl;
 			SDL_PushEvent(&event);//puts another sdl quit in the event queue, so program
 					      //can be terminated while in "text entry" mode
 			done = true;			
@@ -385,10 +375,6 @@ void sdl_help::text_box_mini_loop(ostream& outs, SDL_Event& event,button_manager
 
 
 
-		//if something actually changed, re-draw
-		//elsewise don't do it to try and save time
-		//if(text_was_changed){
-			//cout << "HAVING TO REDRAW" << endl;
 			//update picture
 			draw_tiles();
 			draw_sbars();
@@ -397,20 +383,15 @@ void sdl_help::text_box_mini_loop(ostream& outs, SDL_Event& event,button_manager
 			//text_was_changed = false;
 			//show updated picture
 			present();
-		//}
 
-		//c++;
-		//SDL_Delay(50);
 	}//end of loop
 	SDL_StopTextInput();//stop text input functionality because it slows down the app
 
 }
 
 void sdl_help::text_box_mini_loop_helper(SDL_Keysym& key,field& current_tile,bool& text_was_changed){
-	cout << key.sym << endl;
 	switch( key.sym ){
 		case SDLK_BACKSPACE:
-			//cout << "BACKSPACE" << endl;
 			//delete last character, unless it's empty already than do nothing
 			if( current_tile.temp_input.size() > 0 ){
 				current_tile.back_space();//delete a character, update text's graphics
@@ -419,7 +400,6 @@ void sdl_help::text_box_mini_loop_helper(SDL_Keysym& key,field& current_tile,boo
 			break;
 	
 		case SDLK_LEFT:
-			//cout << "Left arrow key" << endl;
 			//if we are not already at the very left of the text, move the editing position
 			//one to the left
 			if(current_tile.editing_location > 0){
@@ -428,7 +408,6 @@ void sdl_help::text_box_mini_loop_helper(SDL_Keysym& key,field& current_tile,boo
 			}
 			break;
 		case SDLK_RIGHT:
-			//cout << "Right arrow key" << endl;
 			//if we are not already at the very end of the text, move the editing position
 			//one to the right
 			if(current_tile.editing_location < current_tile.temp_input.size()){
@@ -454,7 +433,7 @@ bool sdl_help::in(int click_x, int click_y,const SDL_Rect& rect) const{
 
 
 void sdl_help::calc_corners(){
-	//cout << "################# IN CALC CORNERS ##########################################" << endl;
+	error_logger.push_msg("################# IN CALC CORNERS ##########################################");
 	//this variable keeps track of where the next line should start being placed. The helper function
 	//should set it to be just below the newly created section of tiles, and some padding value
 	unsigned int row_height = 5;//5 pixel buffer from top of window
@@ -462,13 +441,13 @@ void sdl_help::calc_corners(){
 	int row_limit;//this variable limits the width of the rows
 
 	int widest_tile = tile_bag.get_widest_tile_width();
-	cout << "WIDEST TILE: " << widest_tile << endl;
+	error_logger.push_msg("WIDEST TILE: "+to_string(widest_tile));
 	if(widest_tile > window_s.width){
-		cout << "USING WIDEST TILE TO LIMIT ROWS" << endl;
+		error_logger.push_msg("USING WIDEST TILE TO LIMIT ROWS");
 		row_limit = widest_tile;//if a single tile is bigger than the window, use it for logic
 					//because the window is likely so small the normal row placement logic won't work				
 	} else {
-		cout << "USING WINDOW SIZE TO LIMIT ROWS" << endl;
+		error_logger.push_msg("USING WINDOW SIZE TO LIMIT ROWS");
 		row_limit = window_s.width;//else wise, fill up the window as best it can 
 	}
 
@@ -494,12 +473,12 @@ void sdl_help::calc_corners(){
 
 
 
-	//cout << "################# END CALC CORNERS ############################################" << endl;
+	error_logger.push_msg("################# END CALC CORNERS ############################################");
 
 }
 void sdl_help::calc_corners_helper(const string line_in, map<std::string,field>& map_in, unsigned int& start_height,
 				   int row_limit){
-	//cout << "In calc_corners_helper()! Line in progress is:" << line_in << endl;
+	error_logger.push_msg("In calc_corners_helper()! Line in progress is:" + line_in);
 
 
 
@@ -519,7 +498,7 @@ void sdl_help::calc_corners_helper(const string line_in, map<std::string,field>&
 	int lowest_point = start_height;
 
 	for(map<string,field>::iterator param_it = map_in.begin(); param_it != map_in.end();param_it++){
-		//cout << "PARAM:" << param_it->first << endl;
+		error_logger.push_msg("PARAM:"+param_it->first);
 
 		//this is the case where the tile can stay in the current row 
 		if(x_corner + param_it->second.get_size().width < row_limit){
@@ -533,9 +512,9 @@ void sdl_help::calc_corners_helper(const string line_in, map<std::string,field>&
 			
 
 			if(param_it->second.yloc + param_it->second.get_size().height + 5 > lowest_point){
-				cout << "OLD lowest_point:" << lowest_point;
+				error_logger.push_msg("OLD lowest_point:"+to_string(lowest_point));
 				lowest_point = param_it->second.yloc + param_it->second.get_size().height + 5;
-				cout << " NEW lowest_piont:" << lowest_point << endl;
+				error_logger.push_msg(" NEW lowest_point:"+to_string(lowest_point));
 			}
 		//this is the case where the tile needs to be placed into a new row (because there's not enough width left)
 		} else {

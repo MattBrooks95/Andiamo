@@ -10,6 +10,9 @@
 #include "manager.h"
 #include "input_maker.h"
 
+#include "logger.h"
+extern logger error_logger;
+
 class button_manager; //forward declaration,so sdl can be passed a button_manager pointer without needing
 		      //to #include "button_manager.h", because doing so is a circular dependency
 
@@ -21,8 +24,8 @@ struct win_size{
 	/*! it initializes the window width and height to -1, these must be set by sdl helper and later by
 	 *the user */
 	win_size();
-	//! print() print() prints this fields width and height fields, and a newline
-	void print(std::ostream& outs);
+	//! print() print() prints this fields width and height fields
+	void print();
 
 	int width; //! < holds the width of the window, which is different than the screen info in display
 	int height; //! < holds the height of the window, which is different than the info in display
@@ -122,9 +125,8 @@ class sdl_help{
 	 *the size of the window in which things can be seen - this is usually less than the actual area.
 	 *area is the total size needed to render all objects - this is usually bigger than the actual area.
 	 *Scrolling will be implemented to allow the user to see different sections of whole area using the
-	 *limited window. \param outs is the desired output stream. Likely to be cout in development,
-         *but may later be a file to support error logging features*/
-	void print_size_info(std::ostream& outs);
+	 *limited window. */
+	void print_size_info();
 
 
 	//! This member traverses the tile_locations vector and prints all of their SDL_Rect fields

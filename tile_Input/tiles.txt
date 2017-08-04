@@ -5,17 +5,18 @@ andy_tile.png
 550x50
 andy
 line_2#############################################################################################
-ELAB
+ELAB:Projectile Energy
+c Variable name in HF: ELAB
 c energy of projectile in MeV in the lab
 andy_tile.png
 150x50
 andy
-A
+A:Mass Number
 c mass number of first compound nucleus
 andy_tile.png
 150x50
 andy
-Z
+Z:Atomic Number
 c atomic number of first compound in nucleus
 andy_tile.png
 150x50
@@ -30,7 +31,8 @@ c for the E1 and M1 strength functions for gamma ray decay
 andy_tile.png
 150x50
 andy
-IENCH
+IENCH:Entrance Channel
+c Variable name in HF: IENCH
 c entrance channel:
 c 1 = neutron, 2 = proton, 3 = deuteron
 c 4 = triton, 5 = helium-3, 6 = alpha 
@@ -38,8 +40,8 @@ c 7 = incident particle with A > 4
 andy_tile.png
 150x50
 andy
-ICM
-c reference frame of transmission coefficients:
+ICM:TC Reference Frame
+c Variable name in HF: ICM
 c 0 = energies given in lab,
 c 1 = energies given in center-of-mass
 andy_tile.png
@@ -51,14 +53,16 @@ c 1 = exclude 2H, 3H, and 3HE
 andy_tile.png
 150x50
 andy
-TCPR
+TCPR:TC Printing Options
+c Variable name in HF: TCPR
 c 0 = do not print transmission coefficients,
 c 1 = print transmission coefficients (title only) 
 c >1 print complete transmission of coefficients
 andy_tile.png
 150x50
 andy
-FNRME2
+FNRME2:E2 Strength Normalization
+c Variable name in HF: FNRME2
 c normalization factor for E2 strength
 andy_tile.png
 150x50
@@ -106,12 +110,14 @@ andy_tile.png
 300x50
 andy
 line_4##############################################################################################################
-FJTAR
+FJTAR:Target Spin
+c Variable name in HF: FJTAR
 c FJTAR is the spin of the target
 andy_tile.png
 150x50
 andy
-FCMJMAX
+FCMJMAX:Max Nuclear Spin
+c Variable name in HF: FCMJMAX
 c FCMJMAX is the maximum compound nuclear
 c spin to include. Should be
 c LMAX in entrance channel
@@ -119,7 +125,7 @@ c plus FJTAR plus FJPAR
 andy_tile.png
 150x50
 andy
-FRESIDMAX
+FRESIDMAX:Residual Spin Max
 c FRESIDMAX is the maximum residual
 c nuclear spin allowed. This
 c should be about 10 for A,
@@ -128,14 +134,14 @@ c about 200?
 andy_tile.png
 150x50
 andy
-ITARPR
+ITARPR:Ground State Parity
 c ITARPR is the parity (+1) or (-1)
 c of the target ground state
 andy_tile.png
 150x50
 andy
-NG
-c NG is gamma emission
+NG:Gamma Emission
+c Variable in HF:NG
 c = 0 allow gamma emmission, where
 c energy allows
 c = 1 suppress gamma emmission when EX is
@@ -156,20 +162,23 @@ c Z of incident particle
 andy_tile.png
 150x50
 andy
-QIN
+QIN:Binding Energy
+c Variable in HF: QIN
 c only needed if IENCH = 7
 c binding energy of incident particle
 c in compound nucleus
 andy_tile.png
 150x50
 andy
-FJPAR
+FJPAR:Projectile Spin
+c Variable in HF: FJPAR
 c only needed if IENCH = 7
 c spin of the projectile
 andy_tile.png
 150x50
 andy
-FPRPAR
+FPRPAR:Ground State Parity
+c Variable in HF: FPRPAR
 c parity of (+1 or -1) of projectile
 c only needed if IENCH = 7
 c in ground state
@@ -191,7 +200,8 @@ c at the incident energy
 andy_tile.png
 andy
 line_5#############################################################################################################
-ILVL1
+ILV1:Parameter Options
+c Variable name in HF: ILV1
 c 1 = used ROHR parameters
 c 2 = used Po-lin Huang A parameters
 c 3 = used Po-lin Huang B parameters
@@ -202,21 +212,24 @@ c 7 = search on level density parameters
 andy_tile.png
 150x50
 andy
-ILVL2
+ILV2:Level Information
+c Variable in HF:ILV2
 c Resolved level information
 c 0 = use BNL levels for nuclei
 c 1 = add levels to BNL tabulation
 andy_tile.png
 150x50
 andy
-ILVL3
+ILV3:Level Density Parameters
+c Variable name in HF: ILV3
 c input parameters for level density of particular nculei
 c 0 = do not change level density from values specified by ILVL1
 c 1 change level density parameters for nuclei specified later
 andy_tile.png
 150x50
 andy
-ILVL4
+ILV4:Renormalization Options
+c Variable name in HF: ILV4
 c select renormalization
 c 0 = no renormalization
 c 1 = renormalize each level density so it
@@ -226,11 +239,11 @@ c     transition energy
 andy_tile.png
 150x50
 andy
-ILVL5
-c ILVL5 = number of nuclei for which temperatures are read in
+ILV5
+c ILV5 = number of nuclei for which temperatures are read in
 c 0 = use Fermi gas
 c 1 <= use constant temperature model (no search can be done if
-c     ILVL5 >= 0 
+c     ILV5 >= 0 
 c talk to Tom about this one, isn't present in example input
 andy_tile.png
 150x50
@@ -310,7 +323,8 @@ c 1 = calculate cross sections for resolved levels
 andy_tile.png
 150x50
 andy
-ICNTRL5
+ICNTRL5:Angular Distributions Options
+c Variable name in HF: ICNTRL5
 c 0 = no angular distributions calculated
 c 1 = neutron angular distributions calculated
 c 2 = proton angular distributions calculated
@@ -321,14 +335,16 @@ c 6 = alpha angular distrubtions calculated
 andy_tile.png
 150x50
 andy
-ICNTRL6
+ICNTRL6:Search Options
+c Varibale name in HF: ICNTRL6
 c 0 = no search
 c 1 = search
 c 2 = search with more intermediate output
 andy_tile.png
 150x50
 andy
-ICNTRL7
+ICNTRL7:Level Densities Options
+c Variable name in HF: ICNTRL7
 c 0 = do not echo level densities or change
 c     file of reduced levels
 c 1 = echo level densities
@@ -337,7 +353,8 @@ c 3 = read new cutoff values and echo level densities
 andy_tile.png
 150x50
 andy
-ICNTRL8
+ICNTRL8:Cutoff Nuclei
+c Variable name in HF: ICNTRL8
 c the number of final nuclei for which cutoff on 
 c energy values of levels should change
 c Normally code uses all known levels up to 25 before
@@ -349,7 +366,8 @@ c continuum form
 andy_tile.png
 150x50
 andy
-ICNTRL9
+ICNTRL9:Fitting
+c Variable name in HF: ICNTRL9
 c 0 = use normal x^2
 c 1 = use relative x^2 in fit
 c     (find normalization factor for calculation
@@ -357,7 +375,8 @@ c     which minimalizes x^2)
 andy_tile.png
 150x50
 andy
-ICNTRL10
+ICNTRL10:Sigma Information
+c Variable name in HF: ICNTRL10
 c 0 < read individual sigma information
 c 0 = don't read individual sigma information
 andy_tile.png
@@ -398,42 +417,46 @@ andy_tile.png
 150x50
 andy
 line_9###############################################################################
-ECH4
+ECH4:Level Energy
+c Variable in HF: ECH4
 c ECH4 energy of the level in MeV
 andy_tile.png
 150x50
 andy
-FJCH4
+FJCH4:Level Spin
+c Variable in HF: FJCH4
 c FJCH4 spin of the level
 andy_tile.png
 150x50
 andy
-IPAR4
+IPAR4:Level Parity
+c Variable in HF: IPAR4
 c HF variable name:IPAR4
 c parity of the level
 andy_tile.png
 150x50
 andy
-FIS4
+FIS4:Level Isospin
+c Variable in HF:FIS4
 c HF variable name: FIS4
 c isospin of the level
 andy_tile.png
 150x50
 andy
 line_10########################################################################################
-ITER
+ITER:Search Iterations
 c HF variable name:ITER
 c number of iterations in search
 andy_tile.png
 150x50
 andy
-INM1
+INM1:Spectra Fitting
 c HF variable name:INM1
 c number of spectra to fit (n,p, , etc)
 andy_tile.png
 150x50
 andy
-INM2
+INM2:Cross Sections
 c HF variable name:INM2
 c number of integrated cross sections
 c to fit(n,p), (n, 2n) etc. These are

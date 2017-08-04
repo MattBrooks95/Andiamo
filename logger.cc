@@ -3,6 +3,9 @@ using namespace std;
 
 logger::logger(){
 
+
+	verbose = false;//default to not worrying about operational messages
+
 	//build dynamic file name ###########################################################################
 	string path = "./error_logs/";
 	string prefix = "andiamo_errors_";//constant first part
@@ -43,15 +46,29 @@ logger::~logger(){
 }
 
 
-void logger::push_error(std::string& push_me){
+void logger::push_error(std::string push_me){
 	errors_vector.push_back(push_me);//put message in the vector
 	error_msg_num++;//increment the error counter
 
 }
+void logger::push_msg(std::string push_me){
+	if(!verbose) return;//do nothing if we are not in verbose mode
+	message_vector.push_back(push_me);//if we are in verbose mode, accumulate this message
 
+}
 
 void logger::make_error_file(){
+
 	errors_out.open(unique_file_name);
+
+	if(verbose){
+		for(unsigned int c = 0; c < message_vector.size();c++){
+			errors_out << message_vector[c] << "\n";
+
+		}
+	}
+
+
 	for(unsigned int c = 0; c < errors_vector.size();c++){
 		errors_out << errors_vector[c] << "\n";
 	}
