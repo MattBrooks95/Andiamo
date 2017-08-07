@@ -60,7 +60,7 @@ void logger::push_msg(std::string push_me){
 void logger::make_error_file(){
 
 	errors_out.open(unique_file_name);
-
+	errors_out << "#############Verbose messages###################" << endl;
 	if(verbose){
 		for(unsigned int c = 0; c < message_vector.size();c++){
 			errors_out << message_vector[c] << "\n";
@@ -68,7 +68,7 @@ void logger::make_error_file(){
 		}
 	}
 
-
+	errors_out << "\n##################Error messages##############" << endl;
 	for(unsigned int c = 0; c < errors_vector.size();c++){
 		errors_out << errors_vector[c] << "\n";
 	}

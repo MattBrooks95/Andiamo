@@ -16,8 +16,6 @@ class logger{
 	//! the destructor calls make_error_file()
 	~logger();
 
-
-
 	//! puts a new error message into the vector
 	/* these messages are accumulated and then printed to a file at the end of this object's life.
 	 *This function also does some book keeping, like the # of error messages pushed */
@@ -33,7 +31,6 @@ class logger{
 	void make_error_file();
 
 	bool verbose;
-
 
   private:
 	int error_msg_num;//!< keep track of the number of error messages pushed

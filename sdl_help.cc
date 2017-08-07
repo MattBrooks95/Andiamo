@@ -6,14 +6,12 @@
 #include<algorithm>
 #include<queue>
 
-
 //button manager is included here so that sdl_help can access button_manager::draw_buttons()
 //this include CAN'T be in the header file because it creates a circular dependency
 //more pre-project planning on my part would have avoided such a misfortune, I am sorry
 #include "button_manager.h"
 
 using namespace std;
-
 
 
 //######################### WIN SIZE STRUCT ################################################################
@@ -281,7 +279,7 @@ void sdl_help::print_tile_locs(ostream& outs){
 		for(map<string,field>::iterator params_it = lines_it->second.begin();
 		    params_it != lines_it->second.end();
 		    params_it++){
-			params_it->second.print(cout);
+			params_it->second.print();
 		}
 	}
 
@@ -298,13 +296,13 @@ void sdl_help::click_detection(ostream& outs,SDL_Event& event,button_manager* b_
 			//if the mouse click coordinates fall within a tile
 			if( in( click_x,click_y, params_it->second.get_rect() ) ){
 
-				if(params_it->second.text_box_clicked(outs,click_x,click_y) ){
+				if(params_it->second.text_box_clicked(click_x,click_y) ){
 					//if the click fell within the text box
 					//go into text entry loop
 					text_box_mini_loop(outs,event,b_manager,params_it->second);
 				} else {
 					//if the click was not on the text box, enact clicked()
-				 	params_it->second.clicked(outs,event,click_x,click_y);
+				 	params_it->second.clicked(event,click_x,click_y);
 				}
 
 			}
@@ -337,7 +335,7 @@ void sdl_help::text_box_mini_loop(ostream& outs, SDL_Event& event,button_manager
 
 		  case SDL_MOUSEBUTTONDOWN:
 			//if the click was within the text box, move the cursor maybe
-		  	if( current_tile.text_box_clicked(outs,event.button.x,event.button.y) ){
+		  	if( current_tile.text_box_clicked(event.button.x,event.button.y) ){
 				error_logger.push_msg("Text box click at " + to_string(event.button.x) + ":"
 						       + to_string(event.button.y) );
 		  	} else { //elsewise exit text input mode, user clicked off the text box

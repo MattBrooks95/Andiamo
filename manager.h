@@ -11,6 +11,8 @@
 #include<SDL2/SDL.h>
 #include<SDL2/SDL_image.h>
 
+#include "logger.h"
+extern logger error_logger;
 //! The manager is a vector+ object that handles a standard vector that contains input tiles or 'cards'
 class manager{
   public:
@@ -75,7 +77,7 @@ class manager{
 
 	//! this function runs through the 2d map, and prints all of the lines and their fields
 	/* \param outs is the output stream that will be printed to */
-	void print_all(std::ostream& outs);
+	void print_all();
 
 	//! This member updates the window's dimension values win_w and win_h
 	/*! This should usually only be called from a member of the sdl_help class,

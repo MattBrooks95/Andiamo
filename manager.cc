@@ -22,7 +22,7 @@ void manager::init(){
 
 	ins.open((tile_input_p + "tiles.txt").c_str()); //open the file
 	if(ins.fail()){ //if something went wrong, print an error message to console
- 		cout << "Fatal error: Failed to open tile input file: " << tile_input_p + "tiles.txt";
+ 		error_logger.push_error("Fatal error: Failed to open tile input file: "+tile_input_p+"tiles.txt");
 	}
 
 	string temp_string;//used to store unidentified line
@@ -61,8 +61,8 @@ void manager::init(){
 			}
 			getline(ins,temp_string);
 		}
-		//once we've reached this point, we have found a line_name
-		//cout << "Found a line name:" << temp_string << endl;
+
+		error_logger.push_msg("Found a line name:"+temp_string);
 		strip_char(temp_string,'#');
 		line_name = temp_string;//save line name for later
 		getline(ins,temp_string);//grab a new line
@@ -83,35 +83,35 @@ void manager::init(){
 
 			//inner loop runs name -> andy as many times as needed, until a line separator is found
 			while(temp_string != "andy" && !ins.fail()){ //loop until separator 'andy' is found
-				//if(man_test) cout << "LINE:" << temp_string << "|" << endl;
+				error_logger.push_msg("LINE:"+temp_string+"|");
 
 
 				if( regex_match(temp_string,img_pattern) ){ //if this line has '.png' in it, 
 									    //process it as an input picture name
-					//if(man_test) cout << "Found an image name!: " << temp_string << endl;
+					error_logger.push_msg("Found an image name!: "+temp_string);
 					img_name = temp_string;
 
 				} else if( regex_match(temp_string,desc_pattern)){
 
-					//if(man_test) cout << "Found a description line.: " << temp_string << endl;
+					error_logger.push_msg("Found a description line.: "+temp_string);
 					description = temp_string.erase(0,2);//remove 'c ' at start of desc lines
 					temp_descriptions.push_back(temp_string);
 
 
 				} else if( regex_match(temp_string,field_size_pattern) ){
 
-					//if(man_test) cout << "Found field size specification!: " << temp_string << endl;
+					error_logger.push_msg("Found field size specification!: "+temp_string);
 					strip_char(temp_string,' '); //remove spaces
 					vector<string> dimensions = split(temp_string,'x');   //split into a vector of strings
 					try{
 					  tile_w = stoi(dimensions[0]); //first number in the line is the width
 					  tile_h = stoi(dimensions[1]); //second number in the line is the width
 					} catch (invalid_argument& error){
-						cout << "Error in manager::init(), tile given illegal size parameters: ";
-						cout << dimensions[0] << "x" << dimensions[1] << endl;
+						error_logger.push_error("Error in manager::init(), tile given illegal size parameters: "
+									+dimensions[0]+"x"+dimensions[1]);
 					}
 				}  else if( regex_match(temp_string,name_pattern) ){
-					 cout << "Found a tile name!: " << temp_string << endl;
+					 error_logger.push_msg("Found a tile name!: "+temp_string);
 					if( regex_search(temp_string,semi_pattern) ){
 						vector<string> tokens = split(temp_string,':');
 						tile_name = tokens[0];
@@ -122,10 +122,8 @@ void manager::init(){
 						display_name = temp_string;
 					}
 				} else {
-					cout << "Error! This line failed to hit a case in the regex checks." << endl;
-					cout << "Line:" << temp_string << endl;
-					cout << "It may be a missing 'Andy' separator in the tiles.txt config file." << endl;
-					return;
+					error_logger.push_error("Error! This line failed to hit a case in the regex checks:"
+								+temp_string+"\nIt may be a missing 'Andy' separator in the tiles.txt config file.");
 				
 				}
 
@@ -142,9 +140,9 @@ void manager::init(){
 				temp_field.descriptions.push_back(temp_descriptions[c]);
 			}
 
-			//cout << "##########PUSHING FIELD###################" << endl;
-			//temp_field.print(cout);
-			//cout << "##########################################" << endl;
+			error_logger.push_msg("##########PUSHING FIELD###################");
+			temp_field.print();
+			error_logger.push_msg("##########################################");
 
 			new_line.emplace(tile_name,temp_field);//push the field into the map for that parameter's line
 			if( !ins.fail() ){
@@ -159,9 +157,9 @@ void manager::init(){
 	ins.close(); //close the file
 
 	if(man_test){
-		cout << "FIELD MAP AFTER MANAGER.init():" << endl;
-		print_all(cout);
-		cout << "####################################################" << endl;
+		error_logger.push_msg("FIELD MAP AFTER MANAGER.init():");
+		print_all();
+		error_logger.push_msg("####################################################");
 	}
 }
 
@@ -173,11 +171,10 @@ manager::~manager(){
 
 void manager::set_input_maker_hook(input_maker* input_maker_hook_in){
 	//seems to be working
-	//cout <<"SETTING INPUT MAKER HOOK!" << endl;
-	//cout <<"BEFORE: " << input_maker_hook << endl;
-	//cout <<"PASSED HOOK: " << input_maker_hook_in << endl;
+	error_logger.push_msg("SETTING INPUT MAKER HOOK!");
+	error_logger.push_msg("BEFORE: "+to_string(size_t(input_maker_hook)) );
 	input_maker_hook = input_maker_hook_in;
-	//cout <<"AFTER: " << input_maker_hook_in << endl;
+	error_logger.push_msg("AFTER: "+to_string(size_t(input_maker_hook_in)) );
 	give_fields_defaults();
 }
 
@@ -277,9 +274,9 @@ void manager::give_int4_fields_defaults(){
 
 		}
 		if(!found){
-			cout << "Error! Failed to find parameter:" << big_it->first << "'s tile in the fields map."
-			     << "\nPlease make sure that its entries in tile_Input/tiles.txt and HF_Config/config.txt"
-			     << "\n have matching names." << endl;
+			error_logger.push_error("Error! Failed to find parameter:"+big_it->first+"'s tile in the fields map."
+			     		      +"\nPlease make sure that its entries in tile_Input/tiles.txt and HF_Config/config.txt"
+			     		      +"\n have matching names.");
 
 		}
 
@@ -311,9 +308,9 @@ void manager::give_int4_array_fields_defaults(){
 
 		}
 		if(!found){
-			cout << "Error! Failed to find parameter:" << big_it->first << "'s tile in the fields map."
-			     << "\nPlease make sure that its entries in tile_Input/tiles.txt and HF_Config/config.txt"
-			     << "\n have matching names." << endl;
+			error_logger.push_error("Error! Failed to find parameter:"+big_it->first+"'s tile in the fields map."
+			     		      +"\nPlease make sure that its entries in tile_Input/tiles.txt and HF_Config/config.txt"
+			     		      +"\n have matching names.");
 		}
 	}
 
@@ -350,10 +347,10 @@ void manager::give_real8_fields_defaults(){
 			continue;//it wasn't found, so check next line's map
 
 		  }
-		  if(!found){
-			cout << "Error! Failed to find parameter:" << big_it->first << "'s tile in the fields map."
-			     << "\nPlease make sure that its entries in tile_Input/tiles.txt and HF_Config/config.txt"
-			     << "\n have matching names." << endl;
+	  	  if(!found){
+			error_logger.push_error("Error! Failed to find parameter:"+big_it->first+"'s tile in the fields map."
+			     		      +"\nPlease make sure that its entries in tile_Input/tiles.txt and HF_Config/config.txt"
+			     		      +"\n have matching names.");
 
 		  }
 
@@ -383,9 +380,9 @@ void manager::give_string_fields_defaults(){
 		  }
 		}
 		if(!found){
-			cout << "Error! Failed to find parameter:" << big_it->first << "'s tile in the fields map."
-			     << "\nPlease make sure that its entries in tile_Input/tiles.txt and HF_Config/config.txt"
-			     << "\n have matching names." << endl;
+			error_logger.push_error("Error! Failed to find parameter:"+big_it->first+"'s tile in the fields map."
+			     		      +"\nPlease make sure that its entries in tile_Input/tiles.txt and HF_Config/config.txt"
+			     		      +"\n have matching names.");
 
 		}
 
@@ -414,9 +411,9 @@ void manager::give_r8_array_fields_defaults(){
 
 		}
 		if(!found){
-			cout << "Error! Failed to find parameter:" << big_it->first << "'s tile in the fields map."
-			     << "\nPlease make sure that its entries in tile_Input/tiles.txt and HF_Config/config.txt"
-			     << "\n have matching names." << endl;
+			error_logger.push_error("Error! Failed to find parameter:"+big_it->first+"'s tile in the fields map."
+			     		      +"\nPlease make sure that its entries in tile_Input/tiles.txt and HF_Config/config.txt"
+			     		      +"\n have matching names.");
 		}
 
 	}
@@ -469,20 +466,19 @@ void manager::update_win(int width_in,int height_in){
 }
 
 
-void manager::print_all(ostream& outs){
-        cout << "\n Printing line map ########################################################" << endl;
+void manager::print_all(){
+        error_logger.push_msg("\n Printing line map ########################################################");
 
 	//loop over every line map
 	for(map<string,map<string,field>>::iterator big_it = fields.begin(); big_it != fields.end() ;big_it++){
 		//loop over every parameter map
 		for(map<string,field>::iterator small_it = big_it->second.begin(); small_it != big_it->second.end(); small_it++){
-			small_it->second.print(outs);
+			small_it->second.print();
 		}
 
 	} 
 
-	cout << "###############################################################################\n"
-	     << endl;
+	error_logger.push_msg("###############################################################################");
 }
 
 

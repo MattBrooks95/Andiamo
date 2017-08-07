@@ -12,6 +12,9 @@
 #include "ftran_structs.h"
 #include "string+.h"
 
+#include "logger.h"
+extern logger error_logger;
+
 //! this is a handy bag for the textures and surfaces necessary for text box creation. To be used in a field object
 struct sdl_text_box{
 	//! the constructor sets all pointers to NULL, it seems like it's the safe thing to do
@@ -46,8 +49,8 @@ struct tile_size{
 	}
 
 	//! this print member just prints out this tile's dimensions with no newline
-	void print(std::ostream& outs){
-		outs << "Tile width: " << width << " Tile height: " << height;
+	void print(){
+		error_logger.push_msg("Tile width: "+std::to_string(width)+" Tile height: "+std::to_string(height));
 
 	}
 	int width; /*!< \brief The width will be the width of an input section in the program
@@ -104,15 +107,14 @@ class field{
 	~field();
 	
 	//! this member prints a message if the user clicks on this tile
-	/*!
-	 *\param outs is the output stream that the info (if any) should be sent to
+	/*! this function prints to the error logger
 	 *\param click_x is the xlocation relative to the top left corner of the screen, where the user left clicked
 	 *\param click_y is the ylocation relative to the top left corner of the screen, where the user left clicked*/
-	void clicked(std::ostream& outs,SDL_Event& event, const int& click_x,const int& click_y);
+	void clicked(SDL_Event& event, const int& click_x,const int& click_y);
 
 	//! this function returns true if the text box was clicked, and false otherwise
 	/*! it will either implement text grabbing from keyboard, or call a function that does it */
-	bool text_box_clicked(std::ostream& outs, const int& click_x, const int& click_y);
+	bool text_box_clicked(const int& click_x, const int& click_y);
 
 	//! this function changes the temp_input field as a response to typing in the text box
 	/*! it should also update the surface for the text, so that the changes are reflected in the graphics when the next
@@ -152,9 +154,8 @@ class field{
 
 
 	//! this void member prints the field's info to a given stream
-	/*!
-	 *\param outs is the output stream that the info (if any) should be sent to */
-	void print(std::ostream& outs);
+	/*! it prints to the error logger*/
+	void print();
 
 	//! this member returns this tiles corner location, and dimensions as an sdl rect
 	/*! it's definitely weird to have them stored separately after I've decided to give field

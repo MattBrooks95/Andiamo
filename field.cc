@@ -10,8 +10,6 @@ field::field(string tile_name_in,string display_name_in,string image_name_in, in
 
 
 	image_name = image_name_in;
-	//description = description_in;
-	//cout << "DESCRIPTION IN: " << description << endl;
 
 	size.width = width;
         size.height = height;
@@ -81,9 +79,15 @@ void field::graphics_init(SDL_Renderer* sdl_help_renderer_in,string image_p_in,
 
 	//load in tile background
 	my_surf = IMG_Load(image_name.c_str());
-	if(my_surf == NULL) cout << "Error in field.cc's graphics init() function: " << SDL_GetError() << endl;
+	if(my_surf == NULL){
+		string error = SDL_GetError();
+		error_logger.push_error("Error in field.cc's graphics init() function: "+error);
+	}
 	my_tex = SDL_CreateTextureFromSurface(sdl_help_renderer,my_surf);
-	if(my_tex == NULL) cout << "Error in field.cc's graphics init() function: " << SDL_GetError() << endl;
+	if(my_tex == NULL){
+		string error = SDL_GetError();
+		error_logger.push_error("Error in field.cc's graphics init() function: "+error);
+	}
 
 	text_init();
 
@@ -101,11 +105,16 @@ void field::text_init(){
 	//this part sets up the tile title surface
 	SDL_Color color= {0,0,0,0}; //black text
 	my_text_surf = TTF_RenderUTF8_Blended(sdl_font,(display_name+" = ").c_str(),color);
-	if(my_text_surf == NULL) cout << "Error in field.cc's graphics init() function: " << SDL_GetError() << endl;
-	my_text_tex = SDL_CreateTextureFromSurface(sdl_help_renderer,my_text_surf);
-	if(my_text_tex == NULL) cout << "Error in field.cc's graphics init() function: " << SDL_GetError() << endl;
-	
+	if(my_text_surf == NULL){
+		string error = SDL_GetError();
+		error_logger.push_error("Error in field.cc's graphics init() function: "+error);
 
+	}
+	my_text_tex = SDL_CreateTextureFromSurface(sdl_help_renderer,my_text_surf);
+	if(my_text_tex == NULL){
+		string error = SDL_GetError();
+		error_logger.push_error("Error in field.cc's graphics init() function: "+error);	
+	}
 	if(descriptions.size() > 0){
 	//this part sets up this tile's help box
 
@@ -140,11 +149,12 @@ void field::text_init(){
 			alpha = 0xff000000;
 		#endif
 
-		//make help background 
-		//cout << "SURFACE DIMS: " << max_width << ":" << total_height << endl;
 		my_help_surf = SDL_CreateRGBSurface(0,max_width,total_height,32,red,green,blue,alpha);
-		if(my_help_surf == NULL) cout << "Error making " << tile_name << "'s help box."
-					      << SDL_GetError() << endl;
+		if(my_help_surf == NULL){
+			string error = SDL_GetError();
+			error_logger.push_error("Error making "+tile_name+"'s help box."+error);
+
+		}
 		//color in the help background
 		SDL_FillRect(my_help_surf,NULL,SDL_MapRGBA(my_help_surf->format,0,105,78,255));//OU green
 
@@ -158,13 +168,17 @@ void field::text_init(){
 			new_row_height = word_dest.y + word_height;
 
 			if(SDL_BlitSurface(temp_line,NULL,my_help_surf,&word_dest) != 0){
-				cout << "Error in help blit." << " " << SDL_GetError() << endl;
+				string error = SDL_GetError();
+				error_logger.push_error("Error in help blit."+error);
 			} //draw words atop the help surface
 			SDL_FreeSurface(temp_line);//free memory, this pointer will be used again
 		}
 
 		my_help_tex = SDL_CreateTextureFromSurface(sdl_help_renderer,my_help_surf);
-		if(my_help_tex == NULL) cout << "Error in creating help box texture. " << SDL_GetError() << endl;
+		if(my_help_tex == NULL){
+			string error = SDL_GetError();
+			error_logger.push_error("Error in creating help box texture. "+error);
+		}
 	}
 }
 void field::draw_me(){
@@ -234,33 +248,31 @@ void field::help_toggle(){
 	help_mode = true;
 
 }
-void field::print(ostream& outs){
-	outs << "Tile name: " << tile_name << " Tile Image Name: "
-	     << image_name << endl;
-	outs << "CORNER x:y = " << xloc << ":" << yloc << endl;
-	outs << "scroll value hooks x_ptr:y_ptr = " << sdl_xscroll << ":" << sdl_yscroll << endl; 
-	outs << "SDL pointers surface:texture:renderer = " << my_surf << ":" << my_tex << ":"
-	     << sdl_help_renderer << endl;
-	outs << "SDL font hook: " << sdl_font << endl;
-	outs << "Description lines:" << endl;
+void field::print(){
+	error_logger.push_msg("Tile name: "+tile_name+" Tile Image Name: "+image_name);
+
+	error_logger.push_msg("CORNER x:y = "+to_string(xloc)+":"+to_string(yloc));
+	error_logger.push_msg("scroll value hooks x_ptr:y_ptr = "+to_string(*sdl_xscroll)+":"+to_string(*sdl_yscroll)); 
+	error_logger.push_msg("SDL pointers surface:texture:renderer = "+to_string(size_t(my_surf))+":"
+			      +to_string(size_t(&my_tex))+":"+to_string(size_t(sdl_help_renderer)) );
+	error_logger.push_msg("SDL font hook: "+to_string(size_t(sdl_font)) );
+	error_logger.push_msg("Description lines:");
 
 	for(unsigned int c = 0; c < descriptions.size();c++){
-		outs << descriptions[c] << endl;
+		error_logger.push_msg(descriptions[c]);
 	}
-	
-	outs << "Help mode: ";
-	if(help_mode) cout << "Yes" << endl;
-	else cout << "No" << endl;
-	size.print(outs);
-	cout << "\n\n" << endl;
+	string yay_or_nay;
+	if(help_mode) yay_or_nay = "Yes";
+	else yay_or_nay = "No";
+	error_logger.push_msg("Help mode: "+yay_or_nay);
+	size.print();
 }
 
-void field::clicked(ostream& outs,SDL_Event& event, const int& click_x,const int& click_y){
-	outs << "Tile " << tile_name << " says: That tickles!" << endl;
+void field::clicked(SDL_Event& event, const int& click_x,const int& click_y){
 	help_toggle();
 }
 
-bool field::text_box_clicked(std::ostream& outs, const int& click_x, const int& click_y){
+bool field::text_box_clicked(const int& click_x, const int& click_y){
 
 	if( int4_hook == NULL && real8_hook == NULL && string_hook == NULL && int4_array_hook == NULL &&
 	    r8_array_hook == NULL){
@@ -280,11 +292,7 @@ void field::back_space(){
 		temp_input.erase(editing_location-1,1);//erase from current editing location
 		editing_location--;//decrement editing location
 	}
-	//if(temp_input.length() > 0){
-		//cout << "BEFORE DELETE: " << temp_input << endl;
-	//	temp_input.pop_back();
-		//cout << "AFTER DELETE: " << temp_input << endl;
-	//}
+
 	//update the cursor's size information
 	TTF_SizeText(sdl_font,temp_input.c_str(),&text_dims.w,&text_dims.h);
 
@@ -301,15 +309,14 @@ void field::init_temp_input(string data){
 
 void field::update_temp_input(SDL_Event& event){
 	
-	//cout << "Stuff to change text and update surfaces here" << endl;
-	//cout << "OLD LINE: " << temp_input << endl;
+	error_logger.push_msg("OLD LINE: "+temp_input);
 	//temp_input.append( event.text.text );
 
 	temp_input.insert(editing_location,event.text.text);
 	editing_location += strlen(event.text.text);
 
 	TTF_SizeText(sdl_font,temp_input.c_str(),&text_dims.w,&text_dims.h);
-	//cout << "AFTER APPEND: " << temp_input << endl;
+	error_logger.push_msg("AFTER APPEND:"+temp_input);
 	update_texture();
 }
 
@@ -342,28 +349,24 @@ void field::draw_cursor(){
 
 
 	if( SDL_RenderCopy(sdl_help_renderer,text_box.cursor_texture,NULL,&cursor_dest) ){
-
-		cout << SDL_GetError() << endl;
+		error_logger.push_error(SDL_GetError());
 	}
 
 }
 
 //I need to find a way to save time, it's slow when the user is typing
 void field::update_texture(){
-		//cout << "Texture has been updated, but can you draw it?" << endl;
 		SDL_FreeSurface(text_box.text_surf);//prevent memory loss
 		SDL_DestroyTexture(text_box.text_tex);//prevent memory loss
 
 		text_box.text_surf = TTF_RenderUTF8_Blended(sdl_font,temp_input.c_str(),text_box.text_color);
-		if(text_box.text_surf == NULL) cout << SDL_GetError() << endl;
+		if(text_box.text_surf == NULL) error_logger.push_error(SDL_GetError());
 		text_box.text_tex = SDL_CreateTextureFromSurface(sdl_help_renderer,text_box.text_surf);
-		if(text_box.text_tex == NULL) cout << SDL_GetError() << endl;
+		if(text_box.text_tex == NULL) error_logger.push_error(SDL_GetError());
 }
 //this function updates this fields ftran_struct in the input_maker vectors
 bool field::update_my_value(){
-	//cout << "Tile name: " << tile_name << endl;
-	//cout << "Hooks  int4:r8:string = " << int4_hook << ":" << real8_hook << ":" << string_hook << ":"
-	//     << endl;
+
 	regex bad_int("\\D");
 	regex bad_real8("[A-Za-z _]");
 
@@ -374,9 +377,9 @@ bool field::update_my_value(){
 
 	if(int4_hook == NULL && real8_hook == NULL && string_hook == NULL && int4_array_hook == NULL &&
 	   r8_array_hook == NULL){
-		cout << "ERROR! Tile " << tile_name << " has no association with a fortran struct"
-		     << " in input_maker's vectors. Please check that the tile's name in the tiles.txt"
-		     << " and HF_config.txt match each other.\n\n" << endl;
+		error_logger.push_error("ERROR! Tile "+tile_name+" has no association with a fortran struct"
+		     +" in input_maker's vectors. Please check that the tile's name in the tiles.txt"
+		     +" and HF_config.txt match each other.\n\n");
 		return false;
 	}
 
@@ -386,12 +389,12 @@ bool field::update_my_value(){
 			if( !regex_search(temp_input,bad_int) ){
 				int4_hook->value = stoi(temp_input);
 			} else {
-				cout << display_name << " has an illegal string:" << temp_input << endl;
+				error_logger.push_error(display_name+" has an illegal string:");
 				success = false;
 			}
 		  } catch( invalid_argument& error ){
-			cout << "Error! int4 parameter provided with an illegal string.";
-			cout << " Tile name:" << tile_name << endl; 
+			error_logger.push_error("Error! int4 parameter provided with an illegal string. Tile name:"
+						+tile_name); 
 			int4_hook->value = -1804;
 			success = false;
 		  }
@@ -402,12 +405,11 @@ bool field::update_my_value(){
 				if( !regex_search(temp_input,bad_real8) ){
 					real8_hook->value = stod(temp_input);
 				} else {
-					cout << display_name << " has an illegal string:" << temp_input << endl;
+					error_logger.push_error(display_name+" has an illegal string:"+temp_input);
 					success = false;
 				}
 			} catch(invalid_argument& error){
-			  cout << "Error in field::update_my_value(), illegal value entered:";
-			  cout << temp_input << endl;
+			  error_logger.push_error("Error in field::update_my_value(), illegal value entered:" + temp_input);
 			  real8_hook->value = -180.4;
 			  success = false;
 			}
@@ -419,16 +421,14 @@ bool field::update_my_value(){
 			unsigned int balance_factor = temp_string.length() - string_hook->value.length();
 			trim(temp_string,balance_factor);
 			string_hook->value = temp_string;
-			cout << "Ftran String value after: " << string_hook->value << endl;
+			error_logger.push_msg("Ftran String value after: "+string_hook->value);
 		} else {
-			cout << "Error! String " << display_name << " is likely missing quotation marks." << endl;
+			error_logger.push_error("Error! String "+display_name+" is likely missing quotation marks.");
 			success = false;
 
 		}
 
 	} else if(int4_array_hook != NULL){
-		//cout << "USER CHANGED VALUES FOR INT4 ARRAY:" << tile_name 
-		     //<< "\n" << temp_input << endl;
 		vector<string> user_entered_values = split(temp_input,',');//split the user's string across commas
 
 		//replace the default numbers in input_maker with the ones entered by the user
@@ -436,9 +436,8 @@ bool field::update_my_value(){
 			try{
 			  int4_array_hook->values[c] = stoi(user_entered_values[c]);
 		  	} catch (invalid_argument& error){
-			  cout << "Error! Int4 array value is an illegal string";
-			  cout << "Tile name:" << tile_name;
-			  cout << " Array index:" << c << endl;
+			  error_logger.push_error("Error! Int4 array value is an illegal string. Tile name:"+tile_name
+						  +" Array index:"+to_string(c));
 			  success = false;
 			}
 		}
@@ -449,8 +448,8 @@ bool field::update_my_value(){
 			try {
 			  r8_array_hook->values[c] = stod(user_entered_values[c]);
 			} catch(invalid_argument& error){
-			  cout << "Error! real 8 array given illegal value:";
-			  cout << user_entered_values[c] << " at index:" << c << endl;
+			  error_logger.push_error("Error! real 8 array given illegal value:"+user_entered_values[c]
+			  			  +" at index:"+to_string(c));
 			  success = false;
 			}
 		}
@@ -466,13 +465,13 @@ void field::go_red(){
 
 	my_surf = IMG_Load( (image_p+"bad_tile.png").c_str() );//load up error indicating surface
 	if(my_surf == NULL){
-		cout << "Error changing tile:" << display_name << " to red." << endl;
-		cout << SDL_GetError() << endl;
+		string error = SDL_GetError();
+		error_logger.push_error("Error changing tile:"+display_name+" to red."+error);
 	}
 	my_tex = SDL_CreateTextureFromSurface(sdl_help_renderer,my_surf);//turn that surface into a texture
 	if(my_tex == NULL){
-		cout << "Error changing tile:" << display_name << " to red." << endl;
-		cout << SDL_GetError() << endl;
+		string error = SDL_GetError();
+		error_logger.push_error("Error changing tile:"+display_name+" to red."+error);
 	}
 	is_red = true;
 }
@@ -485,10 +484,15 @@ void field::go_back(){
 	my_tex = NULL;
 
 	my_surf = IMG_Load(image_name.c_str());//go back to original texture & surface
-	if(my_surf == NULL) cout << "Error in field::go_back() function: " << SDL_GetError() << endl;
+	if(my_surf == NULL){
+		string error = SDL_GetError();
+		error_logger.push_error("Error in field::go_back() function: "+error);
+	}
 	my_tex = SDL_CreateTextureFromSurface(sdl_help_renderer,my_surf);
-	if(my_tex == NULL) cout << "Error in field::go_back() function: " << SDL_GetError() << endl;
-
+	if(my_tex == NULL){
+		string error = SDL_GetError();
+		error_logger.push_error("Error in field::go_back() function: "+error);
+	}
 }
 
 
@@ -513,25 +517,35 @@ void field::text_box_init(){
 
 	//set up text box background
 	text_box.box_surf = IMG_Load((image_p+"text_box.png").c_str());
-	if(text_box.box_surf == NULL) cout << "Error in text_box_init! " << SDL_GetError() << endl;
+	if(text_box.box_surf == NULL){
+		string error = SDL_GetError();
+		error_logger.push_error("Error in text_box_init! "+error);
+	}
 	text_box.box_tex = SDL_CreateTextureFromSurface(sdl_help_renderer,text_box.box_surf);
-	if(text_box.box_tex == NULL) cout << "Error in text_box_init! " << SDL_GetError() << endl;
-
+	if(text_box.box_tex == NULL){
+		string error = SDL_GetError();
+		error_logger.push_error("Error in text_box_init! "+error);
+	}
 
 	text_box.cursor_surface = IMG_Load("Assets/Images/cursor.png");
-	if(text_box.cursor_surface == NULL) cout << SDL_GetError() << endl;
+	if(text_box.cursor_surface == NULL) error_logger.push_error(SDL_GetError());
 	text_box.cursor_texture = SDL_CreateTextureFromSurface(sdl_help_renderer,text_box.cursor_surface);
-	if(text_box.cursor_texture == NULL) cout << SDL_GetError() << endl;
+	if(text_box.cursor_texture == NULL) error_logger.push_error(SDL_GetError());
 
 	//set up text box text
 	text_box.text_surf = TTF_RenderUTF8_Blended(sdl_font,temp_input.c_str(),color);
 
 	SDL_Rect delete_me = {0,0,0,0};
 	TTF_SizeText(sdl_font,temp_input.c_str(),&delete_me.w,&delete_me.h);
-	//cout << "Text:" << temp_input << " Size: " << delete_me.w << ":" << delete_me.h << endl;
-	if(text_box.text_surf == NULL) cout << "Error in text_box_init! " << SDL_GetError() << endl;
+	if(text_box.text_surf == NULL){
+		string error = SDL_GetError();
+		error_logger.push_error("Error in text_box_init! "+error);
+	}
 	text_box.text_tex = SDL_CreateTextureFromSurface(sdl_help_renderer,text_box.text_surf);
-	if(text_box.text_tex == NULL) cout << "Error in text_box_init! " << SDL_GetError() << endl;
+	if(text_box.text_tex == NULL){
+		string error = SDL_GetError();
+		error_logger.push_error("Error in text_box_init! "+error);
+	}
 	editing_location = temp_input.size();
 }
 

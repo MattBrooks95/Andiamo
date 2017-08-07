@@ -121,8 +121,8 @@ int main(int argc, char *argv[]){
 			break;
 
 		case SDL_WINDOWEVENT:
-			error_logger.push_msg("WINDOW EVENT ####################################################");
-			error_logger.push_msg("EVENT Num:"+to_string(big_event.type));
+			//error_logger.push_msg("WINDOW EVENT ####################################################");
+			//error_logger.push_msg("EVENT Num:"+to_string(big_event.type));
 			if(big_event.window.event == SDL_WINDOWEVENT_SIZE_CHANGED){
 				error_logger.push_msg(to_string(big_event.window.data1)+":"+
 						       to_string(big_event.window.data2));
