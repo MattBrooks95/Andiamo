@@ -26,6 +26,9 @@ class logger{
 	 *if that argument is not present, this does nothing */
 	void push_msg(std::string push_me);
 
+	//! This functions pushes a message into the vector, but without a newline character
+	void push_msg_no_nl(std::string push_me);
+
 	//! this function creates the error file from the errors_vector
 	/*! it is called in this class's destructor, so that it doesn't have to be called in main */
 	void make_error_file();

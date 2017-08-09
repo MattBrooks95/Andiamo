@@ -53,8 +53,13 @@ void logger::push_error(std::string push_me){
 }
 void logger::push_msg(std::string push_me){
 	if(!verbose) return;//do nothing if we are not in verbose mode
-	message_vector.push_back(push_me);//if we are in verbose mode, accumulate this message
+	message_vector.back().append(push_me);//if we are in verbose mode, accumulate this message
 
+}
+
+void logger::push_msg_no_nl(std::string push_me){
+	if(!verbose) return;//do nothing if we are not in verbose mode
+	message_vector.back().append(push_me);
 }
 
 void logger::make_error_file(){

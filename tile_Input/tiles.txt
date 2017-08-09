@@ -9,27 +9,32 @@ ELAB:Projectile Energy
 c Variable name in HF: ELAB
 c energy of projectile in MeV in the lab
 andy_tile.png
-150x50
+160x50
 andy
-A:Mass Number
+A:Compound Nuclear A
+c Variable name in HF:A
 c mass number of first compound nucleus
 andy_tile.png
-150x50
+200x50
 andy
-Z:Atomic Number
+Z:Compound Nuclear Z
+c Variable name in HF:Z
 c atomic number of first compound in nucleus
 andy_tile.png
-150x50
+200x50
 andy
-FNRME1
-c normalization factors
+FNRME1:E1 Strength Normalization
+c Variable name in HF FNRME1
+c normalization factors for E1
+c gamma ray decay
 andy_tile.png
-150x50
+240x50
 andy
-FNRMM1
-c for the E1 and M1 strength functions for gamma ray decay
+FNRMM1:M1 Strength Normalization
+c Variable name in HF:FNRMM1
+c M1 strength functions for gamma ray decay
 andy_tile.png
-150x50
+240x50
 andy
 IENCH:Entrance Channel
 c Variable name in HF: IENCH
@@ -38,20 +43,20 @@ c 1 = neutron, 2 = proton, 3 = deuteron
 c 4 = triton, 5 = helium-3, 6 = alpha 
 c 7 = incident particle with A > 4
 andy_tile.png
-150x50
+160x50
 andy
 ICM:TC Reference Frame
 c Variable name in HF: ICM
 c 0 = energies given in lab,
 c 1 = energies given in center-of-mass
 andy_tile.png
-150x50
+200x50
 andy
-NZ3
+NZ3:Exclude A=2,3 Exit Channels
 c include or exclude d, t, 3He: 0 = include 2H, 3H, and 3He 
 c 1 = exclude 2H, 3H, and 3HE
 andy_tile.png
-150x50
+250x50
 andy
 TCPR:TC Printing Options
 c Variable name in HF: TCPR
@@ -59,15 +64,15 @@ c 0 = do not print transmission coefficients,
 c 1 = print transmission coefficients (title only) 
 c >1 print complete transmission of coefficients
 andy_tile.png
-150x50
+180x50
 andy
 FNRME2:E2 Strength Normalization
 c Variable name in HF: FNRME2
 c normalization factor for E2 strength
 andy_tile.png
-150x50
+240x50
 andy
-NGF
+NGF:Functional Form
 c 0 = use original (Caltech) values
 c 1 = use original (Caltech) values
 c 2 = use Kopecky-Uhl values for gamma ray strength, 
@@ -116,29 +121,29 @@ c FJTAR is the spin of the target
 andy_tile.png
 150x50
 andy
-FCMJMAX:Max Nuclear Spin
+FCMJMAX:Compound Nuclear Spin Limit
 c Variable name in HF: FCMJMAX
 c FCMJMAX is the maximum compound nuclear
 c spin to include. Should be
 c LMAX in entrance channel
 c plus FJTAR plus FJPAR
 andy_tile.png
-150x50
+280x50
 andy
-FRESIDMAX:Residual Spin Max
+FRESIDMAX:Residual Nuclear Spin Limit
 c FRESIDMAX is the maximum residual
 c nuclear spin allowed. This
 c should be about 10 for A,
 c about 30 and about 20 A
 c about 200?
 andy_tile.png
-150x50
+200x50
 andy
 ITARPR:Ground State Parity
 c ITARPR is the parity (+1) or (-1)
 c of the target ground state
 andy_tile.png
-150x50
+180x50
 andy
 NG:Gamma Emission
 c Variable in HF:NG
@@ -147,7 +152,7 @@ c energy allows
 c = 1 suppress gamma emmission when EX is
 c greater than 10MeV
 andy_tile.png
-150x50
+160x50
 andy
 line_4A#################################################################################################
 APAR
@@ -177,7 +182,7 @@ c spin of the projectile
 andy_tile.png
 150x50
 andy
-FPRPAR:Ground State Parity
+FPRPAR:Target GS Parity
 c Variable in HF: FPRPAR
 c parity of (+1 or -1) of projectile
 c only needed if IENCH = 7
@@ -192,11 +197,11 @@ andy_tile.png
 150x50
 andy
 line_4B############################################################################################################
-TIN
+TIN:Entrance Transmission Coefficients
 c comma-separated list of transmission coefficients
 c ordered in l of the incident particle
 c at the incident energy
-1400x50
+1200x50
 andy_tile.png
 andy
 line_5#############################################################################################################
@@ -210,7 +215,7 @@ c 5 = S. Al-Quraishi paper 2
 c 6 = input parameters by formula 
 c 7 = search on level density parameters
 andy_tile.png
-150x50
+170x50
 andy
 ILV2:Level Information
 c Variable in HF:ILV2
@@ -218,7 +223,7 @@ c Resolved level information
 c 0 = use BNL levels for nuclei
 c 1 = add levels to BNL tabulation
 andy_tile.png
-150x50
+170x50
 andy
 ILV3:Level Density Parameters
 c Variable name in HF: ILV3
@@ -226,7 +231,7 @@ c input parameters for level density of particular nculei
 c 0 = do not change level density from values specified by ILVL1
 c 1 change level density parameters for nuclei specified later
 andy_tile.png
-150x50
+230x50
 andy
 ILV4:Renormalization Options
 c Variable name in HF: ILV4
@@ -237,7 +242,7 @@ c     matches the level density produced
 c     by the resolved levels at the 
 c     transition energy
 andy_tile.png
-150x50
+230x50
 andy
 ILV5
 c ILV5 = number of nuclei for which temperatures are read in

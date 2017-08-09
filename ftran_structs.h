@@ -2,7 +2,7 @@
 #pragma once
 #include<iostream>
 #include<vector> 
-
+#include<string>
 //! param_int4 is a default c++ integer "and more"
 /*! it allows storage of a name that serves a contextual purpose, and a value that is compatible with Fortran INT*4 */
 struct param_int4{
@@ -12,6 +12,8 @@ struct param_int4{
 	//! overloaded << operator for printing
 	friend std::ostream& operator <<(std::ostream& outs, const param_int4& rhs);
 
+	//! returns a string version of this parameter's information
+	std::string get_string();
 
 	//! I don't know if this works
 	/*! Something like this will need to be done when/if we have Andiamo
@@ -53,6 +55,9 @@ struct param_real8{
 
 	//! overloaded << operator for printing
 	friend std::ostream& operator <<(std::ostream& outs, const param_real8& rhs);
+
+	//! returns a string version of this parameter's information
+	std::string get_string();
 
 	//! I don't know if this works
 	/*! Something like this will need to be done when/if we have Andiamo

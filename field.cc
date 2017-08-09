@@ -104,7 +104,7 @@ void field::text_init(){
 
 	//this part sets up the tile title surface
 	SDL_Color color= {0,0,0,0}; //black text
-	my_text_surf = TTF_RenderUTF8_Blended(sdl_font,(display_name+" = ").c_str(),color);
+	my_text_surf = TTF_RenderUTF8_Blended(sdl_font,(display_name).c_str(),color);
 	if(my_text_surf == NULL){
 		string error = SDL_GetError();
 		error_logger.push_error("Error in field.cc's graphics init() function: "+error);
@@ -252,7 +252,7 @@ void field::print(){
 	error_logger.push_msg("Tile name: "+tile_name+" Tile Image Name: "+image_name);
 
 	error_logger.push_msg("CORNER x:y = "+to_string(xloc)+":"+to_string(yloc));
-	error_logger.push_msg("scroll value hooks x_ptr:y_ptr = "+to_string(*sdl_xscroll)+":"+to_string(*sdl_yscroll)); 
+	error_logger.push_msg("scroll value hooks x_ptr:y_ptr = "+to_string(size_t(sdl_xscroll))+":"+to_string(size_t(sdl_yscroll))); 
 	error_logger.push_msg("SDL pointers surface:texture:renderer = "+to_string(size_t(my_surf))+":"
 			      +to_string(size_t(&my_tex))+":"+to_string(size_t(sdl_help_renderer)) );
 	error_logger.push_msg("SDL font hook: "+to_string(size_t(sdl_font)) );

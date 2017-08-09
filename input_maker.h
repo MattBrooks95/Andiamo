@@ -16,6 +16,9 @@
 #include "ftran_structs.h"
 #include "string+.h"
 
+#include "logger.h"
+extern logger error_logger;
+
 //! input_maker is a class that reads a config file to configure itself, and then creates the outputs to be used with HF
 //* it exists within sdl_help, and interacts heavily with fields and the manager
 class input_maker{
@@ -39,7 +42,7 @@ class input_maker{
 	
 	//! check_map() traverses all of the maps in this object, and prints them to the given stream
 	/*\param outs is the output stream to send the information to */
-	void check_map(std::ostream& outs);
+	void check_map();
 
 	//################ GETTERS AND SETTERS #########################################
 
@@ -58,7 +61,7 @@ class input_maker{
 	//! return int4_array_params BY REFERENCE
 	std::map<std::string,param_int4_array>& get_i4_array_params(){ return int4_array_params;}
 
-	//! return e_params map BY REFERENCE
+	//! return r8_params map BY REFERENCE
 	std::map<std::string,param_r8_array>& get_r8_array_params(){ return r8_array_params;}
 	//##############################################################################
 
@@ -122,39 +125,37 @@ class input_maker{
 void output_string(std::ofstream& outs,const unsigned int& size,const std::string& string_in); 
 
 //! this function sets up line one of the HF input file
-void do_line1(const std::map<std::string,param_string>& string_params,std::ofstream& outs);
+void do_line1(std::ofstream& outs,const std::map<std::string,param_string>& string_params);
 
 //! this function sets up line two of the HF input file
-void do_line2(const std::map<std::string,param_real8>& real8_params,const std::map<std::string,param_int4>& int4_params,
-	      std::ofstream& outs);
+void do_line2(std::ofstream& outs,const std::map<std::string,param_real8>& real8_params,const std::map<std::string,param_int4>& int4_params);
 
 //! this function implements the reading loop over the transmission coefficients
 /* NENT, LMAX and NGF control the loops, and TC_input_file button sets this class's TC_input_file_name variable
  *and the coefficients are read in from there */
 void do_TC_coefficients(const std::map<std::string,param_real8>& real8_params, const std::map<std::string,param_int4_array>& array_map,
-			std::string TC_input_file_name, std::ofstream& outs);
+			std::string TC_input_file_name,std::ofstream& outs);
 
 //! this helper outputs the variables found in line 4 of the input description manual
-void do_line4(const std::map<std::string,param_real8>& real8_params, const std::map<std::string,param_int4>& int4_params,std::ofstream& outs);
+void do_line4(std::ofstream& outs,const std::map<std::string,param_real8>& real8_params, const std::map<std::string,param_int4>& int4_params);
 
 //! this helper outputs the variables in line 4A (if IENCH = 7, logic in output() )
-void do_line4A(const std::map<std::string,param_real8>& real8_params,const std::map<std::string,param_int4>& int4_params,std::ofstream& outs);
+void do_line4A(std::ofstream& outs,const std::map<std::string,param_real8>& real8_params,const std::map<std::string,param_int4>& int4_params);
 
 //! this helper outputs the variables in line 4B (if IENCH = 7,logic in output() )
-void do_line4B(const std::map<std::string, param_r8_array>& e_params, std::ofstream& outs);
+void do_line4B(std::ofstream& outs,const std::map<std::string, param_r8_array>& e_params);
 
 //! this helper outputs the values for the parameters in line 6
-void do_line6(const std::map<std::string,param_int4>& int4_params, std::ofstream& outs);
+void do_line6(std::ofstream& outs,const std::map<std::string,param_int4>& int4_params);
 
 //! this helper outputs the values for the parameters in line 7
-void do_line7(const std::map<std::string,param_real8>& real8_params, std::ofstream& outs);
+void do_line7(std::ofstream& outs,const std::map<std::string,param_real8>& real8_params);
 
 //! this helper outputs the variables in line 8, if ICNTRL4 != 0 (logic should be in output(), which calls this)
-void do_line8(const std::map<std::string,param_int4>& int4_params, std::ofstream& outs);
+void do_line8(std::ofstream& outs,const std::map<std::string,param_int4>& int4_params);
 
 //! this helper outputs the variables in line 9
-void do_line9(const std::map<std::string,param_int4>& int4_params,const std::map<std::string,param_real8>& real8_params,
-	      std::ofstream& outs);
+void do_line9(std::ofstream& outs,const std::map<std::string,param_int4>& int4_params,const std::map<std::string,param_real8>& real8_params);
 //######################################################################################################################
 
 

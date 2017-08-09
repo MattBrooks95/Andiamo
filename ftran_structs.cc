@@ -22,6 +22,10 @@ ostream& operator <<(ostream& outs, const param_int4& rhs){
 	return outs;
 }
 
+string param_int4::get_string(){
+	return (name+to_string(value));
+}
+
 int* param_int4::get_ptr(){
 	return &value;
 }
@@ -70,6 +74,10 @@ param_real8::param_real8(string name_in,double val_in){
 ostream& operator <<(ostream& outs, const param_real8& rhs){
 	outs << rhs.value << " " << rhs.name;
 	return outs;
+}
+
+string param_real8::get_string(){
+	return (name+to_string(value));
 }
 
 double* param_real8::get_ptr(){
