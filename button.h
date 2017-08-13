@@ -10,6 +10,10 @@
 #include<fstream>
 #include "sdl_help.h"
 
+
+#include "logger.h"
+extern logger error_logger;
+
 //! this is the base class for the static buttons that implement features
 /*! some possible features are going to include graphing options, the exit dialogue opening,
  *output file name entry*/

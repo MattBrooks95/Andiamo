@@ -13,6 +13,10 @@
 
 #include "sdl_help.h"
 
+
+#include "logger.h"
+extern logger error_logger;
+
 //! button_manager is a manager for the different derivations of class button
 /*! these buttons should either stay in a box below the tiles, OR be fixed to the window kind of like a HUD,
  *It needs access to a lot of sdl_helper fields, like the renderer, font, window size... */

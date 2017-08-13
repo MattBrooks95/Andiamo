@@ -39,9 +39,9 @@ void button::init(const string& image_name_in,const string& image_p_in,sdl_help*
 	total_image_p = image_p_in + image_name;
 
 	button_surface = IMG_Load(total_image_p.c_str());
-	if(button_surface == NULL) cout << SDL_GetError() << endl;
+	if(button_surface == NULL) error_logger.push_error(string(SDL_GetError()));
 	button_texture = SDL_CreateTextureFromSurface(sdl_helper->renderer,button_surface);
-	if(button_texture == NULL) cout << SDL_GetError() << endl;
+	if(button_texture == NULL) error_logger.push_error(string(SDL_GetError()));
 
 	SDL_QueryTexture(button_texture,NULL,NULL,&width,&height);
 
@@ -51,11 +51,13 @@ void button::init(const string& image_name_in,const string& image_p_in,sdl_help*
 
 //virtual
 void button::print_me(){
-	cout << "IMAGE NAME: " << image_name << " TOTAL IMAGE PATH: " << total_image_p << endl;
-	cout << "SDL_HELP HOOK: " << sdl_helper << " XLOC:YLOC = " << xloc << ":" << yloc << endl;
-	cout << "WIDTH = " << width << " HEIGHT = " << height << endl;
-	cout << "SURFACE PTR: " << button_surface << " TEXTURE PTR: " << button_texture << endl;
-	cout << "SHOWN? = " << shown << endl;
+	error_logger.push_msg("IMAGE NAME: "+image_name+" TOTAL IMAGE PATH: "+total_image_p);
+	error_logger.push_msg("SDL_HELP HOOK: "+to_string(size_t(sdl_helper))+" XLOC:YLOC = "+to_string(xloc)
+                              +":"+to_string(yloc));
+	error_logger.push_msg("WIDTH = "+to_string(width)+" HEIGHT = "+to_string(height));
+	error_logger.push_msg("SURFACE PTR: "+to_string(size_t(button_surface))+" TEXTURE PTR: "
+                              +to_string(size_t(button_texture)));
+	error_logger.push_msg("SHOWN? = "+to_string(shown));
 }
 
 //virtual
@@ -91,10 +93,8 @@ void button::handle_resize(int yloc_in){
 
 //virtual
 void button::force_corner_loc(int xloc_in, int yloc_in){
-	//cout << "DEFAULT BUTTON OLD: " << xloc << ":" << yloc << endl;
 	xloc = xloc_in;
 	yloc = yloc_in;
-	//cout << "DEFAULT BUTTON NEW: " << xloc << ":" << yloc << endl;
 	make_rect();
 }
 
@@ -116,7 +116,7 @@ bool button::was_clicked(SDL_Event& mouse_event){
 }
 
 void button::click_helper(SDL_Event& mouse_event){
-	cout << "default button click_helper" << endl;
+	error_logger.push_msg("default button click_helper");
 
 
 }

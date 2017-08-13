@@ -10,6 +10,10 @@
 #include "sdl_help.h"
 #include "button_manager.h"
 
+
+#include "logger.h"
+extern logger error_logger;
+
 //! this is a filter function meant to prevent the sdl event queue from pushing mouse location updates
 int filter_mouse_move(void* userdata, SDL_Event* event);
 

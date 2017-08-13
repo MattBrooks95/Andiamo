@@ -24,7 +24,7 @@ andy_tile.png
 200x50
 andy
 FNRME1:E1 Strength Normalization
-c Variable name in HF FNRME1
+c Variable name in HF: FNRME1 
 c normalization factors for E1
 c gamma ray decay
 andy_tile.png
@@ -53,6 +53,7 @@ andy_tile.png
 200x50
 andy
 NZ3:Exclude A=2,3 Exit Channels
+c Variable name in HF: NZ3
 c include or exclude d, t, 3He: 0 = include 2H, 3H, and 3He 
 c 1 = exclude 2H, 3H, and 3HE
 andy_tile.png
@@ -198,6 +199,7 @@ andy_tile.png
 andy
 line_4B############################################################################################################
 TIN:Entrance Transmission Coefficients
+c Variable name in HF: TIN
 c comma-separated list of transmission coefficients
 c ordered in l of the incident particle
 c at the incident energy

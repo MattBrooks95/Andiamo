@@ -36,7 +36,8 @@ bool scroll_bar::is_scrolling(){
 }
 void scroll_bar::scroll_mode_change(bool bool_in){
 	scrolling_mode = bool_in;
-	cout << "Scrolling mode changed to: " << scrolling_mode << endl;
+	if(scrolling_mode) error_logger.push_msg("Scrolling mode changed to: true");
+	else error_logger.push_msg("Scrolling mode changed to: false");
 }
 //################################################################################################
 
@@ -44,13 +45,13 @@ void scroll_bar::scroll_mode_change(bool bool_in){
 void scroll_bar::init_corner_texture(){
 	my_surf = IMG_Load(image_p.c_str());
 	if(my_surf == NULL){
-		cout << SDL_GetError() << endl; //something went wrong, print error to screen
+		error_logger.push_error(string(SDL_GetError())); //something went wrong, print error to screen
 		return;
 	}
 
 	my_tex = SDL_CreateTextureFromSurface(renderer,my_surf); //turn surface into a texture
 	if(my_tex == NULL){
-		cout << SDL_GetError() << endl; //something went wrong, print error to the screen
+		error_logger.push_error(string(SDL_GetError())); //something went wrong, print error to the screen
 		return;
 	}
 	SDL_QueryTexture(my_tex,NULL,NULL,&width,&height);//fills in width and height fields
@@ -58,7 +59,7 @@ void scroll_bar::init_corner_texture(){
 	if(width > height){ //we are dealing with a horizontal scroll bar
 		xloc = 0;//start off on the left of the screen 
 		if(window_height == NULL){
-			cout << "ERROR in init, null ptr window_height!" << endl;
+			error_logger.push_error("ERROR in init, null ptr window_height!");
 			return;
 		}
 		yloc = *window_height - height;//texture's bottom needs to be inline with window's bottom,
@@ -67,7 +68,7 @@ void scroll_bar::init_corner_texture(){
 
 	} else { //we are dealing with a vertical scroll bar
 		if(window_width == NULL){
-			cout << "ERROR in init, null ptr window_width!" << endl;
+			error_logger.push_error("ERROR in init, null ptr window_width!");
 			return;
 		}
 		xloc = *window_width - width; //similarly, texture's right side needs to be inline with the
@@ -88,16 +89,6 @@ void scroll_bar::init(int* x_scroll_in, int* y_scroll_in, const int* window_widt
 	init_corner_texture();
 
 }
-void scroll_bar::print(ostream& outs){
-	if( x_scroll == NULL || y_scroll == NULL || window_width == NULL || window_height == NULL || renderer == NULL) {
-		cout << "ERROR! One of the scrollbar's pointers to sdl_help fields is NULL."
-		     << "Exiting scroll_bar::print() early " << endl;
-		delete x_scroll; delete y_scroll;
-		delete window_width; delete window_height;
-		return;//get outta here
-	}
-
-}
 
 void scroll_bar::draw_me(){
 	SDL_Rect dest = {xloc,yloc,width,height};
@@ -106,8 +97,7 @@ void scroll_bar::draw_me(){
 
 void scroll_bar::update(){
 	if(x_scroll == NULL || y_scroll == NULL || window_height == NULL || window_width == NULL){
-		cout << "Error in scroll_bar::update(), x_scroll, y_scroll,"
-		     << " window_width, or window_height pointers are null" << endl;
+		error_logger.push_error("Error in scroll_bar::update(), x_scroll, y_scroll, window_width, or window_height pointers are null");
 		return;
 	}
 	if(width > height){//logic for horizontal bar
@@ -129,7 +119,6 @@ void scroll_bar::update(){
 			yloc = (*window_height) - height;
 		}
 	}
-	cout << xloc << ":" <<  yloc << endl;
 }
 
 bool scroll_bar::in(int click_x,int click_y) const{
@@ -137,7 +126,7 @@ bool scroll_bar::in(int click_x,int click_y) const{
 	    (click_y > yloc && click_y < yloc+height) ) return true;
 	return false;
 }
-bool scroll_bar::clicked(ostream& outs, int click_x, int click_y) const{
+bool scroll_bar::clicked(int click_x, int click_y) const{
 	bool was_clicked = false;
 	if( in(click_x,click_y)) was_clicked = true;
 	return was_clicked;

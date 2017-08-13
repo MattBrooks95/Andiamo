@@ -4,6 +4,10 @@
 #include<iostream>
 #include<SDL2/SDL.h>
 #include<SDL2/SDL_image.h>
+
+#include "logger.h"
+extern logger error_logger;
+
 /*! \brief scroll_bar contains the internal bookkeeping necessary for creating scroll bars, and also 
  *references to the pertinent fields of the sdl_help object that contains these objects */
 /*! it's pretty cool. The sdl_help() constructor calls this class's init() function and sets it up with
@@ -36,11 +40,6 @@ class scroll_bar{
 	 *\param image_p_in string that contains the desired image name */ 
 	void init(int* x_scroll_in, int* y_scroll_in, const int* window_width_in,
 		  const int* window_height_in,SDL_Renderer* renderer_in, std::string image_p_in);
-	/*! print() prints, to the given stream, this scroll bar's personal info, like location and image 
-         *path, but also prints the values of that its pointer fields point to, to make sure they line up
-         *with the sdl_help object's fields (they should point to the same location in memory
-	 *\param outs is the stream the output messages should be sent to. */
-	void print(std::ostream& outs);
 
 	//! draw_me uses it's own information to draw itself to the renderer used by the sdl_help object
 	void draw_me();
@@ -51,11 +50,12 @@ class scroll_bar{
 
 	/*! this member should update the scroll bar's location*/
 	void update();
+
 	//! boolean helper for clicked. Returns true if a clicks x&y values fall within the texture's area
 	bool in(int click_x, int click_y) const;
+
 	//! clicked returns true if the call to in() returns true, and calls functions that do things
-	/*! prints a cute message for now, scrolls the screen later */
-	bool clicked(std::ostream& outs, int click_x, int click_y) const;
+	bool clicked(int click_x, int click_y) const;
 
 	//################## GETTERS AND SETTERS ############################
 	//! returns true if scroll bar is being moved, and false otherwise

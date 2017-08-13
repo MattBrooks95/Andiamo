@@ -162,7 +162,6 @@ void text_box_button::force_corner_loc(int xloc_in, int yloc_in){
 */
 //###################### TRANSMISSION COEFFICIENTS FILE BUTTON ##################################
 int TC_input_file_button::work(input_maker& io_handler){
-	cout << "Hi, I'm Paul! (from TC_input_file_button.work() )" << endl;
 	io_handler.TC_input_file_name = my_text_box.text;//set up the TC In put var in the
 							 //input maker
 	if(my_text_box.text.size() == 0 || my_text_box.text == " "){
@@ -190,9 +189,8 @@ int TC_input_file_button::work(input_maker& io_handler){
 //######################## CREATED HF FILE OUTPUT BUTTON ########################################
 
 int output_file_button::work(input_maker& io_handler){
-	cout << "Hi, I'm Paul! (from output_file_button.work() )" << endl;
 	if(my_text_box.text.size() == 0 || my_text_box.text == " "){
-		cout << "Output file name was not supplied, using the default \"output.txt\"." << endl;
+		error_logger.push_error("Output file name was not supplied, using the default \"output.txt\".");
 		return -1;
 	} else {
 		io_handler.output_file_name = my_text_box.text;//set up the output file name var
@@ -232,13 +230,13 @@ void graphing_button::draw_me(){
 
 void graphing_button::print_me(){
 	text_box_button::print_me();
-	cout << "CHECK SURFACE: " << checked_surface << " CHECK TEXTURE: " << checked_texture << endl;
-	cout << "SHOW CHECK BOOLEAN: " << show_check_version << endl;
+	error_logger.push_msg("CHECK SURFACE: "+to_string(size_t(checked_surface))+" CHECK TEXTURE: "
+                              +to_string(size_t(checked_texture)));
+	error_logger.push_msg("SHOW CHECK BOOLEAN: "+to_string(show_check_version));
 	check_box.print_me();
 }
 
 int graphing_button::work(input_maker& io_handler){
-	cout << "Hi, I'm Paul! (from graphing_button.work() )" << endl;
 	return 0;
 }
 
@@ -246,11 +244,11 @@ bool graphing_button::handle_click(SDL_Event& mouse_event){
 	if( check_box.clicked(mouse_event) ){//check or uncheck the check box
 		//if already showing check, hide it
 		if(show_check_version){
-			//cout << "Toggling show_check to false" << endl;
+			error_logger.push_msg("Toggling show_check to false");
 			show_check_version = false;
 
 		} else {//if not already showing check, show it
-			//cout << "Toggling show_check to true" << endl;
+			error_logger.push_msg("Toggling show_check to true");
 			show_check_version = true;
 		}
 		return true;
@@ -272,7 +270,6 @@ void graphing_button::init(const std::string& image_name_in,const std::string& i
 
 	show_check_version = false;
 
-	cout << "MY XLOC YLOC: " << xloc << ":" << yloc << endl;
 	//set up the active area for the check box
 	check_box.xloc = xloc + 48;
 	check_box.yloc = yloc + 32;
@@ -282,9 +279,9 @@ void graphing_button::init(const std::string& image_name_in,const std::string& i
 
 	//set up the checked version texture
 	checked_surface = IMG_Load( (image_p_in+"graphing_options_checked.png").c_str() );
-	if(checked_surface == NULL) cout << SDL_GetError() << endl;
+	if(checked_surface == NULL) error_logger.push_error(string(SDL_GetError()));
 	checked_texture = SDL_CreateTextureFromSurface(sdl_helper->renderer,checked_surface);
-	if(checked_texture == NULL) cout << SDL_GetError() << endl;
+	if(checked_texture == NULL) error_logger.push_error(string(SDL_GetError()));
 }
 
 //###############################################################################################

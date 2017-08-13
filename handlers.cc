@@ -9,8 +9,6 @@
 
 using namespace std;
 
-bool handle_test = true;
-
 
 
 int filter_mouse_move(void* userdata, SDL_Event* big_event){
@@ -33,8 +31,7 @@ void scrolling_mini_loop(SDL_Event& big_event, sdl_help& sdl_help,button_manager
 
 		switch(big_event.type){
 			case SDL_MOUSEBUTTONDOWN:
-				cout << "Error, MOUSEBUTTONDOWN not properly filtered in "
-				     << " scrolling_mini_loop" << endl;
+				error_logger.push_error("Error, MOUSEBUTTONDOWN not properly filtered in scrolling_mini_loop");
 				break;
 			case SDL_MOUSEBUTTONUP:
 				switch(big_event.button.button){
@@ -84,7 +81,7 @@ void scrolling_mini_loop(SDL_Event& big_event, sdl_help& sdl_help,button_manager
 			case 1776:
 				break;
 			default:
-				cout << "Error. Didn't hit a case in scrolling event sub-loop." << endl;
+				error_logger.push_error("Error. Didn't hit a case in scrolling event sub-loop.");
 				exit = true;
 		}//end daddy switch statement
 		SDL_Delay(30);
@@ -108,29 +105,27 @@ void handle_mouseb_down( SDL_Event& big_event, sdl_help& sdl_help,button_manager
 
 			//result of scroll_clicked 'boolean' function stored here, so function is only
 			//called once
-			which_bar = sdl_help.scroll_clicked(cout,big_event.button.x,big_event.button.y);
+			which_bar = sdl_help.scroll_clicked(big_event.button.x,big_event.button.y);
 
 			if( which_bar == 1){
 				//a return value of 1 means that the vertical scroll bar was clicked
-				cout << "Clicked on the vertical bar!" << endl; //make sure vals line up
+				error_logger.push_msg("Clicked on the vertical bar!"); //make sure vals line up
 				if(sdl_help.get_v_bar().is_scrolling() == false){
 					sdl_help.get_v_bar().scroll_mode_change(true);
 					SDL_FlushEvents(0,1000);//is this necessary?
 				} else {//should never hit this branch
-					cout << "Error! V scroll bar already in scroll mode upon click!"
-					     << endl;
+					error_logger.push_error("Error! V scroll bar already in scroll mode upon click!");
 				}
 
 			} else if( which_bar == 2){
 				//a return value of 2 means that horizontal scroll bar was clicked
-				cout << "Clicked on the horizontal bar!" << endl;//make sure vals line up
+				error_logger.push_msg("Clicked on the horizontal bar!");//make sure vals line up
 				if(sdl_help.get_h_bar().is_scrolling() == false){
 					sdl_help.get_h_bar().scroll_mode_change(true);
 					SDL_FlushEvents(0,1000);//is this necessary?
 				} else { //should likewise never hit this branch
 
-					cout << "Error! H scroll bar already in scroll mode upon click!"
-					     << endl;
+					error_logger.push_error("Error! H scroll bar already in scroll mode upon click!");
 				}
 
 			} else if( which_bar == 0){//no scroll bar was clicked, look at other things
@@ -143,19 +138,17 @@ void handle_mouseb_down( SDL_Event& big_event, sdl_help& sdl_help,button_manager
 				}
 
 			} else {//if which_bar is still -1, something is wrong
-				cout << "Error in left mouse button case, sdl_help::scroll_clicked "
-				     << "has a bad value." << endl;
+				error_logger.push_error("Error in left mouse button case, sdl_help::scroll_clicked has a bad value.");
 			}
 			break;
 
 		case SDL_BUTTON_RIGHT: //handle right clicks
-			if(handle_test) cout << "\nRight clicked at location= "
-			     << big_event.button.x << ":" << big_event.button.y << endl;
+			error_logger.push_msg("\nRight clicked at location = "+to_string(big_event.button.x)+":"+to_string(big_event.button.y));
 			break;
 
 		case SDL_BUTTON_MIDDLE: //handle mousewheel clicks
-			if(handle_test) cout << "\nMousewheel clicked at location= "
-			     << big_event.button.x << ": " << big_event.button.y << endl;
+			error_logger.push_msg("\nMousewheel clicked at location = "+to_string(big_event.button.x)+": "+
+			to_string(big_event.button.y));
 		default:
 			break;
 	}
@@ -187,30 +180,25 @@ void handle_mouse_wheel(const SDL_Event& big_event, sdl_help& sdl_help){
 void handle_key_down(const SDL_Event& big_event, sdl_help& sdl_help){
 	switch(big_event.key.keysym.sym){
 		case SDLK_DOWN: //literal down arrow key
-			cout << SDL_GetKeyName(SDLK_DOWN) << " pressed down" << endl;
 			sdl_help.update_scroll(0,-30); //scroll down
 			break;
 
 		case SDLK_UP:
-			cout << SDL_GetKeyName(SDLK_UP) << " pressed down" << endl;
 			sdl_help.update_scroll(0,30); //scroll down
 			break;
 
 		case SDLK_RIGHT:
-			cout << SDL_GetKeyName(SDLK_RIGHT) << " pressed down" << endl;
 			sdl_help.update_scroll(-60,0); //scroll down
 			break;
 
 		case SDLK_LEFT:
-			cout << SDL_GetKeyName(SDLK_LEFT) << " pressed down" << endl;
 			sdl_help.update_scroll(60,0); //scroll down
 			break; 
 		case SDLK_SPACE:
-			cout << "Spacebar pressed, resetting scroll values." << endl;
 			sdl_help.reset_scroll();
 			break;
 		default:
-			if(handle_test) cout << "Unknown key pressed down." << endl;
+			error_logger.push_msg("Unknown key pressed down.");
 			break;
 	}//end switch statement
 
@@ -219,25 +207,20 @@ void handle_key_down(const SDL_Event& big_event, sdl_help& sdl_help){
 void handle_key_up(const SDL_Event& big_event, const sdl_help& sdl_help){
 	switch(big_event.key.keysym.sym){
 		case SDLK_RIGHT:
-			//cout << SDL_GetKeyName(SDLK_RIGHT) << " released" << endl;
 			break;
 
 		case SDLK_LEFT:
-			//cout << SDL_GetKeyName(SDLK_LEFT) << " released" << endl;
 			break;
 
 		case SDLK_DOWN:
-			//cout << SDL_GetKeyName(SDLK_DOWN) << " released." << endl;
 			break;
 
 		case SDLK_UP:
-			//cout << SDL_GetKeyName(SDLK_UP) << " released." << endl;
 			break;
 		case SDLK_SPACE:
-			cout << "Spacebar released." << endl;
 			break;
 		default:
-			if(handle_test) cout << "Unknown key released. " << endl;
+			error_logger.push_msg("Unknown key released. ");
 			break;
 	}//end switch statement
 	SDL_FlushEvent(SDL_MOUSEBUTTONUP);

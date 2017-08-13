@@ -1,7 +1,9 @@
 //! \file this file implements the class described in button_manager.h
 
 #include "button_manager.h"
+
 using namespace std;
+
 
 
 button_manager::button_manager(sdl_help* sdl_helper_in){
@@ -23,24 +25,16 @@ button_manager::button_manager(sdl_help* sdl_helper_in){
 }
 
 button_manager::~button_manager(){
-	//if(button_tray_surf == NULL || button_tray_texture == NULL){
-	//	cout << "WEIRD, DESTRUCTOR HAS BEEN CALLED TWICE" << endl;
-	//	char junk;
-	//	cin >> junk;
 
-	//} //else {
-		//cout << "B_MANAGER'S DESTRUCTOR RUNNING" << endl;
-	//}
 	SDL_FreeSurface(button_tray_surf);
 	SDL_DestroyTexture(button_tray_texture);
 }
 
 void button_manager::init_tray(){
-	//cout << (button_image_p+tray_image_name).c_str() << endl; 
 	button_tray_surf = IMG_Load( (button_image_p+tray_image_name).c_str() );
-	if(button_tray_surf == NULL) cout << SDL_GetError() << endl;
+	if(button_tray_surf == NULL) error_logger.push_error(string(SDL_GetError()));
 	button_tray_texture = SDL_CreateTextureFromSurface(sdl_helper->renderer,button_tray_surf);
-	if(button_tray_texture == NULL) cout << SDL_GetError() << endl;
+	if(button_tray_texture == NULL) error_logger.push_error(string(SDL_GetError()));
 
 	//use query texture to get the texture's height and width
 	SDL_QueryTexture(button_tray_texture,NULL,NULL,&tray_rect.w,&tray_rect.h);
@@ -108,20 +102,20 @@ void button_manager::init_buttons(){
 
 }
 void button_manager::print_buttons(){
-	cout << "####################### PRINTING BUTTONS ############################" << endl;
+	error_logger.push_msg("####################### PRINTING BUTTONS ############################");
 	default_test.print_me();
-	cout << endl;
+
 	exit_dialogue.print_me();
-	cout << endl;
+
 	output_fname.print_me();
-	cout << endl;
+
 	t_coefficients.print_me();
-	cout << endl;
+
 	lets_go.print_me();
-	cout << endl;
+
 	//graphing_options.print_me();
-	//cout << endl;
-	cout << "####################### DONE PRINTING BUTTONS #######################" << endl;
+
+	error_logger.push_msg("####################### DONE PRINTING BUTTONS #######################");
 }
 
 void button_manager::draw_tray(){
@@ -141,7 +135,6 @@ void button_manager::draw_buttons(){
 }
 
 void button_manager::text_box_loop(text_box_button* current_button,SDL_Event& event){
-	//cout << "Text box was clicked." << endl;
 
 
 	SDL_StartTextInput();//turn on the text input background functions
@@ -155,7 +148,6 @@ void button_manager::text_box_loop(text_box_button* current_button,SDL_Event& ev
 	while(!done){
 		//if(c >= 10) return;
 		//do stuff
-		//cout << " in text input mini loop " << c << endl;
 
 		if( !SDL_PollEvent(&event) ){
 			event.type = 1776; //dummy event to stop it from printing default message every frame
@@ -164,15 +156,14 @@ void button_manager::text_box_loop(text_box_button* current_button,SDL_Event& ev
 
 		switch(event.type){
 		  case SDL_MOUSEMOTION:
-			cout << "Mouse motion for some reason.... " << endl;
 			break;
 
 		  case SDL_MOUSEBUTTONDOWN:
 			//if the click was within the text box, move the cursor maybe
 		  	if( current_button->my_text_box.was_clicked(event) ){
-				//cout << "Text box click at " << event.button.x << ":" << event.button.y << endl;
+				error_logger.push_msg("Text box click at "+to_string(event.button.x)+":"+to_string(event.button.y));
 		  	} else { //elsewise exit text input mode, user clicked off the text box
-		  		//cout << "Clicked outside of the text box, exiting mini-loop" << endl;
+		  		error_logger.push_msg("Clicked outside of the text box, exiting mini-loop");
 				SDL_PushEvent(&event);//doing this allows the user to 'hop' to another text box
 						      //directly from editing another box
 				done = true;
@@ -180,7 +171,6 @@ void button_manager::text_box_loop(text_box_button* current_button,SDL_Event& ev
 		  	break;
 
 		  case SDL_TEXTINPUT:
-		  	//cout << " I guess this was an SDL_TEXTINPUT event... " << endl;
 			pass_me = event.text.text;
 			current_button->my_text_box.update_text(pass_me);
 			text_was_changed = true;
@@ -190,7 +180,6 @@ void button_manager::text_box_loop(text_box_button* current_button,SDL_Event& ev
 
 		  case SDL_KEYDOWN:
 			
-		  	//cout << " Key pressed: " << event.key.keysym.sym << endl;
 			if(event.key.keysym.sym == SDLK_BACKSPACE){
 				//they hit backspace, so delete the end character if it is non-empty
 				current_button->my_text_box.back_space();
@@ -210,7 +199,6 @@ void button_manager::text_box_loop(text_box_button* current_button,SDL_Event& ev
 			SDL_FlushEvent(SDL_KEYDOWN); //prevent event flooding
 		  	break;
 		  case SDL_QUIT:
-			//cout << "exiting from text entry" << endl;
 			SDL_PushEvent(&event);//puts another sdl quit in the event queue, so program
 					      //can be terminated while in "text entry" mode
 			done = true;			
@@ -227,7 +215,6 @@ void button_manager::text_box_loop(text_box_button* current_button,SDL_Event& ev
 		//if something actually changed, re-draw
 		//elsewise don't do it to try and save time
 		if(text_was_changed){
-			//cout << "HAVING TO REDRAW" << endl;
 			//update picture
 			sdl_helper->draw_tiles();
 			sdl_helper->draw_sbars();
@@ -249,7 +236,7 @@ bool button_manager::click_handling(SDL_Event& mouse_event){
 			 	    //no need to check all buttons if one has already been clicked
 			 	    //shouldn't be possible to click two at the same time
 
-	cout << "HANDLING BUTTON CLICKS" << endl;
+	error_logger.push_msg("HANDLING BUTTON CLICKS");
 	if(!done_something && default_test.shown){
 		if( default_test.handle_click(mouse_event)){
 			done_something = true;
@@ -298,7 +285,7 @@ bool button_manager::click_handling(SDL_Event& mouse_event){
 			done_something = true;
 		}
 	}*/
-	cout << "DONE HANDLING BUTTON CLICKS" << endl;
+	error_logger.push_msg("DONE HANDLING BUTTON CLICKS");
 	return done_something;//let main know if it should check tiles or not
 }
 
@@ -333,9 +320,9 @@ int button_manager::clean_up(){
 void button_manager::bad_tile_input_warnings(vector<string>& bad_input_list){
 	//sdl_helper
 	SDL_Surface* bad_input_msg_surface = IMG_Load("Assets/Images/bad_input_message.png");
-	if(bad_input_msg_surface == NULL) cout << SDL_GetError() << endl;
+	if(bad_input_msg_surface == NULL) error_logger.push_error(string(SDL_GetError()));
 	SDL_Texture* bad_input_msg_texture = SDL_CreateTextureFromSurface(sdl_helper->renderer,bad_input_msg_surface);
-	if(bad_input_msg_surface == NULL) cout << SDL_GetError() << endl;
+	if(bad_input_msg_surface == NULL) error_logger.push_error(string(SDL_GetError()));
 	
 	SDL_Rect msg_dest;//calculate where to put the error message
 	SDL_QueryTexture(bad_input_msg_texture,NULL,NULL,&msg_dest.w,&msg_dest.h);
@@ -370,10 +357,10 @@ void button_manager::clean_up_warnings(bool bad_output_fname,bool bad_tc_input_f
 	if(bad_output_fname){
 
 		output_fname_error_surf = IMG_Load("Assets/Images/Buttons/output_fname_err.png");
-		if(output_fname_error_surf == NULL) cout << SDL_GetError() << endl;
+		if(output_fname_error_surf == NULL) error_logger.push_error(string(SDL_GetError()));
 
 		output_fname_error_texture = SDL_CreateTextureFromSurface(sdl_helper->renderer,output_fname_error_surf);
-		if(output_fname_error_texture == NULL) cout << SDL_GetError() << endl;
+		if(output_fname_error_texture == NULL) error_logger.push_error(string(SDL_GetError()));
 
 		//plan where to draw image
 		SDL_Rect dest = {0,0,0,0};
