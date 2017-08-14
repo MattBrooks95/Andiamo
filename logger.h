@@ -21,6 +21,12 @@ class logger{
 	 *This function also does some book keeping, like the # of error messages pushed */
 	void push_error(std::string push_me);
 
+	//! this is an overload of logger::push_error
+	/*! it taks two strings as arguments, to allow long messages to be split up into parts for readability
+	 * and brevity */
+	void push_error(std::string push_1,std::string push_2);
+
+
 	//! This function accumulates messages about what happens during run time
 	/* if verbose mode is turned on by the -v argument, these are accumulated and printed.
 	 *if that argument is not present, this does nothing */

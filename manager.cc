@@ -481,6 +481,154 @@ void manager::print_all(){
 	error_logger.push_msg("###############################################################################");
 }
 
+void manager::check_locks(){
+
+	iench_locking();
+	ilv1_locking();
+	icntrl4_locking();
+
+}
+
+void manager::iench_locking(){
+  try{
+	//do locking that pertains to IENCH
+	regex iench_good("\\s*7\\s*");
+	if(!regex_match(fields.at("line_2").at("IENCH").temp_input,iench_good)){
+
+		fields.at("line_4A").at("APAR").is_locked  = true;
+		fields.at("line_4A").at("ZPAR").is_locked  = true;
+		fields.at("line_4A").at("QIN").is_locked   = true;
+		fields.at("line_4A").at("FJPAR").is_locked = true;
+		fields.at("line_4A").at("FPRPAR").is_locked= true;
+		fields.at("line_4A").at("NLIN").is_locked  = true;
+		fields.at("line_4B").at("TIN").is_locked   = true;
+
+	} else {//do the unlocking
+
+		fields.at("line_4A").at("APAR").is_locked  = false;
+		fields.at("line_4A").at("ZPAR").is_locked  = false;
+		fields.at("line_4A").at("QIN").is_locked   = false;
+		fields.at("line_4A").at("FJPAR").is_locked = false;
+		fields.at("line_4A").at("FPRPAR").is_locked= false;
+		fields.at("line_4A").at("NLIN").is_locked  = false;
+		fields.at("line_4B").at("TIN").is_locked   = false;
+	}
+  } catch (out_of_range& map_error){
+	error_logger.push_error("From: manager::iench_locking| Critical tiles associated with IENCH were not found,",
+				"please check the tile and HF config files.");
+  }
+
+
+}
+
+void manager::ilv1_locking(){
+  try{
+	//do locking that pertains to ILV1
+	regex ilv1_good("\\s*6\\s*");
+	if(!regex_match(fields.at("line_5").at("ILV1").temp_input,ilv1_good)){
+		fields.at("line_5A").at("ACON").is_locked = true;
+		fields.at("line_5A").at("GAM").is_locked  = true;
+		fields.at("line_5A").at("FCON").is_locked = true;
+		fields.at("line_5A").at("C0").is_locked   = true;
+		fields.at("line_5A").at("C10").is_locked  = true;
+		fields.at("line_5A").at("C11").is_locked  = true;
+		fields.at("line_5A").at("C12").is_locked  = true;
+		fields.at("line_5A").at("C3").is_locked   = true;
+
+	} else { //do the unlocking
+
+		fields.at("line_5A").at("ACON").is_locked = false;
+		fields.at("line_5A").at("GAM").is_locked  = false;
+		fields.at("line_5A").at("FCON").is_locked = false;
+		fields.at("line_5A").at("C0").is_locked   = false;
+		fields.at("line_5A").at("C10").is_locked  = false;
+		fields.at("line_5A").at("C11").is_locked  = false;
+		fields.at("line_5A").at("C12").is_locked  = false;
+		fields.at("line_5A").at("C3").is_locked   = false;
+	}
+
+  } catch (out_of_range& map_error){
+	error_logger.push_error("From: manager::iench_locking| One of the critical tiles associated with ILV1 were not found,",
+				"please check the tile and HF config files.");
+
+  }
+
+}
+
+void manager::icntrl4_locking(){
+  try{
+	regex icntrl4_good("\\s*1\\s*");
+
+	if( !regex_match(fields.at("line_6").at("ICNTRL4").temp_input,icntrl4_good) ){
+		fields.at("line_8").at("ICH4").is_locked  = true;
+		fields.at("line_8").at("NCH4").is_locked  = true;
+
+		fields.at("line_9").at("ECH4").is_locked  = true;
+		fields.at("line_9").at("FJCH4").is_locked = true;
+		fields.at("line_9").at("IPAR4").is_locked = true;
+		fields.at("line_9").at("FIS4").is_locked  = true;
+
+
+	} else { //do the unlocking
+
+		fields.at("line_8").at("ICH4").is_locked  = false;
+		fields.at("line_8").at("NCH4").is_locked  = false;
+
+		fields.at("line_9").at("ECH4").is_locked  = false;
+		fields.at("line_9").at("FJCH4").is_locked = false;
+		fields.at("line_9").at("IPAR4").is_locked = false;
+		fields.at("line_9").at("FIS4").is_locked  = false;
+
+	}
+
+
+  } catch( out_of_range& map_error){
+
+
+  }
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

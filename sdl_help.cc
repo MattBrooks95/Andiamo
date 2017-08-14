@@ -140,7 +140,7 @@ void sdl_help::present(){
 //draws all of the fields. It makes sure to draw field's help dialog boxes on top of themselves or other fields
 void sdl_help::draw_tiles(){
 	SDL_RenderClear(renderer);//clear off the renderer, to prepare to re-draw
-
+	tile_bag.check_locks();
 	//draw the background image to the screen
 	SDL_RenderCopy(renderer,bg_texture,NULL,NULL);
 
@@ -261,10 +261,10 @@ void sdl_help::reset_scroll(){
 	horiz_bar.update();
 }
 
-int sdl_help::scroll_clicked(ostream& outs,int click_x, int click_y) const{
-	if(vert_bar.clicked(outs,click_x,click_y)) return 1;//call vbar's click detection member
+int sdl_help::scroll_clicked(int click_x, int click_y) const{
+	if(vert_bar.clicked(click_x,click_y)) return 1;//call vbar's click detection member
 							    //1 means vertical bar was clicked
-	if(horiz_bar.clicked(outs,click_x,click_y)) return 2;//call hbar's click detection member
+	if(horiz_bar.clicked(click_x,click_y)) return 2;//call hbar's click detection member
 							     //2 means horizontal bar was clicked
 	return 0;   //if we make it to this line return 'false' 0 (nothing was clicked)
 		     //this returning false allows handle_mouseb_down to check the tiles
@@ -299,7 +299,9 @@ void sdl_help::click_detection(ostream& outs,SDL_Event& event,button_manager* b_
 				if(params_it->second.text_box_clicked(click_x,click_y) ){
 					//if the click fell within the text box
 					//go into text entry loop
-					text_box_mini_loop(outs,event,b_manager,params_it->second);
+					if(!params_it->second.is_locked){
+						text_box_mini_loop(outs,event,b_manager,params_it->second);
+					}
 				} else {
 					//if the click was not on the text box, enact clicked()
 				 	params_it->second.clicked(event,click_x,click_y);

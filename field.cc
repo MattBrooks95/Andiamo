@@ -46,6 +46,14 @@ field::field(string tile_name_in,string display_name_in,string image_name_in, in
 
 	sdl_help_renderer = NULL;
 
+	//LOCKING VARIABLES
+	lock_surface = NULL;
+	lock_texture = NULL;
+	is_locked = false;
+
+
+
+
 	//this will allow the field to change values in the input manager's vectors
 	//they will be set up by give_defaults. Note that it's likely that any one tile will only have one
 	//of these not be null
@@ -88,6 +96,16 @@ void field::graphics_init(SDL_Renderer* sdl_help_renderer_in,string image_p_in,
 		string error = SDL_GetError();
 		error_logger.push_error("Error in field.cc's graphics init() function: "+error);
 	}
+
+
+	lock_surface = IMG_Load((image_p+"lock.png").c_str());
+	if(lock_surface == NULL) error_logger.push_error(string(SDL_GetError()));
+	lock_texture = SDL_CreateTextureFromSurface(sdl_help_renderer,lock_surface);
+	if(lock_texture == NULL) error_logger.push_error(string(SDL_GetError()));
+
+
+
+
 
 	text_init();
 
@@ -182,11 +200,6 @@ void field::text_init(){
 	}
 }
 void field::draw_me(){
-	if(tile_name == "background"){ //if this is the background field, it gets drawn with no text
-		SDL_RenderCopy(sdl_help_renderer,my_tex,NULL,NULL); //and covers the entire environment
-		return;//get out before any unecessary things are drawn
-	}
-	//normal tiles are drawn below
 
 	//this part draws the "normal box"
 	if(!help_mode || my_help_surf == NULL || my_help_tex == NULL){
@@ -209,8 +222,6 @@ void field::draw_me(){
 		SDL_RenderCopy(sdl_help_renderer,text_box.box_tex,&text_box_src,&text_box_dest);
 
 
-		//text was too big in cases, now text won't show at all. I'm pretty sure it's a texture source_rect issue
-		//but who knows... - fixed, see below comment
 
 		//SDL_Rect text_box_text_src = {0,0,0,0}; //become -> text_dims in field class
 		//TTF_SizeText(sdl_font,temp_input.c_str(),&text_dims.w,&text_dims.h);
@@ -224,7 +235,16 @@ void field::draw_me(){
 		//###########################################################################################
 
 
-	} else { //this part draws the "help box" in its place
+	}
+
+	//handle the lock
+	if(is_locked){
+		SDL_Rect lock_dest = {xloc+(*sdl_xscroll)+size.width-15,yloc+(*sdl_yscroll)+text_box.y_offset,15,25};
+		SDL_RenderCopy(sdl_help_renderer,lock_texture,NULL,&lock_dest);
+	}
+
+
+	if( help_mode && my_help_surf != NULL && my_help_tex != NULL){ //this part draws the "help box" in its place
 
 		//draw normal box boundaries - note that this is implemented in both if cases here, because
 		//later we may want the help box to have a different background color or image
@@ -505,6 +525,10 @@ field::~field(){
 
 	SDL_FreeSurface(my_help_surf);
 	SDL_DestroyTexture(my_help_tex);
+
+	SDL_FreeSurface(lock_surface);
+	SDL_DestroyTexture(lock_texture);
+
 }
 
 
@@ -566,9 +590,11 @@ sdl_text_box::sdl_text_box(){
 
 sdl_text_box::~sdl_text_box(){
 	SDL_FreeSurface(box_surf);
-	SDL_FreeSurface(text_surf);
 	SDL_DestroyTexture(box_tex);
+
+	SDL_FreeSurface(text_surf);
 	SDL_DestroyTexture(text_tex);
+
 	SDL_FreeSurface(cursor_surface);
 	SDL_DestroyTexture(cursor_texture);
 }

@@ -203,7 +203,7 @@ c Variable name in HF: TIN
 c comma-separated list of transmission coefficients
 c ordered in l of the incident particle
 c at the incident energy
-1200x50
+800x50
 andy_tile.png
 andy
 line_5#############################################################################################################

@@ -214,6 +214,9 @@ class field{
 	bool is_red;//!< is this tile in error mode or not
 	
 
+	bool is_locked;//!< allows locking of the tile, for situation in which they are redundant or not necessary
+
+
 	int xloc; //!< the field keeps track of the xcoordinate of its upper right corner
 	int yloc; //!< the field keeps track of the ycoordinate of its upper right corner
   private:
@@ -228,6 +231,10 @@ class field{
 	TTF_Font* sdl_font;//!< this pointer allows field objects access to the font setting file
 	SDL_Renderer* sdl_help_renderer;//!< a pointer to sdl_help's rendering context
 	//########################################################################################################
+
+	SDL_Surface* lock_surface;//!< save the sdl surface for the lock icon
+	SDL_Texture* lock_texture;//!< save the sdl texture for the lock icon
+
 
 	SDL_Surface* my_text_surf;//!< saves the surface for the tile name text, so that it isn't recreated every frame
 	SDL_Texture* my_text_tex;//!< saves the texture for the tile name text, so that it isn't recreated every frame

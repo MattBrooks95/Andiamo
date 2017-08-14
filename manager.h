@@ -79,6 +79,19 @@ class manager{
 	/* \param outs is the output stream that will be printed to */
 	void print_all();
 
+	//! this function analyzes some parameter tiles, to implement the control logic of selector variables
+	void check_locks();
+
+	//! helper function for check_locks()
+	void iench_locking();
+
+	//! helper function for check_locks()
+	void ilv1_locking();
+
+	//! helper function for check_locks()
+	void icntrl4_locking();
+
+
 	//! This member updates the window's dimension values win_w and win_h
 	/*! This should usually only be called from a member of the sdl_help class,
 	 *probably whenever the user resizes the screen, and at startup of Andiamo 

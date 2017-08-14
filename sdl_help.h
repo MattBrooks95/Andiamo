@@ -113,11 +113,10 @@ class sdl_help{
 
 	//! this member calls the scroll bars's scroll_bar::clicked() function (click detection)
 	/*! this doesn't do any logic besides return boolean values from the scroll bars's clicked member
-	 *\param outs is the stream that messages should be sent to
 	 *\param click_x is the xcoord of the mouse click
 	 *\param click_y is the ycoord of the mouse click
 	 *\return returns true if a scroll bar was clicked, and false elsewise */
-	int scroll_clicked(std::ostream& outs, int click_x, int click_y) const;
+	int scroll_clicked(int click_x, int click_y) const;
 	/**********************************************************************************************/
 
 	//! This member prints the sizes of the three important size variables: area, window, and display

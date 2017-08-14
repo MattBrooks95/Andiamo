@@ -51,6 +51,15 @@ void logger::push_error(std::string push_me){
 	error_msg_num++;//increment the error counter
 
 }
+
+void logger::push_error(string push_1,string push_2){
+	errors_vector.push_back(push_1);
+	errors_vector.push_back(push_2);
+	error_msg_num++;//the two strings are likely describing the same error, so only increment once
+}
+
+
+
 void logger::push_msg(std::string push_me){
 	if(!verbose) return;//do nothing if we are not in verbose mode
 	message_vector.push_back(push_me);//if we are in verbose mode, accumulate this message
