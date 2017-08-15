@@ -125,6 +125,10 @@ class field{
 	/*! this helper will also update the text's surface dimensions, to be used when the text is drawn to the screen */
 	void init_temp_input(std::string data);
 
+	//! this function takes the file name of a different tile background in the images folder, and uses it instead
+	/*! The tiles that have logical control over other parameters (cause locking), will be made purple
+	 *to indicate that they are the reason some tiles are unavailable.*/
+	void change_tile_background(std::string image_name);
 
 
 	//! this function copies the temp value that was likely entered by the user into the output vectors

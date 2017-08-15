@@ -91,6 +91,13 @@ class manager{
 	//! helper function for check_locks()
 	void icntrl4_locking();
 
+	//! helper function for check_locks()
+	void icntrl6_locking();
+	//! helper function for check_locks()
+	void inm1_locking();
+	//! helper function for check_locks()
+	void inm2_locking();
+
 
 	//! This member updates the window's dimension values win_w and win_h
 	/*! This should usually only be called from a member of the sdl_help class,

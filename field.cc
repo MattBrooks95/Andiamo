@@ -327,6 +327,23 @@ void field::init_temp_input(string data){
 	update_texture(); // update the texture
 }
 
+
+void field::change_tile_background(string image_name){
+	string full_path = image_p + image_name;
+	SDL_FreeSurface(my_surf);
+	SDL_DestroyTexture(my_tex);
+
+	my_surf = NULL;
+	my_tex = NULL;
+
+	my_surf = IMG_Load(full_path.c_str());
+	if(my_surf == NULL) error_logger.push_error(SDL_GetError());
+	my_tex = SDL_CreateTextureFromSurface(sdl_help_renderer,my_surf);
+	if(my_tex == NULL) error_logger.push_error(SDL_GetError());
+}
+
+
+
 void field::update_temp_input(SDL_Event& event){
 	
 	error_logger.push_msg("OLD LINE: "+temp_input);

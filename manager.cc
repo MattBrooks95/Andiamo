@@ -487,6 +487,10 @@ void manager::check_locks(){
 	ilv1_locking();
 	icntrl4_locking();
 
+	//##### ICNTRL6 has a lot going on ##############
+	icntrl6_locking();
+	inm1_locking();
+	inm2_locking();
 }
 
 void manager::iench_locking(){
@@ -494,6 +498,8 @@ void manager::iench_locking(){
 	//do locking that pertains to IENCH
 	regex iench_good("\\s*7\\s*");
 	if(!regex_match(fields.at("line_2").at("IENCH").temp_input,iench_good)){
+		//make IENCH's tile appear purple to indicate it is the reason some parameters are locked
+		fields.at("line_2").at("IENCH").change_tile_background("purple_andy_tile.png");
 
 		fields.at("line_4A").at("APAR").is_locked  = true;
 		fields.at("line_4A").at("ZPAR").is_locked  = true;
@@ -504,6 +510,8 @@ void manager::iench_locking(){
 		fields.at("line_4B").at("TIN").is_locked   = true;
 
 	} else {//do the unlocking
+		//switch the IENCH tile back to the default gray 
+		fields.at("line_2").at("IENCH").change_tile_background("andy_tile.png");
 
 		fields.at("line_4A").at("APAR").is_locked  = false;
 		fields.at("line_4A").at("ZPAR").is_locked  = false;
@@ -526,6 +534,9 @@ void manager::ilv1_locking(){
 	//do locking that pertains to ILV1
 	regex ilv1_good("\\s*6\\s*");
 	if(!regex_match(fields.at("line_5").at("ILV1").temp_input,ilv1_good)){
+		//make it purplish pink to indicate that it is locking other parameters
+		fields.at("line_5").at("ILV1").change_tile_background("purple_andy_tile.png");
+
 		fields.at("line_5A").at("ACON").is_locked = true;
 		fields.at("line_5A").at("GAM").is_locked  = true;
 		fields.at("line_5A").at("FCON").is_locked = true;
@@ -536,6 +547,8 @@ void manager::ilv1_locking(){
 		fields.at("line_5A").at("C3").is_locked   = true;
 
 	} else { //do the unlocking
+		//set it back to the default gray
+		fields.at("line_5").at("ILV1").change_tile_background("andy_tile.png");
 
 		fields.at("line_5A").at("ACON").is_locked = false;
 		fields.at("line_5A").at("GAM").is_locked  = false;
@@ -560,6 +573,9 @@ void manager::icntrl4_locking(){
 	regex icntrl4_good("\\s*1\\s*");
 
 	if( !regex_match(fields.at("line_6").at("ICNTRL4").temp_input,icntrl4_good) ){
+		//make it purple to indicate it is locking other variables
+		fields.at("line_6").at("ICNTRL4").change_tile_background("purple_andy_tile.png");
+
 		fields.at("line_8").at("ICH4").is_locked  = true;
 		fields.at("line_8").at("NCH4").is_locked  = true;
 
@@ -571,6 +587,9 @@ void manager::icntrl4_locking(){
 
 	} else { //do the unlocking
 
+		//make it gray again, as it is no longer locking
+		fields.at("line_6").at("ICNTRL4").change_tile_background("andy_tile.png");
+
 		fields.at("line_8").at("ICH4").is_locked  = false;
 		fields.at("line_8").at("NCH4").is_locked  = false;
 
@@ -581,44 +600,60 @@ void manager::icntrl4_locking(){
 
 	}
 
-
   } catch( out_of_range& map_error){
-
+	error_logger.push_error("From: manager::icntrl4_locking| One of the critical tiles associated with ICNTRL4",
+				" were not found, please check that tile and HF config files match."); 
 
   }
 
 }
 
 
+void manager::icntrl6_locking(){
+  try{
+	regex icntrl6_unlock("\\s*(1|2)\\s*");
+	//if icntrl6 is 1 or 2, unlock
+	if( regex_match(fields.at("line_6").at("ICNTRL6").temp_input,icntrl6_unlock) ){
+		//unlock params now that icntrl6 > 0
+		fields.at("line_6").at("ICNTRL6").change_tile_background("andy_tile.png");
 
+		fields.at("line_10").at("ITER").is_locked = false;
+		fields.at("line_10").at("INM1").is_locked = false;
+		fields.at("line_10").at("INM2").is_locked = false;
+	} else {
+		//elsewise, lock them
+		fields.at("line_6").at("ICNTRL6").change_tile_background("purple_andy_tile.png");
 
+		fields.at("line_10").at("ITER").is_locked = true;
+		fields.at("line_10").at("INM1").is_locked = true;
+		fields.at("line_10").at("INM2").is_locked = true;
+	}
 
+  } catch (out_of_range& map_error){
+	error_logger.push_error("From: manager::icntrl6_locking| One of the critical tiles associated with ICNTRL4",
+				" were not found, please check that tile and HF config files match.");
+  }
 
+}
 
+void manager::inm1_locking(){
+  try{
+	
 
+  } catch (out_of_range& map_error){
 
+  }
 
+}
 
+void manager::inm2_locking(){
+  try{
 
+  } catch (out_of_range& map_error){
 
+  }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+}
 
 
 

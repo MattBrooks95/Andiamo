@@ -101,7 +101,7 @@ R8 FIS4  = 1.0
 
 #line 10 - if ICNTRL6 > 0
 I4 ITER = nodef
-I4 INM1 = nodef
-I4 INM2 = nodef
+I4 INM1 = 0
+I4 INM2 = 0
 
 #line 11  - is this feasible to enter by hand
