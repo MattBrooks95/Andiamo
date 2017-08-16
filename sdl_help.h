@@ -89,6 +89,11 @@ class sdl_help{
 	void calc_corners_helper(const std::string line_in, std::map<std::string,field>& map_in,
 				 unsigned int& start_height,int row_limit);
 
+	//! this is an alternative helper that prints line 6 in the order they appear in the manual, instead of alphabetical
+	void calc_corners_ordered(const std::string line_in,std::map<std::string,field>& map_in,
+					 unsigned int& start_height,int row_limit,std::vector<std::string>& ordered);
+
+
 	//! This member changes this class's x_scroll and y_scroll values to the given parameters
 	/*! This is being called from the handlers.cc implementations most of the time.
          * \param x_scroll_in amount to increase(positive) or decrease(negative) horizontal

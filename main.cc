@@ -46,6 +46,7 @@ int main(int argc, char *argv[]){
   button_manager b_manager(&sdl_helper);
   b_manager.init_tray();
   b_manager.init_buttons();
+  b_manager.init_form_tray();
   //b_manager.print_buttons();
   //sdl_helper.get_mgr().print_all(cout);
 

@@ -465,10 +465,19 @@ void sdl_help::calc_corners(){
 	//but, I saved the line names as they were read in my manager::init(), so we can just walk that
 	//vector and ensure that lines are placed in the same order in which they were read
 	for(unsigned int c = 0; c < tile_bag.line_order.size();c++){
-		calc_corners_helper(tile_bag.line_order[c],tile_bag.fields.at(tile_bag.line_order[c]),
-				    row_height, row_limit);
+		if(tile_bag.line_order[c] == "line_6"){
+			//create a vector with the row parameter names in the order in which they should appear
+			vector<string> line_6_order = {"ICNTRL1","ICNTRL2","ICNTRL3","ICNTRL4","ICNTRL5","ICNTRL6","ICNTRL7",
+						       "ICNTRL8","ICNTRL9","ICNTRL10"};
+			//and pass it into the alternative calc_corners helper function
+			calc_corners_ordered(tile_bag.line_order[c],tile_bag.fields.at(tile_bag.line_order[c]),
+						    row_height, row_limit,line_6_order);
+		} else {
+			//this is the standard calc_corners helper function
+			calc_corners_helper(tile_bag.line_order[c],tile_bag.fields.at(tile_bag.line_order[c]),
+				            row_height, row_limit);
 
-
+		}
 	}
 
 
@@ -540,6 +549,67 @@ void sdl_help::calc_corners_helper(const string line_in, map<std::string,field>&
 	start_height = lowest_point + 5;//save the the start location for the next row
 
 }
+
+//unfortunately, the map places "ICNTRL10" just after ICNTRL1, because they are stored in alphabetical order and not
+//the order in which they were pushed into the map. So this function is used instead of the normal calc corners helper,
+//to make sure that they are in logical order
+void sdl_help::calc_corners_ordered(const string line_in,map<string,field>& map_in, unsigned int& start_height,int row_limit,
+				    vector<string>& order){
+
+	int lowest_point = start_height;//temp copy of the starting height
+	int x_buffer = 5; //distance between tiles and the left edge
+	int x_corner = x_buffer;//keep track of where the next tile should begin
+	int y_corner = start_height;//keep track of there the tile's corner should be vertically
+
+
+	for(vector<string>::iterator it = order.begin(); it != order.end();it++){
+
+		//this is the case where the tile can stay in the current row 
+		if(x_corner + map_in.at(*it).get_size().width < row_limit){
+
+			map_in.at(*it).xloc = x_corner;
+			map_in.at(*it).yloc = y_corner;
+
+
+			x_corner = map_in.at(*it).xloc + map_in.at(*it).get_size().width + x_buffer;//literal 5 for 5 pixel offset
+
+			
+
+			if(map_in.at(*it).yloc + map_in.at(*it).get_size().height + 5 > lowest_point){
+				error_logger.push_msg("OLD lowest_point:"+to_string(lowest_point));
+				lowest_point = map_in.at(*it).yloc + map_in.at(*it).get_size().height + 5;
+				error_logger.push_msg(" NEW lowest_point:"+to_string(lowest_point));
+			}
+		//this is the case where the tile needs to be placed into a new row (because there's not enough width left)
+		} else {
+			map_in.at(*it).xloc = x_buffer;//place it on the left edge
+			x_corner = map_in.at(*it).xloc + map_in.at(*it).get_size().width + x_buffer;
+										      //save it's leftmost edge + padding
+										      //to be used to place the next tile
+
+			map_in.at(*it).yloc = lowest_point; //place it just below the previous row
+
+			y_corner = lowest_point; //set that lowest point as the new y coordinate for the
+						 //fields in this row
+
+			lowest_point = map_in.at(*it).yloc + map_in.at(*it).get_size().height + 5;//save new lowest point
+
+		}		
+
+
+
+
+
+
+	}
+
+
+
+	start_height = lowest_point + 5;//save the start location for the next row
+}
+
+
+
 //############################ NON-MEMBER HELPERS ##########################################################
 
 bool compare_width(names_and_width& left, names_and_width& right){

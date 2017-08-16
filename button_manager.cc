@@ -12,6 +12,8 @@ button_manager::button_manager(sdl_help* sdl_helper_in){
 	button_image_p = "./Assets/Images/Buttons/";
 
 	tray_image_name = "button_tray.png";
+	form_tray_image_name = "form_tray.png";
+
 
 	tray_shown = true;
 
@@ -20,8 +22,17 @@ button_manager::button_manager(sdl_help* sdl_helper_in){
 	tray_rect.w = 0;
 	tray_rect.h = 0;
 
+	form_tray_rect.x = 0;
+	form_tray_rect.y = 0;
+	form_tray_rect.w = 0;
+	form_tray_rect.h = 0;
+
+
 	button_tray_surf = NULL;
 	button_tray_texture = NULL;
+
+	form_tray_surface = NULL;
+	form_tray_texture = NULL;
 }
 
 button_manager::~button_manager(){
@@ -44,6 +55,22 @@ void button_manager::init_tray(){
 	tray_rect.y = sdl_helper->get_h_bar().get_top() - (tray_rect.h + 10);//set it to be just above the bottom scroll bar
 
 }
+
+void button_manager::init_form_tray(){
+
+	form_tray_surface = IMG_Load( (button_image_p+form_tray_image_name).c_str() );
+	if(form_tray_surface == NULL) error_logger.push_error(SDL_GetError());
+	form_tray_texture = SDL_CreateTextureFromSurface(sdl_helper->renderer,form_tray_surface);
+	if(form_tray_texture == NULL) error_logger.push_error(SDL_GetError());
+
+	SDL_QueryTexture(form_tray_texture,NULL,NULL,&form_tray_rect.w,&form_tray_rect.h);
+
+	form_tray_rect.x = 5;//start on the left edge of the screen, with some space
+	form_tray_rect.y = tray_rect.y - form_tray_rect.h;//should be right on top of the button tray 
+
+}
+
+
 //this follows the logic used in init_buttons
 //there is a lot of hard coded stuff, but I'm hoping the button manager won't need changed often
 void button_manager::location_update(){
@@ -65,7 +92,7 @@ void button_manager::location_update(){
 	lets_go.handle_resize(new_y+7);
 
 	tray_rect.y = new_y;
-
+	form_tray_rect.y = new_y - form_tray_rect.h;
 }
 
 void button_manager::init_buttons(){
@@ -101,6 +128,14 @@ void button_manager::init_buttons(){
 
 
 }
+
+void button_manager::init_form_buttons(){
+
+
+
+
+}
+
 void button_manager::print_buttons(){
 	error_logger.push_msg("####################### PRINTING BUTTONS ############################");
 	default_test.print_me();
@@ -124,8 +159,13 @@ void button_manager::draw_tray(){
 	}
 }
 
+void button_manager::draw_form_tray(){
+	SDL_RenderCopy(sdl_helper->renderer,form_tray_texture,NULL,&form_tray_rect);
+}
+
 void button_manager::draw_buttons(){
 	draw_tray();
+	draw_form_tray();
 	default_test.draw_me();
 	output_fname.draw_me();	
 	t_coefficients.draw_me();

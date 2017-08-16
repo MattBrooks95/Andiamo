@@ -74,6 +74,7 @@ andy_tile.png
 240x50
 andy
 NGF:Functional Form
+c Variable name in HF: NGF
 c 0 = use original (Caltech) values
 c 1 = use original (Caltech) values
 c 2 = use Kopecky-Uhl values for gamma ray strength, 
@@ -132,7 +133,8 @@ andy_tile.png
 280x50
 andy
 FRESIDMAX:Residual Nuclear Spin Limit
-c FRESIDMAX is the maximum residual
+c Variable name in HF: FRESIDMAX
+c The the maximum residual
 c nuclear spin allowed. This
 c should be about 10 for A,
 c about 30 and about 20 A
@@ -302,12 +304,13 @@ andy_tile.png
 150x50
 andy
 line_6###################################################
-ICNTRL1
+ICNTRL1:Output Per Decay
+c Variable name in HF: ICNTRL1
 c 0 = print output only after last stage is complete
 c 1 = print output after each stage as
 c     specified by ICNTRL2
 andy_tile.png
-150x50
+170x50
 andy
 ICNTRL2
 c 0 = print total formation cross section for
@@ -323,12 +326,13 @@ c 1 = print denominator sums
 andy_tile.png
 150x50
 andy
-ICNTRL4
+ICNTRL4:Resolved Level + Continuum
+c Variable name in HF: ICNTRL4
 c 0 = do not separately calculate cross sections for
 c     resolved levels (bins only)
 c 1 = calculate cross sections for resolved levels
 andy_tile.png
-150x50
+260x50
 andy
 ICNTRL5:Angular Distributions Options
 c Variable name in HF: ICNTRL5

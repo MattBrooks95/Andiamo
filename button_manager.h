@@ -32,8 +32,15 @@ class button_manager{
 	//! this member sets up the tray in which the buttons are placed
 	void init_tray();
 
+	//! this member sets up the buttons that open and close forms for extensive parameter entry
+	void init_form_tray();
+
+
 	//! this member displays the tray to the screen
 	void draw_tray();
+
+	//! this member displays the form button tray, and their locks, when appropriate
+	void draw_form_tray();
 
 	//! this member updates the tray's location in response to a window size change
 	void location_update();
@@ -41,6 +48,10 @@ class button_manager{
 	//##############################################################################################//
 	//! this member calls the virtual init() memeber on each of button_manager's private buttons
 	void init_buttons();
+
+	//! this member sets up the buttons that populate the forms tray
+	void init_form_buttons();
+
 	//! this member calls each buttons virtual print_me() member
 	void print_buttons();
 
@@ -92,11 +103,29 @@ class button_manager{
 	SDL_Surface* button_tray_surf;//!< save the surface for the tray on which buttons sit
 	SDL_Texture* button_tray_texture;//!< save the texture for the tray on which buttons sit
 
+	SDL_Surface* form_tray_surface;//!< save the surface for the tray on which the form buttons sit
+	SDL_Texture* form_tray_texture;//!< save the texture for the tray on which the form buttons sit
+
+
+
+
+
 	//! name for the tray's image file. Defaults to button_image_p + "button_tray.png" in constructor
 	std::string tray_image_name;
 
+	//! name for the form tray's image file. Defaults to button_image_p + "form_tray.png" in constructor
+	std::string form_tray_image_name;
+
 	bool tray_shown;//!< keep track of whether or not the tray should be drawn to the screen
-	SDL_Rect tray_rect;//!< drawing destion for the tray
+	SDL_Rect tray_rect;//!< drawing destination for the button tray
+
+
+	SDL_Rect form_tray_rect;//!< drawing destination for the form tray
+
+
+	//! This vector contains the "normal" buttons that actually sit on the button tray
+	/*! there will be special buttons, like the exit dialogue, who do not belong here. */
+	std::vector<button> buttons;
 
 
 	button default_test;//!< example of a base class instantiation, not actually for use
