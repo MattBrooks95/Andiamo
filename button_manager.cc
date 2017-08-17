@@ -39,6 +39,9 @@ button_manager::~button_manager(){
 
 	SDL_FreeSurface(button_tray_surf);
 	SDL_DestroyTexture(button_tray_texture);
+
+	SDL_FreeSurface(form_tray_surface);
+	SDL_DestroyTexture(form_tray_texture);
 }
 
 void button_manager::init_tray(){
@@ -68,6 +71,7 @@ void button_manager::init_form_tray(){
 	form_tray_rect.x = 5;//start on the left edge of the screen, with some space
 	form_tray_rect.y = tray_rect.y - form_tray_rect.h;//should be right on top of the button tray 
 
+	init_form_buttons();
 }
 
 
@@ -130,10 +134,25 @@ void button_manager::init_buttons(){
 }
 
 void button_manager::init_form_buttons(){
+	icntrl_8.init(sdl_helper);
+	icntrl_6.init(sdl_helper);
+	ilv_2.init(sdl_helper);
+	icntrl_10.init(sdl_helper);
 
+	icntrl_8.set_corner_loc(form_tray_rect.x + 104,form_tray_rect.y);
+	icntrl_6.set_corner_loc(form_tray_rect.x + 212,form_tray_rect.y);
+	ilv_2.set_corner_loc(form_tray_rect.x + 320,form_tray_rect.y);
+	icntrl_10.set_corner_loc(form_tray_rect.x+429,form_tray_rect.y);
 
+	icntrl_8.make_rect();
+	icntrl_6.make_rect();
+	ilv_2.make_rect();
+	icntrl_10.make_rect();
 
-
+	icntrl_8.setup_lock();
+	icntrl_6.setup_lock();
+	ilv_2.setup_lock();
+	icntrl_10.setup_lock();
 }
 
 void button_manager::print_buttons(){
@@ -161,6 +180,10 @@ void button_manager::draw_tray(){
 
 void button_manager::draw_form_tray(){
 	SDL_RenderCopy(sdl_helper->renderer,form_tray_texture,NULL,&form_tray_rect);
+	icntrl_8.draw_lock();
+	icntrl_6.draw_lock();
+	ilv_2.draw_lock();
+	icntrl_10.draw_lock();
 }
 
 void button_manager::draw_buttons(){
@@ -325,6 +348,28 @@ bool button_manager::click_handling(SDL_Event& mouse_event){
 			done_something = true;
 		}
 	}*/
+
+
+	//############### FORM BUTTON CHECKS #########################################
+	if(!done_something){
+		if( icntrl_8.handle_click(mouse_event) ){
+			done_something = true;
+		} else if( icntrl_6.handle_click(mouse_event) ){
+			done_something = true;
+
+		} else if( ilv_2.handle_click(mouse_event) ){
+			done_something = true;
+
+		} else if( icntrl_10.handle_click(mouse_event) ) {
+			done_something = true;
+
+		}
+	}
+
+
+	//#############################################################################
+
+
 	error_logger.push_msg("DONE HANDLING BUTTON CLICKS");
 	return done_something;//let main know if it should check tiles or not
 }

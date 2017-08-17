@@ -23,7 +23,7 @@ bool main_done = false;
  *that way the message can always be in the same location relative to the button */
 void no_work_done_message(sdl_help& sdl_helper,exit_button& exit_dialogue);
 
- /*! main() handles sdl events (keypresses, mouse movements), instantiates an sdl_help object,
+ /*! main() handles sdl events (keypress, mouse movements), instantiates an sdl_help object,
   *and calls its drawing functions per run of the loop. It will eventually have options for resizing
   *the window, and letting the user pick the frame rate.
   */

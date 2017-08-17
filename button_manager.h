@@ -10,7 +10,7 @@
 
 #include "button.h"
 #include "derived_buttons.h"
-
+#include "form_buttons.h"
 #include "sdl_help.h"
 
 
@@ -103,24 +103,30 @@ class button_manager{
 	SDL_Surface* button_tray_surf;//!< save the surface for the tray on which buttons sit
 	SDL_Texture* button_tray_texture;//!< save the texture for the tray on which buttons sit
 
+	//####################### FORM BUTTONS ##################################################################
+	//! name for the form tray's image file. Defaults to button_image_p + "form_tray.png" in constructor
+	std::string form_tray_image_name;
+
 	SDL_Surface* form_tray_surface;//!< save the surface for the tray on which the form buttons sit
 	SDL_Texture* form_tray_texture;//!< save the texture for the tray on which the form buttons sit
+	
+	icntrl8_form_button icntrl_8;//!< allows user to enter extra lines as a resault of icntrl8 being used
+	icntrl6_form_button icntrl_6;//!< allows user to enter extra lines as a result of icntrl6 being used
+	ilv2_form_button ilv_2;//!< allows user to enter extra lines as a result of ilv_2 being used
+	icntrl10_form_button icntrl_10;//!< allows user to enter extra liens as a result of ilv_2 being used
 
+	SDL_Rect form_tray_rect;//!< drawing destination for the form tray
 
-
+	//#######################################################################################################
 
 
 	//! name for the tray's image file. Defaults to button_image_p + "button_tray.png" in constructor
 	std::string tray_image_name;
 
-	//! name for the form tray's image file. Defaults to button_image_p + "form_tray.png" in constructor
-	std::string form_tray_image_name;
+
 
 	bool tray_shown;//!< keep track of whether or not the tray should be drawn to the screen
 	SDL_Rect tray_rect;//!< drawing destination for the button tray
-
-
-	SDL_Rect form_tray_rect;//!< drawing destination for the form tray
 
 
 	//! This vector contains the "normal" buttons that actually sit on the button tray

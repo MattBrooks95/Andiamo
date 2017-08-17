@@ -48,7 +48,7 @@ class button{
 	virtual void make_rect();
 
 	//! this is the virtual set_corner_logic() function
-	/*! this will likely need overwritten if you wan the button to be drawn somewhere special, and not in the
+	/*! this will likely need overwritten if you want the button to be drawn somewhere special, and not in the
 	 *same location as more default-like buttons */
 	virtual void set_corner_loc();
 
