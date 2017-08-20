@@ -109,7 +109,7 @@ bool button::handle_click(SDL_Event& mouse_event){
 
 bool button::was_clicked(SDL_Event& mouse_event){
 	if( (mouse_event.button.x > xloc && mouse_event.button.x < xloc + width) &&
-	    (mouse_event.button.y > yloc && mouse_event.button.x < yloc + height) ){
+	    (mouse_event.button.y > yloc && mouse_event.button.y < yloc + height) ){
 		return true;
 	}
 	return false;

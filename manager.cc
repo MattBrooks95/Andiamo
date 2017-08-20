@@ -1,11 +1,11 @@
 //! \file manager.cc implements the functions declared in manager.h
 #include "manager.h"
+#include "button_manager.h"
 
-#include<fstream>
-#include<iostream>
-#include<regex>
-#include<algorithm> //for sorting the tiles based on width
+
 using namespace std;
+
+
 
 bool compare_width(field& left, field& right);//prototype for sorting function passed to algorithm::sort
 
@@ -578,11 +578,9 @@ void manager::icntrl4_locking(){
 
 		fields.at("line_8").at("ICH4").is_locked  = true;
 		fields.at("line_8").at("NCH4").is_locked  = true;
-
-		fields.at("line_9").at("ECH4").is_locked  = true;
-		fields.at("line_9").at("FJCH4").is_locked = true;
-		fields.at("line_9").at("IPAR4").is_locked = true;
-		fields.at("line_9").at("FIS4").is_locked  = true;
+		if( !(b_manager_hook->get_icntrl_4().get_is_locked()) ){
+			b_manager_hook->get_icntrl_4().toggle_lock();
+		} 
 
 
 	} else { //do the unlocking
@@ -593,21 +591,73 @@ void manager::icntrl4_locking(){
 		fields.at("line_8").at("ICH4").is_locked  = false;
 		fields.at("line_8").at("NCH4").is_locked  = false;
 
-		fields.at("line_9").at("ECH4").is_locked  = false;
-		fields.at("line_9").at("FJCH4").is_locked = false;
-		fields.at("line_9").at("IPAR4").is_locked = false;
-		fields.at("line_9").at("FIS4").is_locked  = false;
+
+		ich4_nch4_locking();
 
 	}
 
   } catch( out_of_range& map_error){
 	error_logger.push_error("From: manager::icntrl4_locking| One of the critical tiles associated with ICNTRL4",
-				" were not found, please check that tile and HF config files match."); 
+				" were not found, please check that the tile and HF config files match."); 
+
+  }
+
+
+
+}
+//this function is checked at the end of icntrl4 check lock, because the parameters icntrl4 unlocks
+//must also be set up to unlock the form button
+void manager::ich4_nch4_locking(){
+  try{
+
+	regex ich4_unlock("\\s*[1-6]\\s*");
+	//if both of it's params are correctly set up
+
+	string test_ich4 = fields.at("line_8").at("ICH4").temp_input;
+	if( fields.at("line_8").at("ICH4").am_I_locking && regex_match(test_ich4,ich4_unlock) ){
+		fields.at("line_8").at("ICH4").change_tile_background("andy_tile.png");
+		fields.at("line_8").at("ICH4").am_I_locking = false;
+
+	} else if( !regex_match(test_ich4,ich4_unlock) ){
+		fields.at("line_8").at("ICH4").change_tile_background("purple_andy_tile.png");
+		fields.at("line_8").at("ICH4").am_I_locking = true;
+	}
+
+
+	int test_nch4 = stoi(fields.at("line_8").at("NCH4").temp_input);
+	if( fields.at("line_8").at("NCH4").am_I_locking && (test_nch4 > 0 && test_nch4 < 101 )){
+
+		fields.at("line_8").at("NCH4").change_tile_background("andy_tile.png");
+		fields.at("line_8").at("NCH4").am_I_locking = false;
+
+	} else if( !(test_nch4 > 0 && test_nch4 < 101) ){
+
+		fields.at("line_8").at("NCH4").change_tile_background("purple_andy_tile.png");
+		fields.at("line_8").at("NCH4").am_I_locking = true;
+	}
+
+	if( b_manager_hook->get_icntrl_4().get_is_locked() && 
+	    (!(fields.at("line_8").at("ICH4").am_I_locking) && !(fields.at("line_8").at("NCH4").am_I_locking)) ){
+		b_manager_hook->get_icntrl_4().toggle_lock();//unlock the button, both are satisfied
+
+	} else if( (fields.at("line_8").at("ICH4").am_I_locking || fields.at("line_8").at("NCH4").am_I_locking)
+		   && !(b_manager_hook->get_icntrl_4().get_is_locked()) ){
+
+		b_manager_hook->get_icntrl_4().toggle_lock();//lock the button
+	}
+
+
+  } catch( out_of_range& map_error){
+	error_logger.push_error("From: manager::ich4_nch4_locking| One of the critical tiles associated with ICH4/NCH4",
+				" were not found, please check that the tile and HF config files match.");
+
+  } catch( invalid_argument& bad_arg){
+	error_logger.push_msg("From manager::ich4_nch4_locking| NCH4 has a number in an illegal range");
+	error_logger.push_msg(". The acceptable range is 0<=x<=100.");
 
   }
 
 }
-
 
 void manager::icntrl6_locking(){
   try{
@@ -655,8 +705,9 @@ void manager::inm2_locking(){
 
 }
 
-
-
+void manager::gain_bmanager_access(button_manager* b_manager_hook_in){
+	b_manager_hook = b_manager_hook_in;
+}
 
 
 

@@ -47,6 +47,7 @@ int main(int argc, char *argv[]){
   b_manager.init_tray();
   b_manager.init_buttons();
   b_manager.init_form_tray();
+  sdl_helper.get_mgr().gain_bmanager_access(&b_manager);
   //b_manager.print_buttons();
   //sdl_helper.get_mgr().print_all(cout);
 

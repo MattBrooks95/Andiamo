@@ -220,6 +220,7 @@ class field{
 
 	bool is_locked;//!< allows locking of the tile, for situation in which they are redundant or not necessary
 
+	bool am_I_locking;//!< allows tiles to keep track of whether or not they're locking their subparameters or form buttons
 
 	int xloc; //!< the field keeps track of the xcoordinate of its upper right corner
 	int yloc; //!< the field keeps track of the ycoordinate of its upper right corner

@@ -74,6 +74,26 @@ void button_manager::init_form_tray(){
 	init_form_buttons();
 }
 
+void button_manager::redo_locks(){
+
+	icntrl_8.set_corner_loc(form_tray_rect.x + 105,form_tray_rect.y);
+	icntrl_6.set_corner_loc(form_tray_rect.x + 210,form_tray_rect.y);
+	ilv_2.set_corner_loc(form_tray_rect.x + 315,form_tray_rect.y);
+	icntrl_10.set_corner_loc(form_tray_rect.x+420,form_tray_rect.y);
+	icntrl_4.set_corner_loc(form_tray_rect.x+525,form_tray_rect.y);
+
+	icntrl_8.make_rect();
+	icntrl_6.make_rect();
+	ilv_2.make_rect();
+	icntrl_10.make_rect();
+	icntrl_4.make_rect();
+
+	icntrl_8.setup_lock();
+	icntrl_6.setup_lock();
+	ilv_2.setup_lock();
+	icntrl_10.setup_lock();
+	icntrl_4.setup_lock();
+}
 
 //this follows the logic used in init_buttons
 //there is a lot of hard coded stuff, but I'm hoping the button manager won't need changed often
@@ -97,6 +117,7 @@ void button_manager::location_update(){
 
 	tray_rect.y = new_y;
 	form_tray_rect.y = new_y - form_tray_rect.h;
+	redo_locks();
 }
 
 void button_manager::init_buttons(){
@@ -138,21 +159,25 @@ void button_manager::init_form_buttons(){
 	icntrl_6.init(sdl_helper);
 	ilv_2.init(sdl_helper);
 	icntrl_10.init(sdl_helper);
+	icntrl_4.init(sdl_helper);
 
-	icntrl_8.set_corner_loc(form_tray_rect.x + 104,form_tray_rect.y);
-	icntrl_6.set_corner_loc(form_tray_rect.x + 212,form_tray_rect.y);
-	ilv_2.set_corner_loc(form_tray_rect.x + 320,form_tray_rect.y);
-	icntrl_10.set_corner_loc(form_tray_rect.x+429,form_tray_rect.y);
+	icntrl_8.set_corner_loc(form_tray_rect.x + 105,form_tray_rect.y);
+	icntrl_6.set_corner_loc(form_tray_rect.x + 210,form_tray_rect.y);
+	ilv_2.set_corner_loc(form_tray_rect.x + 315,form_tray_rect.y);
+	icntrl_10.set_corner_loc(form_tray_rect.x+420,form_tray_rect.y);
+	icntrl_4.set_corner_loc(form_tray_rect.x+525,form_tray_rect.y);
 
 	icntrl_8.make_rect();
 	icntrl_6.make_rect();
 	ilv_2.make_rect();
 	icntrl_10.make_rect();
+	icntrl_4.make_rect();
 
 	icntrl_8.setup_lock();
 	icntrl_6.setup_lock();
 	ilv_2.setup_lock();
 	icntrl_10.setup_lock();
+	icntrl_4.setup_lock();
 }
 
 void button_manager::print_buttons(){
@@ -184,6 +209,8 @@ void button_manager::draw_form_tray(){
 	icntrl_6.draw_lock();
 	ilv_2.draw_lock();
 	icntrl_10.draw_lock();
+	icntrl_4.draw_lock();
+	
 }
 
 void button_manager::draw_buttons(){
@@ -363,6 +390,9 @@ bool button_manager::click_handling(SDL_Event& mouse_event){
 		} else if( icntrl_10.handle_click(mouse_event) ) {
 			done_something = true;
 
+		} else if( icntrl_4.handle_click(mouse_event)  ) {
+			done_something = true;
+
 		}
 	}
 
@@ -423,9 +453,6 @@ void button_manager::bad_tile_input_warnings(vector<string>& bad_input_list){
 
 	SDL_FreeSurface(bad_input_msg_surface);
 	SDL_DestroyTexture(bad_input_msg_texture);//free memory back up
-
-
-
 
 }
 void button_manager::clean_up_warnings(bool bad_output_fname,bool bad_tc_input_fname){

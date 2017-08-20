@@ -18,6 +18,8 @@ field::field(string tile_name_in,string display_name_in,string image_name_in, in
 
 	is_red = false; //not in error mode at default
 
+	am_I_locking = false;//not in locking mode at default
+
 	temp_input = "temp_input -> default failure"; //start off input blank. Default value loaded in by input
 		    //manager, overridden by user
 	editing_location = 0;

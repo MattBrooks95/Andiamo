@@ -77,7 +77,7 @@ R8 C3   = -0.1
 I4 ICNTRL1  = 1
 I4 ICNTRL2  = 1
 I4 ICNTRL3  = 0
-I4 ICNTRL4  = 1
+I4 ICNTRL4  = 0
 I4 ICNTRL5  = 2
 I4 ICNTRL6  = 0
 I4 ICNTRL7  = 3
@@ -90,14 +90,8 @@ R8 FMU  = 1.00
 R8 FCON_ = 0.00
 
 #line 8
-I4 ICH4 = 5
-I4 NCH4 = 1
-
-#line 9
-R8 ECH4  = 0.0
-R8 FJCH4 = 0.0
-I4 IPAR4 = 1
-R8 FIS4  = 1.0
+I4 ICH4 = 0
+I4 NCH4 = 0
 
 #line 10 - if ICNTRL6 > 0
 I4 ITER = nodef

@@ -38,10 +38,10 @@ void form_button::make_rect(int width_in,int height_in){
 	height = height_in;//the height field is the one used to check clicks
 }
 void form_button::setup_lock(){
-	lock_rect.x = my_rect.x+my_rect.w-30;
+	lock_rect.x = my_rect.x+my_rect.w-15;//temporarily halved
 	lock_rect.y = my_rect.y;
-	lock_rect.w = 30;
-	lock_rect.h = 50;
+	lock_rect.w = 15;//temporarily halved
+	lock_rect.h = 25;
 
 }
 
@@ -51,6 +51,14 @@ void form_button::draw_lock(){
 	}
 }
 
+void form_button::toggle_lock(){
+	if(is_locked){
+		is_locked = false;
+	} else {
+		is_locked = true;
+	}
+
+}
 //#############################################################################
 
 
@@ -120,7 +128,29 @@ void icntrl10_form_button::click_helper(SDL_Event& mouse_event){
 //################################################################################
 
 
+//##################### ICNTRL4 BUTTON ###########################################
+void icntrl4_form_button::setup_lock(){
+	lock_rect.w = 15;//temporarily halved
+	lock_rect.h = 25;
 
+	lock_rect.x = my_rect.x+my_rect.w-15;//temporarily halved
+	lock_rect.y = my_rect.y + my_rect.h - lock_rect.h;
+
+}
+
+
+bool icntrl4_form_button::handle_click(SDL_Event& mouse_event){
+	if(button::was_clicked(mouse_event)){
+		click_helper(mouse_event);
+		return true;
+	}
+	return false;
+}
+
+void icntrl4_form_button::click_helper(SDL_Event& mouse_event){
+	cout << "clicked the icntrl4/resolved levels info button " << endl;
+}
+//################################################################################
 
 
 

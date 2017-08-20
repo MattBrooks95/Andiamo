@@ -412,7 +412,7 @@ andy_tile.png
 150x50
 andy
 line_8#########################################
-ICH4
+ICH4:Resolved Cross-Section Channel
 c 1 = neutron channel
 c 2 = proton
 c 3 = deuteron
@@ -420,39 +420,12 @@ c 4 = triton
 c 5 = helium-3
 c 6 = alpha
 andy_tile.png
-150x50
+290x50
 andy
-NCH4
+NCH4:Number of Resolved Levels
 c NCH4 = number of separate levels
 andy_tile.png
-150x50
-andy
-line_9###############################################################################
-ECH4:Level Energy
-c Variable in HF: ECH4
-c ECH4 energy of the level in MeV
-andy_tile.png
-150x50
-andy
-FJCH4:Level Spin
-c Variable in HF: FJCH4
-c FJCH4 spin of the level
-andy_tile.png
-150x50
-andy
-IPAR4:Level Parity
-c Variable in HF: IPAR4
-c HF variable name:IPAR4
-c parity of the level
-andy_tile.png
-150x50
-andy
-FIS4:Level Isospin
-c Variable in HF:FIS4
-c HF variable name: FIS4
-c isospin of the level
-andy_tile.png
-150x50
+250x50
 andy
 line_10########################################################################################
 ITER:Search Iterations

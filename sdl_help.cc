@@ -8,7 +8,7 @@
 
 //button manager is included here so that sdl_help can access button_manager::draw_buttons()
 //this include CAN'T be in the header file because it creates a circular dependency
-//more pre-project planning on my part would have avoided such a misfortune, I am sorry
+//more pre-project planning on my part would have avoided such a misfortune
 #include "button_manager.h"
 
 using namespace std;
@@ -594,11 +594,7 @@ void sdl_help::calc_corners_ordered(const string line_in,map<string,field>& map_
 
 			lowest_point = map_in.at(*it).yloc + map_in.at(*it).get_size().height + 5;//save new lowest point
 
-		}		
-
-
-
-
+		}
 
 
 	}

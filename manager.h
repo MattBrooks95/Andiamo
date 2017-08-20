@@ -4,6 +4,11 @@
 #include<vector>
 #include<map>
 
+#include<fstream>
+#include<iostream>
+#include<regex>
+#include<algorithm> //for sorting the tiles based on width
+
 
 #include "field.h"
 #include "input_maker.h"
@@ -13,6 +18,10 @@
 
 #include "logger.h"
 extern logger error_logger;
+
+class button_manager;
+
+
 //! The manager is a vector+ object that handles a standard vector that contains input tiles or 'cards'
 class manager{
   public:
@@ -90,6 +99,8 @@ class manager{
 
 	//! helper function for check_locks()
 	void icntrl4_locking();
+	//! helper function for icntrl4_locking(), it's unlocked parameters must also be filled in to unlock form button
+	void ich4_nch4_locking();
 
 	//! helper function for check_locks()
 	void icntrl6_locking();
@@ -97,6 +108,10 @@ class manager{
 	void inm1_locking();
 	//! helper function for check_locks()
 	void inm2_locking();
+
+	//! this function allows manager access to the button manager, for the purpose of unlocking the form buttons
+	/*! This will need to be called from main unfortunately. */
+	void gain_bmanager_access(button_manager* b_manager_hook_in);
 
 
 	//! This member updates the window's dimension values win_w and win_h
@@ -112,6 +127,7 @@ class manager{
 
   private:
 	input_maker* input_maker_hook; //!< allows manager access to sdl_help's input_maker object
+	button_manager* b_manager_hook; //!< allows tile manager to unlock form buttons
 
 	std::string tile_input_p; //!< \brief a path string to the tile input file folder
 	int win_w;//!< \brief keeps track of sdl window width

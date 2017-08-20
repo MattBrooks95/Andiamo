@@ -18,16 +18,20 @@ class form_button : public button{
 	void set_corner_loc(int x_in, int y_in);
 	//! this function is used by the button manager to set width and height
 	/*! though 100x50 is the default dimensions of each of the form buttons */
-	void make_rect(int width_in = 100,int height_in = 50);
+	void make_rect(int width_in = 100,int height_in = 70);
 
 	//! this function sets up the lock's location
-	void setup_lock();
+	virtual void setup_lock();
 
 	//! This member draws the lock to the screen, if the button is in lock mode
 	void draw_lock();
 
+	//! this member changes it's modes from locked to unlocked, and the reverse
+	void toggle_lock();
 
-  private:
+	//! this member is a getter for the is_locked boolean
+	const bool& get_is_locked(){ return is_locked;}
+  protected:
 	SDL_Surface* lock_surface;//!< save the surface for the lock, when this button is not in use
 	SDL_Texture* lock_texture;//!< save the texture for the lock, when this button is not in use
 	SDL_Rect lock_rect;//!< save location & size of the lock
@@ -90,7 +94,22 @@ class icntrl10_form_button : public form_button{
 
 };
 
+class icntrl4_form_button : public form_button{
 
+  public:
+	//! setup_lock is overloaded here, because it looks better on this form button in the lower right corner
+	void setup_lock();
+
+
+	//! implements the special logic for this class
+	bool handle_click(SDL_Event& mouse_event);
+
+	//! this function opens the icntrl4 form on click
+	void click_helper(SDL_Event& mouse_event);
+
+  private:
+
+};
 
 
 
