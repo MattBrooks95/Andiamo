@@ -91,23 +91,46 @@ class manager{
 	//! this function analyzes some parameter tiles, to implement the control logic of selector variables
 	void check_locks();
 
-	//! helper function for check_locks()
-	void iench_locking();
+	//simple cases for lockign and unlocking
 
-	//! helper function for check_locks()
-	void ilv1_locking();
+		//! helper function for check_locks()
+		void iench_locking();
 
-	//! helper function for check_locks()
-	void icntrl4_locking();
-	//! helper function for icntrl4_locking(), it's unlocked parameters must also be filled in to unlock form button
-	void ich4_nch4_locking();
+		//! helper function for check_locks()
+		void ilv1_locking();
+	//#######################################
 
-	//! helper function for check_locks()
-	void icntrl6_locking();
-	//! helper function for check_locks()
-	void inm1_locking();
-	//! helper function for check_locks()
-	void inm2_locking();
+	//###################################################
+		//! helper function for check_locks()
+		void icntrl4_locking();
+		//! helper function for icntrl4_locking(), it's unlocked parameters must also be filled in to unlock form button
+		void ich4_nch4_locking();
+	//###################################################
+
+	//Complex parameter entry cases###############################################
+
+		//! helper function for check_locks()
+		void icntrl8_locking();
+
+		//! helper function for check_locks
+		void ilv2_locking();
+
+		//! helper function for check_locks()
+		void icntrl10_locking();
+		//##### ICNTRL6 locking + helpers ######################################
+			//! helper function for check_locks()
+			void icntrl6_locking();
+
+			//! helper function for icntrl6_locking()
+			void inm1_locking();
+
+			//! helper function for icntrl6_locking()
+			void inm2_locking();
+
+			//!helper function for icntrl6_locking()
+			void iter_locking();
+		//#######################################################################
+	//#############################################################################
 
 	//! this function allows manager access to the button manager, for the purpose of unlocking the form buttons
 	/*! This will need to be called from main unfortunately. */

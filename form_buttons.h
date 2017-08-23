@@ -71,6 +71,10 @@ class ilv2_form_button : public form_button{
 class icntrl6_form_button : public form_button{
 
   public:
+	//! setup_lock is overloaded here, because it looks better in the lower right corner
+	void setup_lock();
+
+
 	//! implements the special logic for this class
 	bool handle_click(SDL_Event& mouse_event);
 

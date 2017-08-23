@@ -483,14 +483,20 @@ void manager::print_all(){
 
 void manager::check_locks(){
 
+	//simple cases
 	iench_locking();
 	ilv1_locking();
-	icntrl4_locking();
 
+
+
+	//complex cases/form button cases
+	ilv2_locking();
+	icntrl10_locking();
+	icntrl4_locking();
+	icntrl8_locking();
 	//##### ICNTRL6 has a lot going on ##############
 	icntrl6_locking();
-	inm1_locking();
-	inm2_locking();
+	//###############################################
 }
 
 void manager::iench_locking(){
@@ -652,20 +658,142 @@ void manager::ich4_nch4_locking(){
 				" were not found, please check that the tile and HF config files match.");
 
   } catch( invalid_argument& bad_arg){
-	error_logger.push_msg("From manager::ich4_nch4_locking| NCH4 has a number in an illegal range");
-	error_logger.push_msg(". The acceptable range is 0<=x<=100.");
-
+	error_logger.push_msg("From manager::ich4_nch4_locking| NCH4 or ICH4 has a number in an illegal range");
+	error_logger.push_msg(". The acceptable range for NCH4 is 0<=x<=100. The acceptable range for ICH4 is 0 <= ICH4 <= 6");
   }
 
 }
+void manager::icntrl8_locking(){
+  try{
+	regex icntrl8_unlock("\\s*[0-9]+?\\s*");
+
+	string icntrl_8_str = fields.at("line_6").at("ICNTRL8").temp_input;
+	int icntrl_8_val = stoi(fields.at("line_6").at("ICNTRL8").temp_input);
+	//if it is currently in locking mode, and it shouldn't be, then change its mode
+	if( (regex_match(icntrl_8_str,icntrl8_unlock) && (icntrl_8_val > 0 && icntrl_8_val < 332) ) &&
+	    fields.at("line_6").at("ICNTRL8").am_I_locking ){
+		fields.at("line_6").at("ICNTRL8").change_tile_background("andy_tile.png");//update background color
+		fields.at("line_6").at("ICNTRL8").am_I_locking = false;//make it stop locking
+
+	//if it failed the above check, and it's currently unlocked, then re-lock it
+	} else if( !(icntrl_8_val > 0 && icntrl_8_val < 332) ){
+		fields.at("line_6").at("ICNTRL8").change_tile_background("purple_andy_tile.png");
+		fields.at("line_6").at("ICNTRL8").am_I_locking = true;
+
+	}
+
+
+  } catch (out_of_range& map_error){
+	error_logger.push_error("From: manager::icntrl8_locking()| ICNTRL8 was not found in the map of parameter tiles",
+				", please check that the tile and HF config files match.");
+
+  } catch (invalid_argument& stoi_error){
+	error_logger.push_msg("ICNTRL8 has an illegal string argument, it must be an integer in the range");
+	error_logger.push_msg(" 0 <= ICNTRL8 < 332");
+	fields.at("line_6").at("ICNTRL8").change_tile_background("purple_andy_tile.png");
+	fields.at("line_6").at("ICNTRL8").am_I_locking = true;
+
+  }
+
+	//toggle if the conditions are met for unlocking, and it is currently locked, or if the conditions are not met
+	//and it is unlocked
+	if( ( !(fields.at("line_6").at("ICNTRL8").am_I_locking) && b_manager_hook->get_icntrl_8().get_is_locked() ) ||
+	    (fields.at("line_6").at("ICNTRL8").am_I_locking && !b_manager_hook->get_icntrl_8().get_is_locked()) ){
+		b_manager_hook->get_icntrl_8().toggle_lock();//
+	}
+
+
+}
+void manager::ilv2_locking(){
+  try{
+
+	regex ilv2_good("\\s*[0-9]+\\s*");
+	string ilv2_str = fields.at("line_5").at("ILV2").temp_input;
+	int ilv2_val = stoi(ilv2_str);
+
+	//if ilv2 is locking, and it shouldn't be, then make it stop unlocking
+	if( fields.at("line_5").at("ILV2").am_I_locking &&
+	    (regex_match(ilv2_str,ilv2_good) && ilv2_val > 0) ){
+		fields.at("line_5").at("ILV2").change_tile_background("andy_tile.png");
+		fields.at("line_5").at("ILV2").am_I_locking = false;
+
+	//if it is currently not locking and it should be, then make it start locking
+	} else if( !(fields.at("line_5").at("ILV2").am_I_locking) &&
+		   (!(regex_match(ilv2_str,ilv2_good)) || !(ilv2_val > 0)) ){
+		fields.at("line_5").at("ILV2").change_tile_background("purple_andy_tile.png");
+		fields.at("line_5").at("ILV2").am_I_locking = true;
+	}  
+
+  } catch (out_of_range& map_error){
+	error_logger.push_error("From: manager::ilv2_locking()| ILV2 was not found in the parameter tiles",
+				", please check that the tile and the HF config files match.");
+
+  } catch (invalid_argument& stoi_error){
+	error_logger.push_msg("ILV2 has an illegal string argument, it must be an integer in the range");
+	error_logger.push_msg(" 0 < ILV2 ");
+	fields.at("line_5").at("ILV2").change_tile_background("purple_andy_tile.png");
+	fields.at("line_5").at("ILV2").am_I_locking = true;
+  }
+
+	if( (b_manager_hook->get_ilv_2().get_is_locked() && !(fields.at("line_5").at("ILV2").am_I_locking) ) ||
+	    (!(b_manager_hook->get_ilv_2().get_is_locked()) && fields.at("line_5").at("ILV2").am_I_locking ) ){
+		b_manager_hook->get_ilv_2().toggle_lock();
+	}
+}
+
+void manager::icntrl10_locking(){
+  try{
+
+	regex icntrl10_unlock("\\s*[0-9]+?\\s*");
+	int icntrl10_val = stoi(fields.at("line_6").at("ICNTRL10").temp_input);
+	string icntrl10_str = fields.at("line_6").at("ICNTRL10").temp_input;
+
+	//if icntrl10 tile is currently locking its button, and the conditions for unlocking it are true,
+	//then have it start unlocking
+	if( fields.at("line_6").at("ICNTRL10").am_I_locking &&
+	    (regex_match(icntrl10_str,icntrl10_unlock) && icntrl10_val > 0) ){
+		fields.at("line_6").at("ICNTRL10").change_tile_background("andy_tile.png");
+		fields.at("line_6").at("ICNTRL10").am_I_locking = false;
+
+	//otherwise, if it is not locking, and it's conditions are not met, then have it start locking
+	} else if( !(fields.at("line_6").at("ICNTRL10").am_I_locking) && 
+		   !(regex_match(icntrl10_str,icntrl10_unlock) && icntrl10_val > 0) ){
+		fields.at("line_6").at("ICNTRL10").change_tile_background("purple_andy_tile.png");
+		fields.at("line_6").at("ICNTRL10").am_I_locking = true;
+
+	}
+
+
+  } catch (out_of_range& map_error){
+	error_logger.push_error("From: manager::icntrl8_locking()| ICNTRL10 was not found in the map of parameter tiles,",
+				" please check that the tile and HF config files match");
+
+  } catch (invalid_argument& stoi_error){
+	error_logger.push_msg("ICNTRL10 has an illegal string argument, it must be an integer in the range");
+	error_logger.push_msg(" 0 <= ICNTRL10");
+	fields.at("line_6").at("ICNTRL10").change_tile_background("purple_andy_tile.png");
+	fields.at("line_6").at("ICNTRL10").am_I_locking = true;
+
+
+  }
+
+	if( ( !(fields.at("line_6").at("ICNTRL10").am_I_locking) && b_manager_hook->get_icntrl_10().get_is_locked() ) ||
+	    ( fields.at("line_6").at("ICNTRL10").am_I_locking && !(b_manager_hook->get_icntrl_10().get_is_locked()) ) ){
+		b_manager_hook->get_icntrl_10().toggle_lock();
+	}
+
+
+}
+
 
 void manager::icntrl6_locking(){
   try{
-	regex icntrl6_unlock("\\s*(1|2)\\s*");
+	regex icntrl6_unlock("\\s*[12]\\s*");
 	//if icntrl6 is 1 or 2, unlock
 	if( regex_match(fields.at("line_6").at("ICNTRL6").temp_input,icntrl6_unlock) ){
 		//unlock params now that icntrl6 > 0
 		fields.at("line_6").at("ICNTRL6").change_tile_background("andy_tile.png");
+		fields.at("line_6").at("ICNTRL6").am_I_locking = false;
 
 		fields.at("line_10").at("ITER").is_locked = false;
 		fields.at("line_10").at("INM1").is_locked = false;
@@ -673,6 +801,7 @@ void manager::icntrl6_locking(){
 	} else {
 		//elsewise, lock them
 		fields.at("line_6").at("ICNTRL6").change_tile_background("purple_andy_tile.png");
+		fields.at("line_6").at("ICNTRL6").am_I_locking = true;
 
 		fields.at("line_10").at("ITER").is_locked = true;
 		fields.at("line_10").at("INM1").is_locked = true;
@@ -683,30 +812,115 @@ void manager::icntrl6_locking(){
 	error_logger.push_error("From: manager::icntrl6_locking| One of the critical tiles associated with ICNTRL4",
 				" were not found, please check that tile and HF config files match.");
   }
+	bool icntrl6_lock_status = fields.at("line_6").at("ICNTRL6").am_I_locking;
+	if( !icntrl6_lock_status ){
+		inm1_locking();
+		inm2_locking();
+		iter_locking();
+
+
+
+		bool inm1_lock_status = fields.at("line_10").at("INM1").am_I_locking;
+		bool inm2_lock_status = fields.at("line_10").at("INM2").am_I_locking;
+		bool iter_lock_status = fields.at("line_10").at("ITER").am_I_locking;
+
+
+		if(  ( !(b_manager_hook->get_icntrl_6().get_is_locked()) && ( inm1_lock_status || inm2_lock_status || iter_lock_status ))
+		     || ( b_manager_hook->get_icntrl_6().get_is_locked() && !(inm1_lock_status || inm2_lock_status || iter_lock_status) ) ){
+			b_manager_hook->get_icntrl_6().toggle_lock();
+
+		}
+	} else if( !b_manager_hook->get_icntrl_6().get_is_locked() ){
+		b_manager_hook->get_icntrl_6().toggle_lock();
+	}
 
 }
 
 void manager::inm1_locking(){
   try{
-	
+	int inm1_val = stoi(fields.at("line_10").at("INM1").temp_input);
+	string inm1_str = fields.at("line_10").at("INM1").temp_input;
+	regex inm1_good("\\s*[0-9]+\\s*");
+
+	if( fields.at("line_10").at("INM1").am_I_locking && (regex_match(inm1_str,inm1_good) && inm1_val > 0) ){
+		fields.at("line_10").at("INM1").change_tile_background("andy_tile.png");
+		fields.at("line_10").at("INM1").am_I_locking = false;
+
+	} else if( !(fields.at("line_10").at("INM1").am_I_locking) && (!(inm1_val > 0) || !(regex_match(inm1_str,inm1_good))) ){
+		fields.at("line_10").at("INM1").change_tile_background("purple_andy_tile.png");
+		fields.at("line_10").at("INM1").am_I_locking = true;;
+	}
 
   } catch (out_of_range& map_error){
-
+	error_logger.push_error("From: manager: inm1_locking| INM1 was not found in the parameter map",
+				", please check that the tile and HF config files match");
+  } catch (invalid_argument& stoi_error){
+	error_logger.push_msg("INM1 has an illegal string argument, it must be an integer in the range ");
+	error_logger.push_msg(" 0 <= INM1");
+	fields.at("line_10").at("INM1").change_tile_background("purple_andy_tile.png");
+	fields.at("line_10").at("INM1").am_I_locking = true;
   }
 
 }
 
 void manager::inm2_locking(){
   try{
+	int inm2_val = stoi(fields.at("line_10").at("INM2").temp_input);
+
+	if( fields.at("line_10").at("INM2").am_I_locking && inm2_val > 0 ){
+		fields.at("line_10").at("INM2").change_tile_background("andy_tile.png");
+		fields.at("line_10").at("INM2").am_I_locking = false;
+
+	} else if( !(fields.at("line_10").at("INM2").am_I_locking) && !(inm2_val > 0) ){
+		fields.at("line_10").at("INM2").change_tile_background("purple_andy_tile.png");
+		fields.at("line_10").at("INM2").am_I_locking = true;;
+	}	
 
   } catch (out_of_range& map_error){
-
+	error_logger.push_error("From: manager: inm2_locking| INM2 was not found in the parameter map",
+				", please check that the tile and HF config files match");
+  } catch (invalid_argument& stoi_error){
+	error_logger.push_msg("INM2 has an illegal string argument, it must be an integer in the range ");
+	error_logger.push_msg(" 0 <= INM2");
+	fields.at("line_10").at("INM2").change_tile_background("purple_andy_tile.png");
+	fields.at("line_10").at("INM2").am_I_locking = true;
   }
+
+}
+
+void manager::iter_locking(){
+  try{
+	int iter_val = stoi(fields.at("line_10").at("ITER").temp_input);
+
+	if( fields.at("line_10").at("ITER").am_I_locking && iter_val > 0 ){
+		fields.at("line_10").at("ITER").change_tile_background("andy_tile.png");
+		fields.at("line_10").at("ITER").am_I_locking = false;
+
+	} else if( !(fields.at("line_10").at("ITER").am_I_locking) && !(iter_val > 0) ){
+		fields.at("line_10").at("ITER").change_tile_background("purple_andy_tile.png");
+		fields.at("line_10").at("ITER").am_I_locking = true;;
+	}	
+
+  } catch (out_of_range& map_error){
+	error_logger.push_error("From: manager: iter_locking| ITER was not found in the parameter map",
+				", please check that the tile and HF config files match");
+  } catch (invalid_argument& stoi_error){
+	error_logger.push_msg("ITER has an illegal string argument, it must be an integer in the range ");
+	error_logger.push_msg(" 0 <= ITER");
+
+	fields.at("line_10").at("ITER").change_tile_background("purple_andy_tile.png");
+	fields.at("line_10").at("ITER").am_I_locking = true;
+  }
+
+
+
 
 }
 
 void manager::gain_bmanager_access(button_manager* b_manager_hook_in){
 	b_manager_hook = b_manager_hook_in;
+
+
 }
 
 

@@ -221,19 +221,19 @@ c 7 = search on level density parameters
 andy_tile.png
 170x50
 andy
-ILV2:Level Information
+ILV2:Supplement Resolved Levels?
 c Variable in HF:ILV2
 c Resolved level information
 c 0 = use BNL levels for nuclei
-c 1 = add levels to BNL tabulation
+c 1 <= add levels to BNL tabulation
 andy_tile.png
-170x50
+270x50
 andy
 ILV3:Level Density Parameters
 c Variable name in HF: ILV3
 c input parameters for level density of particular nculei
 c 0 = do not change level density from values specified by ILVL1
-c 1 change level density parameters for nuclei specified later
+c 1 <= change level density parameters for nuclei specified later
 andy_tile.png
 230x50
 andy
@@ -346,13 +346,13 @@ c 6 = alpha angular distrubtions calculated
 andy_tile.png
 150x50
 andy
-ICNTRL6:Search Options
+ICNTRL6:Parameter Search
 c Varibale name in HF: ICNTRL6
 c 0 = no search
 c 1 = search
 c 2 = search with more intermediate output
 andy_tile.png
-150x50
+160x50
 andy
 ICNTRL7:Level Densities Options
 c Variable name in HF: ICNTRL7
@@ -364,7 +364,7 @@ c 3 = read new cutoff values and echo level densities
 andy_tile.png
 150x50
 andy
-ICNTRL8:Cutoff Nuclei
+ICNTRL8:Resolved Level Threshold Count
 c Variable name in HF: ICNTRL8
 c the number of final nuclei for which cutoff on 
 c energy values of levels should change
@@ -375,7 +375,7 @@ c above 4Mev, you can put in this cutoff, and levels
 c above the energy will be omitted and replaced with the
 c continuum form
 andy_tile.png
-150x50
+300x50
 andy
 ICNTRL9:Fitting
 c Variable name in HF: ICNTRL9
@@ -386,12 +386,12 @@ c     which minimalizes x^2)
 andy_tile.png
 150x50
 andy
-ICNTRL10:Sigma Information
+ICNTRL10:Specify Spin Cutoff?
 c Variable name in HF: ICNTRL10
 c 0 < read individual sigma information
 c 0 = don't read individual sigma information
 andy_tile.png
-150x50
+210x50
 andy
 line_7###############################################################################
 FMU

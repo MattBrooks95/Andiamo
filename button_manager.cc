@@ -155,26 +155,26 @@ void button_manager::init_buttons(){
 }
 
 void button_manager::init_form_buttons(){
-	icntrl_8.init(sdl_helper);
 	icntrl_6.init(sdl_helper);
+	icntrl_8.init(sdl_helper);
 	ilv_2.init(sdl_helper);
 	icntrl_10.init(sdl_helper);
 	icntrl_4.init(sdl_helper);
 
-	icntrl_8.set_corner_loc(form_tray_rect.x + 105,form_tray_rect.y);
-	icntrl_6.set_corner_loc(form_tray_rect.x + 210,form_tray_rect.y);
+	icntrl_6.set_corner_loc(form_tray_rect.x + 420,form_tray_rect.y);
+	icntrl_8.set_corner_loc(form_tray_rect.x + 210,form_tray_rect.y);
 	ilv_2.set_corner_loc(form_tray_rect.x + 315,form_tray_rect.y);
-	icntrl_10.set_corner_loc(form_tray_rect.x+420,form_tray_rect.y);
+	icntrl_10.set_corner_loc(form_tray_rect.x+105,form_tray_rect.y);
 	icntrl_4.set_corner_loc(form_tray_rect.x+525,form_tray_rect.y);
 
-	icntrl_8.make_rect();
 	icntrl_6.make_rect();
+	icntrl_8.make_rect();
 	ilv_2.make_rect();
 	icntrl_10.make_rect();
 	icntrl_4.make_rect();
 
-	icntrl_8.setup_lock();
 	icntrl_6.setup_lock();
+	icntrl_8.setup_lock();
 	ilv_2.setup_lock();
 	icntrl_10.setup_lock();
 	icntrl_4.setup_lock();
