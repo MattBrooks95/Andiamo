@@ -4,6 +4,14 @@
 using namespace std;
 
 //######################## FORM BUTTONS #####################################
+form_button::form_button(){
+	lock_surface = NULL;
+	lock_texture = NULL;
+	is_locked = true;
+	unlock_help_surface = NULL;
+	unlock_help_texture = NULL;
+}
+
 form_button::~form_button(){
 	SDL_FreeSurface(lock_surface);
 	SDL_DestroyTexture(lock_texture);
@@ -45,6 +53,25 @@ void form_button::setup_lock(){
 
 }
 
+void form_button::setup_help_msg(){
+	unlock_help_surface = IMG_Load("Assets/Images/form_assets/general_form_locked_msg.png");
+	if(unlock_help_surface == NULL) error_logger.push_error(SDL_GetError());
+	unlock_help_texture = SDL_CreateTextureFromSurface(sdl_helper->renderer,unlock_help_surface);
+	if(unlock_help_texture == NULL) error_logger.push_error(SDL_GetError());
+
+}
+void form_button::draw_help_msg(SDL_Event& big_event,SDL_Rect& destination){
+	SDL_RenderCopy(sdl_helper->renderer,unlock_help_texture,NULL,&destination);
+	sdl_helper->present();
+
+	//spin until they are done reading, and they click the mouse or push a key - I can't get this to work because
+	//of phantom events, for now it just stays up until they let the mouse button come up
+	while(big_event.type != SDL_MOUSEBUTTONUP ){
+		SDL_PollEvent(&big_event);
+	}
+					
+
+}
 void form_button::draw_lock(){
 	if(is_locked){
 		SDL_RenderCopy(sdl_helper->renderer,lock_texture,NULL,&lock_rect);

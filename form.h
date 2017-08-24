@@ -11,6 +11,7 @@
 #include<string>
 
 #include "button.h"
+#include "text_box.h"
 class page;
 
 class form{
@@ -20,9 +21,11 @@ class form{
 	~form();
 
 
-	void form_init(std::string form_title_in,unsigned int num_of_pages_in,SDL_Rect form_area_in,
+	void form_init(std::string form_title_in,unsigned int num_of_pages_in,int xloc_in,int yloc_in,
 		       sdl_help* sdl_helper_in,TTF_Font* sdl_font_in);
 
+
+	void handle_click(SDL_Event& mouse_event);
 
 	void draw_me();
 
@@ -67,13 +70,20 @@ class form{
 class page{
 
   public:
+	//! page constructor allows for the setting of important variables
+	/*! \param num_columns_in is the # of columns of text boxes to create
+	*\param num_rows_in is the # of rows of text boxes to create
+	*\param row_labels_in is the row labels, which is not always used
+	*\param column_labels_in is the column labels, which should almost always be specified */
 	page(unsigned int num_columns_in, unsigned int num_rows_in,std::vector<std::string>& column_labels_in,
-	     std::vector<std::string>& row_labels_in,sdl_help* sdl_helper_in);
+	     std::vector<std::string>& row_labels_in,sdl_help* sdl_helper_in,TTF_Font* sdl_font_in);
 	~page();
+	//! this function draws the pages headers, labels and text boxes
+	void draw_me();
 
   private:
 	sdl_help* sdl_helper;
-
+	TTF_Font* sdl_font;
 
 	unsigned int num_columns;
 	unsigned int num_rows;
@@ -81,4 +91,5 @@ class page{
 	std::vector<std::string> column_labels;
 	std::vector<std::string> row_labels;
 	
+	std::vector<text_box> text_boxes;
 };

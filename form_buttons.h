@@ -9,6 +9,7 @@
 class form_button : public button{
 
   public:
+	form_button();
 	~form_button();
 
 
@@ -25,6 +26,15 @@ class form_button : public button{
 
 	//! this function sets up the lock's location
 	virtual void setup_lock();
+	//! this function can be overloaded or used by derived classes
+	/*! overloading it allows a specific picture file to be used as the help dialogue when the user
+	 *clicks on the form while it is still locked, and explains its purpose and unlocking conditions */ 
+	virtual void setup_help_msg();
+
+	//! this function can be overloaded or used by derived classes
+	/*! if a special message box is made, it would be wise to overload this as well, so it can be placed
+	 * in a different location */
+	virtual void draw_help_msg(SDL_Event& big_event, SDL_Rect& destination);
 
 	//! This member draws the lock to the screen, if the button is in lock mode
 	void draw_lock();
@@ -40,6 +50,9 @@ class form_button : public button{
 	SDL_Rect lock_rect;//!< save location & size of the lock
 
 	bool is_locked;//!< control whether or not to show the lock, and prevent the button from being used
+
+	SDL_Surface* unlock_help_surface;
+	SDL_Texture* unlock_help_texture;
 
 };
 

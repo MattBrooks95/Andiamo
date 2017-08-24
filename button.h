@@ -120,6 +120,14 @@ struct active_area{
 		width= 0;
 		height=0;
 	}
+	//! this function allows the setting of variables in this struct
+	void set_loc(int xloc_in, int yloc_in, int width_in, int height_in){
+		xloc = xloc_in;
+		yloc = yloc_in;
+		width = width_in;
+		height = height_in;
+	}
+
 	//! boolean variable to check mouse click coords against this active area's location
 	/*! \param event is the SDL event from main that contains the click information */
 	bool clicked(SDL_Event& event){
