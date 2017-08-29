@@ -184,6 +184,12 @@ void button_manager::init_form_buttons(){
 	ilv_2.setup_help_msg();
 	icntrl_10.setup_help_msg();
 	icntrl_4.setup_help_msg();
+
+	icntrl_6.init_form();
+	icntrl_8.init_form();
+	ilv_2.init_form();
+	icntrl_10.init_form();
+	icntrl_4.init_form();
 }
 
 void button_manager::print_buttons(){
@@ -387,35 +393,40 @@ bool button_manager::click_handling(SDL_Event& mouse_event){
 	if(!done_something){
 		SDL_Rect msg_dest = {250,form_tray_rect.y-500,500,500};
 		if( icntrl_8.handle_click(mouse_event) ){
-			if(icntrl_8.get_is_locked()) icntrl_8.draw_help_msg(mouse_event,msg_dest);
-			else {
+			if(icntrl_8.get_is_locked()){
+				icntrl_8.draw_help_msg(mouse_event,msg_dest);
+			} else {
 
 			}
 			done_something = true;
 		} else if( icntrl_6.handle_click(mouse_event) ){
-			if(icntrl_6.get_is_locked()) icntrl_6.draw_help_msg(mouse_event,msg_dest);
-			else {
+			if(icntrl_6.get_is_locked()){
+				icntrl_6.draw_help_msg(mouse_event,msg_dest);
+			} else {
 
 			}
 			done_something = true;
 
 		} else if( ilv_2.handle_click(mouse_event) ){
-			if(ilv_2.get_is_locked()) ilv_2.draw_help_msg(mouse_event,msg_dest);
-			else {
+			if(ilv_2.get_is_locked()){
+				ilv_2.draw_help_msg(mouse_event,msg_dest);
+			} else {
 
 			}
 			done_something = true;
 
 		} else if( icntrl_10.handle_click(mouse_event) ) {
-			if(ilv_2.get_is_locked()) icntrl_10.draw_help_msg(mouse_event,msg_dest);
-			else {
+			if(ilv_2.get_is_locked()){
+				icntrl_10.draw_help_msg(mouse_event,msg_dest);
+			} else {
 
 			}
 			done_something = true;
 
 		} else if( icntrl_4.handle_click(mouse_event)  ) {
-			if(icntrl_10.get_is_locked()) icntrl_10.draw_help_msg(mouse_event,msg_dest);
-			else {
+			if(icntrl_10.get_is_locked()){
+				icntrl_10.draw_help_msg(mouse_event,msg_dest);
+			} else {
 
 			}
 			done_something = true;

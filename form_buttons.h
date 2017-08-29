@@ -31,6 +31,11 @@ class form_button : public button{
 	 *clicks on the form while it is still locked, and explains its purpose and unlocking conditions */ 
 	virtual void setup_help_msg();
 
+	//! this function initializes this buttons form object
+	/*! It must be overloaded by the derived form_buttons to have any meaning */
+	virtual void init_form();
+
+
 	//! this function can be overloaded or used by derived classes
 	/*! if a special message box is made, it would be wise to overload this as well, so it can be placed
 	 * in a different location */
@@ -51,6 +56,8 @@ class form_button : public button{
 
 	bool is_locked;//!< control whether or not to show the lock, and prevent the button from being used
 
+	form my_form;//!< object which allows for dynamic parameter entry
+
 	SDL_Surface* unlock_help_surface;
 	SDL_Texture* unlock_help_texture;
 
@@ -67,7 +74,7 @@ class icntrl8_form_button : public form_button{
 	void click_helper(SDL_Event& mouse_event);
 
   private:
-	
+
 
 };
 
@@ -112,7 +119,6 @@ class icntrl10_form_button : public form_button{
 	void click_helper(SDL_Event& mouse_event);
 
   private:
-
 };
 
 class icntrl4_form_button : public form_button{
@@ -129,7 +135,6 @@ class icntrl4_form_button : public form_button{
 	void click_helper(SDL_Event& mouse_event);
 
   private:
-
 };
 
 

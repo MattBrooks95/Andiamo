@@ -87,6 +87,9 @@ sdl_help::sdl_help(string name_in,string HF_input_file_in,string bg_image_name_i
 	//give horizontal scroll bar the address of the info it needs from the sdl_help object
 	horiz_bar.init(&x_scroll,&y_scroll, &window_s.width, &window_s.height, renderer,"h_ou_grey_quarter.png");
 
+	//resizable = false;
+
+
 	calc_corners(); //set up tile locations with the field's corner location 
 	tile_bag.give_fields_renderer(renderer,image_p,&x_scroll,&y_scroll,font);//give fields rendering and font info
 
@@ -177,6 +180,17 @@ void sdl_help::draw_sbars(){
 	horiz_bar.draw_me();
 	vert_bar.draw_me();
 }
+/*
+void sdl_help::toggle_resizable(){
+	if(resizable){
+		SDL_SetWindowResizable(&window,SDL_FALSE);//forbid resizing of the window while in form loop
+		resizable = false;
+	} else {
+		SDL_SetWindowResizable(&window,SDL_TRUE);//allow the window to be resized
+		resizable = true;
+
+	}
+}*/
 //**********************SCROLLING FUNCTIONS ***************************************************/
 
 // walk the tile locations vector, and keep track of the rightmost, leftmost, bottommost, and upmost

@@ -76,6 +76,9 @@ class sdl_help{
 	/* This should likely be called directly below every call to draw_tiles() */ 
 	void draw_sbars();
 
+	////! This function uses 	SDL_SetWindowResizeable to prevent or allow window resizing
+	//void toggle_resizable();
+
 	/**************************SCROLLING FUNCTIONS ************************************************/
 	//! calc_corners implements a guessing algorithm that tries to place tiles in a space-efficient way
 	void calc_corners();
@@ -234,6 +237,8 @@ class sdl_help{
 	std::string bg_image_name;
 	SDL_Surface* bg_surface;
 	SDL_Texture* bg_texture;
+
+	//bool resizable;//!< controls whether or not the window can be resized
 
 
 	/***************** FIELDS THAT PERTAIN TO SCROLLING ********************************/

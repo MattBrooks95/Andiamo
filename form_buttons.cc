@@ -27,7 +27,6 @@ void form_button::init(sdl_help* sdl_help_in){
 	if(lock_texture == NULL) error_logger.push_error(SDL_GetError());
 	is_locked = true;
 
-
 }
 //should be used by the bmangers "form" init member to place each form button such that it lines up with
 //the graphic for the form button tray
@@ -60,6 +59,12 @@ void form_button::setup_help_msg(){
 	if(unlock_help_texture == NULL) error_logger.push_error(SDL_GetError());
 
 }
+void form_button::init_form(){
+
+	my_form.init("no title",0,0,0,sdl_helper,sdl_helper->font);
+
+}
+
 void form_button::draw_help_msg(SDL_Event& big_event,SDL_Rect& destination){
 	SDL_RenderCopy(sdl_helper->renderer,unlock_help_texture,NULL,&destination);
 	sdl_helper->present();
@@ -72,6 +77,7 @@ void form_button::draw_help_msg(SDL_Event& big_event,SDL_Rect& destination){
 					
 
 }
+
 void form_button::draw_lock(){
 	if(is_locked){
 		SDL_RenderCopy(sdl_helper->renderer,lock_texture,NULL,&lock_rect);
@@ -101,7 +107,10 @@ bool icntrl8_form_button::handle_click(SDL_Event& mouse_event){
 void icntrl8_form_button::click_helper(SDL_Event& mouse_event){
 	cout << "Clicked icntrl8/cutoff nuclei button" << endl;
 
-
+	if(!is_locked){
+		my_form.toggle_active();//let the form know that it is now active
+		my_form.form_event_loop(mouse_event);//enter the mini loop for form entry
+	}
 }
 
 
@@ -118,7 +127,10 @@ bool ilv2_form_button::handle_click(SDL_Event& mouse_event){
 
 void ilv2_form_button::click_helper(SDL_Event& mouse_event){
 	cout << "Clicked ilv2/  button" << endl;
-
+	if(!is_locked){
+		my_form.toggle_active();//let the form know that it is now active
+		my_form.form_event_loop(mouse_event);//enter the mini loop for form entry
+	}
 }
 
 
@@ -145,7 +157,10 @@ bool icntrl6_form_button::handle_click(SDL_Event& mouse_event){
 
 void icntrl6_form_button::click_helper(SDL_Event& mouse_event){
 	cout << "clicked the icntrl6/parameter search button" << endl;
-
+	if(!is_locked){
+		my_form.toggle_active();//let the form know that it is now active
+		my_form.form_event_loop(mouse_event);//enter the mini loop for form entry
+	}
 }
 //################################################################################
 
@@ -161,6 +176,10 @@ bool icntrl10_form_button::handle_click(SDL_Event& mouse_event){
 
 void icntrl10_form_button::click_helper(SDL_Event& mouse_event){
 	cout << "clicked the icntrl10/sigma info button " << endl;
+	if(!is_locked){
+		my_form.toggle_active();//let the form know that it is now active
+		my_form.form_event_loop(mouse_event);//enter the mini loop for form entry
+	}
 }
 //################################################################################
 
@@ -186,6 +205,10 @@ bool icntrl4_form_button::handle_click(SDL_Event& mouse_event){
 
 void icntrl4_form_button::click_helper(SDL_Event& mouse_event){
 	cout << "clicked the icntrl4/resolved levels info button " << endl;
+	if(!is_locked){
+		my_form.toggle_active();//let the form know that it is now active
+		my_form.form_event_loop(mouse_event);//enter the mini loop for form entry
+	}
 }
 //################################################################################
 
