@@ -154,8 +154,10 @@ void form::form_event_loop(SDL_Event& big_event){
 void form::handle_click(SDL_Event& mouse_event,bool& done,bool& click_lock){
 
 	if(!click_lock){
+
 		if(exit.clicked(mouse_event)){
 			cout << "Clicked the exit button." << endl;
+			toggle_active();
 			done = true;//end mini loop
 		} else if(help.clicked(mouse_event) ){
 			cout << "clicked the help button." << endl;

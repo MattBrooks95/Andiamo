@@ -49,6 +49,13 @@ class form_button : public button{
 
 	//! this member is a getter for the is_locked boolean
 	const bool& get_is_locked(){ return is_locked;}
+
+	//! this member has the form objects contained herein send their information to the input_maker
+	/*! this is currently a stub */
+	virtual void make_output();
+
+
+
   protected:
 	SDL_Surface* lock_surface;//!< save the surface for the lock, when this button is not in use
 	SDL_Texture* lock_texture;//!< save the texture for the lock, when this button is not in use
@@ -112,6 +119,7 @@ class icntrl6_form_button : public form_button{
 class icntrl10_form_button : public form_button{
 
   public:
+
 	//! impelements the special logic for this class
 	bool handle_click(SDL_Event& mouse_event);
 

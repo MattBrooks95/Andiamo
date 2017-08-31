@@ -34,6 +34,7 @@ class form{
 
 	void toggle_active();
 
+	bool is_active(){ return active;}
 	void next_page();
 
 	void prev_page();

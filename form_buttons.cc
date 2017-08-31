@@ -45,9 +45,9 @@ void form_button::make_rect(int width_in,int height_in){
 	height = height_in;//the height field is the one used to check clicks
 }
 void form_button::setup_lock(){
-	lock_rect.x = my_rect.x+my_rect.w-15;//temporarily halved
+	lock_rect.x = my_rect.x+my_rect.w-15;
 	lock_rect.y = my_rect.y;
-	lock_rect.w = 15;//temporarily halved
+	lock_rect.w = 15;
 	lock_rect.h = 25;
 
 }
@@ -92,6 +92,14 @@ void form_button::toggle_lock(){
 	}
 
 }
+
+void form_button::make_output(){
+
+
+
+
+}
+
 //#############################################################################
 
 
@@ -165,6 +173,7 @@ void icntrl6_form_button::click_helper(SDL_Event& mouse_event){
 //################################################################################
 
 //####################### ICNTRL10 BUTTON ########################################
+
 bool icntrl10_form_button::handle_click(SDL_Event& mouse_event){
 	if(button::was_clicked(mouse_event)){
 		click_helper(mouse_event);
