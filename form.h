@@ -21,8 +21,8 @@ class form{
 	~form();
 
 
-	void init(std::string form_title_in,unsigned int num_of_pages_in,int xloc_in,int yloc_in,
-		       sdl_help* sdl_helper_in,TTF_Font* sdl_font_in);
+	void init(std::string form_title_in,std::string help_msg_image_name,unsigned int num_of_pages_in,
+		  int xloc_in,int yloc_in, sdl_help* sdl_helper_in,TTF_Font* sdl_font_in);
 
 
 	virtual void form_event_loop(SDL_Event& big_event);
@@ -35,6 +35,8 @@ class form{
 	void toggle_active();
 
 	bool is_active(){ return active;}
+
+
 	void next_page();
 
 	void prev_page();
@@ -44,7 +46,6 @@ class form{
 
 	std::string form_title;
 	SDL_Surface* form_title_surface;
-	SDL_Texture* form_title_texture;
 
 	SDL_Surface* form_surface;
 	SDL_Texture* form_texture;

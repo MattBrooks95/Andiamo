@@ -10,7 +10,6 @@ form::form(){
 	form_title = "no title";
 
 	form_title_surface = NULL;
-	form_title_texture = NULL;
 
 	form_surface = NULL;
 	form_texture = NULL;
@@ -34,7 +33,6 @@ form::form(){
 
 form::~form(){
 	SDL_FreeSurface(form_title_surface);
-	SDL_DestroyTexture(form_title_texture);
 
 	SDL_FreeSurface(form_surface);
 	SDL_DestroyTexture(form_texture);
@@ -45,7 +43,7 @@ form::~form(){
 	SDL_FreeSurface(number_sprites);
 }
 
-void form::init(string form_title_in,unsigned int page_count_in,int xloc_in, int yloc_in,
+void form::init(string form_title_in,string help_msg_image_name,unsigned int page_count_in,int xloc_in, int yloc_in,
 		     sdl_help* sdl_helper_in,TTF_Font* sdl_font_in){
 
 	//set up state variables
@@ -58,6 +56,7 @@ void form::init(string form_title_in,unsigned int page_count_in,int xloc_in, int
 
 	//initialize the page number spritesheet
 	//these numbers are blitted onto the form surface, to indicate which page the user is on
+	string help_path = "Assets/Images/form_assets/" + help_msg_image_name;
 	number_sprites = IMG_Load("Assets/Images/form_assets/number_sprites.png");
 	if(number_sprites == NULL) error_logger.push_error(SDL_GetError());
 	//###############################################################################################
@@ -76,6 +75,22 @@ void form::init(string form_title_in,unsigned int page_count_in,int xloc_in, int
 		source = {current_page*20,0,20,20};
 		destination = {725,0,20,20};
 		SDL_BlitSurface(number_sprites,&source,form_surface,&destination);//draw current page # (0) in rop right
+
+		//make the form title surface
+		SDL_Color black = {0,0,0,0};
+		form_title_surface = TTF_RenderUTF8_Blended(sdl_font,form_title.c_str(),black);
+		if(form_title_surface == NULL) error_logger.push_error(SDL_GetError());
+		else {
+			//make this font a little bit bigger than the others
+			TTF_Font* title_font = TTF_OpenFont( "./Assets/fonts/LiberationSerif-Regular.ttf", 28);
+			TTF_SizeText(title_font,form_title.c_str(),&source.w,&source.h);
+			source.x = 0; source.y = 0;
+			destination.w = source.w; destination.h = source.h;
+			destination.x = xloc_in + 400;
+			destination.y = yloc_in + 25 - (source.w / 2);
+			SDL_BlitSurface(form_title_surface,&source,form_surface,&destination);
+			free(title_font);
+		}
 	}
 	form_texture = SDL_CreateTextureFromSurface(sdl_helper->renderer,form_surface);
 	if(form_texture == NULL) error_logger.push_error(SDL_GetError());

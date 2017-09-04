@@ -61,7 +61,7 @@ void form_button::setup_help_msg(){
 }
 void form_button::init_form(){
 
-	my_form.init("no title",0,0,0,sdl_helper,sdl_helper->font);
+	my_form.init("no title","general_form_locked_msg.png",0,0,0,sdl_helper,sdl_helper->font);
 
 }
 
@@ -121,6 +121,11 @@ void icntrl8_form_button::click_helper(SDL_Event& mouse_event){
 	}
 }
 
+void icntrl8_form_button::init_form(){
+
+	my_form.init("no title","general_form_locked_msg.png",0,0,0,sdl_helper,sdl_helper->font);
+
+}
 
 //##############################################################################
 
@@ -139,6 +144,12 @@ void ilv2_form_button::click_helper(SDL_Event& mouse_event){
 		my_form.toggle_active();//let the form know that it is now active
 		my_form.form_event_loop(mouse_event);//enter the mini loop for form entry
 	}
+}
+
+void ilv2_form_button::init_form(){
+
+	my_form.init("no title","general_form_locked_msg.png",0,0,0,sdl_helper,sdl_helper->font);
+
 }
 
 
@@ -170,6 +181,13 @@ void icntrl6_form_button::click_helper(SDL_Event& mouse_event){
 		my_form.form_event_loop(mouse_event);//enter the mini loop for form entry
 	}
 }
+
+void icntrl6_form_button::init_form(){
+
+	my_form.init("no title","general_form_locked_msg.png",0,0,0,sdl_helper,sdl_helper->font);
+
+}
+
 //################################################################################
 
 //####################### ICNTRL10 BUTTON ########################################
@@ -190,6 +208,13 @@ void icntrl10_form_button::click_helper(SDL_Event& mouse_event){
 		my_form.form_event_loop(mouse_event);//enter the mini loop for form entry
 	}
 }
+
+void icntrl10_form_button::init_form(){
+
+	my_form.init("no title","general_form_locked_msg.png",0,0,0,sdl_helper,sdl_helper->font);
+
+}
+
 //################################################################################
 
 
@@ -219,6 +244,13 @@ void icntrl4_form_button::click_helper(SDL_Event& mouse_event){
 		my_form.form_event_loop(mouse_event);//enter the mini loop for form entry
 	}
 }
+
+void icntrl4_form_button::init_form(){
+
+	my_form.init("no title","general_form_locked_msg.png",0,0,0,sdl_helper,sdl_helper->font);
+
+}
+
 //################################################################################
 
 

@@ -76,6 +76,8 @@ class icntrl8_form_button : public form_button{
 	//! implements the special logic for this class
 	bool handle_click(SDL_Event& mouse_event);
 
+	//! sets up a form that suits the needs of icntrl8's logics per the input manual
+	void init_form();
 
 	//! this function opens the icntrl8 form on click
 	void click_helper(SDL_Event& mouse_event);
@@ -91,6 +93,9 @@ class ilv2_form_button : public form_button{
 	//! implements the special logic for this class
 	bool handle_click(SDL_Event& mouse_event);
 
+	//! sets up a form that suits the needs of ilv2's logics per the input manual
+	void init_form();
+
 	//! this function opens the ilv2 form on click
 	void click_helper(SDL_Event& mouse_event);
 
@@ -104,6 +109,9 @@ class icntrl6_form_button : public form_button{
   public:
 	//! setup_lock is overloaded here, because it looks better in the lower right corner
 	void setup_lock();
+
+	//! sets up a form that suits the needs of icntrl6's logics per the input manual
+	void init_form();
 
 
 	//! implements the special logic for this class
@@ -123,6 +131,10 @@ class icntrl10_form_button : public form_button{
 	//! impelements the special logic for this class
 	bool handle_click(SDL_Event& mouse_event);
 
+	//! sets up a form that suits the needs of icntrl10's logics per the input manual
+	void init_form();
+
+
 	//! this function opens the icntrl10 form on click
 	void click_helper(SDL_Event& mouse_event);
 
@@ -134,6 +146,9 @@ class icntrl4_form_button : public form_button{
   public:
 	//! setup_lock is overloaded here, because it looks better on this form button in the lower right corner
 	void setup_lock();
+
+	//! sets up a form that suits the needs of icntrl4's logics per the input manual
+	void init_form();
 
 
 	//! implements the special logic for this class
