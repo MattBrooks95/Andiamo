@@ -21,7 +21,7 @@ class form{
 	~form();
 
 
-	void init(std::string form_title_in,std::string help_msg_image_name,unsigned int num_of_pages_in,
+	void init(std::string form_title_in,std::string help_msg_image_name,
 		  int xloc_in,int yloc_in, sdl_help* sdl_helper_in,TTF_Font* sdl_font_in);
 
 
@@ -41,6 +41,17 @@ class form{
 
 	void prev_page();
 
+	std::vector<page>& get_pages() { return pages;} 
+
+	void set_page_count(int page_count_in);
+	void update_page_indicator();
+	void flush_pages();
+
+	void text_box_loop(text_box& current_box,SDL_Event& event);
+
+
+	bool prev_initiated;
+	int prev_init_value;
 
   private:
 
@@ -79,8 +90,6 @@ class form{
 
 };
 
-
-
 class page{
 
   public:
@@ -92,17 +101,15 @@ class page{
 	page(unsigned int num_columns_in, unsigned int num_rows_in,const std::vector<std::string>& column_labels_in,
 	     std::vector<std::string>& row_labels_in,sdl_help* sdl_helper_in,TTF_Font* sdl_font_in);
 	~page();
+
 	//! this function draws the pages headers, labels and text boxes
 	void draw_me();
 
-	//! this function accepts three structs which specify what type of parameters are needed on the page
-	/*! The structs contain the number of each kind of parameter needed, and also the column number
-	 *that will be assigned to that type. It has been overloaded, because not all of the types will be used */
-	void set_parameters(const std::vector<std::string>& int4_list,const std::vector<std::string>& real8_list,
-			    const std::vector<std::string>& string_list);
-	void set_parameters(const std::vector<std::string>& int4_list,const std::vector<std::string>& real8_list);	
-	void set_parameters(const std::vector<std::string>& int4_list);
+	//! this function sets up the logic that keeps track of which column of rows are which fortran type
+	void column_logic(const std::vector<std::string>& types);
 
+	std::vector<text_box>& get_text_boxes(){ return text_boxes;}
+	const std::vector<text_box>& get_const_text_boxes(){ return text_boxes;}
 
   private:
 	sdl_help* sdl_helper;//!< allows easy access to the graphics class
@@ -115,4 +122,11 @@ class page{
 	std::vector<std::string> row_labels;//!< optional row labels, should be rarely used
 	
 	std::vector<text_box> text_boxes;//!< array that contains all of the necessary text boxes
+	std::vector<SDL_Texture*> column_label_textures;//!< stores the column label textures for the passed labels
+	std::vector<SDL_Rect> column_label_rects;//!< store the drawing location for the column labels
 };
+
+
+
+
+

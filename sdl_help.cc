@@ -11,6 +11,7 @@
 //more pre-project planning on my part would have avoided such a misfortune
 #include "button_manager.h"
 
+#define SDL_HELP_ERROR "Attempted double free in ~sdl_help"
 using namespace std;
 
 
@@ -58,7 +59,11 @@ sdl_help::sdl_help(string name_in,string HF_input_file_in,string bg_image_name_i
 	error_logger.push_msg( "display width: " + to_string(display.w) + "display height:" + to_string(display.h));
 	window = SDL_CreateWindow(window_name.c_str(), 0, 0,temp_window_w,temp_window_h, SDL_WINDOW_RESIZABLE);
 	renderer = SDL_CreateRenderer(window,-1,SDL_RENDERER_PRESENTVSYNC);
- //(font_p + "LiberationSerif-Regular.tff").c_str()
+	if(renderer == NULL){
+		error_logger.push_error("MASSIVE ERROR, RENDERER COULD NOT BE CREATED");//put message in error logger
+		error_logger.make_error_file();//make the error logger output
+		exit(1984);//throw a tantrum and close program
+	}
 	font = TTF_OpenFont( "./Assets/fonts/LiberationSerif-Regular.ttf", 22);//set up pointer to font from file
 	if(font == NULL) {
 		error_logger.push_error(SDL_GetError());
@@ -98,23 +103,22 @@ sdl_help::sdl_help(string name_in,string HF_input_file_in,string bg_image_name_i
 }
 
 sdl_help::~sdl_help(){
+	if( bg_surface != NULL && bg_texture != NULL){
+		SDL_FreeSurface(bg_surface);
+		SDL_DestroyTexture(bg_texture);//free up the memory from the background image
+	} else error_logger.push_error(SDL_HELP_ERROR);
 
-	SDL_FreeSurface(bg_surface);
-	SDL_DestroyTexture(bg_texture);//free up the memory from the background image
-
-
-	SDL_DestroyRenderer(renderer);//stops memory leaks
-	SDL_DestroyWindow(window);
-	TTF_CloseFont(font);//give back memory from the font pointer
+	if(renderer != NULL && window != NULL && font != NULL){
+		SDL_DestroyRenderer(renderer);//stops memory leaks
+		SDL_DestroyWindow(window);
+		TTF_CloseFont(font);//give back memory from the font pointer
+	} else error_logger.push_error(SDL_HELP_ERROR);
 
 	TTF_Quit();
 	IMG_Quit();
 	SDL_Quit();
 }
 
-void sdl_help::quit(){
-	this->~sdl_help();  
-}
 //#####################################################################################################
 
 

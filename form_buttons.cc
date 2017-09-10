@@ -1,5 +1,6 @@
 //! \file form_buttons.cc contains the implementations for the classes specified in form_buttons.h
 
+#include <cmath>
 #include "form_buttons.h"
 using namespace std;
 
@@ -13,8 +14,22 @@ form_button::form_button(){
 }
 
 form_button::~form_button(){
-	SDL_FreeSurface(lock_surface);
-	SDL_DestroyTexture(lock_texture);
+
+	//###############################################################################################
+	if(lock_surface != NULL) SDL_FreeSurface(lock_surface);
+	else error_logger.push_error("Lock surface for form_button NULL upon destructor being called");
+
+	if(lock_texture != NULL) SDL_DestroyTexture(lock_texture);
+	else error_logger.push_error("Lock texture for form_button NULL upon destructor being called");
+	//###############################################################################################
+
+	//###############################################################################################
+	if(unlock_help_surface != NULL) SDL_FreeSurface(unlock_help_surface);
+	else error_logger.push_error("Help message surface for form_button NULL upon destructor being called");
+
+	if(unlock_help_texture != NULL) SDL_DestroyTexture(unlock_help_texture);
+	else error_logger.push_error("Help message texture for form_button NULL upon destructor being called");
+	//###############################################################################################
 
 }
 
@@ -53,15 +68,17 @@ void form_button::setup_lock(){
 }
 
 void form_button::setup_help_msg(){
+
 	unlock_help_surface = IMG_Load("Assets/Images/form_assets/general_form_locked_msg.png");
 	if(unlock_help_surface == NULL) error_logger.push_error(SDL_GetError());
+
 	unlock_help_texture = SDL_CreateTextureFromSurface(sdl_helper->renderer,unlock_help_surface);
 	if(unlock_help_texture == NULL) error_logger.push_error(SDL_GetError());
 
 }
 void form_button::init_form(){
 
-	my_form.init("no title","general_form_locked_msg.png",0,0,0,sdl_helper,sdl_helper->font);
+	my_form.init("no title","general_form_locked_msg.png",0,0,sdl_helper,sdl_helper->font);
 
 }
 
@@ -113,18 +130,82 @@ bool icntrl8_form_button::handle_click(SDL_Event& mouse_event){
 }
 
 void icntrl8_form_button::click_helper(SDL_Event& mouse_event){
-	cout << "Clicked icntrl8/cutoff nuclei button" << endl;
+	error_logger.push_msg("Clicked icntrl8/cutoff nuclei button");
 
+	//don't consider doing anything if the form is locked
 	if(!is_locked){
-		my_form.toggle_active();//let the form know that it is now active
-		my_form.form_event_loop(mouse_event);//enter the mini loop for form entry
+
+		//in this case the form has not been previously created
+		if(!my_form.prev_initiated){
+			//grab val from parameter field, so the pages can be set up
+			icntrl8_val = stoi(sdl_helper->get_mgr().fields.at("line_6").at("ICNTRL8").temp_input);
+			error_logger.push_msg("ICNTRL8 val:" + to_string(icntrl8_val)+" when form opened");
+			vector<string> pass_column_titles,pass_row_titles;
+			//for icntrl 8, the labels shouldn't change
+			pass_column_titles.push_back("IA8");
+			pass_column_titles.push_back("IZ8");
+			pass_column_titles.push_back("E8");
+			//#########################################
+		
+			int total_height_pixels = icntrl8_val * 35;//guessing on a budget of 25 pixels per text box, and 10 padding 
+			int pages_needed = ceil(total_height_pixels / 725.0); //pixels needed/pixels per page = pages needed
+		
+			for(int c = 0; c < pages_needed;c++){
+				page push_me(3,(icntrl8_val / pages_needed),pass_column_titles,pass_row_titles,sdl_helper,sdl_helper->font);
+				my_form.get_pages().push_back(push_me);//push the new page into the form
+			}
+		
+			my_form.set_page_count(pages_needed);
+
+			my_form.prev_initiated = true;//let the form class know that it's pages have been set up
+			my_form.prev_init_value = icntrl8_val;//and also what conditions caused such a creation
+
+
+			my_form.toggle_active();//let the form know that it is now active
+			my_form.form_event_loop(mouse_event);//enter the mini loop for form entry
+
+		//in this case the form has been previously created, but the icntrl8 value has not changed, so nothing needs to be done
+		} else if(my_form.prev_init_value == stoi(sdl_helper->get_mgr().fields.at("line_6").at("ICNTRL8").temp_input) ){
+			my_form.toggle_active();//let the form know that it is now active
+			my_form.form_event_loop(mouse_event);//enter the mini loop for form entry
+
+		//in this case, the form has been previously created, but the icntrl8 value has been changed, so it must be recreated
+		} else {
+			my_form.flush_pages();//clear out previous info
+
+			//grab val from parameter field, so the pages can be set up
+			icntrl8_val = stoi(sdl_helper->get_mgr().fields.at("line_6").at("ICNTRL8").temp_input);
+			error_logger.push_msg("ICNTRL8 val:" + to_string(icntrl8_val)+" when form opened");
+			vector<string> pass_column_titles,pass_row_titles;
+			//for icntrl 8, the labels shouldn't change
+			pass_column_titles.push_back("IA8");
+			pass_column_titles.push_back("IZ8");
+			pass_column_titles.push_back("E8");
+			//#########################################
+		
+			int total_height_pixels = icntrl8_val * 35;//guessing on a budget of 25 pixels per text box, and 10 padding 
+			int pages_needed = ceil(total_height_pixels / 725.0); //pixels needed/pixels per page = pages needed
+		
+			for(int c = 0; c < pages_needed;c++){
+				page push_me(3,(icntrl8_val / pages_needed),pass_column_titles,pass_row_titles,sdl_helper,sdl_helper->font);
+				my_form.get_pages().push_back(push_me);//push the new page into the form
+			}
+
+			my_form.prev_initiated = true;//make it known that the form has been previously created
+			my_form.prev_init_value = icntrl8_val;//save the info that created this form
+			my_form.set_page_count(pages_needed);
+
+			my_form.toggle_active();//let the form know that it is now active
+			my_form.form_event_loop(mouse_event);//enter the mini loop for form entry
+
+
+		}
 	}
 }
 
 void icntrl8_form_button::init_form(){
 
-	my_form.init("no title","general_form_locked_msg.png",0,0,0,sdl_helper,sdl_helper->font);
-
+	my_form.init("Cutoff Nuclei (ICNTRL8)","icntrl8_form_help.png",0,0,sdl_helper,sdl_helper->font);
 }
 
 //##############################################################################
@@ -139,7 +220,7 @@ bool ilv2_form_button::handle_click(SDL_Event& mouse_event){
 }
 
 void ilv2_form_button::click_helper(SDL_Event& mouse_event){
-	cout << "Clicked ilv2/  button" << endl;
+	error_logger.push_msg("Clicked ilv2/  button");
 	if(!is_locked){
 		my_form.toggle_active();//let the form know that it is now active
 		my_form.form_event_loop(mouse_event);//enter the mini loop for form entry
@@ -148,7 +229,7 @@ void ilv2_form_button::click_helper(SDL_Event& mouse_event){
 
 void ilv2_form_button::init_form(){
 
-	my_form.init("no title","general_form_locked_msg.png",0,0,0,sdl_helper,sdl_helper->font);
+	my_form.init("Level Info (ILV2)","general_form_locked_msg.png",0,0,sdl_helper,sdl_helper->font);
 
 }
 
@@ -175,7 +256,7 @@ bool icntrl6_form_button::handle_click(SDL_Event& mouse_event){
 }
 
 void icntrl6_form_button::click_helper(SDL_Event& mouse_event){
-	cout << "clicked the icntrl6/parameter search button" << endl;
+	error_logger.push_msg("clicked the icntrl6/parameter search button");
 	if(!is_locked){
 		my_form.toggle_active();//let the form know that it is now active
 		my_form.form_event_loop(mouse_event);//enter the mini loop for form entry
@@ -184,7 +265,7 @@ void icntrl6_form_button::click_helper(SDL_Event& mouse_event){
 
 void icntrl6_form_button::init_form(){
 
-	my_form.init("no title","general_form_locked_msg.png",0,0,0,sdl_helper,sdl_helper->font);
+	my_form.init("Parameter Search (ICNTRL6)","general_form_locked_msg.png",0,0,sdl_helper,sdl_helper->font);
 
 }
 
@@ -202,7 +283,7 @@ bool icntrl10_form_button::handle_click(SDL_Event& mouse_event){
 }
 
 void icntrl10_form_button::click_helper(SDL_Event& mouse_event){
-	cout << "clicked the icntrl10/sigma info button " << endl;
+	error_logger.push_msg("clicked the icntrl10/sigma info button ");
 	if(!is_locked){
 		my_form.toggle_active();//let the form know that it is now active
 		my_form.form_event_loop(mouse_event);//enter the mini loop for form entry
@@ -211,7 +292,7 @@ void icntrl10_form_button::click_helper(SDL_Event& mouse_event){
 
 void icntrl10_form_button::init_form(){
 
-	my_form.init("no title","general_form_locked_msg.png",0,0,0,sdl_helper,sdl_helper->font);
+	my_form.init("Spin Cutoff Information (ICNTRL10)","general_form_locked_msg.png",0,0,sdl_helper,sdl_helper->font);
 
 }
 
@@ -238,7 +319,7 @@ bool icntrl4_form_button::handle_click(SDL_Event& mouse_event){
 }
 
 void icntrl4_form_button::click_helper(SDL_Event& mouse_event){
-	cout << "clicked the icntrl4/resolved levels info button " << endl;
+	error_logger.push_msg("clicked the icntrl4/resolved levels info button ");
 	if(!is_locked){
 		my_form.toggle_active();//let the form know that it is now active
 		my_form.form_event_loop(mouse_event);//enter the mini loop for form entry
@@ -247,7 +328,7 @@ void icntrl4_form_button::click_helper(SDL_Event& mouse_event){
 
 void icntrl4_form_button::init_form(){
 
-	my_form.init("no title","general_form_locked_msg.png",0,0,0,sdl_helper,sdl_helper->font);
+	my_form.init("Resolved Levels (ICNTRL4)","general_form_locked_msg.png",0,0,sdl_helper,sdl_helper->font);
 
 }
 

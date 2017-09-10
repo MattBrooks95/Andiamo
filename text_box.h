@@ -17,7 +17,10 @@ struct text_box{
 	 *once the containing class is set up */
 	text_box(sdl_help* sdl_helper = NULL,TTF_Font* font_in=NULL,
 		 std::string text_in = " ",int xloc_in = 0, int yloc_in = 0,int width_in = 0,
-		 int height_in=0);
+		 int height_in = 0);
+
+	//! copy constructor prevents double free() crashes when temporary text_boxes are pushed into vectors
+	text_box(const text_box& other);
 
 	//! the destructor frees the memory for the sdl surfaces and textures
 	~text_box();

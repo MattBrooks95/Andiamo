@@ -142,8 +142,9 @@ struct active_area{
 	/*! it can be used to "line up" the actual button part that responds to clicks with its texture's
 	 *shape and location, like the "yes" and "no" click areas in exit_button */
 	void print_me(){
-		std::cout << "Printing active area" << std::endl;
-		std::cout << xloc << ":" << yloc << "     " << width << ":" << height << std::endl;
+		error_logger.push_msg("Printing active area");
+		error_logger.push_msg(std::to_string(xloc)+":"+std::to_string(yloc)+"     "+std::to_string(width)+":"
+				      +std::to_string(height));
 	}
 
 	int xloc;//!< corner'ss horizontal location

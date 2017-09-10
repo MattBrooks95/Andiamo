@@ -170,8 +170,6 @@ class sdl_help{
 	 *\param rect is an SDL_Rect that contains the box to be checked, usually a tile's location*/
 	bool in(int click_x, int click_y,const SDL_Rect& rect) const;
 
-	//! This member merely calls the destructor at the programmer's discretion
-	void quit();
 
 	/**********GETTERS AND SETTERS*********************************/
 	//! This member gets the current frame count

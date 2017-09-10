@@ -395,13 +395,23 @@ void field::draw_cursor(){
 
 //I need to find a way to save time, it's slow when the user is typing
 void field::update_texture(){
+	//##########################################################################################
+	if(text_box.text_surf != NULL ){
 		SDL_FreeSurface(text_box.text_surf);//prevent memory loss
-		SDL_DestroyTexture(text_box.text_tex);//prevent memory loss
+		text_box.text_surf = NULL;
+	} else error_logger.push_msg("field::update_texture has an unexpected NULL text_surf pointer");
 
-		text_box.text_surf = TTF_RenderUTF8_Blended(sdl_font,temp_input.c_str(),text_box.text_color);
-		if(text_box.text_surf == NULL) error_logger.push_error(SDL_GetError());
-		text_box.text_tex = SDL_CreateTextureFromSurface(sdl_help_renderer,text_box.text_surf);
-		if(text_box.text_tex == NULL) error_logger.push_error(SDL_GetError());
+	if(text_box.text_tex != NULL ){
+		SDL_DestroyTexture(text_box.text_tex);//prevent memory loss
+		text_box.text_tex = NULL;
+	} else error_logger.push_msg("field::update_texture has an unexpected NULL text_text pointer");
+	//###########################################################################################
+
+
+	text_box.text_surf = TTF_RenderUTF8_Blended(sdl_font,temp_input.c_str(),text_box.text_color);
+	if(text_box.text_surf == NULL) error_logger.push_error(SDL_GetError());
+	text_box.text_tex = SDL_CreateTextureFromSurface(sdl_help_renderer,text_box.text_surf);
+	if(text_box.text_tex == NULL) error_logger.push_error(SDL_GetError());
 }
 //this function updates this fields ftran_struct in the input_maker vectors
 bool field::update_my_value(){

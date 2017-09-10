@@ -28,18 +28,71 @@ text_box::text_box(sdl_help* sdl_help_in,TTF_Font* font_in, string text_in, int 
 	cursor_texture = NULL;
 	editing_location = 0;
 
+	text_box_surface = NULL;
+	text_box_texture = NULL;
+
+	text_surface = NULL;
+	text_texture = NULL;
+
 }
 
+text_box::text_box(const text_box& other){
+	my_rect = other.my_rect;
+
+	text_color = other.text_color;
+
+	xloc = other.xloc;
+	yloc = other.yloc;
+
+	width = other.width;
+	height = other.height;
+
+	text = other.text;
+	text_dims = other.text_dims;
+
+	sdl_helper = other.sdl_helper;
+	sdl_help_font = other.sdl_help_font;
+
+
+	cursor_surface = IMG_Load("Assets/Images/cursor.png");
+	cursor_texture = SDL_CreateTextureFromSurface(sdl_helper->renderer,cursor_surface);
+
+	editing_location = other.editing_location;
+
+
+
+	text_box_surface = IMG_Load("./Assets/Images/text_box.png");;
+	text_box_texture = SDL_CreateTextureFromSurface(sdl_helper->renderer,text_box_surface);
+
+	text_surface = TTF_RenderUTF8_Blended(sdl_help_font,text.c_str(),text_color);
+	text_texture = SDL_CreateTextureFromSurface(sdl_helper->renderer,text_surface);
+
+	editing_index = other.editing_index;
+
+
+}
 
 text_box::~text_box(){
-	SDL_FreeSurface(text_box_surface);
-	SDL_DestroyTexture(text_box_texture);
+	if(text_box_surface == NULL || text_box_texture == NULL) {
+		error_logger.push_error("Attempted double free in text_box deconstructor");
+	} else {
+		SDL_FreeSurface(text_box_surface);
+		SDL_DestroyTexture(text_box_texture);
+	}
 
-	SDL_FreeSurface(text_surface);
-	SDL_DestroyTexture(text_texture);
+	if(text_surface == NULL || text_texture == NULL){
+		error_logger.push_error("Attempted double free in text_box deconstructor");
+	} else {
+		SDL_FreeSurface(text_surface);
+		SDL_DestroyTexture(text_texture);
+	}
 
-	SDL_FreeSurface(cursor_surface);
-	SDL_DestroyTexture(cursor_texture);
+	if(cursor_surface == NULL || cursor_texture == NULL){
+		error_logger.push_error("Attemped double free in text_box deconstructor");
+	} else {
+		SDL_FreeSurface(cursor_surface);
+		SDL_DestroyTexture(cursor_texture);
+	}
 }
 
 void text_box::init(sdl_help* sdl_help_in,TTF_Font* font_in, string text_in, int xloc_in, int yloc_in,
@@ -47,7 +100,7 @@ void text_box::init(sdl_help* sdl_help_in,TTF_Font* font_in, string text_in, int
 
 	sdl_helper = sdl_help_in;
 	sdl_help_font = font_in;
-
+	text = text_in;
 
 	//set up location
 	xloc = xloc_in;	
@@ -62,38 +115,40 @@ void text_box::init(sdl_help* sdl_help_in,TTF_Font* font_in, string text_in, int
 	my_rect.w = width;
 	my_rect.h = height;
 
-
 	//load the same text box image used by the tiles
 	text_box_surface = IMG_Load("./Assets/Images/text_box.png");
-	if(text_box_surface == NULL) cout << SDL_GetError() << endl;
+	if(text_box_surface == NULL) error_logger.push_error(SDL_GetError());
 	text_box_texture = SDL_CreateTextureFromSurface(sdl_helper->renderer,text_box_surface);
-	if(text_box_texture == NULL) cout << SDL_GetError() << endl;
+	if(text_box_texture == NULL) error_logger.push_error(SDL_GetError());
 
 	text_surface = TTF_RenderUTF8_Blended(sdl_help_font,text.c_str(),text_color);
-	if(text_surface == NULL) cout << SDL_GetError() << endl;
+	if(text_surface == NULL) error_logger.push_error(SDL_GetError());
 	text_texture = SDL_CreateTextureFromSurface(sdl_helper->renderer,text_surface);
-	if(text_texture == NULL) cout << SDL_GetError() << endl;
+	if(text_texture == NULL) error_logger.push_error(SDL_GetError());
 
 	TTF_SizeText(sdl_help_font,text.c_str(),&text_dims.w,&text_dims.h);
 
 	cursor_surface = IMG_Load("Assets/Images/cursor.png");
-	if(cursor_surface == NULL) cout << SDL_GetError() << endl;
+	if(cursor_surface == NULL) error_logger.push_error(SDL_GetError());
 	cursor_texture = SDL_CreateTextureFromSurface(sdl_helper->renderer,cursor_surface);
-	if(cursor_texture == NULL) cout << SDL_GetError() << endl;
+	if(cursor_texture == NULL) error_logger.push_error(SDL_GetError());
 }
 
 void text_box::print_me(){
-	cout << "Printing text box." << endl;
-	cout << "My location: " << xloc << ":" << yloc << " " << width << ":" << height << endl;
-	cout << "My_rect:" <<  my_rect.x << ":" << my_rect.y << " " << my_rect.w << ":" << my_rect.h << endl;
-	cout << "Color: " << text_color.r << ":" << text_color.g << ":" << text_color.b
-	     << ":" << text_color.a << endl;
-	cout << "Text: " << text << endl;
-	cout << "sdl_help ptr: " << sdl_helper << endl;
-	cout << "sdl_help_font: " << sdl_help_font << endl;
+	error_logger.push_msg("Printing text box.");
+	error_logger.push_msg("My location: "+to_string(xloc)+":"+to_string(yloc)+" "+to_string(width)+":"+to_string(height));
+	error_logger.push_msg("My_rect:"+to_string(my_rect.x)+":"+to_string(my_rect.y)+" "+to_string(my_rect.w)+":"
+			      +to_string(my_rect.h));
+	error_logger.push_msg("Color: "+to_string(text_color.r)+":"+to_string(text_color.g)+":"+to_string(text_color.b)
+	     		      +":"+to_string(text_color.a)); 
+	error_logger.push_msg("Text: "+text);
+	error_logger.push_msg("sdl_help ptr: "+to_string(size_t(sdl_helper)));
+	error_logger.push_msg("sdl_help_font: "+to_string(size_t(sdl_help_font)));
 
-	cout << "Text box surface: " << text_box_surface << " text box texture " << text_box_texture << endl;
-	cout << "Text surface: " << text_box_surface << " text texture " << text_texture << endl;
+	error_logger.push_msg("Text box surface: "+to_string(size_t(text_box_surface))+" text box texture "
+			      +to_string(size_t(text_box_texture)));
+	error_logger.push_msg("Text surface: "+to_string(size_t(text_box_surface))+" text texture "
+			      +to_string(size_t(text_texture)));
 }
 
 void text_box::draw_me(){
@@ -129,8 +184,8 @@ void text_box::draw_cursor(){
 		cursor_dest = {xloc+text_dims.w, yloc, 6, text_dims.h};
 	}
 
-	if( SDL_RenderCopy(sdl_helper->renderer,cursor_texture,NULL,&cursor_dest) ){
-		cout << SDL_GetError() << endl;
+	if( SDL_RenderCopy(sdl_helper->renderer,cursor_texture,NULL,&cursor_dest) != 0 ){
+		error_logger.push_error(SDL_GetError());
 	}
 }
 
@@ -152,13 +207,23 @@ void text_box::update_text(string& new_text){
 }
 
 void text_box::update_texture(){
-	SDL_FreeSurface(text_surface);
-	SDL_DestroyTexture(text_texture);
+	if(text_surface != NULL){
+		SDL_FreeSurface(text_surface);
+	}
+	if(text_texture != NULL){
+		SDL_DestroyTexture(text_texture);
+	}
 
 	text_surface = TTF_RenderUTF8_Blended(sdl_help_font,text.c_str(),text_color);
-	if(text_surface == NULL) cout << SDL_GetError() << endl;
+	if(text_surface == NULL){
+		error_logger.push_error(SDL_GetError());
+		text_surface = TTF_RenderUTF8_Blended(sdl_help_font," ",text_color);
+	}
 	text_texture = SDL_CreateTextureFromSurface(sdl_helper->renderer,text_surface);
-	if(text_texture == NULL) cout << SDL_GetError() << endl;
+	if(text_texture == NULL){
+		error_logger.push_error(SDL_GetError());
+		
+	}
 }
 
 void text_box::back_space(){

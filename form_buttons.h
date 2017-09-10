@@ -83,7 +83,7 @@ class icntrl8_form_button : public form_button{
 	void click_helper(SDL_Event& mouse_event);
 
   private:
-
+	unsigned int icntrl8_val;//!< updated with the value from the field that corresponds to Cutoff Nuclei
 
 };
 
