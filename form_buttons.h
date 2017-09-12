@@ -82,6 +82,9 @@ class icntrl8_form_button : public form_button{
 	//! this function opens the icntrl8 form on click
 	void click_helper(SDL_Event& mouse_event);
 
+	//! this function is a helper that compacts the code found in click_helper that creates or recreates pages
+	void page_creation_helper();
+
   private:
 	unsigned int icntrl8_val;//!< updated with the value from the field that corresponds to Cutoff Nuclei
 

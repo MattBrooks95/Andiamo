@@ -137,29 +137,10 @@ void icntrl8_form_button::click_helper(SDL_Event& mouse_event){
 
 		//in this case the form has not been previously created
 		if(!my_form.prev_initiated){
-			//grab val from parameter field, so the pages can be set up
-			icntrl8_val = stoi(sdl_helper->get_mgr().fields.at("line_6").at("ICNTRL8").temp_input);
-			error_logger.push_msg("ICNTRL8 val:" + to_string(icntrl8_val)+" when form opened");
-			vector<string> pass_column_titles,pass_row_titles;
-			//for icntrl 8, the labels shouldn't change
-			pass_column_titles.push_back("IA8");
-			pass_column_titles.push_back("IZ8");
-			pass_column_titles.push_back("E8");
-			//#########################################
-		
-			int total_height_pixels = icntrl8_val * 35;//guessing on a budget of 25 pixels per text box, and 10 padding 
-			int pages_needed = ceil(total_height_pixels / 725.0); //pixels needed/pixels per page = pages needed
-		
-			for(int c = 0; c < pages_needed;c++){
-				page push_me(3,(icntrl8_val / pages_needed),pass_column_titles,pass_row_titles,sdl_helper,sdl_helper->font);
-				my_form.get_pages().push_back(push_me);//push the new page into the form
-			}
-		
-			my_form.set_page_count(pages_needed);
 
-			my_form.prev_initiated = true;//let the form class know that it's pages have been set up
-			my_form.prev_init_value = icntrl8_val;//and also what conditions caused such a creation
 
+			page_creation_helper();//most of this work is shared with the recreation case
+					       //so it has been put into a helper function
 
 			my_form.toggle_active();//let the form know that it is now active
 			my_form.form_event_loop(mouse_event);//enter the mini loop for form entry
@@ -173,6 +154,22 @@ void icntrl8_form_button::click_helper(SDL_Event& mouse_event){
 		} else {
 			my_form.flush_pages();//clear out previous info
 
+
+			page_creation_helper();//most of this work is shared with the 1st time creation case
+					       //so it has been put into a helper function
+
+
+			my_form.toggle_active();//let the form know that it is now active
+			my_form.form_event_loop(mouse_event);//enter the mini loop for form entry
+
+
+		}
+	}
+}
+
+void icntrl8_form_button::page_creation_helper(){
+
+
 			//grab val from parameter field, so the pages can be set up
 			icntrl8_val = stoi(sdl_helper->get_mgr().fields.at("line_6").at("ICNTRL8").temp_input);
 			error_logger.push_msg("ICNTRL8 val:" + to_string(icntrl8_val)+" when form opened");
@@ -186,21 +183,19 @@ void icntrl8_form_button::click_helper(SDL_Event& mouse_event){
 			int total_height_pixels = icntrl8_val * 35;//guessing on a budget of 25 pixels per text box, and 10 padding 
 			int pages_needed = ceil(total_height_pixels / 725.0); //pixels needed/pixels per page = pages needed
 		
-			for(int c = 0; c < pages_needed;c++){
-				page push_me(3,(icntrl8_val / pages_needed),pass_column_titles,pass_row_titles,sdl_helper,sdl_helper->font);
-				my_form.get_pages().push_back(push_me);//push the new page into the form
+
+			my_form.get_pages().resize(pages_needed);
+			for(unsigned int c = 0; c < my_form.get_pages().size();c++){
+				my_form.get_pages()[c].page_init(3,(icntrl8_val / pages_needed),pass_column_titles,pass_row_titles,sdl_helper,sdl_helper->font);
 			}
 
-			my_form.prev_initiated = true;//make it known that the form has been previously created
-			my_form.prev_init_value = icntrl8_val;//save the info that created this form
 			my_form.set_page_count(pages_needed);
 
-			my_form.toggle_active();//let the form know that it is now active
-			my_form.form_event_loop(mouse_event);//enter the mini loop for form entry
+			my_form.prev_initiated = true;//let the form class know that it's pages have been set up
+			my_form.prev_init_value = icntrl8_val;//and also what conditions caused such a creation
 
 
-		}
-	}
+
 }
 
 void icntrl8_form_button::init_form(){

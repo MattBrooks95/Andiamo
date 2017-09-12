@@ -93,14 +93,30 @@ class form{
 class page{
 
   public:
+
+	//! default page constructor
+	page();
+
+
 	//! page constructor allows for the setting of important variables
 	/*! \param num_columns_in is the # of columns of text boxes to create
 	*\param num_rows_in is the # of rows of text boxes to create
 	*\param row_labels_in is the row labels, which is not always used
 	*\param column_labels_in is the column labels, which should almost always be specified */
+/*
 	page(unsigned int num_columns_in, unsigned int num_rows_in,const std::vector<std::string>& column_labels_in,
 	     std::vector<std::string>& row_labels_in,sdl_help* sdl_helper_in,TTF_Font* sdl_font_in);
+*/
+	
+	//! writing the copy constructer here prevents seg faults due to double free when pushed into a vector
+	page(const page& other);
+
+	//! destructor frees memory back to the OS, most importantly taking care of pointers to memory
 	~page();
+
+	//! this function is used when the detailed constructor can't be ran
+	void page_init(unsigned int num_columns_in, unsigned int num_rows_in,const std::vector<std::string>& column_labels_in,
+	     std::vector<std::string>& row_labels_in,sdl_help* sdl_helper_in,TTF_Font* sdl_font_in);
 
 	//! this function draws the pages headers, labels and text boxes
 	void draw_me();

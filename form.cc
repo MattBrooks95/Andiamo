@@ -146,10 +146,15 @@ void form::form_event_loop(SDL_Event& big_event){
 				//opening and closing the help dialogue
  while(!done){
 	//cout << "IN FORM MINI LOOP" << endl;
-	SDL_PollEvent(&big_event);
-
+	if( !SDL_PollEvent(&big_event) ){
+		big_event.type = 1776;//arbitrary do-nothing event pushed onto queue, so it doesn't hit any cases
+	}
+	if(big_event.type != 1776) cout << "BIG EVENT TYPE:" << big_event.type << endl;
 	switch(big_event.type){
 		case SDL_QUIT:
+			toggle_active();
+			done = true;
+			SDL_PushEvent(&big_event);
 			break;
 		case SDL_KEYDOWN:
 			break;
@@ -165,7 +170,8 @@ void form::form_event_loop(SDL_Event& big_event){
 			break;
 		case SDL_WINDOWEVENT:
 			break;
-
+		case 1776://nop
+			break;
 
 		default:
 			break;
@@ -331,7 +337,6 @@ void form::flush_pages(){
 	page_count = 0;
 	current_page = 0;
 	update_page_indicator();
-
 }
 
 void form::text_box_loop(text_box& current_box,SDL_Event& event){
@@ -353,7 +358,7 @@ void form::text_box_loop(text_box& current_box,SDL_Event& event){
 			event.type = 1776; //dummy event to stop it from printing default message every frame
 					   //where no event happens
 		}
-
+		if(event.type != 1776) cout << "Text box loop type:" << event.type << endl;
 		switch(event.type){
 		  case SDL_MOUSEMOTION:
 			break;
@@ -364,8 +369,15 @@ void form::text_box_loop(text_box& current_box,SDL_Event& event){
 				error_logger.push_msg("Text box click at "+to_string(event.button.x)+":"+to_string(event.button.y));
 		  	} else { //elsewise exit text input mode, user clicked off the text box
 		  		error_logger.push_msg("Clicked outside of the text box, exiting mini-loop");
+
+				SDL_Event keyup_event;
+				keyup_event.type = SDL_MOUSEBUTTONUP;//putting in this key up removes the click locking
+				SDL_PushEvent(&keyup_event);	     //for the loop in form_event_loop
+
+
 				SDL_PushEvent(&event);//doing this allows the user to 'hop' to another text box
 						      //directly from editing another box
+
 				done = true;
 			}
 		  	break;
@@ -431,8 +443,36 @@ void form::text_box_loop(text_box& current_box,SDL_Event& event){
 
 
 //###################### PAGE CLASS BELOW #############################################################
+page::page(){
+	num_columns = 0;
+	num_rows = 0;
 
-page::page(unsigned int num_columns_in, unsigned int num_rows_in,const vector<string>& column_labels_in,
+	sdl_helper = NULL;
+	sdl_font = NULL;
+}
+
+page::page(const page& other){
+	num_columns = other.num_columns;
+	num_rows = other.num_rows;
+	column_labels = other.column_labels;
+	row_labels = other.row_labels;
+	sdl_helper = other.sdl_helper;
+	sdl_font = sdl_font;
+}
+
+
+page::~page(){
+
+	for(unsigned int c = (column_label_textures.size() - 1) ; c > 0;c--){
+		if(column_label_textures[c] != NULL){
+			SDL_DestroyTexture(column_label_textures[c]);
+			column_label_textures.pop_back();
+		}
+	}
+
+}
+
+void page::page_init(unsigned int num_columns_in, unsigned int num_rows_in,const vector<string>& column_labels_in,
 	   vector<string>& row_labels_in,sdl_help* sdl_helper_in,TTF_Font* sdl_font_in){
 	num_columns = num_columns_in;
 	num_rows = num_rows_in;
@@ -456,7 +496,7 @@ page::page(unsigned int num_columns_in, unsigned int num_rows_in,const vector<st
 	//but, I think another solution could have been to tell the vector make 'x' text_boxes, and then init the copies
 	//that exist inside the vector
 	
-	//set up columnm labels
+	//set up column labels
 	SDL_Color black = {0,0,0,0};
 	SDL_Surface* temp_surf = NULL;
 	SDL_Texture* temp_texture = NULL;
@@ -477,18 +517,6 @@ page::page(unsigned int num_columns_in, unsigned int num_rows_in,const vector<st
 		SDL_FreeSurface(temp_surf);//give memory back
 		temp_surf = NULL;//reset surf pointer for next item
 	}
-
-}
-
-page::~page(){
-/*
-	for(unsigned int c = (column_label_textures.size() - 1) ; c >= 0;c--){
-		if(column_label_textures[c] != NULL){
-			SDL_DestroyTexture(column_label_textures[c]);
-			column_label_textures.pop_back();
-		}
-	}
-*/
 }
 
 void page::draw_me(){
