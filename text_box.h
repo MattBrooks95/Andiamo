@@ -48,7 +48,14 @@ struct text_box{
 	void make_rect();
 
 	//! this function updates the text that is rendererd to the screen
+	/*! it uses update_text_bounds_check to make sure that text can't go off the edge */
 	void update_text(std::string& new_text);
+
+	//! this function is a helper used for update_text to make sure user can't write off of the edge
+	/*! it first creates a copy of the text box's text string, then inserts the proposed string into it.
+	 * Then it checks the width of the text against the width of the box.
+	 * \return true if text fits within the box's bounds, or false if it does not */
+	bool update_text_bounds_check(std::string& new_text) const;
 
 	//! update the texture when the text is changed
 	void update_texture();

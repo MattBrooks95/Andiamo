@@ -73,6 +73,10 @@ class form_button : public button{
 class icntrl8_form_button : public form_button{
 
   public:
+
+	//! this function changes the default help message to one that explains icntrl8's conditions
+	void setup_help_msg();
+
 	//! implements the special logic for this class
 	bool handle_click(SDL_Event& mouse_event);
 

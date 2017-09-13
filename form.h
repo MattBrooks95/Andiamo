@@ -14,31 +14,52 @@
 #include "text_box.h"
 class page;
 
+//! A form is a class that is housed by a form_button, which allows for dynamic parameter entry
+/*! Forms are only used for the handful of parametes in the input manual that enable extra features of
+ *HF, which typically require a significant amount of extra input. Each form is a collection of page objects,
+ *and the various functions that are useful to its implementation. I've tried to create it to be as dynamic as possible,
+ *though inheriting from this class to create even more specialized functionality is possible */
 class form{
 
   public:
+	//! the default constructor, which takes no arguments, and zeroes or NULLs the form's values
 	form();
+	//! the destructor gets rid of the form's textures, giving that memory back to the OS
 	~form();
 
-
+	//! the init function sets up the form's variables as specified by the parameters it is passed.
+	/*! \param form_title_in sets the title that is displayed at the top of the form
+	 *\param help_msg_image_name finishes the asset's path, by specifying the help message png to be used
+	 *\param xloc_in sets the horizontal coordinate of the corner of the form, likely should be 0
+	 *\param yloc_in sets the vertical coordinate of the corner of the form, likely should be 0
+	 *\param sdl_helper_in is a pointer reference to the sdl_help object, for drawing functionality
+	 *\param sdl_font_in is a pointer to the font contained within the sdl_help object, for shorthand access */
 	void init(std::string form_title_in,std::string help_msg_image_name,
 		  int xloc_in,int yloc_in, sdl_help* sdl_helper_in,TTF_Font* sdl_font_in);
 
-
+	//! form_event_loop is a member that enacts an event loop similar to the one in main
+	/* it is specifically tailored to be useful for form parameter entry, and it is virtual so it could be
+	 *inherited by narrow forms to allow specialized functionality */
 	virtual void form_event_loop(SDL_Event& big_event);
 
-
+	//! handle click the is the function that processes clicks and enacts the according object's work functions
 	void handle_click(SDL_Event& mouse_event,bool& done,bool& click_lock);
 
+	//! draw_me presents the form to the screen, which involves printing its currently active page as well
 	void draw_me();
 
+	//! toggle_active() is used to flip the active boolean
+	/*! the active boolean tells the application when the form should be visible & interactable, and when
+	 * it should not be */
 	void toggle_active();
 
+	//! is_active() is a by-value getter for the active boolean
 	bool is_active(){ return active;}
 
-
+	//! next_page presents the next page to the user, if possible
 	void next_page();
 
+	//! prev_page presents the previous page to the user, if possible
 	void prev_page();
 
 	std::vector<page>& get_pages() { return pages;} 
@@ -124,7 +145,9 @@ class page{
 	//! this function sets up the logic that keeps track of which column of rows are which fortran type
 	void column_logic(const std::vector<std::string>& types);
 
+	//! this function is a non-const reference getter for the text box vector
 	std::vector<text_box>& get_text_boxes(){ return text_boxes;}
+	//! this function is a const reference getter for the text box vector
 	const std::vector<text_box>& get_const_text_boxes(){ return text_boxes;}
 
   private:

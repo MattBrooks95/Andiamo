@@ -6,7 +6,13 @@
 #include<string>
 #include<cstdlib> //for system calls
 #include<time.h>  //for time functions used to name files
-
+//! the logger is a class that provides a means by which error messages can be printed to a file
+/*! I made this to reduce the terminal clutter involved with the many cout statements that I use(d) for debugging.
+ *It has two primary functionalities: extensive debugging output and error message output. Caught exceptions or
+ *shaky occurences within the logics of if-else statements are the kind of messages that wind up here. The output
+ *from SDL_GetError() also winds up here often. It currently does not clean out the folder in which it stores the reports
+ *, which is a feature I'd like to add sometime. It also only outputs debugging messages if -v is appended to its
+ *terminal command, like ./andiamo -v */
 class logger{
   public:
 	//! constructor creates the error output stream (errors_out)

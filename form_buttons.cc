@@ -121,6 +121,18 @@ void form_button::make_output(){
 
 
 //####################### ICNTRL8 BUTTON ######################################
+
+void icntrl8_form_button::setup_help_msg(){
+	cout << "setting up help message for icntrl 8" << endl;
+
+	unlock_help_surface = IMG_Load("Assets/Images/form_assets/icntrl8_form_locked_msg.png");
+	if(unlock_help_surface == NULL) error_logger.push_error(SDL_GetError());
+
+	unlock_help_texture = SDL_CreateTextureFromSurface(sdl_helper->renderer,unlock_help_surface);
+	if(unlock_help_texture == NULL) error_logger.push_error(SDL_GetError());
+
+}
+
 bool icntrl8_form_button::handle_click(SDL_Event& mouse_event){
 	if(button::was_clicked(mouse_event)){
 		click_helper(mouse_event);

@@ -271,7 +271,7 @@ void form::toggle_active(){
 
 
 void form::next_page(){
-	if(current_page < (pages.size() - 1) ){
+	if(current_page < page_count){
 		current_page++;
 		update_page_indicator();
 	}
@@ -397,15 +397,19 @@ void form::text_box_loop(text_box& current_box,SDL_Event& event){
 				current_box.back_space();
 				text_was_changed = true;
 			} else if(event.key.keysym.sym == SDLK_LEFT){
+
 				if(current_box.editing_location > 0){
 					current_box.editing_location--;
 					text_was_changed = true;
 				}
+
 			} else if(event.key.keysym.sym == SDLK_RIGHT){
+
 				if(current_box.editing_location < current_box.text.size()){
 					current_box.editing_location++;
 					text_was_changed = true;
 				}
+
 			}
 				
 			SDL_FlushEvent(SDL_KEYDOWN); //prevent event flooding

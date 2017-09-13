@@ -135,6 +135,7 @@ void text_box::init(sdl_help* sdl_help_in,TTF_Font* font_in, string text_in, int
 }
 
 void text_box::print_me(){
+
 	error_logger.push_msg("Printing text box.");
 	error_logger.push_msg("My location: "+to_string(xloc)+":"+to_string(yloc)+" "+to_string(width)+":"+to_string(height));
 	error_logger.push_msg("My_rect:"+to_string(my_rect.x)+":"+to_string(my_rect.y)+" "+to_string(my_rect.w)+":"
@@ -198,12 +199,30 @@ void text_box::make_rect(){
 }
 
 void text_box::update_text(string& new_text){
-	//add to the string
-	text.insert(editing_location,new_text);
-	editing_location += strlen(new_text.c_str());
-	TTF_SizeText(sdl_helper->font,text.c_str(),&text_dims.w,&text_dims.h);
-	//update the texture for the text
-	update_texture();
+
+	if( update_text_bounds_check(new_text) ){
+
+
+		//add to the string
+		text.insert(editing_location,new_text);
+		editing_location += strlen(new_text.c_str());
+		TTF_SizeText(sdl_helper->font,text.c_str(),&text_dims.w,&text_dims.h);
+		//update the texture for the text
+		update_texture();
+	} else {
+		error_logger.push_msg("Couldn't modify text box text, because it would go out of bounds");
+	}
+
+}
+
+bool text_box::update_text_bounds_check(std::string& new_text) const{
+
+	string fake_string = text;
+	fake_string.insert(editing_location,new_text);
+	int new_w, new_h;
+	TTF_SizeText(sdl_helper->font,fake_string.c_str(),&new_w,&new_h);
+	if(new_w > width) return false;
+	else return true;
 }
 
 void text_box::update_texture(){

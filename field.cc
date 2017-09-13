@@ -349,14 +349,28 @@ void field::change_tile_background(string image_name){
 void field::update_temp_input(SDL_Event& event){
 	
 	error_logger.push_msg("OLD LINE: "+temp_input);
-	//temp_input.append( event.text.text );
+		//temp_input.append( event.text.text );
 
-	temp_input.insert(editing_location,event.text.text);
-	editing_location += strlen(event.text.text);
+	if(check_text_box_bounds(event)){
+		temp_input.insert(editing_location,event.text.text);
+		editing_location += strlen(event.text.text);
 
-	TTF_SizeText(sdl_font,temp_input.c_str(),&text_dims.w,&text_dims.h);
-	error_logger.push_msg("AFTER APPEND:"+temp_input);
-	update_texture();
+		TTF_SizeText(sdl_font,temp_input.c_str(),&text_dims.w,&text_dims.h);
+		error_logger.push_msg("AFTER APPEND:"+temp_input);
+		update_texture();
+	} else {
+		error_logger.push_msg("Could not edit field's text, as it would go out of bounds");
+	}
+}
+
+bool field::check_text_box_bounds(SDL_Event& event) const{
+
+	string fake_string = temp_input;
+	fake_string.insert(editing_location,event.text.text);
+	int new_w, new_h;
+	TTF_SizeText(sdl_font,fake_string.c_str(),&new_w,&new_h);
+	if(new_w > size.width) return false;
+	else return true;	
 }
 
 void field::draw_cursor(){

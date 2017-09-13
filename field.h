@@ -121,6 +121,9 @@ class field{
 	 *frame is drawn */
 	void update_temp_input(SDL_Event& event);
 
+	//! this function makes sure that the user can't type off the bounds of the text box
+	bool check_text_box_bounds(SDL_Event& event) const;
+
 	//! this function is used by manager::give_fields_defaults to set the text as read in from the HF config file
 	/*! this helper will also update the text's surface dimensions, to be used when the text is drawn to the screen */
 	void init_temp_input(std::string data);
