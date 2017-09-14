@@ -91,7 +91,7 @@ class manager{
 	//! this function analyzes some parameter tiles, to implement the control logic of selector variables
 	void check_locks();
 
-	//simple cases for lockign and unlocking
+	//simple cases for locking and unlocking
 
 		//! helper function for check_locks()
 		void iench_locking();
@@ -117,6 +117,14 @@ class manager{
 
 		//! helper function for check_locks()
 		void icntrl10_locking();
+
+		//! helper function for check_locks()
+		void ilv3_ilv5_locking();
+		//! helper function for ilv3_ilv5_locking(), determines lock/unlock conditions of passed field
+		/*! the field passed MUST be "ILV3" or "ILV5"
+		 *\param target_param is the name of the field to check the locking status of, MUST be "ILV3" or "ILV5" */
+		void ilv3_ilv5_locking_helper(const std::string& target_param,const std::regex& unlock_condition);
+
 		//##### ICNTRL6 locking + helpers ######################################
 			//! helper function for check_locks()
 			void icntrl6_locking();

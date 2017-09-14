@@ -54,7 +54,7 @@ class button_manager{
 	ilv2_form_button& get_ilv_2(){return ilv_2;}
 	icntrl10_form_button& get_icntrl_10(){return icntrl_10;}
 	icntrl4_form_button& get_icntrl_4(){return icntrl_4;}
-
+	ilv3_ilv5_form_button& get_ilv3_ilv5(){return ilv3_ilv5;}
 
 	//##############################################################################################//
 	//! this member calls the virtual init() memeber on each of button_manager's private buttons
@@ -126,6 +126,8 @@ class button_manager{
 	ilv2_form_button ilv_2;//!< allows user to enter extra lines as a result of ilv_2 being used
 	icntrl10_form_button icntrl_10;//!< allows user to enter extra lines as a result of ilv_2 being used
 	icntrl4_form_button icntrl_4;//!< allows user to enter extra lines as a result of icntrl4 being used
+	ilv3_ilv5_form_button ilv3_ilv5;//!< allows user to enter parameters for ILV3 or ILV5
+
 	SDL_Rect form_tray_rect;//!< drawing destination for the form tray
 
 	//#######################################################################################################
@@ -133,8 +135,6 @@ class button_manager{
 
 	//! name for the tray's image file. Defaults to button_image_p + "button_tray.png" in constructor
 	std::string tray_image_name;
-
-
 
 	bool tray_shown;//!< keep track of whether or not the tray should be drawn to the screen
 	SDL_Rect tray_rect;//!< drawing destination for the button tray

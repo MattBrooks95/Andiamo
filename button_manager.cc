@@ -83,6 +83,7 @@ void button_manager::redo_locks(){
 	ilv_2.set_corner_loc(form_tray_rect.x + 315,form_tray_rect.y);
 	icntrl_10.set_corner_loc(form_tray_rect.x+105,form_tray_rect.y);
 	icntrl_4.set_corner_loc(form_tray_rect.x+525,form_tray_rect.y);
+	ilv3_ilv5.set_corner_loc(form_tray_rect.x+630,form_tray_rect.y);
 
 /*
 	icntrl_8.set_corner_loc(form_tray_rect.x + 105,form_tray_rect.y);
@@ -97,12 +98,14 @@ void button_manager::redo_locks(){
 	ilv_2.make_rect();
 	icntrl_10.make_rect();
 	icntrl_4.make_rect();
+	ilv3_ilv5.make_rect();
 
 	icntrl_8.setup_lock();
 	icntrl_6.setup_lock();
 	ilv_2.setup_lock();
 	icntrl_10.setup_lock();
 	icntrl_4.setup_lock();
+	ilv3_ilv5.setup_lock();
 }
 
 //this follows the logic used in init_buttons
@@ -170,36 +173,42 @@ void button_manager::init_form_buttons(){
 	ilv_2.init(sdl_helper);
 	icntrl_10.init(sdl_helper);
 	icntrl_4.init(sdl_helper);
+	ilv3_ilv5.init(sdl_helper);
 
 	icntrl_6.set_corner_loc(form_tray_rect.x + 420,form_tray_rect.y);
 	icntrl_8.set_corner_loc(form_tray_rect.x + 210,form_tray_rect.y);
 	ilv_2.set_corner_loc(form_tray_rect.x + 315,form_tray_rect.y);
 	icntrl_10.set_corner_loc(form_tray_rect.x+105,form_tray_rect.y);
 	icntrl_4.set_corner_loc(form_tray_rect.x+525,form_tray_rect.y);
+	ilv3_ilv5.set_corner_loc(form_tray_rect.x+630,form_tray_rect.y);
 
 	icntrl_6.make_rect();
 	icntrl_8.make_rect();
 	ilv_2.make_rect();
 	icntrl_10.make_rect();
 	icntrl_4.make_rect();
+	ilv3_ilv5.make_rect();
 
 	icntrl_6.setup_lock();
 	icntrl_8.setup_lock();
 	ilv_2.setup_lock();
 	icntrl_10.setup_lock();
 	icntrl_4.setup_lock();
+	ilv3_ilv5.setup_lock();
 
 	icntrl_6.setup_help_msg();
 	icntrl_8.setup_help_msg();
 	ilv_2.setup_help_msg();
 	icntrl_10.setup_help_msg();
 	icntrl_4.setup_help_msg();
+	ilv3_ilv5.setup_help_msg();
 
 	icntrl_6.init_form();
 	icntrl_8.init_form();
 	ilv_2.init_form();
 	icntrl_10.init_form();
 	icntrl_4.init_form();
+	ilv3_ilv5.init_form();
 }
 
 void button_manager::print_buttons(){
@@ -232,6 +241,7 @@ void button_manager::draw_form_tray(){
 	ilv_2.draw_lock();
 	icntrl_10.draw_lock();
 	icntrl_4.draw_lock();
+	ilv3_ilv5.draw_lock();
 	
 }
 
@@ -441,6 +451,13 @@ bool button_manager::click_handling(SDL_Event& mouse_event){
 			}
 			done_something = true;
 
+		} else if( ilv3_ilv5.handle_click(mouse_event) ) {
+			if(icntrl_4.get_is_locked()){
+				icntrl_4.draw_help_msg(mouse_event,msg_dest);
+			} else {
+
+			}
+			done_something = true;
 		}
 	}
 

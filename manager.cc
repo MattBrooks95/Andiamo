@@ -494,6 +494,7 @@ void manager::check_locks(){
 	icntrl10_locking();
 	icntrl4_locking();
 	icntrl8_locking();
+	ilv3_ilv5_locking();
 	//##### ICNTRL6 has a lot going on ##############
 	icntrl6_locking();
 	//###############################################
@@ -785,6 +786,70 @@ void manager::icntrl10_locking(){
 
 }
 
+void manager::ilv3_ilv5_locking(){
+
+  try{
+
+	regex ilv3_ilv5_unlock("\\s*[0-9]+?\\s*");
+	ilv3_ilv5_locking_helper("ILV3",ilv3_ilv5_unlock);//do checks for ILV3
+	ilv3_ilv5_locking_helper("ILV5",ilv3_ilv5_unlock);
+
+  } catch (out_of_range& map_error){
+	error_logger.push_error("From: manager::ilv3_ilv5_locking()| ILV3 or ILV5was not found in the map of parameter"
+				 " tiles, please check that the tile and HF config files match");
+
+  } catch (invalid_argument& stoi_error){
+	error_logger.push_msg("ILV3 or ILV5 has an illegal string argument, it must be an integer in the range");
+	error_logger.push_msg(" 0 <= (ILV3 or ILV5)");
+	fields.at("line_5").at("ILV3").change_tile_background("purple_andy_tile.png");
+	fields.at("line_5").at("ILV3").am_I_locking = true;
+	fields.at("line_5").at("ILV5").change_tile_background("purple_andy_tile.png");
+	fields.at("line_5").at("ILV5").am_I_locking = true;
+
+
+  }
+	//store the truth values that we care about in local variables, so the logic below is slightly
+	//more readable
+	bool ilv3_locking = fields.at("line_5").at("ILV3").am_I_locking;
+	bool ilv5_locking = fields.at("line_5").at("ILV5").am_I_locking;
+
+	    //if the form button is locked, and ILV3 XOR ILV5 (one is true, one is false), then unlock it (by toggling)
+	if( (b_manager_hook->get_ilv3_ilv5().get_is_locked() && ((ilv3_locking && !ilv5_locking) || ((!ilv3_locking && ilv5_locking))))
+	    //or, if the form button is not locked, and ILV3 XOR ILV5 is false (both are false, or both are true), then toggle
+	    || (!b_manager_hook->get_ilv3_ilv5().get_is_locked() && !((ilv3_locking && !ilv5_locking) || ((!ilv3_locking && ilv5_locking))))
+          ){
+		b_manager_hook->get_ilv3_ilv5().toggle_lock();
+	}
+
+}
+
+void manager::ilv3_ilv5_locking_helper(const string& target_param,const regex& unlock_condition){
+
+	//nab raw string from field parameter
+	string target_str = fields.at("line_5").at(target_param).temp_input;
+
+	int target_val = stoi(target_str);//cast the string to an int
+
+	//if the target tile is currently locking its button, and the conditions for unlocking it are true,
+	//then have it start unlocking
+	if( fields.at("line_5").at(target_param).am_I_locking &&
+	    (regex_match(target_str,unlock_condition) && target_val > 0) ){
+
+		fields.at("line_5").at(target_param).change_tile_background("andy_tile.png");
+		fields.at("line_5").at(target_param).am_I_locking = false;
+
+	//if target_param is not currently locking it's form button, and the conditions for it being unlocked are not met
+	//then make it start locking again
+	} else if( !fields.at("line_5").at(target_param).am_I_locking &&
+		   !(regex_match(target_str,unlock_condition) && target_val > 0) ){
+		fields.at("line_5").at(target_param).change_tile_background("purple_andy_tile.png");
+		fields.at("line_5").at(target_param).am_I_locking = true;
+	}
+
+
+
+
+}
 
 void manager::icntrl6_locking(){
   try{

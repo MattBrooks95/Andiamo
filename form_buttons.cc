@@ -123,14 +123,11 @@ void form_button::make_output(){
 //####################### ICNTRL8 BUTTON ######################################
 
 void icntrl8_form_button::setup_help_msg(){
-	cout << "setting up help message for icntrl 8" << endl;
-
 	unlock_help_surface = IMG_Load("Assets/Images/form_assets/icntrl8_form_locked_msg.png");
 	if(unlock_help_surface == NULL) error_logger.push_error(SDL_GetError());
 
 	unlock_help_texture = SDL_CreateTextureFromSurface(sdl_helper->renderer,unlock_help_surface);
 	if(unlock_help_texture == NULL) error_logger.push_error(SDL_GetError());
-
 }
 
 bool icntrl8_form_button::handle_click(SDL_Event& mouse_event){
@@ -340,6 +337,33 @@ void icntrl4_form_button::init_form(){
 }
 
 //################################################################################
+
+//################## IVL4 || ILV5 BUTTON #########################################
+
+bool ilv3_ilv5_form_button::handle_click(SDL_Event& mouse_event){
+	if(button::was_clicked(mouse_event)){
+		click_helper(mouse_event);
+		return true;
+	}
+	return false;
+}
+
+void ilv3_ilv5_form_button::click_helper(SDL_Event& mouse_event){
+	error_logger.push_msg("clicked the icntrl4/resolved levels info button ");
+	if(!is_locked){
+		my_form.toggle_active();//let the form know that it is now active
+		my_form.form_event_loop(mouse_event);//enter the mini loop for form entry
+	}
+}
+
+void ilv3_ilv5_form_button::init_form(){
+
+	my_form.init("Resolved Levels (ICNTRL4)","general_form_locked_msg.png",0,0,sdl_helper,sdl_helper->font);
+
+}
+
+
+//#################################################################################
 
 
 

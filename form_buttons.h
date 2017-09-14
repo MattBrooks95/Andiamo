@@ -167,6 +167,23 @@ class icntrl4_form_button : public form_button{
   private:
 };
 
+class ilv3_ilv5_form_button : public form_button{
+
+  public:
+	//! sets up a form that suits the needs of icntrl4's logics per the input manual
+	void init_form();
+
+
+	//! implements the special logic for this class
+	bool handle_click(SDL_Event& mouse_event);
+
+	//! this function opens the icntrl4 form on click
+	void click_helper(SDL_Event& mouse_event);
+
+  private:
+
+};
+
 
 
 
