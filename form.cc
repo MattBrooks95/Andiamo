@@ -149,7 +149,7 @@ void form::form_event_loop(SDL_Event& big_event){
 	if( !SDL_PollEvent(&big_event) ){
 		big_event.type = 1776;//arbitrary do-nothing event pushed onto queue, so it doesn't hit any cases
 	}
-	if(big_event.type != 1776) cout << "BIG EVENT TYPE:" << big_event.type << endl;
+	//if(big_event.type != 1776) cout << "BIG EVENT TYPE:" << big_event.type << endl;
 	switch(big_event.type){
 		case SDL_QUIT:
 			toggle_active();
@@ -358,7 +358,7 @@ void form::text_box_loop(text_box& current_box,SDL_Event& event){
 			event.type = 1776; //dummy event to stop it from printing default message every frame
 					   //where no event happens
 		}
-		if(event.type != 1776) cout << "Text box loop type:" << event.type << endl;
+		//if(event.type != 1776) cout << "Text box loop type:" << event.type << endl;
 		switch(event.type){
 		  case SDL_MOUSEMOTION:
 			break;

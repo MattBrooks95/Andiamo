@@ -77,9 +77,30 @@ void form_button::setup_help_msg(){
 
 }
 void form_button::init_form(){
-
+	screen_size();
 	my_form.init("no title","general_form_locked_msg.png",0,0,sdl_helper,sdl_helper->font);
 
+}
+
+void form_button::screen_size(){
+	bool update = false;
+	int old_width = sdl_helper->get_win_size()->width;
+	int old_height = sdl_helper->get_win_size()->height;
+	if(old_width < 800){
+		old_width = 800; 
+		update = true;
+	}
+
+	if(sdl_helper->get_win_size()->width < 800){
+		old_height = 800;
+		update = true;
+	}
+
+	if(update){
+		sdl_helper->window_update(old_width,old_height);
+		cout << "Updated screen size upon opening a form." << endl;
+		error_logger.push_msg("Updated screen size upon opening a form.");
+	}
 }
 
 void form_button::draw_help_msg(SDL_Event& big_event,SDL_Rect& destination){
@@ -143,6 +164,7 @@ void icntrl8_form_button::click_helper(SDL_Event& mouse_event){
 
 	//don't consider doing anything if the form is locked
 	if(!is_locked){
+		screen_size();
 
 		//in this case the form has not been previously created
 		if(!my_form.prev_initiated){
@@ -208,7 +230,6 @@ void icntrl8_form_button::page_creation_helper(){
 }
 
 void icntrl8_form_button::init_form(){
-
 	my_form.init("Cutoff Nuclei (ICNTRL8)","icntrl8_form_help.png",0,0,sdl_helper,sdl_helper->font);
 }
 
@@ -226,6 +247,7 @@ bool ilv2_form_button::handle_click(SDL_Event& mouse_event){
 void ilv2_form_button::click_helper(SDL_Event& mouse_event){
 	error_logger.push_msg("Clicked ilv2/  button");
 	if(!is_locked){
+		screen_size();
 		my_form.toggle_active();//let the form know that it is now active
 		my_form.form_event_loop(mouse_event);//enter the mini loop for form entry
 	}
@@ -262,6 +284,7 @@ bool icntrl6_form_button::handle_click(SDL_Event& mouse_event){
 void icntrl6_form_button::click_helper(SDL_Event& mouse_event){
 	error_logger.push_msg("clicked the icntrl6/parameter search button");
 	if(!is_locked){
+		screen_size();
 		my_form.toggle_active();//let the form know that it is now active
 		my_form.form_event_loop(mouse_event);//enter the mini loop for form entry
 	}
@@ -289,6 +312,7 @@ bool icntrl10_form_button::handle_click(SDL_Event& mouse_event){
 void icntrl10_form_button::click_helper(SDL_Event& mouse_event){
 	error_logger.push_msg("clicked the icntrl10/sigma info button ");
 	if(!is_locked){
+		screen_size();
 		my_form.toggle_active();//let the form know that it is now active
 		my_form.form_event_loop(mouse_event);//enter the mini loop for form entry
 	}
@@ -325,6 +349,7 @@ bool icntrl4_form_button::handle_click(SDL_Event& mouse_event){
 void icntrl4_form_button::click_helper(SDL_Event& mouse_event){
 	error_logger.push_msg("clicked the icntrl4/resolved levels info button ");
 	if(!is_locked){
+		screen_size();
 		my_form.toggle_active();//let the form know that it is now active
 		my_form.form_event_loop(mouse_event);//enter the mini loop for form entry
 	}
@@ -351,6 +376,7 @@ bool ilv3_ilv5_form_button::handle_click(SDL_Event& mouse_event){
 void ilv3_ilv5_form_button::click_helper(SDL_Event& mouse_event){
 	error_logger.push_msg("clicked the icntrl4/resolved levels info button ");
 	if(!is_locked){
+		screen_size();
 		my_form.toggle_active();//let the form know that it is now active
 		my_form.form_event_loop(mouse_event);//enter the mini loop for form entry
 	}
