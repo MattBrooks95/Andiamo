@@ -35,8 +35,9 @@ class form_button : public button{
 	/*! It must be overloaded by the derived form_buttons to have any meaning */
 	virtual void init_form();
 
+
 	//! this function resizes the window if it is too small when the user tries to open a form
-	virtual void screen_size();
+	virtual void screen_size(SDL_Event& sdl_event);
 
 
 	//! this function can be overloaded or used by derived classes

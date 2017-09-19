@@ -209,7 +209,7 @@ c at the incident energy
 andy_tile.png
 andy
 line_5#############################################################################################################
-ILV1:Parameter Options
+ILV1:Level Density Options
 c Variable name in HF: ILV1
 c 1 = used ROHR parameters
 c 2 = used Po-lin Huang A parameters
@@ -219,7 +219,7 @@ c 5 = S. Al-Quraishi paper 2
 c 6 = input parameters by formula 
 c 7 = search on level density parameters
 andy_tile.png
-170x50
+200x50
 andy
 ILV2:Supplement Resolved Levels?
 c Variable in HF:ILV2
@@ -229,15 +229,15 @@ c 1 <= add levels to BNL tabulation
 andy_tile.png
 270x50
 andy
-ILV3:Level Density Parameters
+ILV3:Distinct Residual Level Density?
 c Variable name in HF: ILV3
 c input parameters for level density of particular nculei
 c 0 = do not change level density from values specified by ILVL1
 c 1 <= change level density parameters for nuclei specified later
 andy_tile.png
-230x50
+295x50
 andy
-ILV4:Renormalization Options
+ILV4:Normalize LD to resolve levels?
 c Variable name in HF: ILV4
 c select renormalization
 c 0 = no renormalization
@@ -246,50 +246,50 @@ c     matches the level density produced
 c     by the resolved levels at the 
 c     transition energy
 andy_tile.png
-230x50
+290x50
 andy
-ILV5
+ILV5:Distinct Level Density Model
 c ILV5 = number of nuclei for which temperatures are read in
 c 0 = use Fermi gas
 c 1 <= use constant temperature model (no search can be done if
 c     ILV5 >= 0 
 c talk to Tom about this one, isn't present in example input
 andy_tile.png
-150x50
+265x50
 andy
 line_5A############################################################################################################
-ACON
+ACON:Level Density a/A
 c small a = ACON x A
 andy_tile.png
-150x50
+170x50
 andy
-GAM
+GAM:Al-Quraishi Gamma
 c small a = ACON x A x EXPF (-GAM x(Z-Z0)^2)
 andy_tile.png
-150x50
+180x50
 andy
-FCON
+FCON:Spin Cutoff Multiplier
 c FCON x SIG from Al-Quraishi (#2) is spin cutoff
 c     (1E FCON multiplies normal 𝜎 by FCON)
 andy_tile.png
-150x50
+200x50
 andy
-C0
+C0:Parity Ratio 
 c for parity ratio
 andy_tile.png
 150x50
 andy
-C10
+C10:Parity Ratio 10
 c for parity ratio
 andy_tile.png
 150x50
 andy
-C11
+C11:Parity Ratio 11
 c for parity ratio
 andy_tile.png
 150x50
 andy
-C12
+C12:Parity Ratio 12
 c for parity ratio
 c Odd-odd: DELP = C10 + C0/A - 0.89
 c Even-odd or odd-even: DELP = C11 + C0/A - 0.89
@@ -297,7 +297,7 @@ c Even-even DELP = C12 + C0/(A ^(0.89))
 andy_tile.png
 150x50
 andy
-C3
+C3:Parity Ratio 3
 c used in parity ratio
 c P.R. = 0.5 ? (1 (+/-) 1/(1 + EXP (C3 ? (E - DELP)))
 andy_tile.png
@@ -320,7 +320,7 @@ c     proton, etc. cross sections for each stage
 andy_tile.png
 150x50
 andy
-ICNTRL3
+ICNTRL3:moot -make always 0
 c 0 = do not print denominator sums
 c 1 = print denominator sums
 andy_tile.png
@@ -344,7 +344,7 @@ c 4 = triton angular distributions calculated
 c 5 = helium-3 angular distributions calculated
 c 6 = alpha angular distrubtions calculated
 andy_tile.png
-150x50
+270x50
 andy
 ICNTRL6:Parameter Search
 c Varibale name in HF: ICNTRL6
@@ -354,7 +354,7 @@ c 2 = search with more intermediate output
 andy_tile.png
 160x50
 andy
-ICNTRL7:Level Densities Options
+ICNTRL7:Point Level Density
 c Variable name in HF: ICNTRL7
 c 0 = do not echo level densities or change
 c     file of reduced levels
@@ -362,7 +362,7 @@ c 1 = echo level densities
 c 2 = read new cutoff values for resolved levels
 c 3 = read new cutoff values and echo level densities
 andy_tile.png
-150x50
+200x50
 andy
 ICNTRL8:Resolved Level Threshold Count
 c Variable name in HF: ICNTRL8
@@ -394,22 +394,22 @@ andy_tile.png
 210x50
 andy
 line_7###############################################################################
-FMU
+FMU:Isospin Mixing Fraction
 c 0 <= FMU <= 1.0
 c FMU is the fraction of strength in the upper
 c isospin states that is mixed into lower
 c states before decay
 andy_tile.png
-150x50
+210x50
 andy
-FCON_
+FCON_:Spin Cutoff Multiplier (duplicate?)
 c FCON is the multiplier on the spin cutoff parameter.
 c FCON = 1 uses the rigid body value for
 c R = R0  A^(1/3), where R0 = 1.2.
 c Values of FCON != 1 will result in multiplying
 c the above rigid body value by FCON
 andy_tile.png
-150x50
+200x50
 andy
 line_8#########################################
 ICH4:Resolved Cross-Section Channel
@@ -422,25 +422,25 @@ c 6 = alpha
 andy_tile.png
 290x50
 andy
-NCH4:Number of Resolved Levels
+NCH4:# of Resolved Levels
 c NCH4 = number of separate levels
 andy_tile.png
-250x50
+225x50
 andy
 line_10########################################################################################
-ITER:Search Iterations
+ITER:# of Search Iterations
 c HF variable name:ITER
 c number of iterations in search
 andy_tile.png
-150x50
+190x50
 andy
-INM1:Spectra Fitting
+INM1:# of Search Sectra
 c HF variable name:INM1
 c number of spectra to fit (n,p, , etc)
 andy_tile.png
-150x50
+170x50
 andy
-INM2:Cross Sections
+INM2:# of Cross Sections
 c HF variable name:INM2
 c number of integrated cross sections
 c to fit(n,p), (n, 2n) etc. These are
@@ -448,5 +448,5 @@ c what are usually termed activation
 c cross sections, i.e., (n,𝜶) is added
 c to (n,np) and (n,pn), for example
 andy_tile.png
-150x50
+175x50
 andy

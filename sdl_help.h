@@ -189,6 +189,8 @@ class sdl_help{
 	//! this member returns current vertical scrolling value by value
 	int get_yscroll(){return y_scroll;}
 
+	//! this member serves as a getter for the SDL window
+	SDL_Window* get_window(){ return window;}
 
 	//!this member is a const getter for the tile_locations vector
 	//const std::vector<SDL_Rect>& get_locations() const { return tile_locations;}

@@ -4,8 +4,14 @@
 #include<iostream>
 #include<vector>
 #include<string>
+#include<regex>//for breaking file names up into integers
+
 #include<cstdlib> //for system calls
 #include<time.h>  //for time functions used to name files
+
+#include<dirent.h>//allows traversing a directory and getting its file names. ./error_logs in this case
+#include<algorithm>//std::sort, to sort a vector of file names
+
 //! the logger is a class that provides a means by which error messages can be printed to a file
 /*! I made this to reduce the terminal clutter involved with the many cout statements that I use(d) for debugging.
  *It has two primary functionalities: extensive debugging output and error message output. Caught exceptions or
@@ -32,6 +38,10 @@ class logger{
 	 * and brevity */
 	void push_error(std::string push_1,std::string push_2);
 
+	//! this function uses dirent functions to check the # of files, and then removes the oldest ones
+	/*! If the # of files in the /error_logs directory is greater than 30, it culls the 10 oldest
+	 * entries */
+	void cleaning_check();
 
 	//! This function accumulates messages about what happens during run time
 	/* if verbose mode is turned on by the -v argument, these are accumulated and printed.
@@ -57,3 +67,8 @@ class logger{
 	
 
 };
+//! this function is passed to std::sort, to allow it to sort file names by their recentness
+bool file_compare(std::string str_one, std::string str_two);
+//! this function is a helper for file_compare, which "tokenizes" the dates from the file name
+void quantify_file_name(const std::regex& regex_in, std::string string_in, int* numbers_in);
+

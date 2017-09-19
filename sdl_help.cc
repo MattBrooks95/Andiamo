@@ -129,6 +129,8 @@ void sdl_help::window_update(int width_in, int height_in){
 	horiz_bar.handle_resize();
 	tile_bag.update_win(width_in,height_in);
 }
+
+
 //prints area window size and display 
 void sdl_help::print_size_info(){
 
