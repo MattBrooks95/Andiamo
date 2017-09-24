@@ -64,21 +64,22 @@ void logger::cleaning_check(){
 
 	vector<string> file_names;
 
-	DIR* dir_point;
-	struct dirent *ep;
+	DIR* dir_point; //this allows the opening of a directory as if it were a file
+	struct dirent *file_in_dir;
 	dir_point = opendir("./error_logs");
 	if(dir_point != NULL){
 
-		while( ep = readdir(dir_point) ){
+		//readdir is kind of like a getline statement, read in info then act on it
+		while( file_in_dir = readdir(dir_point) ){
 
 			//this ensures that only regular files are considered, and not the . and .. directories
 			//that exist in nearly every linux directory (but hidden)
-			if( ep->d_type == DT_REG){
-				file_names.push_back(ep->d_name);//save # in vector
+			if( file_in_dir->d_type == DT_REG){
+				file_names.push_back(file_in_dir->d_name);//save # in vector
 			}
 		}
 
-		closedir(dir_point);
+		closedir(dir_point);//close the directory
 
 	} else {
 		push_error("Failure to open the /error_logs file, for cleaning by cleaning_check()");
@@ -91,9 +92,10 @@ void logger::cleaning_check(){
 		//index in the vector. This way, we can pop_off the oldest entries and delete their files
 		//until only 20 files exist
 		sort(file_names.begin(),file_names.end(), file_compare);
+		/*
 		for(unsigned int c = 0; c < file_names.size() ; c++){
 			cout << file_names[c] << endl;
-		}
+		}*/
 
 		while(file_names.size() > 19){
 			string doomed_one = "./error_logs/" + file_names.back();//grab file name to complete path

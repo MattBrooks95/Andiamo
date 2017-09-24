@@ -3,6 +3,7 @@
 #include<iostream>
 #include<vector> 
 #include<string>
+
 //! param_int4 is a default c++ integer "and more"
 /*! it allows storage of a name that serves a contextual purpose, and a value that is compatible with Fortran INT*4 */
 struct param_int4{

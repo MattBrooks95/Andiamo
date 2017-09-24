@@ -9,7 +9,9 @@
 class form_button : public button{
 
   public:
-	form_button();
+	//! the constructor NULLs all of the fields
+	 form_button();
+	//! the destructor returns memory back to the operating system when the object is killed
 	~form_button();
 
 
@@ -37,7 +39,7 @@ class form_button : public button{
 
 
 	//! this function resizes the window if it is too small when the user tries to open a form
-	virtual void screen_size(SDL_Event& sdl_event);
+	virtual void screen_size();
 
 
 	//! this function can be overloaded or used by derived classes
@@ -93,6 +95,9 @@ class icntrl8_form_button : public form_button{
 	//! this function is a helper that compacts the code found in click_helper that creates or recreates pages
 	void page_creation_helper();
 
+	//! this function outputs the form's info to the input_maker's file stream when called
+	void make_output();
+
   private:
 	unsigned int icntrl8_val;//!< updated with the value from the field that corresponds to Cutoff Nuclei
 
@@ -118,11 +123,33 @@ class ilv2_form_button : public form_button{
 class icntrl6_form_button : public form_button{
 
   public:
+	//! this destructor frees the memory unique to this form button
+	/*! the language calls ~form_button() automatically */
+	~icntrl6_form_button();
+
 	//! setup_lock is overloaded here, because it looks better in the lower right corner
 	void setup_lock();
 
 	//! sets up a form that suits the needs of icntrl6's logics per the input manual
 	void init_form();
+
+	//! this function sets up a reference to the button manager
+	/* this object needs reference to the button_manager because it needs to be able to draw the
+	 *button tray in it's form selection loop */
+	void set_bmanager_reference(button_manager* b_manager_in) { b_manager = b_manager_in; }
+
+
+	//################ PAGE CREATION HELPERS ##################################################
+	//! this member sets up the parity form's pages
+	void parity_page_creation();
+
+	//! this member sets up the search spectra form's pages
+	void search_spectra_page_creation();
+
+	//! this member sets up the xsection form's pages
+	void cross_sections_page_creation();
+	//#########################################################################################
+
 
 
 	//! implements the special logic for this class
@@ -131,7 +158,30 @@ class icntrl6_form_button : public form_button{
 	//! this function opens the icntrl6 form on click
 	void click_helper(SDL_Event& mouse_event);
 
+	//! this function sets up the form selection page
+	void setup_landing();
+
+	//! this function shows the image that allows the user to switch between icntrl6's forms
+	void show_landing();
+
+	//! does the logic for figuring out if a mousebutton down event clicked somewhere within form selection
+	bool landing_was_clicked(SDL_Event& mouse_event);
+
   private:
+
+	button_manager* b_manager;
+
+	SDL_Surface* landing_surface;
+	SDL_Texture* landing_texture;
+
+	SDL_Rect landing_rect;
+
+	active_area parity_area;
+	active_area spectra_area;
+	active_area xsections_area;
+
+	form search_spectra;
+	form cross_sections;
 
 };
 

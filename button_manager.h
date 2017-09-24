@@ -48,13 +48,15 @@ class button_manager{
 	//! this member updates the tray's location in response to a window size change
 	void location_update();
 
-
-	icntrl8_form_button& get_icntrl_8(){return icntrl_8;}
-	icntrl6_form_button& get_icntrl_6(){return icntrl_6;}
-	ilv2_form_button& get_ilv_2(){return ilv_2;}
-	icntrl10_form_button& get_icntrl_10(){return icntrl_10;}
-	icntrl4_form_button& get_icntrl_4(){return icntrl_4;}
+	//########### FORM BUTTON GETTERS ########################################################################//
+	icntrl8_form_button& get_icntrl_8(){return icntrl_8;}//!< returns reference to icntrl8 form button
+	icntrl6_form_button& get_icntrl_6(){return icntrl_6;}//!< returns reference to icntrl6 form button
+	ilv2_form_button& get_ilv_2(){return ilv_2;}//!< returns reference to teh ilv2 form button
+	icntrl10_form_button& get_icntrl_10(){return icntrl_10;}//!< returns reference to the icntrl10 form button
+	icntrl4_form_button& get_icntrl_4(){return icntrl_4;}//!< returns reference to the icntrl4 form button
 	ilv3_ilv5_form_button& get_ilv3_ilv5(){return ilv3_ilv5;}
+	//########################################################################################################//
+
 
 	//##############################################################################################//
 	//! this member calls the virtual init() memeber on each of button_manager's private buttons

@@ -150,6 +150,11 @@ class page{
 	//! this function is a const reference getter for the text box vector
 	const std::vector<text_box>& get_const_text_boxes(){ return text_boxes;}
 
+	//! this function is a getter for the # of columns on the page
+	unsigned int get_columns(){ return num_columns;}
+	//! this function is a getter for the # of rows on the page
+	unsigned int get_rows(){ return num_rows;}
+
   private:
 	sdl_help* sdl_helper;//!< allows easy access to the graphics class
 	TTF_Font* sdl_font;//!< allows easy access to the text style used in other constructs

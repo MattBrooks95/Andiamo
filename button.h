@@ -115,10 +115,10 @@ class button{
 struct active_area{
 	//! constructor defaults stuff to 0
 	active_area(){
-		xloc = 0;
-		yloc = 0;
-		width= 0;
-		height=0;
+		xloc   = 0;
+		yloc   = 0;
+		width  = 0;
+		height = 0;
 	}
 	//! this function allows the setting of variables in this struct
 	void set_loc(int xloc_in, int yloc_in, int width_in, int height_in){

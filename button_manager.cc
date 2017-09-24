@@ -169,6 +169,8 @@ void button_manager::init_buttons(){
 
 void button_manager::init_form_buttons(){
 	icntrl_6.init(sdl_helper);
+	icntrl_6.set_bmanager_reference(this);
+
 	icntrl_8.init(sdl_helper);
 	ilv_2.init(sdl_helper);
 	icntrl_10.init(sdl_helper);
@@ -582,9 +584,9 @@ void button_manager::clean_up_warnings(bool bad_output_fname,bool bad_tc_input_f
 	if(bad_tc_input_fname){
 
 		tc_input_error_surf = IMG_Load("Assets/Images/Buttons/TC_input_err.png");
-		if(tc_input_error_surf == NULL) cout << SDL_GetError() << endl;
+		if(tc_input_error_surf == NULL) error_logger.push_error(SDL_GetError());
 		tc_input_error_texture = SDL_CreateTextureFromSurface(sdl_helper->renderer,tc_input_error_surf);
-		if(tc_input_error_texture == NULL) cout << SDL_GetError() << endl;
+		if(tc_input_error_texture == NULL) error_logger.push_error(SDL_GetError());
 
 		SDL_Rect dest = {0,0,0,0};
 

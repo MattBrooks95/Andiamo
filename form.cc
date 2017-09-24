@@ -222,11 +222,13 @@ void form::handle_click(SDL_Event& mouse_event,bool& done,bool& click_lock){
 		} else if(!help_shown){
 
 			bool found = false;//used to kick out of the loop after the text box that was clicked has been found
-			for(unsigned int c = 0; c < pages[current_page].get_const_text_boxes().size() && !found ;c++){
+			if(!pages.size() == 0){
+				for(unsigned int c = 0; c < pages[current_page].get_const_text_boxes().size() && !found ;c++){
 
-				if(pages[current_page].get_text_boxes()[c].was_clicked(mouse_event) ){
-					text_box_loop(pages[current_page].get_text_boxes()[c],mouse_event);
-					found = true;
+					if(pages[current_page].get_text_boxes()[c].was_clicked(mouse_event) ){
+						text_box_loop(pages[current_page].get_text_boxes()[c],mouse_event);
+						found = true;
+					}
 				}
 			}
 		}

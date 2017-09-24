@@ -5,6 +5,7 @@
 using namespace std;
 
 extern bool main_done;
+extern logger error_logger;
 
 //################################ EXIT BUTTON ########################################################
 
@@ -68,7 +69,7 @@ void exit_button::my_click_helper(int which,bool& satisfied){
 }
 
 void exit_button::print_me(){
-	//cout << "Did my parent's print function get called too? How about now?" << endl;
+
 	button::print_me();
 	no_area.print_me();
 	yes_area.print_me();
@@ -145,21 +146,7 @@ void text_box_button::force_corner_loc(int xloc_in, int yloc_in){
 }
 
 //###############################################################################################
-	/*
-	cout << "In clean up function." << endl;
-	cout << "Input maker's output file name is: " << io_handler.output_file_name <<  endl;
-	cout << "Input maker's TC input file name is: " << io_handler.TC_input_file_name << endl;
-	cout << "Output file name button's user-entered value is " << output_fname.my_text_box.text << endl;
-	cout << "TC file name button's user-entered value is " << t_coefficients.my_text_box.text << endl;
-	if(output_fname.my_text_box.text.size() == 0 || output_fname.my_text_box.text == " "){
-		cout << "Output file name was not supplied, using default \"output.txt\"." << endl;
 
-	} else {
-
-		io_handler.output_file_name = output_fname.my_text_box.text;
-	}
-	cout << "Input maker's output path after change: " << io_handler.output_file_name << endl;
-*/
 //###################### TRANSMISSION COEFFICIENTS FILE BUTTON ##################################
 int TC_input_file_button::work(input_maker& io_handler){
 	io_handler.TC_input_file_name = my_text_box.text;//set up the TC In put var in the

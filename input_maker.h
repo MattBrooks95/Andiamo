@@ -18,9 +18,11 @@
 
 #include "logger.h"
 extern logger error_logger;
+class button_manager;
 
 //! input_maker is a class that reads a config file to configure itself, and then creates the outputs to be used with HF
-//* it exists within sdl_help, and interacts heavily with fields and the manager
+/*! it exists within sdl_help, and interacts heavily with fields and the manager */
+
 class input_maker{
   public:
 	//! this constructor sets the config-file related strings
@@ -34,6 +36,16 @@ class input_maker{
 	//! init() sets up the parameter vectors to the specifications of the config file
 	/*! It uses regular expressions, and the split functions in string+.h*/
 	void init();
+
+	//! this function takes a pointer to button_manager
+	/*! this is necessary so that the input_maker can tell the form_buttons when to make their output lines */
+	void set_bmanager_ptr(button_manager* b_manager_in){ b_manager = b_manager_in;}
+
+	//! this function allows the input maker to access the button manager
+	/*! reason being is that the form buttons are necessary to creating some of the later lines in the
+	 *input manual */
+	void get_bmanager_ptr(button_manager* b_manager_in) { b_manager = b_manager_in;}
+
 
 	//! output() prints out the information in the order and format needed to be used by HF
 	/*! for now it defaults to printing to ./output/output.txt, the output file can be specified
@@ -76,6 +88,8 @@ class input_maker{
 
 
   private:
+
+	button_manager* b_manager;//!< pointer allows access to the button manager, because form_buttons need to make output
 
 	std::string config_p; //!< \brief contains a string that provides the relative path to the config files
 

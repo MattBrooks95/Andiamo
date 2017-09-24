@@ -1,5 +1,9 @@
 //! \file ftran_structs.cc \brief this file implements the functions declared in ftran_structs.h
 #include "ftran_structs.h"
+#include "logger.h"
+
+extern logger error_logger;
+
 using namespace std;
 
 //######################### FTRAN STRING ###############################################
@@ -59,8 +63,7 @@ bool param_int4::operator ==(int other){
 }
 
 void param_int4::operator =(double other){
-	cout << "Error! Fortran struct: " << this->name
-	     << " can not have a float value assigned to it." << endl; 
+	error_logger.push_msg("Error! Fortran struct: "+this->name+" can not have a float value assigned to it."); 
 }
 //########################################################################################
 
@@ -113,8 +116,7 @@ bool param_real8::operator ==(double other){
 }
 
 void param_real8::operator =(int other){
-	cout << "Error! Fortran struct: " << this->name
-	     << " can not have an integer assigned to it." << endl; 
+	error_logger.push_msg("Error! Fortran struct: "+this->name+" can not have an integer assigned to it."); 
 }
 //########################################################################################
 

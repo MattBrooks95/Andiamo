@@ -4,7 +4,7 @@
 #include<iomanip>
 
 #include "input_maker.h"
-
+#include "button_manager.h"
 
 #define F << setw(8) <<
 #define F10 << setw(10) <<
@@ -63,10 +63,6 @@ void input_maker::check_map(){
 	}
 
 }
-
-
-
-
 
 
 void input_maker::init(){
@@ -386,11 +382,20 @@ void input_maker::output(){
 	if( int4_params.at("ICNTRL4").value != 0 ){
 		//do line 8
 		do_line8(outs,int4_params);
-	}//elsewise, don't do line 8
+		//do line 9
+		do_line9(outs,int4_params,real8_params);
+	}//elsewise, don't do lines 8&9
 
 
-	//do line 9
-	do_line9(outs,int4_params,real8_params);
+
+
+
+	//#########MAKE OUTPUTS FROM FORM_BUTTONS ##############################################################//
+	b_manager->get_icntrl_6().make_output();
+	b_manager->get_icntrl_8().make_output();
+	b_manager->get_icntrl_10().make_output();
+	//######################################################################################################//
+
 
 	outs.flush();//push changes to file, if this is not here C++ will wait to do the writing until
 		     //the program is terminated
