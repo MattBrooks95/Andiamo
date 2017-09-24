@@ -1,4 +1,4 @@
-//! this file implements the functions declared in text_box.h
+//! \file text_box.cc this file implements the functions declared in text_box.h
 #include "text_box.h"
 
 using namespace std;
@@ -241,7 +241,6 @@ void text_box::update_texture(){
 	text_texture = SDL_CreateTextureFromSurface(sdl_helper->renderer,text_surface);
 	if(text_texture == NULL){
 		error_logger.push_error(SDL_GetError());
-		
 	}
 }
 

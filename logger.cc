@@ -1,3 +1,5 @@
+//! \file logger.cc this file describes the functions and objects declared in logger.h
+
 #include "logger.h"
 using namespace std;
 

@@ -1,3 +1,5 @@
+//! \file logger.h this file describes the logger class, which is used for creating error & verbose messages during runtime
+
 #pragma once
 
 #include<fstream>

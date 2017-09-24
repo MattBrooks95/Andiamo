@@ -2,7 +2,7 @@
  * extensive text dynamic text entry, as required by some of the parameters specified in the input manual */
 
 #pragma once
-
+#include<fstream>
 #include "button.h"
 #include "form.h"
 //! "base" class for form buttons, that provides their general form, and can be inherited from to make more specialized forms
@@ -58,7 +58,7 @@ class form_button : public button{
 
 	//! this member has the form objects contained herein send their information to the input_maker
 	/*! this is currently a stub */
-	virtual void make_output();
+	virtual void make_output(std::ofstream& outs);
 
 
 
@@ -96,7 +96,7 @@ class icntrl8_form_button : public form_button{
 	void page_creation_helper();
 
 	//! this function outputs the form's info to the input_maker's file stream when called
-	void make_output();
+	void make_output(std::ofstream& outs);
 
   private:
 	unsigned int icntrl8_val;//!< updated with the value from the field that corresponds to Cutoff Nuclei
@@ -167,21 +167,23 @@ class icntrl6_form_button : public form_button{
 	//! does the logic for figuring out if a mousebutton down event clicked somewhere within form selection
 	bool landing_was_clicked(SDL_Event& mouse_event);
 
+	//! this sends this object's info the input_manager's file stream
+	void make_output(std::ofstream& outs);
   private:
 
-	button_manager* b_manager;
+	button_manager* b_manager;//!< pointer to the button manager, to call it's drawing functions
 
-	SDL_Surface* landing_surface;
-	SDL_Texture* landing_texture;
+	SDL_Surface* landing_surface;//!< saves surface for the form selection image
+	SDL_Texture* landing_texture;//!< saves texture for the form selection image
 
-	SDL_Rect landing_rect;
+	SDL_Rect landing_rect;//!< saves the location info for the form selection feature
 
-	active_area parity_area;
-	active_area spectra_area;
-	active_area xsections_area;
+	active_area parity_area;//!< controls clicking logics to open parity_area form
+	active_area spectra_area;//!< controls clicking logics to open spectra_area form
+	active_area xsections_area;//!< controls clicking logics to open xsections_area form
 
-	form search_spectra;
-	form cross_sections;
+	form search_spectra;//!< extra form # 1, for making INM1 line in input manual
+	form cross_sections;//!< extra form # 2 for making INM2 line in input manual
 
 };
 

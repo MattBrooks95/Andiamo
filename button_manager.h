@@ -1,4 +1,4 @@
-//! this file describes the button_manager class that contains various derivations of class button
+//! \file button_manager.h this file describes the button_manager class that contains various derivations of class button
 #pragma once
 #include<SDL2/SDL.h>
 #include<SDL2/SDL_image.h>

@@ -1,4 +1,4 @@
-//! \file implements the class functions declared in derived_buttons.h
+//! \file derived_buttons.cc implements the class functions declared in derived_buttons.h
 
 #include<iostream>
 #include "derived_buttons.h"
@@ -131,7 +131,7 @@ void text_box_button::init(const std::string& image_name_in,const std::string& i
 
 	sdl_help_font = sdl_helper->font;
 
-	my_text_box.init(sdl_helper,sdl_help_font," ",xloc,yloc+height-25,width,25);
+	my_text_box.init(sdl_helper,sdl_help_font,"",xloc,yloc+height-25,width,25);
 
 }
 

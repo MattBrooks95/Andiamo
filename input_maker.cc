@@ -391,9 +391,9 @@ void input_maker::output(){
 
 
 	//#########MAKE OUTPUTS FROM FORM_BUTTONS ##############################################################//
-	b_manager->get_icntrl_6().make_output();
-	b_manager->get_icntrl_8().make_output();
-	b_manager->get_icntrl_10().make_output();
+	b_manager->get_icntrl_6().make_output(outs);
+	b_manager->get_icntrl_8().make_output(outs);
+	b_manager->get_icntrl_10().make_output(outs);
 	//######################################################################################################//
 
 

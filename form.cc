@@ -223,11 +223,20 @@ void form::handle_click(SDL_Event& mouse_event,bool& done,bool& click_lock){
 
 			bool found = false;//used to kick out of the loop after the text box that was clicked has been found
 			if(!pages.size() == 0){
+
+				string command;//filled by text_box_loop to tell this loop to do things
+
 				for(unsigned int c = 0; c < pages[current_page].get_const_text_boxes().size() && !found ;c++){
 
-					if(pages[current_page].get_text_boxes()[c].was_clicked(mouse_event) ){
-						text_box_loop(pages[current_page].get_text_boxes()[c],mouse_event);
-						found = true;
+					//enter text box loop for the matching text box, where the current text box was
+					//either clicked, or our index, 'c', was set for us by command being equal to "TAB"
+					if(pages[current_page].get_text_boxes()[c].was_clicked(mouse_event) ||
+					   command == "TAB" ){
+						if(command == "TAB") command = "";//reset command container if it was set
+						text_box_loop(pages[current_page].get_text_boxes()[c],mouse_event,command);
+						if(command == "TAB" &&  c < pages[current_page].get_text_boxes().size()){
+							continue;//redo this step, but act on the next text box
+						} else found = true;
 					}
 				}
 			}
@@ -341,7 +350,7 @@ void form::flush_pages(){
 	update_page_indicator();
 }
 
-void form::text_box_loop(text_box& current_box,SDL_Event& event){
+void form::text_box_loop(text_box& current_box,SDL_Event& event,string& command){
 
 
 	SDL_StartTextInput();//turn on the text input background functions
@@ -411,7 +420,10 @@ void form::text_box_loop(text_box& current_box,SDL_Event& event){
 					current_box.editing_location++;
 					text_was_changed = true;
 				}
-
+			
+			} else if(event.key.keysym.sym == SDLK_TAB){//tab over to next text box
+				command = "TAB";
+				return;
 			}
 				
 			SDL_FlushEvent(SDL_KEYDOWN); //prevent event flooding
@@ -494,7 +506,7 @@ void page::page_init(unsigned int num_columns_in, unsigned int num_rows_in,const
 			text_box new_text_box;
 			int x_val = 0+TEXT_BOX_W*i+TEXT_BOX_HORIZ_PADDING*i;
 			int y_val = 80+25*j+10*j;
-			new_text_box.init(sdl_helper,sdl_font," ",x_val,y_val,60,25);
+			new_text_box.init(sdl_helper,sdl_font,"",x_val,y_val,60,25);
 			text_boxes.push_back(new_text_box);
 		}
 

@@ -143,6 +143,12 @@ class sdl_help{
          *logging features*/
 	void print_tile_locs(std::ostream& outs);
 
+	//! this member allows the sdl_help and input_maker classes to gain a reference to the button manager
+	/*! reason being that the form_buttons are critical to creating the output file */
+	void get_bmanager_ptr(button_manager* b_manager_in){
+		b_manager_ptr = b_manager_in; //give sdl_help object reference to button manager
+		io_handler.get_bmanager_ptr(b_manager_in); //give input handler reference to the button_manager
+	}
 
 	//! This member traverses the tile location vector and sees if the user clicked on a tile or not
 	/*! it walks linearly through the tile_locations vector and enacts the clicked() member
@@ -269,6 +275,12 @@ class sdl_help{
 	//################## INPUT MAKER OBJECT #################################################
 	input_maker io_handler; //!< object that manages the config and output files for HF relevant stuff
 	//#######################################################################################
+
+	//################ JANK POINTER TO B_MANAGER ############################################
+	button_manager* b_manager_ptr;
+	//#######################################################################################
+
+
 };
 
 //################### non member helpers ########################################//

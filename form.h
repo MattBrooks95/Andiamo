@@ -62,13 +62,23 @@ class form{
 	//! prev_page presents the previous page to the user, if possible
 	void prev_page();
 
+	//! getter for the vector that stores the pages of text boxes
 	std::vector<page>& get_pages() { return pages;} 
 
+	//! this funciton sets page_count to the passed value
 	void set_page_count(int page_count_in);
+	//! this function updates the sprites that represent which page the user is currently on
+	/*! these are the numbers at the top right of the form, next to the page left and right buttons */
 	void update_page_indicator();
+	//! this function destroys the pages that were previously created, so they can be recreated
 	void flush_pages();
 
-	void text_box_loop(text_box& current_box,SDL_Event& event);
+	//! this is the text editing loop for the text boxes within a page
+	/*! \param_current_box supplies function a reference to which text box is being edited
+	 *\param event is a reference to the sdl event containeer
+	 *\param command is a string that may be changed and returned from the functon, to tell the form_event_loop
+	 *if any necessary behaviours are needed, like tabbing to the next text box */
+	void text_box_loop(text_box& current_box,SDL_Event& event,std::string& command);
 
 
 	bool prev_initiated;

@@ -1,4 +1,4 @@
-//! \file declares the classes that inherit from button.h's button class
+//! \file derived_buttons.h declares the classes that inherit from button.h's button class
 #pragma once
 #include<fstream>
 

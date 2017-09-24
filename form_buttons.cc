@@ -6,6 +6,16 @@
 #include "button_manager.h"
 using namespace std;
 
+//copied over from input_maker
+#define F << setw(8) <<
+#define F10 << setw(10) <<
+#define F5 << setw(5) <<
+#define I << setw(5) <<
+#define I10 << setw(10) <<
+
+
+
+
 //######################## FORM BUTTONS #####################################
 form_button::form_button(){
 	lock_surface = NULL;
@@ -134,7 +144,7 @@ void form_button::toggle_lock(){
 
 }
 
-void form_button::make_output(){
+void form_button::make_output(ofstream& outs){
 	error_logger.push_error("A form button has called the base classes output creation member. Each form button is",
 				" likely to have a special format, so you should customize this function in the derived class.");
 }
@@ -234,27 +244,37 @@ void icntrl8_form_button::init_form(){
 	my_form.init("Cutoff Nuclei (ICNTRL8)","icntrl8_form_help.png",0,0,sdl_helper,sdl_helper->font);
 }
 
-void icntrl8_form_button::make_output(){
-/*
+void icntrl8_form_button::make_output(ofstream& outs){
+	if(outs.fail()){
+		error_logger.push_error("icntrl8_form_button::make_output was not given a valid output file stream.",
+					"exiting.");
+		return;
+	}
+
+
+	outs << "TESTING ICNTRL8'S OUTPUT" << endl;
 	vector<page>* pages_ptr = &my_form.get_pages(); //saves calls to the getter, and space in this function
 
+	//loop over each page
 	for(unsigned int c = 0; c < pages_ptr->size();c++){
 		unsigned int columns = pages_ptr->at(c).get_columns();
 
-		for(unsigned int d = 0; d < ( pages_ptr->at(c).get_text_boxes().size() / columns) ;d += columns){
+		//cout << "Running for:" << pages_ptr->at(c).get_text_boxes().size() / columns << endl;
 
-			cout << setw(5);
-			//cout << pages_ptr->at(c).get_text_boxes().at(d) << pages_ptr->at(c).get_text_boxes().at(d+1);
-			cout << pages_ptr->at(c).get_text_boxes()[d];
-			cout << setw(10);
-			cout << setprecision(3);
-			//cout << pages_ptr->at(c).get_text_boxes()[d+2] << endl;
+		//loop over each row
+		for(unsigned int d = 0; d < pages_ptr->at(c).get_text_boxes().size() ;d += columns){
+
+			outs I pages_ptr->at(c).get_text_boxes().at(d).text
+			     I pages_ptr->at(c).get_text_boxes().at(d+1).text;
+			outs << setw(10);
+			outs << setprecision(3);
+			outs << pages_ptr->at(c).get_text_boxes()[d+2].text << endl;
 
 
 		}
 
 	}
-*/
+
 }
 //##############################################################################
 
@@ -482,6 +502,12 @@ void icntrl6_form_button::show_landing(){
 
 }
 
+void icntrl6_form_button::make_output(ofstream& outs){
+	
+
+
+
+}
 //################################################################################
 
 //####################### ICNTRL10 BUTTON ########################################

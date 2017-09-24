@@ -1,4 +1,4 @@
-//! \file buttons.cc implements the functions declared in buttons.h
+//! \file button.cc implements the functions declared in buttons.h
 
 #include "button.h"
 using namespace std;

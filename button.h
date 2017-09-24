@@ -1,4 +1,4 @@
-//! \file buttons.h has declarations for the buttons class, which manages static buttons that enact important functions
+//! \file button.h has declarations for the buttons class, which manages static buttons that enact important functions
 
 #pragma once
 

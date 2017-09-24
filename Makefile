@@ -56,7 +56,7 @@ manager.o: manager.cc manager.h field.o input_maker.o logger.o
 ftran_structs.o: ftran_structs.cc ftran_structs.h
 	g++ $(c_flg) -c ftran_structs.cc
 
-input_maker.o: input_maker.cc input_maker.h string+.o ftran_structs.o string+.o
+input_maker.o: input_maker.cc input_maker.h string+.o ftran_structs.o string+.o button_manager.o
 	g++ $(c_flg) -c input_maker.cc
 
 text_box.o: text_box.cc text_box.h sdl_help.h

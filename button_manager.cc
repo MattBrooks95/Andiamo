@@ -1,4 +1,4 @@
-//! \file this file implements the class described in button_manager.h
+//! \file button_manager.cc this file implements the class described in button_manager.h
 
 #include "button_manager.h"
 

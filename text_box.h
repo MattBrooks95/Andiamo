@@ -1,4 +1,4 @@
-//! this file describes a struct that has the information necessary for text boxes
+//! \file text_box.h this file describes a struct that has the information necessary for text boxes
 #pragma once
 #include<SDL2/SDL.h>
 #include<SDL2/SDL_image.h>
@@ -16,7 +16,7 @@ struct text_box{
 	 *has been properly set up, causing issues. So I've been writing init functions to fix that data
 	 *once the containing class is set up */
 	text_box(sdl_help* sdl_helper = NULL,TTF_Font* font_in=NULL,
-		 std::string text_in = " ",int xloc_in = 0, int yloc_in = 0,int width_in = 0,
+		 std::string text_in = "",int xloc_in = 0, int yloc_in = 0,int width_in = 0,
 		 int height_in = 0);
 
 	//! copy constructor prevents double free() crashes when temporary text_boxes are pushed into vectors
