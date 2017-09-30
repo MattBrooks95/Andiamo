@@ -109,8 +109,6 @@ class form{
 	active_area right_arrow;
 	active_area left_arrow;
 
-
-
 	std::vector<page> pages;
 	unsigned int page_count;
 	unsigned int current_page;
@@ -146,8 +144,15 @@ class page{
 	~page();
 
 	//! this function is used when the detailed constructor can't be ran
+	/*
 	void page_init(unsigned int num_columns_in, unsigned int num_rows_in,const std::vector<std::string>& column_labels_in,
-	     std::vector<std::string>& row_labels_in,sdl_help* sdl_helper_in,TTF_Font* sdl_font_in);
+	     std::vector<std::string>& row_labels_in,sdl_help* sdl_helper_in,TTF_Font* sdl_font_in,int additional_spacing);
+	*/
+
+	void page_init(unsigned int num_columns_in, unsigned int rows_needed,
+		       const std::vector<std::string>& column_labels_in, std::vector<std::string>& row_labels_in,
+		       sdl_help* sdl_helper_in,TTF_Font* sdl_font_in,int additional_spacing);
+
 
 	//! this function draws the pages headers, labels and text boxes
 	void draw_me();
@@ -178,6 +183,9 @@ class page{
 	std::vector<text_box> text_boxes;//!< array that contains all of the necessary text boxes
 	std::vector<SDL_Texture*> column_label_textures;//!< stores the column label textures for the passed labels
 	std::vector<SDL_Rect> column_label_rects;//!< store the drawing location for the column labels
+
+	std::vector<SDL_Texture*> row_label_textures;//!< store textures for the row labels
+	std::vector<SDL_Rect> row_label_rects;//!< store the location of the textures for the row labels
 };
 
 

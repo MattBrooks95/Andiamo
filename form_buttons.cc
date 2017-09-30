@@ -111,7 +111,6 @@ void form_button::screen_size(){
 		SDL_SetWindowSize(sdl_helper->get_window(),old_width,old_height);
 		sdl_helper->window_update(old_width,old_height);
 
-		cout << "Updated screen size upon opening a form." << endl;
 		error_logger.push_msg("Updated screen size upon opening a form.");
 	}
 }
@@ -212,30 +211,59 @@ void icntrl8_form_button::click_helper(SDL_Event& mouse_event){
 void icntrl8_form_button::page_creation_helper(){
 
 
-			//grab val from parameter field, so the pages can be set up
-			icntrl8_val = stoi(sdl_helper->get_mgr().fields.at("line_6").at("ICNTRL8").temp_input);
-			error_logger.push_msg("ICNTRL8 val:" + to_string(icntrl8_val)+" when form opened");
-			vector<string> pass_column_titles,pass_row_titles;
-			//for icntrl 8, the labels shouldn't change
-			pass_column_titles.push_back("IA8");
-			pass_column_titles.push_back("IZ8");
-			pass_column_titles.push_back("E8");
-			//#########################################
-		
-			int total_height_pixels = icntrl8_val * 35;//guessing on a budget of 25 pixels per text box, and 10 padding 
-			int pages_needed = ceil(total_height_pixels / 725.0); //pixels needed/pixels per page = pages needed
-		
+	//grab val from parameter field, so the pages can be set up
+	try{
+	  icntrl8_val = stoi(sdl_helper->get_mgr().fields.at("line_6").at("ICNTRL8").temp_input);
+	} catch (out_of_range& range_error){
+	  error_logger.push_error("ICNTRL8 could not be found in the field map",
+				  range_error.what());
+	  icntrl8_val = 0;
+	} catch (invalid_argument& arg_error){
+	  error_logger.push_error("ICNTRL8 has been given an invalid (non-numerical?) argument.",
+				  arg_error.what());
+	  icntrl8_val = 0;
+	}
 
-			my_form.get_pages().resize(pages_needed);
-			for(unsigned int c = 0; c < my_form.get_pages().size();c++){
-				my_form.get_pages()[c].page_init(3,(icntrl8_val / pages_needed),pass_column_titles,pass_row_titles,sdl_helper,sdl_helper->font);
-			}
 
-			my_form.set_page_count(pages_needed);
 
-			my_form.prev_initiated = true;//let the form class know that it's pages have been set up
-			my_form.prev_init_value = icntrl8_val;//and also what conditions caused such a creation
+	error_logger.push_msg("ICNTRL8 val:" + to_string(icntrl8_val)+" when form opened");
+	vector<string> pass_column_titles,pass_row_titles;
+	//for icntrl 8, the labels shouldn't change
+	pass_column_titles.push_back("IA8");
+	pass_column_titles.push_back("IZ8");
+	pass_column_titles.push_back("E8");
+	//#########################################
 
+	int rows_per_page = floor(725.0 / 35);
+	int rows_needed   = icntrl8_val;
+	unsigned int vector_size = ceil((icntrl8_val * 35) / 725.0);//calculate how many pages are needed
+	unsigned int pages_made = 0;
+
+	vector<page>& pages = my_form.get_pages();//saves space later
+	pages.resize(vector_size);
+	for(unsigned int c = 0; c < pages.size();c++){
+
+		if(rows_per_page >= rows_needed){
+			pages[c].page_init(3,rows_needed,pass_column_titles,pass_row_titles,
+								      sdl_helper, sdl_helper->font,0);
+			rows_needed = 0;
+		} else {
+
+			pages[c].page_init(3,rows_per_page,pass_column_titles,pass_row_titles,
+								      sdl_helper, sdl_helper->font,0);
+			rows_needed = rows_needed - rows_per_page;
+		}
+		pages_made++;//we made a page, so increase the counter
+	}
+	if(pages_made != vector_size) {
+		error_logger.push_error("Error in icntrl8 page_creation_helper, # of created pages does not match",
+				       "expected value.");
+	}
+
+	my_form.set_page_count(pages_made);
+
+	my_form.prev_initiated = true;//let the form class know that it's pages have been set up
+	my_form.prev_init_value = icntrl8_val;//and also what conditions caused such a creation
 
 
 }
@@ -257,9 +285,8 @@ void icntrl8_form_button::make_output(ofstream& outs){
 
 	//loop over each page
 	for(unsigned int c = 0; c < pages_ptr->size();c++){
-		unsigned int columns = pages_ptr->at(c).get_columns();
 
-		//cout << "Running for:" << pages_ptr->at(c).get_text_boxes().size() / columns << endl;
+		unsigned int columns = pages_ptr->at(c).get_columns();
 
 		//loop over each row
 		for(unsigned int d = 0; d < pages_ptr->at(c).get_text_boxes().size() ;d += columns){
@@ -447,17 +474,234 @@ void icntrl6_form_button::init_form(){
 	void column_logic(const std::vector<std::string>& types);
 */
 
+//this one is kind of unique because the form itself should not change, it has a fixed size in the input manual
 void icntrl6_form_button::parity_page_creation(){
-	
 
+	if( !my_form.prev_initiated ){
+
+		my_form.prev_initiated = true;
+		my_form.prev_init_value = 18;
+
+		my_form.get_pages().resize(1);//make room for the first and only page
+
+		vector<string> column_labels, row_labels;
+		fill_parity_labels(row_labels, column_labels);
+		my_form.get_pages()[0].page_init( 3, 18, column_labels, row_labels, sdl_helper,sdl_helper->font,140);
+		
+	}
+
+
+}
+
+void icntrl6_form_button::fill_parity_labels(vector<string>& row_labels,vector<string>& column_labels){
+
+	//########## ROW LABELS (PARAMETER NAMES) ################################
+	row_labels.push_back("α");   //1
+	row_labels.push_back("γ");   //2
+	row_labels.push_back("F1");  //3
+	row_labels.push_back("F2");  //4
+	row_labels.push_back("b0");  //5
+	row_labels.push_back("b1");  //6
+	row_labels.push_back("b2");  //7
+	row_labels.push_back("b3");  //8
+	row_labels.push_back("b4");  //9
+	row_labels.push_back("ECON");//10
+	row_labels.push_back("C0");  //11
+	row_labels.push_back("C10"); //12
+	row_labels.push_back("C11"); //13
+	row_labels.push_back("C12"); //14
+	row_labels.push_back("C3");  //15
+	row_labels.push_back("FF");  //16
+	row_labels.push_back("MU");  //17
+	row_labels.push_back("18");  //18
+	//#################################################################################
+
+	//################# COLUMN LABELS #################################################
+	column_labels.push_back("Al-Quraishi Parameter");
+	column_labels.push_back("value");
+	column_labels.push_back("Vary?");
+
+	//#################################################################################
 }
 
 void icntrl6_form_button::search_spectra_page_creation(){
 
+	int current_INM1_val;
+	try{
+ 		int current_INM1_val = stoi(sdl_helper->get_mgr().fields.at("line_10").at("INM1").temp_input); 
+	} catch(invalid_argument& arg_error){
+		error_logger.push_error("Error reading current INM1/#Search Spectra value for page creation",
+					" logics.");
+	}
+
+	if( !search_spectra.prev_initiated ){
+
+		search_spectra_page_helper();
+
+	//case where form has been previously created, but INM1's val has not changed, so it does not need to be remade
+	} else if( search_spectra.prev_initiated && search_spectra.prev_init_value == current_INM1_val ){
+		return;
+
+	//case where form has been previously created, and the value of INM1 has been changed
+	} else {
+
+		search_spectra.flush_pages();
+		search_spectra_page_helper();
+	}//*/
+
+
+}
+
+void icntrl6_form_button::search_spectra_page_helper(){
+
+	try{
+	  INM1_val = stoi(sdl_helper->get_mgr().fields.at("line_10").at("INM1").temp_input);
+	} catch ( out_of_range& range_error ){
+	  error_logger.push_error("ICNTRL6-INM1 could not be found in the field map.",
+					  range_error.what());
+	  INM1_val = 0;
+	} catch ( invalid_argument& arg_error ){
+	  error_logger.push_error("ICNTRL6-INM1 has been supplied an illegal (non-numerical?) argument.",
+				  arg_error.what());
+	  INM1_val = 0;
+  	}
+
+	search_spectra.prev_initiated = true;
+	search_spectra.prev_init_value = INM1_val;
+
+	vector<string> pass_column_labels,pass_row_labels;
+	fill_spectra_labels(pass_column_labels);
+
+
+	int rows_per_page = floor(725.0 / 35);
+	int rows_needed   = INM1_val;
+	unsigned int vector_size = ceil((INM1_val * 35) / 725.0);//calculate how many pages are needed
+	unsigned int pages_made = 0;
+
+	vector<page>& pages = search_spectra.get_pages();//saves space later
+	pages.resize(vector_size);
+	for(unsigned int c = 0; c < pages.size();c++){
+
+		if(rows_per_page >= rows_needed){
+			pages[c].page_init(9,rows_needed,pass_column_labels,pass_row_labels,
+								      sdl_helper, sdl_helper->font,15);
+			rows_needed = 0;
+		} else {
+
+			pages[c].page_init(9,rows_per_page,pass_column_labels,pass_row_labels,
+								      sdl_helper, sdl_helper->font,15);
+			rows_needed = rows_needed - rows_per_page;
+		}
+		pages_made++;//we made a page, so increase the counter
+	}
+	if(pages_made != vector_size) {
+		error_logger.push_error("Error in icntrl6/search spectra page_creation_helper, # of created pages does not match",
+				       "expected value.");
+	}
+
+	search_spectra.set_page_count(pages_made);
+
+	search_spectra.prev_initiated = true;//let the form class know that it's pages have been set up
+	search_spectra.prev_init_value = INM1_val;//and also what conditions caused such a creation
+
+
+}
+
+void icntrl6_form_button::fill_spectra_labels(vector<string>& pass_column_labels){
+
+	pass_column_labels.push_back("IFIT");
+	pass_column_labels.push_back("SIGFIT");
+	pass_column_labels.push_back("DSIGFIT");
+	pass_column_labels.push_back("ESIG");
+	pass_column_labels.push_back("DESIG");
+	pass_column_labels.push_back("E2SIG");
+	pass_column_labels.push_back("DE2SIG");
+	pass_column_labels.push_back("ELIML");
+	pass_column_labels.push_back("ELIMU");
+//	pass_column_labels.push_back("
 
 }
 
 void icntrl6_form_button::cross_sections_page_creation(){
+
+
+	int current_INM2_val;
+	try{
+ 		int current_INM2_val = stoi(sdl_helper->get_mgr().fields.at("line_10").at("INM2").temp_input); 
+	} catch(invalid_argument& arg_error){
+		error_logger.push_error("Error reading current INM2/cross sections value for page creation",
+					" logics.");
+	}
+
+	if( !cross_sections.prev_initiated ){
+
+		cross_sections_helper();
+
+	//case where form has been previously created, but INM2's val has not changed, so it does not need to be remade
+	} else if( cross_sections.prev_initiated && cross_sections.prev_init_value == current_INM2_val ){
+		return;
+
+	//case where form has been previously created, and the value of INM2 has been changed
+	} else {
+
+		cross_sections.flush_pages();
+		cross_sections_helper();
+	}//*/
+
+}
+
+void icntrl6_form_button::cross_sections_helper(){
+
+	try{
+	  INM2_val = stoi(sdl_helper->get_mgr().fields.at("line_10").at("INM2").temp_input);
+	} catch ( out_of_range& range_error ){
+	  error_logger.push_error("ICNTRL6-INM2 could not be found in the field map.",
+					  range_error.what());
+	  INM2_val = 0;
+	} catch ( invalid_argument& arg_error ){
+	  error_logger.push_error("ICNTRL6-INM2 has been supplied an illegal (non-numerical?) argument.",
+				  arg_error.what());
+	  INM2_val = 0;
+  	}
+
+	cross_sections.prev_initiated = true;
+	cross_sections.prev_init_value = INM2_val;
+
+	vector<string> pass_column_labels,pass_row_labels;
+	fill_spectra_labels(pass_column_labels);
+
+
+	int rows_per_page = floor(725.0 / 35);
+	int rows_needed   = INM2_val;
+	unsigned int vector_size = ceil((INM2_val * 35) / 725.0);//calculate how many pages are needed
+	unsigned int pages_made = 0;
+
+	vector<page>& pages = cross_sections.get_pages();//saves space later
+	pages.resize(vector_size);
+	for(unsigned int c = 0; c < pages.size();c++){
+
+		if(rows_per_page >= rows_needed){
+			pages[c].page_init(4,rows_needed,pass_column_labels,pass_row_labels,
+								      sdl_helper, sdl_helper->font,15);
+			rows_needed = 0;
+		} else {
+
+			pages[c].page_init(4,rows_per_page,pass_column_labels,pass_row_labels,
+								      sdl_helper, sdl_helper->font,15);
+			rows_needed = rows_needed - rows_per_page;
+		}
+		pages_made++;//we made a page, so increase the counter
+	}
+	if(pages_made != vector_size) {
+		error_logger.push_error("Error in icntrl6/cross sections page creation_helper, # of created pages does not match",
+				       "expected value.");
+	}
+
+	cross_sections.set_page_count(pages_made);
+
+	search_spectra.prev_initiated = true;//let the form class know that it's pages have been set up
+	search_spectra.prev_init_value = INM2_val;//and also what conditions caused such a creation
+
 
 
 }

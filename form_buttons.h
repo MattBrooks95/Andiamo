@@ -142,14 +142,22 @@ class icntrl6_form_button : public form_button{
 	//################ PAGE CREATION HELPERS ##################################################
 	//! this member sets up the parity form's pages
 	void parity_page_creation();
+	//! this fills up the row labels for the parity form
+	void fill_parity_labels(std::vector<std::string>& row_labels,std::vector<std::string>& column_labels);
+
 
 	//! this member sets up the search spectra form's pages
 	void search_spectra_page_creation();
+	//! this helper member fills in the column labels for the search spectra form
+	void fill_spectra_labels(std::vector<std::string>& pass_column_labels);
+	//! This helper abstracts some code to make search_spectra_page_creation more readable
+	void search_spectra_page_helper();
 
 	//! this member sets up the xsection form's pages
 	void cross_sections_page_creation();
+	//! this helper abstracts some code to make cross_sections_page_creation more readable
+	void cross_sections_helper();
 	//#########################################################################################
-
 
 
 	//! implements the special logic for this class
@@ -169,7 +177,11 @@ class icntrl6_form_button : public form_button{
 
 	//! this sends this object's info the input_manager's file stream
 	void make_output(std::ofstream& outs);
+
   private:
+
+	int INM1_val;//!< used to keep track of what conditions caused the current pages to be made
+	int INM2_val;//!< used to keep track of what conditions caused the current pages to be made
 
 	button_manager* b_manager;//!< pointer to the button manager, to call it's drawing functions
 
