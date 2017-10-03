@@ -229,9 +229,9 @@ void icntrl8_form_button::page_creation_helper(){
 	error_logger.push_msg("ICNTRL8 val:" + to_string(icntrl8_val)+" when form opened");
 	vector<string> pass_column_titles,pass_row_titles;
 	//for icntrl 8, the labels shouldn't change
-	pass_column_titles.push_back("IA8");
-	pass_column_titles.push_back("IZ8");
-	pass_column_titles.push_back("E8");
+	pass_column_titles.push_back("A to Drop");
+	pass_column_titles.push_back("Z to Drop");
+	pass_column_titles.push_back("Excitation Energy Cutoff");
 	//#########################################
 
 	int rows_per_page = floor(725.0 / 35);
@@ -241,16 +241,23 @@ void icntrl8_form_button::page_creation_helper(){
 
 	vector<page>& pages = my_form.get_pages();//saves space later
 	pages.resize(vector_size);
+
+	vector<int> column_spaces;
+	column_spaces.push_back(0);
+	column_spaces.push_back(150);
+	column_spaces.push_back(150);
+
+
 	for(unsigned int c = 0; c < pages.size();c++){
 
 		if(rows_per_page >= rows_needed){
 			pages[c].page_init(3,rows_needed,pass_column_titles,pass_row_titles,
-								      sdl_helper, sdl_helper->font,0);
+								      sdl_helper, sdl_helper->font,column_spaces);
 			rows_needed = 0;
 		} else {
 
 			pages[c].page_init(3,rows_per_page,pass_column_titles,pass_row_titles,
-								      sdl_helper, sdl_helper->font,0);
+								      sdl_helper, sdl_helper->font,column_spaces);
 			rows_needed = rows_needed - rows_per_page;
 		}
 		pages_made++;//we made a page, so increase the counter
@@ -486,7 +493,13 @@ void icntrl6_form_button::parity_page_creation(){
 
 		vector<string> column_labels, row_labels;
 		fill_parity_labels(row_labels, column_labels);
-		my_form.get_pages()[0].page_init( 3, 18, column_labels, row_labels, sdl_helper,sdl_helper->font,140);
+
+		vector<int> column_spaces;
+		column_spaces.push_back(0);
+		column_spaces.push_back(250);
+		column_spaces.push_back(250);
+
+		my_form.get_pages()[0].page_init( 3, 18, column_labels, row_labels, sdl_helper,sdl_helper->font,column_spaces);
 		
 	}
 
@@ -528,7 +541,7 @@ void icntrl6_form_button::search_spectra_page_creation(){
 
 	int current_INM1_val;
 	try{
- 		int current_INM1_val = stoi(sdl_helper->get_mgr().fields.at("line_10").at("INM1").temp_input); 
+ 		current_INM1_val = stoi(sdl_helper->get_mgr().fields.at("line_10").at("INM1").temp_input); 
 	} catch(invalid_argument& arg_error){
 		error_logger.push_error("Error reading current INM1/#Search Spectra value for page creation",
 					" logics.");
@@ -570,7 +583,8 @@ void icntrl6_form_button::search_spectra_page_helper(){
 	search_spectra.prev_init_value = INM1_val;
 
 	vector<string> pass_column_labels,pass_row_labels;
-	fill_spectra_labels(pass_column_labels);
+	vector<int> column_spaces;
+	fill_spectra_vectors(pass_column_labels,column_spaces);
 
 
 	int rows_per_page = floor(725.0 / 35);
@@ -580,16 +594,18 @@ void icntrl6_form_button::search_spectra_page_helper(){
 
 	vector<page>& pages = search_spectra.get_pages();//saves space later
 	pages.resize(vector_size);
+
+
 	for(unsigned int c = 0; c < pages.size();c++){
 
 		if(rows_per_page >= rows_needed){
 			pages[c].page_init(9,rows_needed,pass_column_labels,pass_row_labels,
-								      sdl_helper, sdl_helper->font,15);
+								      sdl_helper, sdl_helper->font,column_spaces);
 			rows_needed = 0;
 		} else {
 
 			pages[c].page_init(9,rows_per_page,pass_column_labels,pass_row_labels,
-								      sdl_helper, sdl_helper->font,15);
+								      sdl_helper, sdl_helper->font,column_spaces);
 			rows_needed = rows_needed - rows_per_page;
 		}
 		pages_made++;//we made a page, so increase the counter
@@ -607,8 +623,8 @@ void icntrl6_form_button::search_spectra_page_helper(){
 
 }
 
-void icntrl6_form_button::fill_spectra_labels(vector<string>& pass_column_labels){
-
+void icntrl6_form_button::fill_spectra_vectors(vector<string>& pass_column_labels,vector<int>& column_spaces){
+	//fill column labels
 	pass_column_labels.push_back("IFIT");
 	pass_column_labels.push_back("SIGFIT");
 	pass_column_labels.push_back("DSIGFIT");
@@ -618,7 +634,17 @@ void icntrl6_form_button::fill_spectra_labels(vector<string>& pass_column_labels
 	pass_column_labels.push_back("DE2SIG");
 	pass_column_labels.push_back("ELIML");
 	pass_column_labels.push_back("ELIMU");
-//	pass_column_labels.push_back("
+
+	//fill column spacing info
+	column_spaces.push_back(0);
+	column_spaces.push_back(75);
+	column_spaces.push_back(85);
+	column_spaces.push_back(100);
+	column_spaces.push_back(85);
+	column_spaces.push_back(85);
+	column_spaces.push_back(85);
+	column_spaces.push_back(85);
+	column_spaces.push_back(85);
 
 }
 
@@ -627,7 +653,7 @@ void icntrl6_form_button::cross_sections_page_creation(){
 
 	int current_INM2_val;
 	try{
- 		int current_INM2_val = stoi(sdl_helper->get_mgr().fields.at("line_10").at("INM2").temp_input); 
+ 		current_INM2_val = stoi(sdl_helper->get_mgr().fields.at("line_10").at("INM2").temp_input); 
 	} catch(invalid_argument& arg_error){
 		error_logger.push_error("Error reading current INM2/cross sections value for page creation",
 					" logics.");
@@ -667,9 +693,17 @@ void icntrl6_form_button::cross_sections_helper(){
 	cross_sections.prev_initiated = true;
 	cross_sections.prev_init_value = INM2_val;
 
+	//fill in column labels
 	vector<string> pass_column_labels,pass_row_labels;
-	fill_spectra_labels(pass_column_labels);
+	pass_column_labels.push_back("# p evaporated");
+	pass_column_labels.push_back("# n evaporated");
+	pass_column_labels.push_back("Integrated Cross Section");
+	pass_column_labels.push_back("Integrated CS Error");
 
+	//fill in spacing info
+	vector<int> column_spaces;
+	column_spaces.push_back(0);
+	column_spaces.push_back(140); column_spaces.push_back(140); column_spaces.push_back(220);
 
 	int rows_per_page = floor(725.0 / 35);
 	int rows_needed   = INM2_val;
@@ -678,16 +712,24 @@ void icntrl6_form_button::cross_sections_helper(){
 
 	vector<page>& pages = cross_sections.get_pages();//saves space later
 	pages.resize(vector_size);
+
 	for(unsigned int c = 0; c < pages.size();c++){
 
 		if(rows_per_page >= rows_needed){
+			//pages[c].page_init(4,rows_needed,pass_column_labels,pass_row_labels,
+								     // sdl_helper, sdl_helper->font,120);//prev 15
+
 			pages[c].page_init(4,rows_needed,pass_column_labels,pass_row_labels,
-								      sdl_helper, sdl_helper->font,15);
+								     sdl_helper, sdl_helper->font,column_spaces);
 			rows_needed = 0;
 		} else {
 
+			//pages[c].page_init(4,rows_per_page,pass_column_labels,pass_row_labels,
+								      //sdl_helper, sdl_helper->font,120);//prev 15
 			pages[c].page_init(4,rows_per_page,pass_column_labels,pass_row_labels,
-								      sdl_helper, sdl_helper->font,15);
+								     sdl_helper, sdl_helper->font,column_spaces);
+
+
 			rows_needed = rows_needed - rows_per_page;
 		}
 		pages_made++;//we made a page, so increase the counter
@@ -747,8 +789,57 @@ void icntrl6_form_button::show_landing(){
 }
 
 void icntrl6_form_button::make_output(ofstream& outs){
+	if(outs.fail()){
+		error_logger.push_error("Icntrl6_form_button::make_output was not given a valid output file stream.",
+					"exiting.");
+		return;
+	}	
+
+	outs << "TESTING ICNTRL6'S OUTPUT" << endl;
+	vector<page>& parity_ref = my_form.get_pages();         //handle for accessing parity form's data
+	vector<page>& search_ref = search_spectra.get_pages();  //handle for accessing search_spectra form's data
+	vector<page>& cross_ref  = cross_sections.get_pages();  //handle for accessing cross_section form's data 
+
 	
 
+	//INM1 is up first
+	if(search_ref.size() != 0){
+		//loop over search spectra's pages
+		for(unsigned int c = 0; c < search_ref.size();c++){
+			unsigned int columns = search_ref[c].get_columns();
+			outs << "PAGE " << c << endl;
+			//loop over each row
+			for(unsigned int d = 0; d < search_ref.at(c).get_text_boxes().size(); d += columns){
+				outs I search_ref[c].get_text_boxes()[d].text;
+				outs << setprecision(4);  //set precision for float numbers
+				outs F search_ref[c].get_text_boxes()[d+1].text F search_ref[c].get_text_boxes()[d+2].text;
+				outs F search_ref[c].get_text_boxes()[d+3].text F search_ref[c].get_text_boxes()[d+4].text;
+				outs F search_ref[c].get_text_boxes()[d+5].text F search_ref[c].get_text_boxes()[d+6].text;
+				outs F search_ref[c].get_text_boxes()[d+7].text F search_ref[c].get_text_boxes()[d+8].text;
+				outs F search_ref[c].get_text_boxes()[d+9].text << endl;
+
+			}
+		}
+	}
+	//INM2 is up next
+	if(cross_ref.size() != 0){
+		//loop over search spectra's pages
+		for(unsigned int c = 0;c < cross_ref.size();c++){
+			outs << "PAGE " << c << endl;
+			//loop over each row
+			for(unsigned int d = 0; c < cross_ref.size();c++){
+				outs I cross_ref[c].get_text_boxes()[d].text I cross_ref[c].get_text_boxes()[d+1].text;
+				outs << setprecision(4);
+				outs F10 cross_ref[c].get_text_boxes()[d+2].text F10 cross_ref[c].get_text_boxes()[d+3].text << endl;
+
+			}
+
+		}
+
+
+	}
+
+	//and finally, parity
 
 
 }

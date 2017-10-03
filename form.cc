@@ -495,26 +495,81 @@ page::~page(){
 void page::page_init(unsigned int num_columns_in, unsigned int num_rows_in,const vector<string>& column_labels_in,
 	   vector<string>& row_labels_in,sdl_help* sdl_helper_in,TTF_Font* sdl_font_in,int additional_spacing){
 */
+/*
 void page::page_init(unsigned int num_columns_in, unsigned int rows_needed,
 			const vector<string>& column_labels_in, vector<string>& row_labels_in,
 			sdl_help* sdl_helper_in,TTF_Font* sdl_font_in,int additional_spacing){
+*/
+void page::page_init(unsigned int num_columns_in, unsigned int rows_needed,
+		     const vector<string>& column_labels_in, vector<string>& row_labels_in,
+		     sdl_help* sdl_helper_in,TTF_Font* sdl_font_in,const vector<int>& column_spacings){
 
+	//abstracts some of the assignments to save space here
+	page_init_local_var(num_columns_in, rows_needed, column_labels_in, row_labels_in, sdl_helper_in, sdl_font_in);
+
+	//bool row_labels_exist = false;//turn true to make room for row labels
+	int x_start_point = 0;//used to control where the text boxes start to be drawn
+
+
+	if(num_columns_in != column_spacings.size()){
+		cout << num_columns_in << ":" << column_spacings.size() << endl;
+		cout << "There has not been enough spacing values supplied to page init."
+		     << "Column_spacings should have one less element than num_columns_in." << endl;
+		error_logger.push_error("There has not been enough spacing values supplied to page init.",
+				      "Column_spacings should have one less element than num_columns_in.");
+	}
+
+	//implement logics for setting row labels here
+	//how does this affect the placing of the actual text boxes?
+	if(row_labels_in.size() != 0){
+		page_init_set_row_labels(row_labels_in,x_start_point);
+	}
+
+
+	page_init_set_text_boxes(x_start_point,column_spacings);
+
+	page_init_column_labels(column_spacings,x_start_point);
+/*
+	int x_offset = 0;
+	//set up column labels
+	SDL_Color black = {0,0,0,0};
+	SDL_Surface* temp_surf = NULL;
+	SDL_Texture* temp_texture = NULL;
+	for(unsigned int c = 0; c < column_labels.size();c++){
+		column_label_textures.push_back(temp_texture);//shove in a null pointer
+
+		temp_surf = TTF_RenderUTF8_Blended(sdl_font,column_labels[c].c_str(),black);//render the text
+
+		//make the pointer we shoved point at the desired texture
+		column_label_textures.back() = SDL_CreateTextureFromSurface(sdl_helper->renderer,temp_surf);
+
+		//calculate drawing info for the column label
+		SDL_Rect temp_rect = {x_start_point+x_offset+column_spacings[c],50,0,0};
+		x_offset += column_spacings[c];
+		//size the text and shove it into the vector
+		TTF_SizeText(sdl_font,column_labels[c].c_str(),&temp_rect.w,&temp_rect.h);
+		column_label_rects.push_back(temp_rect);//shove it into the drawing info vector
+
+		SDL_FreeSurface(temp_surf);//give memory back
+		temp_surf = NULL;//reset surf pointer for next item
+	}
+*/
+
+}
+void page::page_init_local_var(unsigned int num_columns_in, unsigned int rows_needed, const vector<string>& column_labels_in,
+			       vector<string>& row_labels_in, sdl_help* sdl_helper_in,TTF_Font* sdl_font_in){
 	num_columns = num_columns_in;
 	num_rows = rows_needed;
 	column_labels = column_labels_in;
 	row_labels = row_labels_in;
 	sdl_helper = sdl_helper_in;
 	sdl_font = sdl_font_in;
+}
 
+void page::page_init_set_row_labels(const std::vector<std::string>& row_labels_in,int& x_start_point){
 
-	bool row_labels_exist = false;//turn true to make room for row labels
-	int x_start_point = 0;//used to control where the text boxes start to be drawn
-
-	//implement logics for setting row labels here
-	//how does this affect the placing of the actual text boxes?
-	if(row_labels_in.size() != 0){
-		cout << "Should be making:" << row_labels_in.size() << " row labels." << endl;
-		row_labels_exist = true;
+		//cout << "Should be making:" << row_labels_in.size() << " row labels." << endl;
+		//row_labels_exist = true;
 
 		SDL_Color black = {0,0,0,0};
 		SDL_Surface* temp_surface = NULL;
@@ -549,29 +604,38 @@ void page::page_init(unsigned int num_columns_in, unsigned int rows_needed,
 
 			row_label_rects.push_back(temp_rect); //push that info into the row label vector
 		}
-	}
 
+
+}
+
+void page::page_init_set_text_boxes(int& x_start_point,const vector<int>& column_spacings){
 	if(x_start_point != 0) x_start_point += 10;//give it some wiggle room
-
-
-
 
 	//had a hard fight with the Rule of Three here.... 
 	//implementing a copy constructor stopped the double free() crash at the text_boxes.push_back
+	int x_offset = 0;
 	for(unsigned int j = 0; j < num_rows; j++){
+		x_offset = 0;
 		for(unsigned int i = 0; i < num_columns; i++){
 			text_box new_text_box;
-			int x_val = x_start_point+TEXT_BOX_W*i+TEXT_BOX_HORIZ_PADDING*i+additional_spacing*i;
+			//int x_val = x_start_point+TEXT_BOX_W*i+TEXT_BOX_HORIZ_PADDING*i+column_spacings[i];
+			int x_val = x_start_point+x_offset+column_spacings[i];
+			x_offset += column_spacings[i];
 			int y_val = 80+25*j+10*j;
 			new_text_box.init(sdl_helper,sdl_font,"",x_val,y_val,60,25);
 			text_boxes.push_back(new_text_box);
 		}
 
 	}
+
 	//but, I think another solution could have been to tell the vector make 'x' text_boxes, and then init the copies
 	//that exist inside the vector
 
-	
+}
+
+void page::page_init_column_labels(const vector<int>& column_spacings,int& x_start_point){
+
+	int x_offset = 0;
 	//set up column labels
 	SDL_Color black = {0,0,0,0};
 	SDL_Surface* temp_surf = NULL;
@@ -585,7 +649,8 @@ void page::page_init(unsigned int num_columns_in, unsigned int rows_needed,
 		column_label_textures.back() = SDL_CreateTextureFromSurface(sdl_helper->renderer,temp_surf);
 
 		//calculate drawing info for the column label
-		SDL_Rect temp_rect = {x_start_point+TEXT_BOX_W*c+TEXT_BOX_HORIZ_PADDING*c+additional_spacing*c,50,0,0};
+		SDL_Rect temp_rect = {x_start_point+x_offset+column_spacings[c],50,0,0};
+		x_offset += column_spacings[c];
 		//size the text and shove it into the vector
 		TTF_SizeText(sdl_font,column_labels[c].c_str(),&temp_rect.w,&temp_rect.h);
 		column_label_rects.push_back(temp_rect);//shove it into the drawing info vector
@@ -623,7 +688,7 @@ void page::draw_me(){
 
 	}
 
-	cout << "Text boxes:" << text_boxes.size() << endl;
+	//cout << "Text boxes:" << text_boxes.size() << endl;
 	for(unsigned int c = 0; c < text_boxes.size();c++){
 		text_boxes[c].draw_me();
 	}

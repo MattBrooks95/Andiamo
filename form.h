@@ -149,10 +149,28 @@ class page{
 	     std::vector<std::string>& row_labels_in,sdl_help* sdl_helper_in,TTF_Font* sdl_font_in,int additional_spacing);
 	*/
 
+	/*
 	void page_init(unsigned int num_columns_in, unsigned int rows_needed,
 		       const std::vector<std::string>& column_labels_in, std::vector<std::string>& row_labels_in,
 		       sdl_help* sdl_helper_in,TTF_Font* sdl_font_in,int additional_spacing);
+	*/
 
+	//###########################################################################################################
+	void page_init(unsigned int num_columns_in, unsigned int rows_needed,
+		       const std::vector<std::string>& column_labels_in,std::vector<std::string>& row_labels_in,
+		       sdl_help* sdl_helper_in,TTF_Font* sdl_font_in, const std::vector<int>& column_spacings);
+	//! helper for page_init, does the mundane pass-through assignments
+	void page_init_local_var(unsigned int num_columns_in, unsigned int rows_needed, const std::vector<std::string>& column_labels_in,
+			         std::vector<std::string>& row_labels_in, sdl_help* sdl_helper_in,TTF_Font* sdl_font_in);
+	//! helper for page_init that sets up the row labels, if they exist
+	void page_init_set_row_labels(const std::vector<std::string>& row_labels_in,int& x_start_point);
+
+	//! helper for page_init that sets up the text boxes
+	void page_init_set_text_boxes(int& x_start_point,const std::vector<int>& column_spacings);
+
+	//! helper for page_init that sets up the column labels/headers
+	void page_init_column_labels(const std::vector<int>& column_spacings,int& x_start_point);
+	//###########################################################################################################
 
 	//! this function draws the pages headers, labels and text boxes
 	void draw_me();

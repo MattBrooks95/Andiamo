@@ -867,7 +867,6 @@ void manager::icntrl6_locking(){
 		//elsewise, lock them
 		fields.at("line_6").at("ICNTRL6").change_tile_background("purple_andy_tile.png");
 		fields.at("line_6").at("ICNTRL6").am_I_locking = true;
-
 		fields.at("line_10").at("ITER").is_locked = true;
 		fields.at("line_10").at("INM1").is_locked = true;
 		fields.at("line_10").at("INM2").is_locked = true;
@@ -879,25 +878,30 @@ void manager::icntrl6_locking(){
   }
 	bool icntrl6_lock_status = fields.at("line_6").at("ICNTRL6").am_I_locking;
 	if( !icntrl6_lock_status ){
+		//these functions set the am_I_locking states for each of the sub-parameters of ICNTRL6
 		inm1_locking();
 		inm2_locking();
 		iter_locking();
 
 
-
+		//the sub states are saved to local variables here so it's not as long of a statement
 		bool inm1_lock_status = fields.at("line_10").at("INM1").am_I_locking;
 		bool inm2_lock_status = fields.at("line_10").at("INM2").am_I_locking;
 		bool iter_lock_status = fields.at("line_10").at("ITER").am_I_locking;
+		bool icntrl6_locked = b_manager_hook->get_icntrl_6().get_is_locked();
 
-
-		if(  ( !(b_manager_hook->get_icntrl_6().get_is_locked()) && ( inm1_lock_status || inm2_lock_status || iter_lock_status ))
-		     || ( b_manager_hook->get_icntrl_6().get_is_locked() && !(inm1_lock_status || inm2_lock_status || iter_lock_status) ) ){
+//the following assumes that ITER must be greater than 0, and atleast one of INM1 or INM2 must be nonzero
+			 //if form_button is not locked, and all are locking, then lock it
+		if( (icntrl6_locked && !iter_lock_status && (!inm1_lock_status || !inm2_lock_status)) ||
+		    (!icntrl6_locked && iter_lock_status) ||
+		    (!icntrl6_locked && !iter_lock_status && (inm1_lock_status && inm2_lock_status))
+		     
+		  ){
+			//cout << icntrl6_lock_status << " " << inm1_lock_status << " " << inm2_lock_status << " " << iter_lock_status << endl;
 			b_manager_hook->get_icntrl_6().toggle_lock();
-
 		}
-	} else if( !b_manager_hook->get_icntrl_6().get_is_locked() ){
-		b_manager_hook->get_icntrl_6().toggle_lock();
 	}
+
 
 }
 

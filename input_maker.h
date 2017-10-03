@@ -170,6 +170,9 @@ void do_line8(std::ofstream& outs,const std::map<std::string,param_int4>& int4_p
 
 //! this helper outputs the variables in line 9
 void do_line9(std::ofstream& outs,const std::map<std::string,param_int4>& int4_params,const std::map<std::string,param_real8>& real8_params);
+
+//! this helper outputs the variables in line 10
+void do_line10(std::ofstream&outs,const std::map<std::string,param_int4>& int4_params);
 //######################################################################################################################
 
 

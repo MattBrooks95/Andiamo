@@ -149,7 +149,7 @@ class icntrl6_form_button : public form_button{
 	//! this member sets up the search spectra form's pages
 	void search_spectra_page_creation();
 	//! this helper member fills in the column labels for the search spectra form
-	void fill_spectra_labels(std::vector<std::string>& pass_column_labels);
+	void fill_spectra_vectors(std::vector<std::string>& pass_column_labels,std::vector<int>& column_spaces);
 	//! This helper abstracts some code to make search_spectra_page_creation more readable
 	void search_spectra_page_helper();
 

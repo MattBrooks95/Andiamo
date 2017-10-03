@@ -387,7 +387,9 @@ void input_maker::output(){
 	}//elsewise, don't do lines 8&9
 
 
-
+	if( int4_params.at("ICNTRL6").value > 0){
+		do_line10(outs,int4_params);
+	}
 
 
 	//#########MAKE OUTPUTS FROM FORM_BUTTONS ##############################################################//
@@ -612,6 +614,9 @@ void do_line9(ofstream& outs,const map<string,param_int4>& int4_params,const map
   }
 }
 
+void do_line10(ofstream& outs, const map<string,param_int4>& int4_params){
+	outs I int4_params.at("ITER").value I int4_params.at("INM1").value I int4_params.at("INM2").value << endl;
+}
 //#################################################################################################################
 
 
