@@ -166,10 +166,10 @@ class page{
 	void page_init_set_row_labels(const std::vector<std::string>& row_labels_in,int& x_start_point);
 
 	//! helper for page_init that sets up the text boxes
-	void page_init_set_text_boxes(int& x_start_point,const std::vector<int>& column_spacings);
+	void page_init_set_text_boxes(int& x_start_point,const std::vector<int>& column_spacings,bool& row_labels_exist);
 
 	//! helper for page_init that sets up the column labels/headers
-	void page_init_column_labels(const std::vector<int>& column_spacings,int& x_start_point);
+	void page_init_column_labels(const std::vector<int>& column_spacings,int& x_start_point,bool& row_labels_exist);
 	//###########################################################################################################
 
 	//! this function draws the pages headers, labels and text boxes

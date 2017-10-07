@@ -106,7 +106,7 @@ class button_manager{
 	//! this member returns the exit button by reference, so its members can be called by other things
 	exit_button& get_exit_dialogue(){ return exit_dialogue;}
 	//! this member returns the default, example button by reference, so its members can be called
-	button& get_default_test(){ return default_test;}
+	button& get_fop_button(){ return fop_button;}
 
 	std::string button_image_p;//!< this is a string that describes the path to the button's image files
 
@@ -147,7 +147,7 @@ class button_manager{
 	std::vector<button> buttons;
 
 
-	button default_test;//!< example of a base class instantiation, not actually for use
+	fop_handler_button fop_button;//!< button that launches the fop_handler
 
 	output_file_button output_fname;//!< button to allow user to select where to output the HF input file
 

@@ -157,7 +157,16 @@ class graphing_button : public text_box_button{
 };
 //##################################################################################################################
 
+class fop_handler_button : public button{
 
+	//! overload handle_click, to open interactive FOP feature
+	void click_helper(SDL_Event& mouse_event);
+	void work();//! this function implementation opens a fop_handler object
+
+
+
+
+};
 
 
 

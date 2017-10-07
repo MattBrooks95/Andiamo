@@ -116,7 +116,7 @@ void button_manager::location_update(){
 	//move buttons to fit the tray
 	//+7 is padding from the top of the button tray
 
-	default_test.handle_resize(new_y+7);
+	fop_button.handle_resize(new_y+7);
 
 
 	output_fname.handle_resize(new_y+7);
@@ -135,7 +135,7 @@ void button_manager::location_update(){
 
 void button_manager::init_buttons(){
 	//initialize the placeholder buttons
-	default_test.init("default_button.png",button_image_p,sdl_helper);
+	fop_button.init("fop_button.png",button_image_p,sdl_helper);
 	output_fname.init("output_name_button.png",button_image_p,sdl_helper);
 	t_coefficients.init("tc_file_button.png",button_image_p,sdl_helper);
 	//graphing_options.init("graphing_options.png",button_image_p,sdl_helper);
@@ -147,10 +147,10 @@ void button_manager::init_buttons(){
 	int end_of_last_button = 0;//keep track of where the last button ended
 
 	//assign their locations
-	default_test.force_corner_loc( tray_rect.x+5,tray_rect.y+7 );
+	fop_button.force_corner_loc( tray_rect.x+5,tray_rect.y+7 );
 
 		//keep track of where the next button placement should start
-		end_of_last_button = end_of_last_button + tray_rect.x+5 + default_test.get_width();
+		end_of_last_button = end_of_last_button + tray_rect.x+5 + fop_button.get_width();
 	
 	//these two are thin enough to occupy the same horizontal space, with one above and one below
 	output_fname.force_corner_loc( end_of_last_button+5, tray_rect.y + 7);
@@ -215,7 +215,7 @@ void button_manager::init_form_buttons(){
 
 void button_manager::print_buttons(){
 	error_logger.push_msg("####################### PRINTING BUTTONS ############################");
-	default_test.print_me();
+	fop_button.print_me();
 
 	exit_dialogue.print_me();
 
@@ -250,7 +250,7 @@ void button_manager::draw_form_tray(){
 void button_manager::draw_buttons(){
 	draw_tray();
 	draw_form_tray();
-	default_test.draw_me();
+	fop_button.draw_me();
 	output_fname.draw_me();	
 	t_coefficients.draw_me();
 	//graphing_options.draw_me();
@@ -361,8 +361,8 @@ bool button_manager::click_handling(SDL_Event& mouse_event){
 			 	    //shouldn't be possible to click two at the same time
 
 	error_logger.push_msg("HANDLING BUTTON CLICKS");
-	if(!done_something && default_test.shown){
-		if( default_test.handle_click(mouse_event)){
+	if(!done_something && fop_button.shown){
+		if( fop_button.handle_click(mouse_event)){
 			done_something = true;
 		}
 

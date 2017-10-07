@@ -497,7 +497,7 @@ void icntrl6_form_button::parity_page_creation(){
 		vector<int> column_spaces;
 		column_spaces.push_back(0);
 		column_spaces.push_back(250);
-		column_spaces.push_back(250);
+		column_spaces.push_back(100);
 
 		my_form.get_pages()[0].page_init( 3, 18, column_labels, row_labels, sdl_helper,sdl_helper->font,column_spaces);
 		

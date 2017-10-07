@@ -276,6 +276,35 @@ void graphing_button::init(const std::string& image_name_in,const std::string& i
 
 
 
+//################## FOP HANDLER BUTTON ##########################################################
+void fop_handler_button::click_helper(SDL_Event& mouse_event){
+	work();
+
+
+
+}
+
+void fop_handler_button::work(){
+	cout << "Message from the fop_button." << endl;
+
+
+
+
+}
+
+
+
+
+
+
+
+//#################################################################################################
+
+
+
+
+
+
 
 
 
