@@ -169,6 +169,9 @@ class icntrl6_form_button : public form_button{
 	//! this function sets up the form selection page
 	void setup_landing();
 
+    //! this function updates the loading screen in response to a screen resize
+    void update_landing();
+
 	//! this function shows the image that allows the user to switch between icntrl6's forms
 	void show_landing();
 
@@ -225,6 +228,8 @@ class icntrl4_form_button : public form_button{
 	//! sets up a form that suits the needs of icntrl4's logics per the input manual
 	void init_form();
 
+    //! helper function for form creation
+    void page_creation_helper();
 
 	//! implements the special logic for this class
 	bool handle_click(SDL_Event& mouse_event);
@@ -232,7 +237,12 @@ class icntrl4_form_button : public form_button{
 	//! this function opens the icntrl4 form on click
 	void click_helper(SDL_Event& mouse_event);
 
+    //! outputs form info to the input_maker file stream
+    void make_output(std::ostream& outs);
+
   private:
+    //! not called icntrl4_val because derivative parameter nch4 controls # of text boxes needed
+    unsigned int nch4_val;
 };
 
 class ilv3_ilv5_form_button : public form_button{

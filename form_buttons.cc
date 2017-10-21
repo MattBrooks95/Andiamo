@@ -15,7 +15,6 @@ using namespace std;
 
 
 
-
 //######################## FORM BUTTONS #####################################
 form_button::form_button(){
 	lock_surface = NULL;
@@ -287,7 +286,7 @@ void icntrl8_form_button::make_output(ofstream& outs){
 	}
 
 
-	outs << "TESTING ICNTRL8'S OUTPUT" << endl;
+	//outs << "TESTING ICNTRL8'S OUTPUT" << endl;
 	vector<page>* pages_ptr = &my_form.get_pages(); //saves calls to the getter, and space in this function
 
 	//loop over each page
@@ -781,6 +780,22 @@ void icntrl6_form_button::setup_landing(){
 
 }
 
+void icntrl6_form_button::update_landing(){
+
+    //70 pixels higher
+	landing_rect.y = yloc - 70;
+
+	landing_rect.w = 312;
+	landing_rect.h = 70;
+
+	//configure the click detection areas for the different form openers
+	parity_area.set_loc(landing_rect.x,landing_rect.y,100,70);
+	spectra_area.set_loc(landing_rect.x+106,landing_rect.y,100,70);
+	xsections_area.set_loc(landing_rect.x+212,landing_rect.y,100,70);
+
+
+}
+
 void icntrl6_form_button::show_landing(){
 
 	SDL_RenderCopy(sdl_helper->renderer,landing_texture,NULL,&landing_rect);
@@ -795,7 +810,7 @@ void icntrl6_form_button::make_output(ofstream& outs){
 		return;
 	}	
 
-	outs << "TESTING ICNTRL6'S OUTPUT" << endl;
+	//outs << "TESTING ICNTRL6'S OUTPUT" << endl;
 	vector<page>& parity_ref = my_form.get_pages();         //handle for accessing parity form's data
 	vector<page>& search_ref = search_spectra.get_pages();  //handle for accessing search_spectra form's data
 	vector<page>& cross_ref  = cross_sections.get_pages();  //handle for accessing cross_section form's data 
@@ -884,6 +899,11 @@ void icntrl4_form_button::setup_lock(){
 
 }
 
+void icntrl4_form_button::init_form(){
+
+	my_form.init("Resolved Levels (ICNTRL4)","icntrl4_form_help.png",0,0,sdl_helper,sdl_helper->font);
+
+}
 
 bool icntrl4_form_button::handle_click(SDL_Event& mouse_event){
 	if(button::was_clicked(mouse_event)){
@@ -895,17 +915,124 @@ bool icntrl4_form_button::handle_click(SDL_Event& mouse_event){
 
 void icntrl4_form_button::click_helper(SDL_Event& mouse_event){
 	error_logger.push_msg("clicked the icntrl4/resolved levels info button ");
+	error_logger.push_msg("Clicked icntrl8/cutoff nuclei button");
+
+	//don't consider doing anything if the form is locked
 	if(!is_locked){
 		screen_size();
-		my_form.toggle_active();//let the form know that it is now active
-		my_form.form_event_loop(mouse_event);//enter the mini loop for form entry
+
+		//in this case the form has not been previously created
+		if(!my_form.prev_initiated){
+
+
+			page_creation_helper();//most of this work is shared with the recreation case
+					       //so it has been put into a helper function
+
+			my_form.toggle_active();//let the form know that it is now active
+			my_form.form_event_loop(mouse_event);//enter the mini loop for form entry
+
+		//in this case the form has been previously created, but the icntrl8 value has not changed, so nothing needs to be done
+		} else if(my_form.prev_init_value == stoi(sdl_helper->get_mgr().fields.at("line_8").at("NCH4").temp_input) ){
+			my_form.toggle_active();//let the form know that it is now active
+			my_form.form_event_loop(mouse_event);//enter the mini loop for form entry
+
+		//in this case, the form has been previously created, but the icntrl8 value has been changed, so it must be recreated
+		} else {
+			my_form.flush_pages();//clear out previous info
+
+
+			page_creation_helper();//most of this work is shared with the 1st time creation case
+					       //so it has been put into a helper function
+
+
+			my_form.toggle_active();//let the form know that it is now active
+			my_form.form_event_loop(mouse_event);//enter the mini loop for form entry
+
+
+		}
 	}
+
+}
+void icntrl4_form_button::page_creation_helper(){
+
+	//grab val from parameter field, so the pages can be set up
+	try{
+	  nch4_val = stoi(sdl_helper->get_mgr().fields.at("line_8").at("NCH4").temp_input);
+	} catch (out_of_range& range_error){
+	  error_logger.push_error("NCH4 could not be found in the field map",
+				  range_error.what());
+	  nch4_val = 0;
+	} catch (invalid_argument& arg_error){
+	  error_logger.push_error("NCH4 has been given an invalid (non-numerical?) argument.",
+				  arg_error.what());
+	  nch4_val = 0;
+	}
+
+
+
+	error_logger.push_msg("NCH4 val:" + to_string(nch4_val)+" when form opened");
+	vector<string> pass_column_titles,pass_row_titles;
+	//for icntrl 4, the labels shouldn't change
+	pass_column_titles.push_back("RL Energy");
+	pass_column_titles.push_back("RL Spin");
+	pass_column_titles.push_back("RL Parity");
+    pass_column_titles.push_back("RL Isospin");
+	//#########################################
+
+	int rows_per_page = floor(725.0 / 35);
+	int rows_needed   = nch4_val;
+	unsigned int vector_size = ceil((nch4_val * 35) / 725.0);//calculate how many pages are needed
+	unsigned int pages_made = 0;
+
+	vector<page>& pages = my_form.get_pages();//saves space later
+	pages.resize(vector_size);
+
+	vector<int> column_spaces;
+	column_spaces.push_back(0);
+	column_spaces.push_back(208);
+	column_spaces.push_back(184);
+    column_spaces.push_back(201);
+
+
+	for(unsigned int c = 0; c < pages.size();c++){
+
+		if(rows_per_page >= rows_needed){
+			pages[c].page_init(4,rows_needed,pass_column_titles,pass_row_titles,
+								      sdl_helper, sdl_helper->font,column_spaces);
+			rows_needed = 0;
+		} else {
+
+			pages[c].page_init(4,rows_per_page,pass_column_titles,pass_row_titles,
+								      sdl_helper, sdl_helper->font,column_spaces);
+			rows_needed = rows_needed - rows_per_page;
+		}
+		pages_made++;//we made a page, so increase the counter
+	}
+	if(pages_made != vector_size) {
+		error_logger.push_error("Error in icntrl8 page_creation_helper, # of created pages does not match",
+				       "expected value.");
+	}
+
+	my_form.set_page_count(pages_made);
+
+	my_form.prev_initiated = true;//let the form class know that it's pages have been set up
+	my_form.prev_init_value = nch4_val;//and also what conditions caused such a creation
+
+
 }
 
-void icntrl4_form_button::init_form(){
+void icntrl4_form_button::make_output(ostream& outs){
+    vector<text_box>* boxes = &my_form.get_pages()[0].get_text_boxes();
+    string spaces = "     ";
+    //we do 4 prints a loop, so c should go up by four each time
+	for(unsigned int c = 0; c < boxes->size();c += 4){
+        //output the line as declared by the input manual and as expected by HF
+        //note here that I'm using the string 'spaces' to approximate the fortran 5x formatting
+        //tag
+        outs << setprecision(2) F5 boxes->at(c).text << spaces;
+        outs << setprecision(1) F5 boxes->at(c+1).text << spaces I boxes->at(c+2).text F5 boxes->at(c+3).text << endl; 
 
-	my_form.init("Resolved Levels (ICNTRL4)","default_form_help.png",0,0,sdl_helper,sdl_helper->font);
-
+    }
 }
 
 //################################################################################
@@ -931,7 +1058,7 @@ void ilv3_ilv5_form_button::click_helper(SDL_Event& mouse_event){
 
 void ilv3_ilv5_form_button::init_form(){
 
-	my_form.init("Resolved Levels (ICNTRL4)","default_form_help.png",0,0,sdl_helper,sdl_helper->font);
+	my_form.init("Resolved Levels (ICNTRL4)","icntrl4_form_help.png",0,0,sdl_helper,sdl_helper->font);
 
 }
 

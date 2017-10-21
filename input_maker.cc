@@ -382,8 +382,8 @@ void input_maker::output(){
 	if( int4_params.at("ICNTRL4").value != 0 ){
 		//do line 8
 		do_line8(outs,int4_params);
-		//do line 9
-		do_line9(outs,int4_params,real8_params);
+		//do the form's output
+		b_manager->get_icntrl_4().make_output(outs);
 	}//elsewise, don't do lines 8&9
 
 

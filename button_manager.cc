@@ -131,6 +131,7 @@ void button_manager::location_update(){
 	tray_rect.y = new_y;
 	form_tray_rect.y = new_y - form_tray_rect.h;
 	redo_locks();
+    icntrl_6.update_landing();
 }
 
 void button_manager::init_buttons(){
@@ -381,6 +382,7 @@ bool button_manager::click_handling(SDL_Event& mouse_event){
 			text_box_loop(&t_coefficients,mouse_event);
 			done_something = true;
 		}
+
 	}
 	if(!done_something && lets_go.shown){
 		if( lets_go.handle_click(mouse_event) ){
