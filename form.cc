@@ -136,6 +136,53 @@ void form::init(string form_title_in,string help_msg_image_name,int xloc_in, int
 	left_arrow.set_loc(700,0,25,50);
 }
 
+void form::set_form_title(std::string new_title){
+        //the form title should have been set by the init function, if it wasn't, something is wrong
+        if(form_title_surface == NULL){
+                error_logger.push_error("Couldn't switch the form's title, it was previously null.");
+        }
+        //destroy the old form title surface
+        SDL_FreeSurface(form_title_surface);
+        
+        //save the new title surface
+        form_title = new_title;
+
+	//make this font a little bit bigger than the others
+	TTF_Font* title_font = TTF_OpenFont( "./Assets/fonts/LiberationSerif-Regular.ttf", 28);
+        //render the text as a graphic
+        SDL_Color black = {0,0,0,0};//black text
+	form_title_surface = TTF_RenderUTF8_Blended(title_font,form_title.c_str(),black);
+
+        //before we can draw the form title to the surface, 
+        //we must first fill over the old form title. Make sure the color is the same as the form's
+        SDL_Rect source, destination;
+        destination = {30,0,650,50};//set destination to the region we have to draw over
+        //draw a rectangle over that area, with the gray color used in the form's asset
+        //change the SDL_MapRGBA call to match the new color if the form is changed, thought it
+        //is possible to query the surface directly and get the color info that way....
+        SDL_FillRect(form_surface,&destination,SDL_MapRGBA(form_surface->format,119,111,103,255));
+
+        //get its size, and then calculate where it should be positioned on the form
+	TTF_SizeText(title_font,form_title.c_str(),&source.w,&source.h);
+	source.x = 0; source.y = 0;
+	destination.w = source.w;
+        destination.h = source.h;
+	destination.x = form_area.x + 400 - (source.w / 2);
+	destination.y = form_area.y + 25  - (source.h / 2);
+
+        //blit the new title surface to the form's surface
+	if(SDL_BlitSurface(form_title_surface,&source,form_surface,&destination) != 0){
+		error_logger.push_error(SDL_GetError());
+	}
+	//close the font
+	TTF_CloseFont(title_font);
+
+        if(form_texture != NULL){
+                SDL_DestroyTexture(form_texture);
+        }
+        form_texture = SDL_CreateTextureFromSurface(sdl_helper->renderer,form_surface);
+}
+
 void form::form_event_loop(SDL_Event& big_event){
 
 	SDL_StartTextInput();//turn on text input

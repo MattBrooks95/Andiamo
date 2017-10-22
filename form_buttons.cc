@@ -1049,20 +1049,136 @@ bool ilv3_ilv5_form_button::handle_click(SDL_Event& mouse_event){
 
 void ilv3_ilv5_form_button::click_helper(SDL_Event& mouse_event){
 	error_logger.push_msg("clicked the icntrl4/resolved levels info button ");
+
+        int curr_ilv3 = stoi(sdl_helper->get_mgr().fields.at("line_5").at("ILV3").temp_input);
+        int curr_ilv5 = stoi(sdl_helper->get_mgr().fields.at("line_5").at("ILV5").temp_input);
+
+	//don't consider doing anything if the form is locked
 	if(!is_locked){
 		screen_size();
-		my_form.toggle_active();//let the form know that it is now active
-		my_form.form_event_loop(mouse_event);//enter the mini loop for form entry
+
+		//in this case the form has not been previously created
+		if(!my_form.prev_initiated){
+
+
+			page_creation_helper();//most of this work is shared with the recreation case
+					       //so it has been put into a helper function
+
+			my_form.toggle_active();//let the form know that it is now active
+			my_form.form_event_loop(mouse_event);//enter the mini loop for form entry
+
+		//in this case the form has to be remade if the user has switched from ilv3 to ilv5 or vice
+                //versa
+		} else if(my_form.prev_init_value == curr_ilv3 || my_form.prev_init_value == curr_ilv5 ){
+
+                        if(my_form.form_title.compare("Distinct Residual Level Density") == 0 && curr_ilv5 > curr_ilv3 ){
+			        my_form.flush_pages();
+                                my_form.set_form_title("Distinct Level Density Model");
+			        page_creation_helper();
+
+                        } else if(my_form.form_title.compare("Distinct Level Density Model") == 0 && curr_ilv3 > curr_ilv5){
+			        my_form.flush_pages();
+                                my_form.set_form_title("Distinct Residual Level Density");
+			        page_creation_helper();
+
+                        }
+
+			my_form.toggle_active();//let the form know that it is now active
+			my_form.form_event_loop(mouse_event);//enter the mini loop for form entry
+
+		//in this case, the form has been previously created, but the ilv3 or ilv5 value has been changed,
+                //so it must be recreated
+		} else {
+			my_form.flush_pages();//clear out previous info
+
+			page_creation_helper();//most of this work is shared with the 1st time creation case
+					       //so it has been put into a helper function
+
+			my_form.toggle_active();//let the form know that it is now active
+			my_form.form_event_loop(mouse_event);//enter the mini loop for form entry
+		}
 	}
+
 }
 
 void ilv3_ilv5_form_button::init_form(){
 
-	my_form.init("Resolved Levels (ICNTRL4)","icntrl4_form_help.png",0,0,sdl_helper,sdl_helper->font);
+	my_form.init("set this when page is open","default_form_help.png",0,0,sdl_helper,sdl_helper->font);
 
 }
 
+void ilv3_ilv5_form_button::page_creation_helper(){
+        int ilv3_val;
+        int ilv5_val;
+        try{
+          ilv3_val = stoi(sdl_helper->get_mgr().fields.at("line_5").at("ILV3").temp_input);
+          ilv5_val = stoi(sdl_helper->get_mgr().fields.at("line_5").at("ILV5").temp_input);
+        } catch(invalid_argument& bad_arg){
+          error_logger.push_error("Ilv3 or ilv5's value failed to conver to int in page_creation_helper.",
+                                  bad_arg.what());
+        }
+        //let the form know that it has been initiated
+        my_form.prev_initiated = true;
+        int rows_needed;//should be set to ilv3 or ilv5, whichever caused this form to be opened
+        vector<string> pass_column_titles;
+        vector<string> pass_row_titles;//this needs to exist, but does nothing here
 
+        //column labels are the same for 3 of 4
+        pass_column_titles.push_back("A for custom LD");
+        pass_column_titles.push_back("Z for custom LD");
+        //set the title to reflect which mode is being used
+        if( ilv3_val > ilv5_val){
+                my_form.set_form_title("Distinct Residual Level Density");
+                my_form.prev_init_value = ilv3_val;
+                rows_needed = ilv3_val;
+                //the third column label depends on what mode the form is in
+                pass_column_titles.push_back("Little a for A,Z");
+        } else {
+                my_form.set_form_title("Distinct Level Density Model");
+                my_form.prev_init_value = ilv5_val;
+                rows_needed = ilv5_val;
+                //the third column label depends on what mode the form is in
+                pass_column_titles.push_back("Temp for A,Z");
+        }
+        //the fourth column label is the same for both cases
+        pass_column_titles.push_back("Delta for A, Z");
+        
+	int rows_per_page = floor(725.0 / 35);
+
+	unsigned int vector_size = ceil((rows_needed * 35) / 725.0);//calculate how many pages are needed
+	unsigned int pages_made = 0;
+
+	vector<page>& pages = my_form.get_pages();//saves space later
+	pages.resize(vector_size);
+
+	vector<int> column_spaces;
+	column_spaces.push_back(0);
+	column_spaces.push_back(180);
+	column_spaces.push_back(180);
+        column_spaces.push_back(180);
+
+
+	for(unsigned int c = 0; c < pages.size();c++){
+
+		if(rows_per_page >= rows_needed){
+			pages[c].page_init(4,rows_needed,pass_column_titles,pass_row_titles,
+								      sdl_helper, sdl_helper->font,column_spaces);
+			rows_needed = 0;
+		} else {
+
+			pages[c].page_init(4,rows_per_page,pass_column_titles,pass_row_titles,
+								      sdl_helper, sdl_helper->font,column_spaces);
+			rows_needed = rows_needed - rows_per_page;
+		}
+		pages_made++;//we made a page, so increase the counter
+	}
+	if(pages_made != vector_size) {
+		error_logger.push_error("Error in icntrl8 page_creation_helper, # of created pages does not match",
+				       "expected value.");
+	}
+
+	my_form.set_page_count(pages_made);
+}
 //#################################################################################
 
 

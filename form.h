@@ -37,6 +37,14 @@ class form{
 	void init(std::string form_title_in,std::string help_msg_image_name,
 		  int xloc_in,int yloc_in, sdl_help* sdl_helper_in,TTF_Font* sdl_font_in);
 
+        //! this function changes the form's title
+        /*! this is useful, for example, when a form can serve one or two logical functions
+         *but the required information is the same. The ilv3/ilv5  form is one such case. Make sure to
+         *account for the form title area's background color, as that color is needed to fill over the old
+         *title, so the new one can be applied. */
+        void set_form_title(std::string new_title);
+
+
 	//! form_event_loop is a member that enacts an event loop similar to the one in main
 	/* it is specifically tailored to be useful for form parameter entry, and it is virtual so it could be
 	 *inherited by narrow forms to allow specialized functionality */
@@ -84,9 +92,10 @@ class form{
 	bool prev_initiated;
 	int prev_init_value;
 
+	std::string form_title;
   private:
 
-	std::string form_title;
+
 	SDL_Surface* form_title_surface;
 
 	SDL_Surface* form_surface;
