@@ -258,8 +258,13 @@ class ilv3_ilv5_form_button : public form_button{
 	//! this function opens the icntrl4 form on click
 	void click_helper(SDL_Event& mouse_event);
 
-        //! helper function for click_helper that sets up pages
-        void page_creation_helper();
+    //! helper function for click_helper that sets up pages
+    void page_creation_helper();
+
+    //! this function is invoked by the input_maker to have this form output to the HF file
+    void make_output(std::ofstream& outs);
+
+
   private:
         
 };

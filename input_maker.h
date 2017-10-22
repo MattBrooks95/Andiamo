@@ -159,6 +159,12 @@ void do_line4A(std::ofstream& outs,const std::map<std::string,param_real8>& real
 //! this helper outputs the variables in line 4B (if IENCH = 7,logic in output() )
 void do_line4B(std::ofstream& outs,const std::map<std::string, param_r8_array>& e_params);
 
+//! this helper prints out line 5
+void do_line5(std::ofstream& outs,const std::map<std::string, param_int4>& int4_params);
+
+//! prints line 5A, should only be called if ILV1 is == 6
+void do_line5A(std::ofstream& outs, const std::map<std::string, param_real8>& real8_params);
+
 //! this helper outputs the values for the parameters in line 6
 void do_line6(std::ofstream& outs,const std::map<std::string,param_int4>& int4_params);
 

@@ -10,6 +10,8 @@ using namespace std;
 #define F << setw(8) <<
 #define F10 << setw(10) <<
 #define F5 << setw(5) <<
+#define F7 << setw(7) <<
+#define F8 << setw(8) <<
 #define I << setw(5) <<
 #define I10 << setw(10) <<
 
@@ -284,7 +286,7 @@ void icntrl8_form_button::make_output(ofstream& outs){
 					"exiting.");
 		return;
 	}
-
+    outs << "ICNTRL 8 OUTPUT" << endl;
 
 	//outs << "TESTING ICNTRL8'S OUTPUT" << endl;
 	vector<page>* pages_ptr = &my_form.get_pages(); //saves calls to the getter, and space in this function
@@ -809,6 +811,7 @@ void icntrl6_form_button::make_output(ofstream& outs){
 					"exiting.");
 		return;
 	}	
+    outs << "ICNTRL6 OUTPUT" << endl;
 
 	//outs << "TESTING ICNTRL6'S OUTPUT" << endl;
 	vector<page>& parity_ref = my_form.get_pages();         //handle for accessing parity form's data
@@ -848,13 +851,16 @@ void icntrl6_form_button::make_output(ofstream& outs){
 				outs F10 cross_ref[c].get_text_boxes()[d+2].text F10 cross_ref[c].get_text_boxes()[d+3].text << endl;
 
 			}
-
 		}
-
-
 	}
 
 	//and finally, parity
+
+    for(unsigned int c = 0; c < parity_ref[0].get_text_boxes().size();c += 2){
+        outs << setprecision(4);
+        outs F8 parity_ref[0].get_text_boxes()[c].text I parity_ref[0].get_text_boxes()[c+1].text;
+        outs << endl;
+    }
 
 
 }
@@ -1024,6 +1030,7 @@ void icntrl4_form_button::page_creation_helper(){
 void icntrl4_form_button::make_output(ostream& outs){
     vector<text_box>* boxes = &my_form.get_pages()[0].get_text_boxes();
     string spaces = "     ";
+    outs << "ICNTRL4 OUTPUT" << endl;
     //we do 4 prints a loop, so c should go up by four each time
 	for(unsigned int c = 0; c < boxes->size();c += 4){
         //output the line as declared by the input manual and as expected by HF
@@ -1178,6 +1185,26 @@ void ilv3_ilv5_form_button::page_creation_helper(){
 	}
 
 	my_form.set_page_count(pages_made);
+}
+
+void ilv3_ilv5_form_button::make_output(std::ofstream& outs){
+	if(outs.fail()){
+		error_logger.push_error("ilv3_ilv5_form_button::make_output was not given a valid output file stream.",
+					"exiting.");
+		return;
+	}
+    outs << "ILV3 ILV5 OUTPUT" << endl;
+    vector<page>& pages = my_form.get_pages();
+
+    for(unsigned int c = 0; c < pages.size(); c++){
+        for(unsigned int d = 0; d < pages[c].get_text_boxes().size(); d += 4){
+            outs I pages[c].get_text_boxes()[d].text I pages[c].get_text_boxes()[d+1].text;
+            outs F7 pages[c].get_text_boxes()[d+2].text F7 pages[c].get_text_boxes()[d+3].text;
+            outs << endl;
+        }
+    }
+
+
 }
 //#################################################################################
 

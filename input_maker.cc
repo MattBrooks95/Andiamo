@@ -339,7 +339,7 @@ void input_maker::output(){
 	//#######################################################################################################
 
 	//IF IENCH = 7 ##########################################################################################
-	bool do_4_5 = false;
+	bool do_4a_4b = false;
 	/*for(unsigned int c = 0; c < int4_params.size();c++){
 		if(int4_params[c].name == "IENCH" && int4_params[c].value == 7){
 			do_4_5 = true;
@@ -348,13 +348,13 @@ void input_maker::output(){
 	}*/
 
 	if(int4_params.at("IENCH").value == 7){
-		do_4_5 = true;
+		do_4a_4b = true;
 	}
 
 
 
 	//only do the following lines if IENCH == 7, per the input manual
-	if(do_4_5){
+	if(do_4a_4b){
 		//SET UP LINE 4##################################################################################
 		do_line4(outs,real8_params,int4_params);
 
@@ -363,14 +363,19 @@ void input_maker::output(){
 		do_line4B(outs,r8_array_params);
 		//###############################################################################################
 
-		//SET UP LINE 5##################################################################################
-		//do_line
-
-		//###############################################################################################
-
 	}
 	//####################### IENCH = 7 LINES ###############################################################
-	
+
+    //do line 5
+    do_line5(outs,int4_params);	
+
+    //do line 5A
+    if(int4_params.at("ILV1").value == 6){
+        do_line5A(outs,real8_params);
+    }
+
+    //do line 5D or 5E
+    b_manager->get_ilv3_ilv5().make_output(outs);
 
 	//do line 6
 	do_line6(outs,int4_params);
@@ -563,6 +568,44 @@ void do_line4B(ofstream& outs,const map<string, param_r8_array>& r8_array_params
   } catch (out_of_range& not_found){
 	error_logger.push_error("Error! Parameter in do_line4B not found in the map!");
   }
+}
+
+void do_line5(ofstream& outs, const map<string,param_int4>& int4_params){
+    
+    int ilv_1 = int4_params.at("ILV1").value;
+    int ilv_2 = int4_params.at("ILV2").value;
+    int ilv_3 = int4_params.at("ILV3").value;
+    int ilv_4 = int4_params.at("ILV4").value;
+    int ilv_5 = int4_params.at("ILV5").value;
+    outs I ilv_1 I ilv_2 I ilv_3 I ilv_4 I ilv_5 << endl;
+
+}
+
+void do_line5A(ofstream& outs, const map<string,param_real8>& real8_params){
+
+    double acon_val,gam_val,fcon_val,c0_val,c10_val,c11_val,c12_val,c3_val;
+    acon_val = real8_params.at("ACON").value;
+    gam_val  = real8_params.at("GAM").value;
+    fcon_val = real8_params.at("FCON").value;
+    c0_val   = real8_params.at("C0").value;
+    c10_val  = real8_params.at("C10").value;
+    c11_val  = real8_params.at("C11").value;
+    c12_val  = real8_params.at("C12").value;
+    c3_val   = real8_params.at("C3").value;
+
+    outs << setprecision(2);
+    outs F5 acon_val F5 gam_val F5 fcon_val F5 c0_val F5 c10_val;
+    outs F5 c11_val  F5 c12_val F5 c3_val << endl;
+
+
+
+}
+
+void do_line5E_D(ofstream& outs,const map<string,param_int4>& int4_params,
+                 const map<string,param_real8>& real8_params){
+    
+
+
 }
 
 void do_line6(ofstream& outs,const map<string,param_int4>& int4_params){
