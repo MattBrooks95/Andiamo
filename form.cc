@@ -82,11 +82,11 @@ void form::init(string form_title_in,string help_msg_image_name,int xloc_in, int
 	if(form_surface == NULL){
 		error_logger.push_error(SDL_GetError());
 	} else {
-		SDL_Rect source = {page_count*20,0,20,20};
+		SDL_Rect source = {20+page_count*20,0,20,20};
 		SDL_Rect destination = {750,26,20,20};
 		SDL_BlitSurface(number_sprites,&source,form_surface,&destination);//draw max page # in top right
 
-		source = {current_page*20,0,20,20};
+		source = {20+current_page*20,0,20,20};
 		destination = {725,0,20,20};
 		SDL_BlitSurface(number_sprites,&source,form_surface,&destination);//draw current page # (0) in rop right
 
@@ -153,16 +153,16 @@ void form::set_form_title(std::string new_title){
         SDL_Color black = {0,0,0,0};//black text
 	form_title_surface = TTF_RenderUTF8_Blended(title_font,form_title.c_str(),black);
 
-        //before we can draw the form title to the surface, 
-        //we must first fill over the old form title. Make sure the color is the same as the form's
-        SDL_Rect source, destination;
-        destination = {30,0,650,50};//set destination to the region we have to draw over
-        //draw a rectangle over that area, with the gray color used in the form's asset
-        //change the SDL_MapRGBA call to match the new color if the form is changed, thought it
-        //is possible to query the surface directly and get the color info that way....
-        SDL_FillRect(form_surface,&destination,SDL_MapRGBA(form_surface->format,119,111,103,255));
+    //before we can draw the form title to the surface, 
+    //we must first fill over the old form title. Make sure the color is the same as the form's
+    SDL_Rect source, destination;
+    destination = {30,0,650,50};//set destination to the region we have to draw over
+    //draw a rectangle over that area, with the gray color used in the form's asset
+    //change the SDL_MapRGBA call to match the new color if the form is changed, thought it
+    //is possible to query the surface directly and get the color info that way....
+    SDL_FillRect(form_surface,&destination,SDL_MapRGBA(form_surface->format,119,111,103,255));
 
-        //get its size, and then calculate where it should be positioned on the form
+    //get its size, and then calculate where it should be positioned on the form
 	TTF_SizeText(title_font,form_title.c_str(),&source.w,&source.h);
 	source.x = 0; source.y = 0;
 	destination.w = source.w;
@@ -170,7 +170,7 @@ void form::set_form_title(std::string new_title){
 	destination.x = form_area.x + 400 - (source.w / 2);
 	destination.y = form_area.y + 25  - (source.h / 2);
 
-        //blit the new title surface to the form's surface
+    //blit the new title surface to the form's surface
 	if(SDL_BlitSurface(form_title_surface,&source,form_surface,&destination) != 0){
 		error_logger.push_error(SDL_GetError());
 	}
@@ -349,7 +349,7 @@ void form::set_page_count(int page_count_in){
 		error_logger.push_error("page count greater than 10, form construction may not work properly");
 	}
 
-	SDL_Rect source = {page_count*20,0,20,20};
+	SDL_Rect source = {20+page_count*20,0,20,20};
 	SDL_Rect destination = {751,27,20,20};//destination is shifted right and down a bit, so fill doesn't mess with "/" in page display
 
 	//"erase" previous page # by filling with white
@@ -370,7 +370,7 @@ void form::set_page_count(int page_count_in){
 
 void form::update_page_indicator(){
 
-	SDL_Rect source = {current_page*20,0,20,20};
+	SDL_Rect source = {20+current_page*20,0,20,20};
 	SDL_Rect destination = {725,0,20,20};
 
 	//write over old number, kind of like erasing just that part of the surface
@@ -456,17 +456,23 @@ void form::text_box_loop(text_box& current_box,SDL_Event& event,string& command)
 				text_was_changed = true;
 			} else if(event.key.keysym.sym == SDLK_LEFT){
 
+                current_box.dec_cursor(text_was_changed);
+                /*
 				if(current_box.editing_location > 0){
 					current_box.editing_location--;
 					text_was_changed = true;
 				}
+                */
 
 			} else if(event.key.keysym.sym == SDLK_RIGHT){
 
+                current_box.inc_cursor(text_was_changed);
+                /*
 				if(current_box.editing_location < current_box.text.size()){
 					current_box.editing_location++;
 					text_was_changed = true;
 				}
+                */
 			
 			} else if(event.key.keysym.sym == SDLK_TAB){//tab over to next text box
 				command = "TAB";

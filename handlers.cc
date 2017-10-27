@@ -194,9 +194,15 @@ void handle_key_down(const SDL_Event& big_event, sdl_help& sdl_help){
 		case SDLK_LEFT:
 			sdl_help.update_scroll(60,0); //scroll down
 			break; 
+
 		case SDLK_SPACE:
 			sdl_help.reset_scroll();
 			break;
+
+        case SDLK_ESCAPE:
+            SDL_Event push_me;
+            push_me.type = SDL_QUIT;
+            SDL_PushEvent(&push_me);
 		default:
 			error_logger.push_msg("Unknown key pressed down.");
 			break;

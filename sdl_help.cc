@@ -54,8 +54,8 @@ sdl_help::sdl_help(string name_in,string HF_input_file_in,string bg_image_name_i
 		error_logger.push_error(SDL_GetError());
         };
 
-	int temp_window_w = display.w *.5;
-	int temp_window_h = display.h * .75;
+	int temp_window_w = display.w * .9;
+	int temp_window_h = display.h * .9;
 	error_logger.push_msg( "display width: " + to_string(display.w) + "display height:" + to_string(display.h));
 	window = SDL_CreateWindow(window_name.c_str(), 0, 0,temp_window_w,temp_window_h, SDL_WINDOW_RESIZABLE);
 	renderer = SDL_CreateRenderer(window,-1,SDL_RENDERER_PRESENTVSYNC);

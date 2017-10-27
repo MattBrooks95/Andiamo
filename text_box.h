@@ -51,11 +51,16 @@ struct text_box{
 	/*! it uses update_text_bounds_check to make sure that text can't go off the edge */
 	void update_text(std::string& new_text);
 
+    //! this function moves the editing location & cursor left when the user hits left arrow
+    void dec_cursor(bool& changed);
+    //! this function moves the editing location & cursor right when the user hits left arrow
+    void inc_cursor(bool& changed);
+
 	//! this function is a helper used for update_text to make sure user can't write off of the edge
 	/*! it first creates a copy of the text box's text string, then inserts the proposed string into it.
 	 * Then it checks the width of the text against the width of the box.
 	 * \return true if text fits within the box's bounds, or false if it does not */
-	bool update_text_bounds_check(std::string& new_text) const;
+	void update_text_bounds_check(std::string& new_text);
 
 	//! update the texture when the text is changed
 	void update_texture();
@@ -76,6 +81,13 @@ struct text_box{
 
 	//! save the dimensions of the text in the button
 	SDL_Rect text_dims;
+
+    //! save the source dimensions for the text
+    /*! This is important because the the source width and height should always
+     *match the text box's dimensions, but the x location should change accordingly
+     *to show the region of the text being edited/displayed */
+    SDL_Rect text_source;
+
 	SDL_Surface* cursor_surface;//!< save the surface for the text editing surface
 	SDL_Texture* cursor_texture;//!< save the texture for the text editing surface
 
@@ -93,8 +105,6 @@ struct text_box{
 	SDL_Surface* text_surface;//!< surface for the text
 	SDL_Texture* text_texture;//!< texture for the tex
 
-
-	int editing_index; //!< keep track of the insertion point for text
 
 };
 

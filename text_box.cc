@@ -28,6 +28,7 @@ text_box::text_box(sdl_help* sdl_help_in,TTF_Font* font_in, string text_in, int 
 	cursor_texture = NULL;
 	editing_location = 0;
 
+
 	text_box_surface = NULL;
 	text_box_texture = NULL;
 
@@ -49,6 +50,8 @@ text_box::text_box(const text_box& other){
 
 	text = other.text;
 	text_dims = other.text_dims;
+    text_source = other.text_source;
+
 
 	sdl_helper = other.sdl_helper;
 	sdl_help_font = other.sdl_help_font;
@@ -59,15 +62,13 @@ text_box::text_box(const text_box& other){
 
 	editing_location = other.editing_location;
 
-
-
 	text_box_surface = IMG_Load("./Assets/Images/text_box.png");;
 	text_box_texture = SDL_CreateTextureFromSurface(sdl_helper->renderer,text_box_surface);
 
 	text_surface = TTF_RenderUTF8_Blended(sdl_help_font,text.c_str(),text_color);
 	text_texture = SDL_CreateTextureFromSurface(sdl_helper->renderer,text_surface);
 
-	editing_index = other.editing_index;
+	//editing_index = other.editing_index;
 
 
 }
@@ -128,6 +129,13 @@ void text_box::init(sdl_help* sdl_help_in,TTF_Font* font_in, string text_in, int
 
 	TTF_SizeText(sdl_help_font,text.c_str(),&text_dims.w,&text_dims.h);
 
+    //x source should start at 0, but be shifted as needed to control what
+    //parts of the text are shown, y should likely always stay 0
+    text_source.x = 0;
+    text_source.y = 0;
+    text_source.w = my_rect.w;
+    text_source.h = my_rect.h;
+
 	cursor_surface = IMG_Load("Assets/Images/cursor.png");
 	if(cursor_surface == NULL) error_logger.push_error(SDL_GetError());
 	cursor_texture = SDL_CreateTextureFromSurface(sdl_helper->renderer,cursor_surface);
@@ -155,14 +163,23 @@ void text_box::print_me(){
 void text_box::draw_me(){
 	SDL_RenderCopy(sdl_helper->renderer,text_box_texture,NULL,&my_rect);//render the white box
 	if(text != " " && !text.empty() ){
-		//the following four lines make sure that the letters are not blurred or stretched
-		SDL_Rect text_source = {0,0,0,0};
-		TTF_SizeText(sdl_helper->font,text.c_str(),&text_source.w,&text_source.h);
+        if(text_dims.w > my_rect.w){
+		    //the following four lines make sure that the letters are not blurred or stretched
+		    //SDL_Rect text_source = {0+text_overage,0,0,0};
+		    //TTF_SizeText(sdl_helper->font,text.c_str(),&text_source.w,&text_source.h);
+            //text_source.w -= text_overage;
 
-		SDL_Rect text_destination = my_rect;
-		text_destination.w = text_source.w; text_destination.h = text_source.h;
+		    //text_destination.w = text_source.w; text_destination.h = text_source.h;
 
-		SDL_RenderCopy(sdl_helper->renderer,text_texture,&text_source,&text_destination);//render the text
+		    SDL_RenderCopy(sdl_helper->renderer,text_texture,&text_source,&my_rect);//render the text
+        } else {
+            SDL_Rect text_dest = my_rect;
+            text_dest.w = text_dims.w;
+            text_dest.h = text_dims.h;
+            SDL_RenderCopy(sdl_helper->renderer,text_texture,NULL,&text_dest);
+
+        }
+
 	}
 	draw_cursor();
 }
@@ -185,6 +202,10 @@ void text_box::draw_cursor(){
 		cursor_dest = {xloc+text_dims.w, yloc, 6, text_dims.h};
 	}
 
+    if(cursor_dest.x < xloc){
+        cursor_dest.x += xloc - cursor_dest.x;
+    }
+
 	if( SDL_RenderCopy(sdl_helper->renderer,cursor_texture,NULL,&cursor_dest) != 0 ){
 		error_logger.push_error(SDL_GetError());
 	}
@@ -198,23 +219,52 @@ void text_box::make_rect(){
 
 }
 
+
+void text_box::dec_cursor(bool& changed){
+
+    //this logic occurs if the text box is not beyond capacity
+	if(editing_location > 0){
+        editing_location--;
+        changed = true;
+
+    }
+}
+
+void text_box::inc_cursor(bool& changed){
+    if(editing_location < text.length()){
+        editing_location++;
+        changed = true;
+    }
+}
+
 void text_box::update_text(string& new_text){
 
-	if( update_text_bounds_check(new_text) ){
+	//if( update_text_bounds_check(new_text) ){
 
-
+        //update_text_bounds_check(new_text);
 		//add to the string
 		text.insert(editing_location,new_text);
 		editing_location += strlen(new_text.c_str());
 		TTF_SizeText(sdl_helper->font,text.c_str(),&text_dims.w,&text_dims.h);
+
+        if(text_dims.w > width){
+            text_source.x = text_dims.w - width;
+        }
+
 		//update the texture for the text
 		update_texture();
-	} else {
-		error_logger.push_msg("Couldn't modify text box text, because it would go out of bounds");
-	}
+
+
+    //if the text is out of bounds, add it to the string anyway, just change the source dimensions
+    //that is drawn, so that the text box 'scrolls' to allow more room for entry
+    //some of the parameters for the fields have field widths of 8-10 characters
+	//} else {
+        
+	//	error_logger.push_msg("Couldn't modify text box text, because it would go out of bounds");
+	//}
 
 }
-
+/*
 bool text_box::update_text_bounds_check(std::string& new_text) const{
 
 	string fake_string = text;
@@ -224,6 +274,19 @@ bool text_box::update_text_bounds_check(std::string& new_text) const{
 	if(new_w > width) return false;
 	else return true;
 }
+*/
+
+/*
+void text_box::update_text_bounds_check(std::string& new_text){
+    string fake_string = text;
+    fake_string.insert(editing_location,new_text);
+    int new_w, new_h;
+    TTF_SizeText(sdl_helper->font,fake_string.c_str(),&new_w,&new_h);
+    int difference = new_w - width;
+    if(difference > 0){
+        text_overage = difference;
+    }
+}*/
 
 void text_box::update_texture(){
 	if(text_surface != NULL){
@@ -245,10 +308,22 @@ void text_box::update_texture(){
 }
 
 void text_box::back_space(){
+
 	if(editing_location > 0){
+        int dead_char_width, useless;    
+        TTF_SizeText(sdl_help_font,text.substr(editing_location-1,1).c_str(),&dead_char_width,
+                     &useless);
+
+        //remove some of the x offset, because the text's texture will get smaller
+        if(text_dims.w > width && text_source.x > 0){
+            text_source.x -= dead_char_width;
+        }
+
+
 		text.erase(editing_location-1,1);//erase from current editing location
 		editing_location--;//decrement editing location
 	}
+
 	//update cursor size information
 	TTF_SizeText(sdl_help_font,text.c_str(),&text_dims.w,&text_dims.h);
 	update_texture();

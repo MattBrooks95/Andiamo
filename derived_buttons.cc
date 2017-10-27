@@ -25,10 +25,13 @@ bool exit_button::handle_click(SDL_Event& mouse_event){
 	bool satisfied = false;
 	int which = 0;
 	bool did_something = false;
+    draw_me();
+    sdl_helper->present();
+
 	while(!satisfied){
 
-		draw_me();
-		sdl_helper->present();
+		//draw_me();
+		//sdl_helper->present();
 
 		SDL_PollEvent(&mouse_event);
 		which = my_click(mouse_event);//see if they clicked on the yes or no boxes
