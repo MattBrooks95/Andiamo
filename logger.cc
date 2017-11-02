@@ -72,7 +72,7 @@ void logger::cleaning_check(){
 	if(dir_point != NULL){
 
 		//readdir is kind of like a getline statement, read in info then act on it
-		while( file_in_dir = readdir(dir_point) ){
+		while( (file_in_dir = readdir(dir_point)) ){
 
 			//this ensures that only regular files are considered, and not the . and .. directories
 			//that exist in nearly every linux directory (but hidden)

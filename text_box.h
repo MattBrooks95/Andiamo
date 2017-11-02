@@ -82,6 +82,8 @@ struct text_box{
 	//! save the dimensions of the text in the button
 	SDL_Rect text_dims;
 
+	int text_overage;
+
     //! save the source dimensions for the text
     /*! This is important because the the source width and height should always
      *match the text box's dimensions, but the x location should change accordingly
@@ -91,7 +93,7 @@ struct text_box{
 	SDL_Surface* cursor_surface;//!< save the surface for the text editing surface
 	SDL_Texture* cursor_texture;//!< save the texture for the text editing surface
 
-	int editing_location;//!< saves the insertion and deletion point
+	unsigned int editing_location;//!< saves the insertion and deletion point
 	std::string text;//!< the text that is rendered to the screen and changed by the user
 
 

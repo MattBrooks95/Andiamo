@@ -119,8 +119,8 @@ class form{
 	active_area left_arrow;
 
 	std::vector<page> pages;
-	unsigned int page_count;
-	unsigned int current_page;
+	int page_count;
+	int current_page;
 
 
 	sdl_help* sdl_helper;

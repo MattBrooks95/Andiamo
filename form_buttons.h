@@ -289,13 +289,3 @@ class ilv3_ilv5_form_button : public form_button{
 
 
 
-
-
-
-
-
-
-
-
-
-

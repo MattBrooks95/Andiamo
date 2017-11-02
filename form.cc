@@ -4,6 +4,7 @@
 #define FORM_ERROR "Attempted double free in ~form"
 #define TEXT_BOX_W 60
 #define TEXT_BOX_HORIZ_PADDING 10
+#define SPRITE_OFFSET 20
 using namespace std;
 
 
@@ -82,11 +83,12 @@ void form::init(string form_title_in,string help_msg_image_name,int xloc_in, int
 	if(form_surface == NULL){
 		error_logger.push_error(SDL_GetError());
 	} else {
-		SDL_Rect source = {20+page_count*20,0,20,20};
+		int offset = SPRITE_OFFSET;
+		SDL_Rect source = {offset+page_count*offset,0,offset,offset};
 		SDL_Rect destination = {750,26,20,20};
 		SDL_BlitSurface(number_sprites,&source,form_surface,&destination);//draw max page # in top right
 
-		source = {20+current_page*20,0,20,20};
+		source = {offset+current_page*offset,0,offset,offset};
 		destination = {725,0,20,20};
 		SDL_BlitSurface(number_sprites,&source,form_surface,&destination);//draw current page # (0) in rop right
 
@@ -625,8 +627,9 @@ void page::page_init_set_row_labels(const std::vector<std::string>& row_labels_i
 			//make the previously shoved null pointer now point to a texture created from the surface
 			row_label_textures.back() = SDL_CreateTextureFromSurface(sdl_helper->renderer,temp_surface);
 
-			//calc location & use the size 
-			SDL_Rect temp_rect = {TEXT_BOX_HORIZ_PADDING,80+25*c+10*c, width, height};
+			//calc location & use the size
+			//explicit cast of c to int stops compiler warnings
+			SDL_Rect temp_rect = {TEXT_BOX_HORIZ_PADDING,80+25*int(c)+10*int(c), width, height};
 			if(width > x_start_point){
 				x_start_point = width;//update the starting point tracker
 			}
@@ -653,7 +656,7 @@ void page::page_init_set_text_boxes(int& x_start_point,const vector<int>& column
 	int x_offset = 0;
 	for(unsigned int i = 0; i < num_rows; i++){
 		x_offset = 0;
-		for( j ; j < num_columns; j++){
+		for( ; j < num_columns; j++){
 			text_box new_text_box;
 			//int x_val = x_start_point+TEXT_BOX_W*i+TEXT_BOX_HORIZ_PADDING*i+column_spacings[i];
 			int x_val = x_start_point+x_offset+column_spacings[j];

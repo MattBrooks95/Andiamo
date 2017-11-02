@@ -1094,7 +1094,7 @@ void ilv3_ilv5_form_button::click_helper(SDL_Event& mouse_event){
 			my_form.form_event_loop(mouse_event);//enter the mini loop for form entry
 
 		//in this case, the form has been previously created, but the ilv3 or ilv5 value has been changed,
-                //so it must be recreated
+        //so it must be recreated
 		} else {
 			my_form.flush_pages();//clear out previous info
 
