@@ -59,6 +59,8 @@ class logger{
 
 	bool verbose;
 
+	std::ofstream& get_stream(){ return errors_out;}
+
   private:
 	int error_msg_num;//!< keep track of the number of error messages pushed
 	std::string unique_file_name;//!< save the file name that is based on the time in which Andiamo was ran

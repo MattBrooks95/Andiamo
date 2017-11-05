@@ -9,6 +9,8 @@
 
 #include "sdl_help.h"
 
+#include "cursor.h"
+
 struct text_box{
 
 	//! this constructor can initialize the location of the text box, runs without params
@@ -41,9 +43,6 @@ struct text_box{
 	//! this function draws the text box to the screen
 	void draw_me();
 
-	//! this function draws the text editing cursor
-	void draw_cursor();
-
 	//! this function updates the SDL_Rect storage of the text boxes location, for rendering
 	void make_rect();
 
@@ -51,23 +50,19 @@ struct text_box{
 	/*! it uses update_text_bounds_check to make sure that text can't go off the edge */
 	void update_text(std::string& new_text);
 
-    //! this function moves the editing location & cursor left when the user hits left arrow
-    void dec_cursor(bool& changed);
-    //! this function moves the editing location & cursor right when the user hits left arrow
-    void inc_cursor(bool& changed);
-
-	//! this function is a helper used for update_text to make sure user can't write off of the edge
-	/*! it first creates a copy of the text box's text string, then inserts the proposed string into it.
-	 * Then it checks the width of the text against the width of the box.
-	 * \return true if text fits within the box's bounds, or false if it does not */
-	void update_text_bounds_check(std::string& new_text);
-
 	//! update the texture when the text is changed
 	void update_texture();
 
-	//! this removes one character in the string if it is not empy
-	void back_space();
+	//! this function calls cursor's right member
+	void inc_cursor(bool& text_was_changed);
 
+	//! this function calls cursor's left member
+	void dec_cursor(bool& text_was_changed);
+
+	//! this removes one character in the string if it is not empty
+	/*! this deletion is made at the editing location, if the cursor
+	 *is not at the very beginning of the string */
+	void back_space();
 
 	SDL_Rect my_rect;//!< location information stored in an SDL_Rect for rendering
 
@@ -79,21 +74,17 @@ struct text_box{
 	int width;//!< the width should be set by the init function or the constructor
 	int height;//!< the height should be set by the init function or the constructor
 
-	//! save the dimensions of the text in the button
+	//! save the absolute dimensions of the text in the button
 	SDL_Rect text_dims;
+    //! keep track of the currently shown subsection of the text
+    SDL_Rect shown_area;
 
-	int text_overage;
 
-    //! save the source dimensions for the text
-    /*! This is important because the the source width and height should always
-     *match the text box's dimensions, but the x location should change accordingly
-     *to show the region of the text being edited/displayed */
-    SDL_Rect text_source;
+	cursor my_cursor;//! class that handles drawing the text editing cursor
+	unsigned int editing_location;//! keep track of where the insertion point is for text
 
-	SDL_Surface* cursor_surface;//!< save the surface for the text editing surface
-	SDL_Texture* cursor_texture;//!< save the texture for the text editing surface
 
-	unsigned int editing_location;//!< saves the insertion and deletion point
+
 	std::string text;//!< the text that is rendered to the screen and changed by the user
 
 

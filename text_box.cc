@@ -23,11 +23,8 @@ text_box::text_box(sdl_help* sdl_help_in,TTF_Font* font_in, string text_in, int 
 	width = width_in;
 	height = height_in; 
 
-
-	cursor_surface   = NULL;
-	cursor_texture   = NULL;
 	editing_location = 0;
-	text_overage     = 0;
+	shown_area       = {0,0,0,0};
 
 	text_box_surface = NULL;
 	text_box_texture = NULL;
@@ -50,26 +47,19 @@ text_box::text_box(const text_box& other){
 
 	text        = other.text;
 	text_dims   = other.text_dims;
-    text_source = other.text_source;
+    shown_area = other.shown_area;
 
 
 	sdl_helper = other.sdl_helper;
 	sdl_help_font = other.sdl_help_font;
 
-
-	cursor_surface = IMG_Load("Assets/Images/cursor.png");
-	cursor_texture = SDL_CreateTextureFromSurface(sdl_helper->renderer,cursor_surface);
-
 	editing_location = other.editing_location;
-	text_overage     = other.text_overage;
 
 	text_box_surface = IMG_Load("./Assets/Images/text_box.png");;
 	text_box_texture = SDL_CreateTextureFromSurface(sdl_helper->renderer,text_box_surface);
 
 	text_surface = TTF_RenderUTF8_Blended(sdl_help_font,text.c_str(),text_color);
 	text_texture = SDL_CreateTextureFromSurface(sdl_helper->renderer,text_surface);
-
-	//editing_index = other.editing_index;
 
 
 }
@@ -89,12 +79,6 @@ text_box::~text_box(){
 		SDL_DestroyTexture(text_texture);
 	}
 
-	if(cursor_surface == NULL || cursor_texture == NULL){
-		error_logger.push_error("Attemped double free in text_box deconstructor");
-	} else {
-		SDL_FreeSurface(cursor_surface);
-		SDL_DestroyTexture(cursor_texture);
-	}
 }
 
 void text_box::init(sdl_help* sdl_help_in,TTF_Font* font_in, string text_in, int xloc_in, int yloc_in,
@@ -117,6 +101,10 @@ void text_box::init(sdl_help* sdl_help_in,TTF_Font* font_in, string text_in, int
 	my_rect.w = width;
 	my_rect.h = height;
 
+	//call the cursor's set up function
+	my_cursor.init(sdl_helper->renderer,&my_rect);
+
+
 	//load the same text box image used by the tiles
 	text_box_surface = IMG_Load("./Assets/Images/text_box.png");
 	if(text_box_surface == NULL) error_logger.push_error(SDL_GetError());
@@ -132,15 +120,11 @@ void text_box::init(sdl_help* sdl_help_in,TTF_Font* font_in, string text_in, int
 
     //x source should start at 0, but be shifted as needed to control what
     //parts of the text are shown, y should likely always stay 0
-    text_source.x = 0;
-    text_source.y = 0;
-    text_source.w = my_rect.w;
-    text_source.h = my_rect.h;
+    shown_area.x = 0;
+    shown_area.y = 0;
+    shown_area.w = my_rect.w;
+    shown_area.h = my_rect.h;
 
-	cursor_surface = IMG_Load("Assets/Images/cursor.png");
-	if(cursor_surface == NULL) error_logger.push_error(SDL_GetError());
-	cursor_texture = SDL_CreateTextureFromSurface(sdl_helper->renderer,cursor_surface);
-	if(cursor_texture == NULL) error_logger.push_error(SDL_GetError());
 }
 
 void text_box::print_me(){
@@ -165,58 +149,39 @@ void text_box::draw_me(){
 	SDL_RenderCopy(sdl_helper->renderer,text_box_texture,NULL,&my_rect);//render the white box
 	if(text != " " && !text.empty() ){
 
-		//if there is a text overage, draw using text_source, which is the same as text_dims
-		//but the x value has been shifted to show the most relevant part of the string
-        if(text_overage > 0){
-		    //the following four lines make sure that the letters are not blurred or stretched
-		    //SDL_Rect text_source = {0+text_overage,0,0,0};
-		    //TTF_SizeText(sdl_helper->font,text.c_str(),&text_source.w,&text_source.h);
-            //text_source.w -= text_overage;
+		int raw_cursor_location;
+		raw_cursor_location = my_cursor.calc_location(sdl_helper->font,text,editing_location);
+		my_cursor.draw_me(sdl_helper->renderer);
+		my_cursor.print(cout);
 
-		    //text_destination.w = text_source.w; text_destination.h = text_source.h;
 
-		    SDL_RenderCopy(sdl_helper->renderer,text_texture,&text_source,&my_rect);//render the text
-		//elsewise, if there is no text_overage, draw all of the text in the text box
-        } else {
-            SDL_Rect text_dest = my_rect;
-            text_dest.w = text_dims.w;
-            text_dest.h = text_dims.h;
-            SDL_RenderCopy(sdl_helper->renderer,text_texture,NULL,&text_dest);
+		//use the entire text texture if it is smaller than the text box's width
+		if(text_dims.w < my_rect.w){
+			SDL_Rect mod_rect;
+			mod_rect   = my_rect; //half of the info will be the same 
+			mod_rect.w = text_dims.w;  //width and height should match text exactly
+			mod_rect.h = text_dims.h;
+			SDL_RenderCopy(sdl_helper->renderer,text_texture,NULL,&mod_rect);
 
-        }
+		//if the text is bigger than the text box, use the shown_area as source info
+		} else {
+			//calculate which sub-bin of the text texture to show based on the return value
+			//of the previously called my_cursor.calc_location
+			int sub_area_selector = floor(raw_cursor_location / my_rect.w);
 
-	}
-	draw_cursor();
-}
+			//make the start area for the source be the beginning of the appropriate bin
+			shown_area.x = 0 + my_rect.w * sub_area_selector;
 
-void text_box::draw_cursor(){
-
-	int start_to_edit, no_point;//start_to_edit is length of string to edit point
-				    //no point is a dummy, needed by SizeText
-	TTF_SizeText(sdl_helper->font, text.substr(0,editing_location).c_str(),
-				&start_to_edit,&no_point);
-
-	int char_width;//grab the cursor's width
-	TTF_SizeText(sdl_helper->font,(text.substr(editing_location,1)).c_str(),
-				&char_width,&no_point);
-
-	SDL_Rect cursor_dest;//save the coordinates and dimensions for the cursor
-	if(editing_location != text.size()){
-		cursor_dest = {xloc + start_to_edit, yloc,char_width, text_dims.h};
-	} else {
-		cursor_dest = {xloc+text_dims.w, yloc, 6, text_dims.h};
-	}
-	//if the cursor's x value is bigger than the text box's rightmost point,
-	//make sure it stays on the right side, but within the text box
-	if(text_overage > 0 && cursor_dest.x > my_rect.x + my_rect.w){
-		cursor_dest.x = xloc+width - cursor_dest.w;
-
-	}
-
-	cout << "Cursor drawing info: " << "\n Xloc: " << cursor_dest.x 
-		 << " Width: " << cursor_dest.w << endl;
-	if( SDL_RenderCopy(sdl_helper->renderer,cursor_texture,NULL,&cursor_dest) != 0 ){
-		error_logger.push_error(SDL_GetError());
+			//figure out if the text destination must be made smaller to avoid the stretching
+			//that results from assuming that the last sub bin will have the same width as
+			//the text box
+			int dist_from_end = text_dims.w - raw_cursor_location;
+			SDL_Rect mod_rect = my_rect;
+			if(dist_from_end < my_rect.w){
+				mod_rect.w = my_rect.w - dist_from_end;
+			}
+			SDL_RenderCopy(sdl_helper->renderer,text_texture,&shown_area,&mod_rect);
+		}
 	}
 }
 
@@ -228,82 +193,28 @@ void text_box::make_rect(){
 
 }
 
-
-void text_box::dec_cursor(bool& changed){
-
-	//this logic ensures the editing location is never negative
-	if(editing_location > 0){
-		editing_location--;
-	    changed = true;
-	}
-
-	//if the text is flowing over the edge of the text box
-	//hitting LEFT should also shift the string to the right
-	//to ensure that the cursor and it's editing location are
-	//in line with eachother
-	if( text_overage > 0 ){
-
-		int char_width, no_point;
-		TTF_SizeText(sdl_helper->font,(text.substr(editing_location,1)).c_str(),
-				&char_width,&no_point);
-
-		text_source.x -= char_width;
-		if(text_source.x < 0){
-			text_source.x = 0;
-		}
-	}
-}
-
-void text_box::inc_cursor(bool& changed){
-    if(editing_location < text.length()){
-        editing_location++;
-        changed = true;
-    }
-
-	if(text_overage > 0){
-		int char_width, no_point;
-		TTF_SizeText(sdl_helper->font,(text.substr(editing_location,1)).c_str(),
-				&char_width,&no_point);
-
-		//don't shift the xcoord of the text any more, or the text will start to stretch
-		//reason being, the x coord can get big enough where there's not much width left afterwards
-		//in the texture, so that small portion gets stretched out to the whole text box, causing
-		//stretching
-		if(text_source.x > text_dims.w - my_rect.w ){
-			return;
-		}
-		text_source.x += char_width;
-		if(text_source.x < 0){
-			text_source.x = 0;
-		}
-	}
-}
-
 void text_box::update_text(string& new_text){
 
-        //update_text_bounds_check(new_text);
-		//add to the string
-		text.insert(editing_location,new_text);
-		editing_location += strlen(new_text.c_str());
-		TTF_SizeText(sdl_helper->font,text.c_str(),&text_dims.w,&text_dims.h);
+     //update_text_bounds_check(new_text);
+	//add to the string
+	text.insert(editing_location,new_text);
+	editing_location += strlen(new_text.c_str());
+	TTF_SizeText(sdl_helper->font,text.c_str(),&text_dims.w,&text_dims.h);
+	shown_area.h = text_dims.h;
 
-		//if the text source becomes bigger than the text box, switch the width
-        if(text_dims.w > width){
-            text_overage = text_dims.w - width;
-			text_source.x  = text_overage;
-        }
+	//update the texture for the text
+	update_texture();
 
-		//update the texture for the text
-		update_texture();
+}
 
+void text_box::inc_cursor(bool& text_was_changed){
+	if(editing_location == text.size()) return;
+	my_cursor.right(text,editing_location,text_was_changed);
+}
 
-    //if the text is out of bounds, add it to the string anyway, just change the source dimensions
-    //that is drawn, so that the text box 'scrolls' to allow more room for entry
-    //some of the parameters for the fields have field widths of 8-10 characters
-	//} else {
-        
-	//	error_logger.push_msg("Couldn't modify text box text, because it would go out of bounds");
-	//}
+void text_box::dec_cursor(bool& text_was_changed){
+	if(editing_location == 0) return;
+	my_cursor.left(text,editing_location,text_was_changed);
 
 }
 
@@ -327,33 +238,12 @@ void text_box::update_texture(){
 }
 
 void text_box::back_space(){
+	if(editing_location <= 0) return;
 
-	if(editing_location > 0){
-        int dead_char_width, useless;    
-        TTF_SizeText(sdl_help_font,text.substr(editing_location-1,1).c_str(),&dead_char_width,
-                     &useless);
+	text.erase(editing_location-1,1);//erase from current editing location
+	editing_location--;//decrement editing location
 
-        //remove some of the x offset, because the text's texture will get smaller
-        if(text_overage > 0){
-            //text_source.x -= dead_char_width;
-			text_overage -= dead_char_width;
-			text_source.x -= dead_char_width;
-			//make sure text overage stays at or above 0
-			if(text_overage < 0){
-				text_overage = 0;
-			}
-			if(text_source.x < 0){
-				text_source.x = 0;
-			}
-
-        }
-
-
-		text.erase(editing_location-1,1);//erase from current editing location
-		editing_location--;//decrement editing location
-	}
-
-	//update cursor size information
+	//update text size information
 	TTF_SizeText(sdl_help_font,text.c_str(),&text_dims.w,&text_dims.h);
 
 
