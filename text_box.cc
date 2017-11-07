@@ -55,12 +55,19 @@ text_box::text_box(const text_box& other){
 
 	editing_location = other.editing_location;
 
-	text_box_surface = IMG_Load("./Assets/Images/text_box.png");;
-	text_box_texture = SDL_CreateTextureFromSurface(sdl_helper->renderer,text_box_surface);
+	//init the cursor, this needs to be called or else cursor
+	//won't have a reference to sdl class, or this class's location
+	//and may cause a seg fault
+	my_cursor.init(sdl_helper->renderer,&my_rect);
 
-	text_surface = TTF_RenderUTF8_Blended(sdl_help_font,text.c_str(),text_color);
-	text_texture = SDL_CreateTextureFromSurface(sdl_helper->renderer,text_surface);
-
+	if(sdl_helper != NULL){
+		text_box_surface = IMG_Load("./Assets/Images/text_box.png");;
+		text_box_texture = SDL_CreateTextureFromSurface(sdl_helper->renderer,text_box_surface);
+	}
+	if(sdl_helper != NULL && sdl_help_font != NULL){
+		text_surface = TTF_RenderUTF8_Blended(sdl_help_font,text.c_str(),text_color);
+		text_texture = SDL_CreateTextureFromSurface(sdl_helper->renderer,text_surface);
+	}
 
 }
 
@@ -103,7 +110,6 @@ void text_box::init(sdl_help* sdl_help_in,TTF_Font* font_in, string text_in, int
 
 	//call the cursor's set up function
 	my_cursor.init(sdl_helper->renderer,&my_rect);
-
 
 	//load the same text box image used by the tiles
 	text_box_surface = IMG_Load("./Assets/Images/text_box.png");
@@ -149,13 +155,19 @@ void text_box::draw_me(){
 	SDL_RenderCopy(sdl_helper->renderer,text_box_texture,NULL,&my_rect);//render the white box
 	if(text != " " && !text.empty() ){
 
+		//start off by figuring out where the cursor would be drawn if we didn't care
+		//about it going off the end of the text box
 		int raw_cursor_location;
+
+		//my_cursor.calc_location returns what it's x value would be if it didn't
+		//care about the constraining text box
 		raw_cursor_location = my_cursor.calc_location(sdl_helper->font,text,editing_location);
 		my_cursor.draw_me(sdl_helper->renderer);
-		my_cursor.print(cout);
+		my_cursor.print();
 
 
 		//use the entire text texture if it is smaller than the text box's width
+		//this is the simplest case
 		if(text_dims.w < my_rect.w){
 			SDL_Rect mod_rect;
 			mod_rect   = my_rect; //half of the info will be the same 
@@ -164,9 +176,12 @@ void text_box::draw_me(){
 			SDL_RenderCopy(sdl_helper->renderer,text_texture,NULL,&mod_rect);
 
 		//if the text is bigger than the text box, use the shown_area as source info
+		//things get a bit more complicated here
 		} else {
 			//calculate which sub-bin of the text texture to show based on the return value
 			//of the previously called my_cursor.calc_location
+			//this math gives an integer that tells us how many text boxes of space
+			//exist, and which one the cursor is in
 			int sub_area_selector = floor(raw_cursor_location / my_rect.w);
 
 			//make the start area for the source be the beginning of the appropriate bin
@@ -175,12 +190,25 @@ void text_box::draw_me(){
 			//figure out if the text destination must be made smaller to avoid the stretching
 			//that results from assuming that the last sub bin will have the same width as
 			//the text box
-			int dist_from_end = text_dims.w - raw_cursor_location;
-			SDL_Rect mod_rect = my_rect;
-			if(dist_from_end < my_rect.w){
-				mod_rect.w = my_rect.w - dist_from_end;
+			int dist_from_end = (shown_area.x + my_rect.w) - text_dims.w;
+			SDL_Rect mod_dest = my_rect;
+			SDL_Rect mod_src  = shown_area;
+
+			//do some modification to make the source dimensions match the text
+			//in the last bin, if the cursor is in the last bin
+			//the first clause in english is "Am I (the cursor) in the last sub bin?"
+			if( raw_cursor_location > my_rect.w * (floor(text_dims.w / my_rect.w))
+				//this second clause ensures that we only 'crop' the source box
+				//when the text in the last sub-bin doesn't use the whole sub-bin
+				&& dist_from_end < my_rect.w){
+				mod_dest.w = my_rect.w - dist_from_end;
+				mod_src.w  = my_rect.w - dist_from_end;
 			}
-			SDL_RenderCopy(sdl_helper->renderer,text_texture,&shown_area,&mod_rect);
+			//at this point, mod_src and mod_dest have either been modified to match
+			//the text in the last sub bin, or they haven't been touched
+			//and using the whole sub-bin as a source and the whole text box as a
+			//destination is fine
+			SDL_RenderCopy(sdl_helper->renderer,text_texture,&mod_src,&mod_dest);
 		}
 	}
 }

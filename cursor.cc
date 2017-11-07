@@ -15,7 +15,8 @@ cursor::cursor(){
 
  
 cursor::cursor(const cursor& other){
-
+	cursor_dest = other.cursor_dest;
+	
 }
 
 cursor::~cursor(){
@@ -40,6 +41,11 @@ void cursor::init(SDL_Renderer* renderer, SDL_Rect* box_location_in){
 }
 
 int cursor::calc_location(TTF_Font* font,const string& text, const unsigned int& editing_location){
+
+	if(font == NULL || box_location == NULL){
+		error_logger.push_error("Could not calc cursor position, not given appropriate ",
+								"pointer to font in calc_location or box_location in init");
+	}
 
 	//no point is a dummy height argument for TTF_SizeText to fill in
 	//this is because the height of the cursor should never change,
@@ -94,7 +100,18 @@ void cursor::print(std::ostream& outs){
 }
 
 void cursor::print(){
-	print(error_logger.get_stream());
+	//can't do this, printing messages will get put in the 'errors' section
+	//print(error_logger.get_stream());
+	string message = "-----------------------------------------------------------------------\n";
+	message += "Surface ptr: " + to_string(size_t(my_surface)) + " Texture ptr: "
+				+ to_string(size_t(my_texture)) + "\n";
+	message += "Containing box's rectangle: " + to_string(box_location->x)
+			   + to_string(box_location->y) + to_string(box_location->w)  
+			   + to_string(box_location->h) + "\n";
+	message += "Destination rectangle: " + to_string(cursor_dest.x)
+			   + to_string(cursor_dest.y) + to_string(cursor_dest.w)
+			   + to_string(cursor_dest.h) + "\n";
+	message += "-----------------------------------------------------------------------\n";
 }
 
 void cursor::left(const string& text,unsigned int& editing_location,bool& changed){
