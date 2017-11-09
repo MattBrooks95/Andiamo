@@ -89,7 +89,7 @@ void form_button::setup_help_msg(){
 	if(unlock_help_texture == NULL) error_logger.push_error(SDL_GetError());
 
 }
-void form_button::init_form(){
+void form_button::init_form(const vector<regex>& pattern_tests){
 	my_form.init("no title","default_form_help.png",0,0,sdl_helper,sdl_helper->font);
 
 }
@@ -276,7 +276,7 @@ void icntrl8_form_button::page_creation_helper(){
 
 }
 
-void icntrl8_form_button::init_form(){
+void icntrl8_form_button::init_form(const vector<regex>& pattern_tests){
 	my_form.init("Cutoff Nuclei (ICNTRL8)","icntrl8_form_help.png",0,0,sdl_helper,sdl_helper->font);
 }
 
@@ -331,7 +331,7 @@ void ilv2_form_button::click_helper(SDL_Event& mouse_event){
 	}
 }
 
-void ilv2_form_button::init_form(){
+void ilv2_form_button::init_form(const vector<regex>& pattern_tests){
 
 	my_form.init("Level Info (ILV2)","default_form_help.png",0,0,sdl_helper,sdl_helper->font);
 
@@ -459,7 +459,7 @@ bool icntrl6_form_button::landing_was_clicked(SDL_Event& mouse_event){
 
 
 
-void icntrl6_form_button::init_form(){
+void icntrl6_form_button::init_form(const vector<regex>& pattern_tests){
 
 	//set up the image that lets the user switch between this button's different forms
 	setup_landing();
@@ -886,7 +886,7 @@ void icntrl10_form_button::click_helper(SDL_Event& mouse_event){
 	}
 }
 
-void icntrl10_form_button::init_form(){
+void icntrl10_form_button::init_form(const vector<regex>& pattern_tests){
 
 	my_form.init("Spin Cutoff Information (ICNTRL10)","default_form_help.png",0,0,sdl_helper,sdl_helper->font);
 
@@ -905,7 +905,7 @@ void icntrl4_form_button::setup_lock(){
 
 }
 
-void icntrl4_form_button::init_form(){
+void icntrl4_form_button::init_form(const vector<regex>& pattern_tests){
 
 	my_form.init("Resolved Levels (ICNTRL4)","icntrl4_form_help.png",0,0,sdl_helper,sdl_helper->font);
 
@@ -1108,7 +1108,7 @@ void ilv3_ilv5_form_button::click_helper(SDL_Event& mouse_event){
 
 }
 
-void ilv3_ilv5_form_button::init_form(){
+void ilv3_ilv5_form_button::init_form(const vector<regex>& pattern_tests){
 
 	my_form.init("set this when page is open","default_form_help.png",0,0,sdl_helper,sdl_helper->font);
 

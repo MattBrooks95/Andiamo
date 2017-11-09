@@ -35,7 +35,7 @@ class form_button : public button{
 
 	//! this function initializes this buttons form object
 	/*! It must be overloaded by the derived form_buttons to have any meaning */
-	virtual void init_form();
+	virtual void init_form(const std::vector<std::regex>& pattern_tests);
 
 
 	//! this function resizes the window if it is too small when the user tries to open a form
@@ -87,7 +87,7 @@ class icntrl8_form_button : public form_button{
 	bool handle_click(SDL_Event& mouse_event);
 
 	//! sets up a form that suits the needs of icntrl8's logics per the input manual
-	void init_form();
+	void init_form(const std::vector<std::regex>& pattern_tests);
 
 	//! this function opens the icntrl8 form on click
 	void click_helper(SDL_Event& mouse_event);
@@ -110,7 +110,7 @@ class ilv2_form_button : public form_button{
 	bool handle_click(SDL_Event& mouse_event);
 
 	//! sets up a form that suits the needs of ilv2's logics per the input manual
-	void init_form();
+	void init_form(const std::vector<std::regex>& pattern_tests);
 
 	//! this function opens the ilv2 form on click
 	void click_helper(SDL_Event& mouse_event);
@@ -131,7 +131,7 @@ class icntrl6_form_button : public form_button{
 	void setup_lock();
 
 	//! sets up a form that suits the needs of icntrl6's logics per the input manual
-	void init_form();
+	void init_form(const std::vector<std::regex>& pattern_tests);
 
 	//! this function sets up a reference to the button manager
 	/* this object needs reference to the button_manager because it needs to be able to draw the
@@ -210,7 +210,7 @@ class icntrl10_form_button : public form_button{
 	bool handle_click(SDL_Event& mouse_event);
 
 	//! sets up a form that suits the needs of icntrl10's logics per the input manual
-	void init_form();
+	void init_form(const std::vector<std::regex>& pattern_tests);
 
 
 	//! this function opens the icntrl10 form on click
@@ -226,7 +226,7 @@ class icntrl4_form_button : public form_button{
 	void setup_lock();
 
 	//! sets up a form that suits the needs of icntrl4's logics per the input manual
-	void init_form();
+	void init_form(const std::vector<std::regex>& pattern_tests);
 
     //! helper function for form creation
     void page_creation_helper();
@@ -249,7 +249,7 @@ class ilv3_ilv5_form_button : public form_button{
 
   public:
 	//! sets up a form that suits the needs of icntrl4's logics per the input manual
-	void init_form();
+	void init_form(const std::vector<std::regex>& pattern_tests);
 
 
 	//! implements the special logic for this class

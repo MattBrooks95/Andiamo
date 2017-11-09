@@ -3,10 +3,73 @@
 #include <string>
 #include <regex>
 #include <vector>
+#include <fstream>
 
 using namespace std;
-int main()
-{
+
+class pattern{
+  public:
+	pattern(const string& pattern, const string& intent){
+		my_pattern = pattern;
+		my_intent  = intent;
+		my_regex = regex(pattern);
+	}
+	regex get_re(){
+		return my_regex;
+	}
+
+	string get_str(){
+		return my_pattern + " with intent " + my_intent;
+	}
+
+  private:
+	regex  my_regex;
+	string my_intent;
+	string my_pattern;
+};
+
+int main(){
+
+	ofstream outs;
+	outs.open("test_results.txt");
+
+	//two integers with field width 5, one float with field width 10, precision 3
+	pattern int5("\\s*[0-9]{0,5}\\s*","int5");
+	pattern f10_3("\\s*[0-9]{1,6}\\.[0-9]{0,3}\\s*","f10_3");
+	pattern f8_4 ("\\s*[0-9]{1,4}\\.[0-9]{0,4}\\s*","f8_4");
+	pattern f10_4("\\s*[0-9]{1,5}\\.[0-9]{0,4}\\s*","f10_4");
+	pattern f5_2 ("\\s*[0-9]{1,3}\\.[0-9]{0,2}\\s*","f5_2");
+	pattern f7_3 ("\\s*[0-9]{1,4}\\.[0-9]{0,3}\\s*","f7_3");
+
+
+	vector<pattern> pattern_list;
+	pattern_list.push_back(int5);
+	pattern_list.push_back(f10_3);
+	pattern_list.push_back(f8_4);
+	pattern_list.push_back(f7_3);
+
+	vector<string> test_lines = {"45", " 45 ", " 4a6", "4.56", "40000", "matthew", "123.31",
+								 "john", "13..45", ".205", "100000.342", "12345678910111213",
+								 "11511.72934812", "mark", "123.456", "lu.ke", "19.",
+								 "kusanagi.motoko", "79.052", "2501", "17..76", "19.95",
+								 "01.2.34", "mega...deth", "1842.295.", ".1393.45.223"};
+
+
+	for(unsigned int c = 0; c < pattern_list.size(); c++){
+		outs << "#########################################################################\n";
+		outs << "TEST: " << pattern_list[c].get_str() << endl;
+		outs << "#########################################################################\n";
+		for(unsigned int d = 0; d < test_lines.size(); d++){
+			if(regex_match(test_lines[d],pattern_list[c].get_re())){
+				outs << "Passes: " << "|" << test_lines[d] << "|" << endl;
+			} else {
+				outs << "Fails : " << "|" << test_lines[d] << "|" << endl;
+			}
+		}
+		outs << "#########################################################################\n";
+	}
+
+/*
 	//set up regex matches
 	regex re_comment("\\s*?#.*");
 	regex int_four("\\s*?I4\\s+?[A-Za-z0-9]+?\\s+?=\\s+?[0-9]*");
@@ -45,34 +108,34 @@ int main()
 
 	for(unsigned int c = 0; c < lines.size();c++){
 		bool found = false;
-		cout << "Line: " << lines[c] << endl;
+		outs << "Line: " << lines[c] << endl;
 		if(regex_match(lines[c],int_four)){
-			cout << "Is an int4 declaration line!\n" << endl;
+			outs << "Is an int4 declaration line!\n" << endl;
 			found = true;
 		} if(regex_match(lines[c],real_eight)){
-			cout << "Is a real 8 declaration line!\n" << endl;
+			outs << "Is a real 8 declaration line!\n" << endl;
 			found = true;
 		} if(regex_match(lines[c],int_array)){
-			cout << "Is an int4 array declaration!\n" << endl;
+			outs << "Is an int4 array declaration!\n" << endl;
 			found = true;
 		} if(regex_match(lines[c],re_comment)){
-			cout << "Is a comment line! \n" << endl;
+			outs << "Is a comment line! \n" << endl;
 			found = true;
 		} if(regex_match(lines[c],char_array)){
-			cout << "Is a character array!\n" << endl;
+			outs << "Is a character array!\n" << endl;
 			found = true;
 		} if( regex_match(lines[c],e_array) ){
-			cout << "Is an array of E!" << endl;
+			outs << "Is an array of E!" << endl;
 			found = true;
 
 		}
 		if(!found){
-			cout << "Wow, this line didn't hit any cases! You must "
+			outs << "Wow, this line didn't hit any cases! You must "
 		     	<< "be really bad at this!\n" << endl;
 		}
 
 	}
-
+*/
 	/*
 	regex int_array_size("\\([0-9]+?\\)");
 	smatch size_match;
@@ -83,10 +146,10 @@ int main()
 
 	if(size_match.ready()){
 		string int_size_string = size_match[0].str();
-		cout << int_size_string << endl;
+		outs << int_size_string << endl;
 
 	} else {
-		cout << "Error! No matches." << endl;
+		outs << "Error! No matches." << endl;
 
 	}*/
 
@@ -99,25 +162,27 @@ int main()
     regex img(".*\\.png");
     regex name("[a-zA-Z0-9]+");
     if(regex_match(example,img)){
-        cout << "Found background tile image name: " << example << endl;   
+        outs << "Found background tile image name: " << example << endl;   
     }
     else if(regex_match(example,name)){
-        cout << "Found background name: " << example << endl;   
+        outs << "Found background name: " << example << endl;   
     }
     
     if(regex_match(example_2,img)){
-        cout << "Found background tile image name: " << example_2 << endl;
+        outs << "Found background tile image name: " << example_2 << endl;
     }
     else if(regex_match(example_2,name)){
-        cout << "Found background tile name: " << example_2 << endl;
+        outs << "Found background tile name: " << example_2 << endl;
     }
 */
 	/*
 	string example = "c energy of projecticle in MeV in the lab\n";
     	regex desc("c[ ]+?.*\n");
 	if(regex_match(example,desc)){
-		cout << "Found the match!" << endl;
-	} else cout << "Regex wasn't found. =( " << endl;
+		outs << "Found the match!" << endl;
+	} else outs << "Regex wasn't found. =( " << endl;
 	*/
+	outs.flush();
+	outs.close();
 }
 
