@@ -65,6 +65,15 @@ class button_manager{
 	//! this member sets up the buttons that populate the forms tray
 	void init_form_buttons();
 
+	//! this member sets up the regex array parameters given to forms
+	/*! the forms will use these to do type/input checking */
+	void fill_regex_vectors(std::vector<std::regex>& icntrl_6_patterns,
+							std::vector<std::regex>& icntrl_8_patterns,
+							std::vector<std::regex>& ilv_2_patterns,
+					   		std::vector<std::regex>& icntrl_10_patterns,
+							std::vector<std::regex>& icntrl_4_patterns,
+							std::vector<std::regex>& ilv3_ilv5_patterns);
+
 	//! this member calls each buttons virtual print_me() member
 	void print_buttons();
 

@@ -90,7 +90,7 @@ void form_button::setup_help_msg(){
 
 }
 void form_button::init_form(const vector<regex>& pattern_tests){
-	my_form.init("no title","default_form_help.png",0,0,sdl_helper,sdl_helper->font);
+	my_form.init("no title","default_form_help.png",0,0,sdl_helper,sdl_helper->font,pattern_tests);
 
 }
 
@@ -277,7 +277,8 @@ void icntrl8_form_button::page_creation_helper(){
 }
 
 void icntrl8_form_button::init_form(const vector<regex>& pattern_tests){
-	my_form.init("Cutoff Nuclei (ICNTRL8)","icntrl8_form_help.png",0,0,sdl_helper,sdl_helper->font);
+	my_form.init("Cutoff Nuclei (ICNTRL8)","icntrl8_form_help.png",0,0,sdl_helper,sdl_helper->font,
+                 pattern_tests);
 }
 
 void icntrl8_form_button::make_output(ofstream& outs){
@@ -333,7 +334,8 @@ void ilv2_form_button::click_helper(SDL_Event& mouse_event){
 
 void ilv2_form_button::init_form(const vector<regex>& pattern_tests){
 
-	my_form.init("Level Info (ILV2)","default_form_help.png",0,0,sdl_helper,sdl_helper->font);
+	my_form.init("Level Info (ILV2)","default_form_help.png",0,0,sdl_helper,sdl_helper->font,
+                 pattern_tests);
 
 }
 
@@ -461,18 +463,55 @@ bool icntrl6_form_button::landing_was_clicked(SDL_Event& mouse_event){
 
 void icntrl6_form_button::init_form(const vector<regex>& pattern_tests){
 
+    /* order of args in pattern_tests
+	//set up icntrl_6 tests
+    //for the inm1 form
+	icntrl_6_patterns.push_back(int5); //0
+    //1 2 3 4 5 6 7 8 9
+    for(int c = 0; c < 9; c++){ //this line has many columns
+        icntrl_6_patterns.push_back(f8_4);
+    }
+    //for the inm2 form
+    icntrl_6_patterns.push_back(int5);  //10
+    icntrl_6_patterns.push_back(int5);  //11
+    icntrl_6_patterns.push_back(f10_4); //12
+    icntrl_6_patterns.push_back(f10_4); //13
+
+    //for the parity form
+    icntrl_6_patterns.push_back(f8_4);  //14
+    icntrl_6_patterns.push_back(int5);  //15 
+    */
+
 	//set up the image that lets the user switch between this button's different forms
 	setup_landing();
 
+    vector<regex> inm1_patterns;
+    inm1_patterns.push_back(pattern_tests[0]);
+    //this line has many columns 9 floating point #'s with field width of 8 and precision of 4
+    for(int c = 0; c < 9; c++){
+        inm1_patterns.push_back(pattern_tests[c+1]);;
+    }
+    vector<regex> inm2_patterns;
+    inm2_patterns.push_back(pattern_tests[10]);
+    inm2_patterns.push_back(pattern_tests[11]);
+    inm2_patterns.push_back(pattern_tests[12]);
+    inm2_patterns.push_back(pattern_tests[13]);
+
+    vector<regex> parity_patterns;
+    parity_patterns.push_back(pattern_tests[14]);
+    parity_patterns.push_back(pattern_tests[15]);
 
 	//my_form (from default form_button class) will be the parity info
-	my_form.init("Parameter Search (ICNTRL6)","icntrl6_parity_help.png",0,0,sdl_helper,sdl_helper->font);
+	my_form.init("Parameter Search (ICNTRL6)","icntrl6_parity_help.png",0,0,sdl_helper,sdl_helper->font,
+                  parity_patterns);
 
 	//INM1 form
-	search_spectra.init("# of Search Spectra","icntrl6_spectra_help.png",0,0,sdl_helper,sdl_helper->font);
+	search_spectra.init("# of Search Spectra","icntrl6_spectra_help.png",0,0,sdl_helper,sdl_helper->font,
+                        inm1_patterns);
 
 	//INM2 form
-	cross_sections.init("# of Search Cross Sections","icntrl6_xsections_help.png",0,0,sdl_helper,sdl_helper->font);
+	cross_sections.init("# of Search Cross Sections","icntrl6_xsections_help.png",0,0,sdl_helper,sdl_helper->font,
+                        inm2_patterns);
 
 }
 
@@ -888,7 +927,8 @@ void icntrl10_form_button::click_helper(SDL_Event& mouse_event){
 
 void icntrl10_form_button::init_form(const vector<regex>& pattern_tests){
 
-	my_form.init("Spin Cutoff Information (ICNTRL10)","default_form_help.png",0,0,sdl_helper,sdl_helper->font);
+	my_form.init("Spin Cutoff Information (ICNTRL10)","default_form_help.png",0,0,sdl_helper,sdl_helper->font,
+                 pattern_tests);
 
 }
 
@@ -907,7 +947,8 @@ void icntrl4_form_button::setup_lock(){
 
 void icntrl4_form_button::init_form(const vector<regex>& pattern_tests){
 
-	my_form.init("Resolved Levels (ICNTRL4)","icntrl4_form_help.png",0,0,sdl_helper,sdl_helper->font);
+	my_form.init("Resolved Levels (ICNTRL4)","icntrl4_form_help.png",0,0,sdl_helper,sdl_helper->font,
+                 pattern_tests);
 
 }
 
@@ -1110,7 +1151,8 @@ void ilv3_ilv5_form_button::click_helper(SDL_Event& mouse_event){
 
 void ilv3_ilv5_form_button::init_form(const vector<regex>& pattern_tests){
 
-	my_form.init("set this when page is open","default_form_help.png",0,0,sdl_helper,sdl_helper->font);
+	my_form.init("set this when page is open","default_form_help.png",0,0,sdl_helper,sdl_helper->font,
+                 pattern_tests);
 
 }
 

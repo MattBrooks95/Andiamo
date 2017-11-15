@@ -35,7 +35,8 @@ class form{
 	 *\param sdl_helper_in is a pointer reference to the sdl_help object, for drawing functionality
 	 *\param sdl_font_in is a pointer to the font contained within the sdl_help object, for shorthand access */
 	void init(std::string form_title_in,std::string help_msg_image_name,
-		  int xloc_in,int yloc_in, sdl_help* sdl_helper_in,TTF_Font* sdl_font_in);
+		      int xloc_in,int yloc_in, sdl_help* sdl_helper_in,TTF_Font* sdl_font_in,
+              const std::vector<std::regex>& pattern_tests);
 
     //! this function changes the form's title
     /*! this is useful, for example, when a form can serve one or two logical functions
@@ -85,51 +86,82 @@ class form{
 	/*! \param_current_box supplies function a reference to which text box is being edited
 	 *\param event is a reference to the sdl event containeer
 	 *\param command is a string that may be changed and returned from the functon, to tell the form_event_loop
+     *\param pattern is the regex used to test user input as they type
 	 *if any necessary behaviours are needed, like tabbing to the next text box */
-	void text_box_loop(text_box& current_box,SDL_Event& event,std::string& command);
+	void text_box_loop(text_box& current_box,SDL_Event& event,std::string& command,
+                       const std::regex& pattern);
 
 
-	bool prev_initiated;
-	int prev_init_value;
+    //these two functions are used to know when a form needs smashed and recreated
+    //because the user specified another size
+	bool prev_initiated;  //!< remember if this form has been initialized or not
+	int prev_init_value;  //!< keep track of the value this form was initialized with
 
+    //! title of the form, which is displayed at the top of the form
 	std::string form_title;
   private:
 
-
+    //! save the title surface so it can be blitted to the form's surface
 	SDL_Surface* form_title_surface;
 
+    //! save the form's surface
 	SDL_Surface* form_surface;
+    //! save the form's texture
 	SDL_Texture* form_texture;
 
+    //! save the help page's surface
 	SDL_Surface* help_surface;
+    //! save the help page's texture
 	SDL_Texture* help_texture;
 
 	//! this is a sprite sheet with numbers 0-9 on it, so parts can be used to show page numbers
 	SDL_Surface* number_sprites;
 
+    //! keep track of the form's dimensions and location
 	SDL_Rect form_area;
 
+    //! keep track of whether or not this form is active
+    /*! active means that it should be drawn to the screen, and it should
+     *check mouse clicks upon itself. This being false allows the form's state to be saved,
+     *but not visible to the user or interactable until it is reopened. */
 	bool active;
 
+    //! keep track of whether to show the page's texture or the help page's
 	bool help_shown;
 
+    //! keep track of the clickable location for the exit button in the top left
 	active_area exit;
+    //! keep track of the clickable location for the help arrow in the top left 
 	active_area help;
+    //! keep track of the clickable location for the page right arrow in the top right
 	active_area right_arrow;
+    //! keep track of the clickable locatino for the page left arrow in the top right
 	active_area left_arrow;
 
+    //! store vector of pages, which each contain an array of text boxes for the user to fill in
 	std::vector<page> pages;
+    //! keep track of how many pages there are, so it can be displayed in the top right
 	int page_count;
+    //! keep track of what page the user is currently interacting with
+    /*! this will be shown in the top right, and will change as the user hits the
+     *right and left arrows */
 	int current_page;
 
+    //! store the regular expressions that can be used for real time error checking
+    /*! kind of like a word processor, I want the text box to indicate if an invalid
+     *input has been typed */
 	std::vector<std::regex> my_patterns;
 
-
+    //! pointer to the graphics class
 	sdl_help* sdl_helper;
+    //! pointer to the font in use in the graphic's class
 	TTF_Font* sdl_font;
 
 };
 
+//! class page describes a class that is housed within a forms class, and handles the text
+/*! it handles the text boxes and the graphical representation of itself. Form's have a vector
+ *of these, so only the one being edited is displayed and interactable */
 class page{
 
   public:

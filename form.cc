@@ -58,11 +58,14 @@ form::~form(){
 }
 
 void form::init(string form_title_in,string help_msg_image_name,int xloc_in, int yloc_in,
-		     sdl_help* sdl_helper_in,TTF_Font* sdl_font_in){
+		     sdl_help* sdl_helper_in,TTF_Font* sdl_font_in,const vector<regex>& pattern_tests){
 
 	//set up state variables
 	form_title = form_title_in;
 	
+    //set up the patterns for user type checking
+    my_patterns = pattern_tests;
+
 	//set up pointers to graphics class
 	sdl_helper = sdl_helper_in;
 	sdl_font = sdl_font_in;	
@@ -282,7 +285,14 @@ void form::handle_click(SDL_Event& mouse_event,bool& done,bool& click_lock){
 					if(pages[current_page].get_text_boxes()[c].was_clicked(mouse_event) ||
 					   command == "TAB" ){
 						if(command == "TAB") command = "";//reset command container if it was set
-						text_box_loop(pages[current_page].get_text_boxes()[c],mouse_event,command);
+                        //the columns should line up with the supplied vector of regular expressions
+                        int pattern_index = 0;
+                        pattern_index =  c % pages[current_page].get_columns();
+                        cout << "NUM COLUMNS: " << pattern_index << endl;
+                        cout << "PATTERN INDEX: " << pattern_index << endl;
+                        cout << "MY PATTERNS SIZE: " << my_patterns.size() << endl;
+						text_box_loop(pages[current_page].get_text_boxes()[c],mouse_event,command,
+                                      my_patterns[pattern_index]);
 						if(command == "TAB" &&  c < pages[current_page].get_text_boxes().size()){
 							continue;//redo this step, but act on the next text box
 						} else found = true;
@@ -399,8 +409,8 @@ void form::flush_pages(){
 	update_page_indicator();
 }
 
-void form::text_box_loop(text_box& current_box,SDL_Event& event,string& command){
-
+void form::text_box_loop(text_box& current_box,SDL_Event& event,string& command,
+                         const regex& pattern){
 
 	SDL_StartTextInput();//turn on the text input background functions
 

@@ -212,6 +212,8 @@ void button_manager::init_form_buttons(){
 	vector<regex> icntrl_10_patterns;
 	vector<regex> icntrl_4_patterns;
 	vector<regex> ilv3_ilv5_patterns;
+	fill_regex_vectors(icntrl_6_patterns,icntrl_8_patterns,ilv_2_patterns,
+					   icntrl_10_patterns,icntrl_4_patterns, ilv3_ilv5_patterns);
 
 	icntrl_6.init_form(icntrl_6_patterns);
 	icntrl_8.init_form(icntrl_8_patterns);
@@ -219,6 +221,87 @@ void button_manager::init_form_buttons(){
 	icntrl_10.init_form(icntrl_10_patterns);
 	icntrl_4.init_form(icntrl_4_patterns);
 	ilv3_ilv5.init_form(ilv3_ilv5_patterns);
+}
+
+void button_manager::fill_regex_vectors(vector<regex>& icntrl_6_patterns,
+										vector<regex>& icntrl_8_patterns,
+										vector<regex>& ilv_2_patterns,
+					   					vector<regex>& icntrl_10_patterns,
+										vector<regex>& icntrl_4_patterns,
+										vector<regex>& ilv3_ilv5_patterns){
+
+	//decimals as field width, but fortran only requires there
+	//to be a decimal, so something like 1776. would be acceptable
+	//if precision is too big, it will work, but it'll get cut off
+	//need - in there if negative
+	regex int5("\\s*-?[0-9]{0,5}\\s*");
+	regex f10_3("\\s*-?[0-9]{1,6}\\.[0-9]{0,3}\\s*");
+	regex f8_4 ("\\s*-?[0-9]{1,4}\\.[0-9]{0,4}\\s*");
+	regex f10_4("\\s*-?[0-9]{1,5}\\.[0-9]{0,4}\\s*");
+	regex f5_2 ("\\s*-?[0-9]{1,3}\\.[0-9]{0,2}\\s*");
+	regex f5_1 ("\\s*-?[0-9]{1,3}\\.[0-9]{0,1}\\s*");
+	regex f7_3 ("\\s*-?[0-9]{1,4}\\.[0-9]{0,3}\\s*");
+
+
+	//set up icntrl_6 tests
+    //for the inm1 form
+	icntrl_6_patterns.push_back(int5); //0
+    //1 2 3 4 5 6 7 8 9
+    for(int c = 0; c < 9; c++){ //this line has many columns
+        icntrl_6_patterns.push_back(f8_4);
+    }
+    //for the inm2 form
+    icntrl_6_patterns.push_back(int5);  //10
+    icntrl_6_patterns.push_back(int5);  //11
+    icntrl_6_patterns.push_back(f10_4); //12
+    icntrl_6_patterns.push_back(f10_4); //13
+
+    //for the parity form
+    icntrl_6_patterns.push_back(f8_4);  //14
+    icntrl_6_patterns.push_back(int5);  //15 
+
+	//set up icntrl_8 tests
+	icntrl_8_patterns.push_back(int5);
+    icntrl_8_patterns.push_back(int5);
+	icntrl_8_patterns.push_back(f10_3);
+
+
+	//set up ilv_2 tests
+	//ilv_2_patterns;
+
+    /*// icntrl10 may not be implemented
+	//set up icntrl_10 tests
+    //line '1'
+	icntrl_10_patterns.push_back(int5);
+    icntrl_10_patterns.push_back(f5_2);
+
+    //line '2'
+    for(int c = 0; c < 6; c++){
+        icntrl_10_patterns.push_back(f6_2);
+    }
+    //line '3'
+    for(int c = 0; c < 6; c++){
+        icntrl_10_patterns.push_back(f6_2);
+    }
+    */
+
+	//set up icntrl_4 tests################################################
+    //line 8
+	icntrl_4_patterns.push_back(int5);
+    icntrl_4_patterns.push_back(int5);
+
+    //line 9
+    icntrl_4_patterns.push_back(f5_2);
+    icntrl_4_patterns.push_back(f5_1);
+    icntrl_4_patterns.push_back(int5);
+    icntrl_4_patterns.push_back(f5_1);
+    //#####################################################################
+
+	//set up ilv3_ilv5 tests 
+	ilv3_ilv5_patterns.push_back(int5);
+	ilv3_ilv5_patterns.push_back(f7_3);
+
+
 }
 
 void button_manager::print_buttons(){

@@ -34,12 +34,13 @@ int main(){
 	outs.open("test_results.txt");
 
 	//two integers with field width 5, one float with field width 10, precision 3
-	pattern int5("\\s*[0-9]{0,5}\\s*","int5");
-	pattern f10_3("\\s*[0-9]{1,6}\\.[0-9]{0,3}\\s*","f10_3");
-	pattern f8_4 ("\\s*[0-9]{1,4}\\.[0-9]{0,4}\\s*","f8_4");
-	pattern f10_4("\\s*[0-9]{1,5}\\.[0-9]{0,4}\\s*","f10_4");
-	pattern f5_2 ("\\s*[0-9]{1,3}\\.[0-9]{0,2}\\s*","f5_2");
-	pattern f7_3 ("\\s*[0-9]{1,4}\\.[0-9]{0,3}\\s*","f7_3");
+	pattern int5("\\s*-?[0-9]{0,5}\\s*","int5");
+	pattern f10_3("\\s*-?[0-9]{1,6}\\.[0-9]{0,3}\\s*","f10_3");
+	pattern f8_4 ("\\s*-?[0-9]{1,4}\\.[0-9]{0,4}\\s*","f8_4");
+	pattern f10_4("\\s*-?[0-9]{1,5}\\.[0-9]{0,4}\\s*","f10_4");
+	pattern f5_2 ("\\s*-?[0-9]{1,3}\\.[0-9]{0,2}\\s*","f5_2");
+	pattern f5_1 ("\\s*-?[0-9]{1,3}\\.[0-9]{0,1}\\s*","f5_1");
+	pattern f7_3 ("\\s*-?[0-9]{1,4}\\.[0-9]{0,3}\\s*","f7_3");
 
 
 	vector<pattern> pattern_list;
@@ -47,12 +48,18 @@ int main(){
 	pattern_list.push_back(f10_3);
 	pattern_list.push_back(f8_4);
 	pattern_list.push_back(f7_3);
+    pattern_list.push_back(f5_1);
+    pattern_list.push_back(f5_2);
+    pattern_list.push_back(f10_4);
+
 
 	vector<string> test_lines = {"45", " 45 ", " 4a6", "4.56", "40000", "matthew", "123.31",
+                                 " 103.3", "1000.1", "0.01.02", "0 . 0 1 . 0 3 ", 
 								 "john", "13..45", ".205", "100000.342", "12345678910111213",
-								 "11511.72934812", "mark", "123.456", "lu.ke", "19.",
-								 "kusanagi.motoko", "79.052", "2501", "17..76", "19.95",
-								 "01.2.34", "mega...deth", "1842.295.", ".1393.45.223"};
+								 "11511.72934812", "-123", "123.456", "lu.ke", "19."," - 0 . 5 ",
+								 "-.005", "kusanagi.motoko", "79.052", "17..76", "19.95",
+								 "01.2.34", "mega...deth", "1842.295.", ".1393.45.223",
+                                 "2501", "-m a r k", " 01989.", "-40.201", "-16.."};
 
 
 	for(unsigned int c = 0; c < pattern_list.size(); c++){

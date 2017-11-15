@@ -632,14 +632,25 @@ sdl_text_box::sdl_text_box(){
 }
 
 sdl_text_box::~sdl_text_box(){
-	SDL_FreeSurface(box_surf);
-	SDL_DestroyTexture(box_tex);
 
-	SDL_FreeSurface(text_surf);
-	SDL_DestroyTexture(text_tex);
-
-	SDL_FreeSurface(cursor_surface);
-	SDL_DestroyTexture(cursor_texture);
+    if(box_surf != NULL){
+	    SDL_FreeSurface(box_surf);
+    }
+    if(box_tex != NULL){
+	    SDL_DestroyTexture(box_tex);
+    }
+    if(text_surf != NULL){
+	    SDL_FreeSurface(text_surf);
+    }
+    if(text_tex != NULL){
+    	SDL_DestroyTexture(text_tex);
+    }
+    if(cursor_surface != NULL){
+	    SDL_FreeSurface(cursor_surface);
+    }
+    if(cursor_texture != NULL){
+	    SDL_DestroyTexture(cursor_texture);
+    }
 }
 
 

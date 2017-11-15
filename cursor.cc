@@ -20,6 +20,15 @@ cursor::cursor(const cursor& other){
 }
 
 cursor::~cursor(){
+	if(my_surface != NULL){
+		SDL_FreeSurface(my_surface);
+		my_surface = NULL;
+	}
+
+	if(my_texture != NULL){
+		SDL_DestroyTexture(my_texture);
+		my_surface = NULL;
+	}
 
 }
 //#########################################################################
