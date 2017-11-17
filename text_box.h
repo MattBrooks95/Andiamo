@@ -53,6 +53,19 @@ struct text_box{
 	//! update the texture when the text is changed
 	void update_texture();
 
+	//! this version of update_text does input checking
+	/*! \param new_text is the test to be added
+	 *\param test is the pattern which indicates good input */ 
+	void update_text(std::string& new_text,const std::regex& test);
+
+	//! this function decides whether or not the input is bad, and changes the color of the text box accordingly
+	void check_text(const std::regex& test);
+
+	//! this function turns the textbox red
+	/*! this is usually to indicate that the input is not consistent with
+	 *what is expected by the Fortran code */
+	void toggle_red();
+
 	//! this function calls cursor's right member
 	void inc_cursor(bool& text_was_changed);
 
@@ -63,6 +76,9 @@ struct text_box{
 	/*! this deletion is made at the editing location, if the cursor
 	 *is not at the very beginning of the string */
 	void back_space();
+	//! this version of back space tests the text string against the regular expression
+	/*! \param the regular expression which indicates good input */
+	void back_space(const std::regex& test);
 
 	SDL_Rect my_rect;//!< location information stored in an SDL_Rect for rendering
 
@@ -83,10 +99,8 @@ struct text_box{
 	cursor my_cursor;//! class that handles drawing the text editing cursor
 	unsigned int editing_location;//! keep track of where the insertion point is for text
 
-
-
 	std::string text;//!< the text that is rendered to the screen and changed by the user
-
+	bool bad_input;//!< keep track of whether this box has been given bad input or not
 
 	sdl_help* sdl_helper;//!< pointer to the sdl_help class
 	TTF_Font* sdl_help_font;//!< pointer to the font in the sdl_help class
@@ -98,6 +112,8 @@ struct text_box{
 	SDL_Surface* text_surface;//!< surface for the text
 	SDL_Texture* text_texture;//!< texture for the tex
 
+	SDL_Surface* bad_surface;//!< surface for text box to indicate bad input
+	SDL_Texture* bad_texture;//!< texture for text box to indicate bad input
 
 };
 

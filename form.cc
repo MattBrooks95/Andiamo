@@ -454,7 +454,7 @@ void form::text_box_loop(text_box& current_box,SDL_Event& event,string& command,
 
 		  case SDL_TEXTINPUT:
 			pass_me = event.text.text;
-			current_box.update_text(pass_me);
+			current_box.update_text(pass_me,pattern);
 			text_was_changed = true;
 		  	//here this actually causes a loss of letters, so the event flooding is necessary, don't flush
 			//SDL_FlushEvent(SDL_TEXTINPUT);

@@ -1,5 +1,5 @@
 #########################################################################
-TEST: \s*[0-9]{0,5}\s* with intent int5
+TEST: \s*-?\s*[0-9]{1,5}\s* with intent int5
 #########################################################################
 Passes: |45|
 Passes: | 45 |
@@ -8,28 +8,50 @@ Fails : |4.56|
 Passes: |40000|
 Fails : |matthew|
 Fails : |123.31|
+Fails : | 103.3|
+Fails : |1000.1|
+Fails : |0.01.02|
+Fails : |a|
+Fails : ||
+Fails : |0 . 0 1 . 0 3 |
 Fails : |john|
 Fails : |13..45|
 Fails : |.205|
 Fails : |100000.342|
-Fails : |12345678910111213|
+Fails : | 500 12345678910111213|
+Fails : |2 . 05|
+Fails : | o|
+Fails : |  f|
 Fails : |11511.72934812|
-Fails : |mark|
+Passes: |-123|
 Fails : |123.456|
+Fails : | f   5|
 Fails : |lu.ke|
 Fails : |19.|
+Fails : | - 0 . 5 |
+Fails : |    6. 05 |
+Fails : |o|
+Fails : |-.005|
 Fails : |kusanagi.motoko|
+Fails : |  17 . 76 m|
 Fails : |79.052|
-Passes: |2501|
 Fails : |17..76|
 Fails : |19.95|
+Fails : |MYN4M3J3FF|
 Fails : |01.2.34|
 Fails : |mega...deth|
+Fails : |a5|
 Fails : |1842.295.|
 Fails : |.1393.45.223|
+Passes: |2501|
+Fails : |-m a r k|
+Fails : | 01989.|
+Fails : |-40.201|
+Fails : |-16..|
+Fails : | |
 #########################################################################
 #########################################################################
-TEST: \s*[0-9]{1,6}\.[0-9]{0,3}\s* with intent f10_3
+TEST: \s*-?\s*[0-9]{1,6}\s*\.\s*[0-9]{0,3}\s* with intent f10_3
 #########################################################################
 Fails : |45|
 Fails : | 45 |
@@ -38,28 +60,50 @@ Passes: |4.56|
 Fails : |40000|
 Fails : |matthew|
 Passes: |123.31|
+Passes: | 103.3|
+Passes: |1000.1|
+Fails : |0.01.02|
+Fails : |a|
+Fails : ||
+Fails : |0 . 0 1 . 0 3 |
 Fails : |john|
 Fails : |13..45|
 Fails : |.205|
 Passes: |100000.342|
-Fails : |12345678910111213|
+Fails : | 500 12345678910111213|
+Passes: |2 . 05|
+Fails : | o|
+Fails : |  f|
 Fails : |11511.72934812|
-Fails : |mark|
+Fails : |-123|
 Passes: |123.456|
+Fails : | f   5|
 Fails : |lu.ke|
 Passes: |19.|
+Passes: | - 0 . 5 |
+Passes: |    6. 05 |
+Fails : |o|
+Fails : |-.005|
 Fails : |kusanagi.motoko|
+Fails : |  17 . 76 m|
 Passes: |79.052|
-Fails : |2501|
 Fails : |17..76|
 Passes: |19.95|
+Fails : |MYN4M3J3FF|
 Fails : |01.2.34|
 Fails : |mega...deth|
+Fails : |a5|
 Fails : |1842.295.|
 Fails : |.1393.45.223|
+Fails : |2501|
+Fails : |-m a r k|
+Passes: | 01989.|
+Passes: |-40.201|
+Fails : |-16..|
+Fails : | |
 #########################################################################
 #########################################################################
-TEST: \s*[0-9]{1,4}\.[0-9]{0,4}\s* with intent f8_4
+TEST: \s*-?\s*[0-9]{1,4}\s*\.\s*[0-9]{0,4}\s* with intent f8_4
 #########################################################################
 Fails : |45|
 Fails : | 45 |
@@ -68,28 +112,50 @@ Passes: |4.56|
 Fails : |40000|
 Fails : |matthew|
 Passes: |123.31|
+Passes: | 103.3|
+Passes: |1000.1|
+Fails : |0.01.02|
+Fails : |a|
+Fails : ||
+Fails : |0 . 0 1 . 0 3 |
 Fails : |john|
 Fails : |13..45|
 Fails : |.205|
 Fails : |100000.342|
-Fails : |12345678910111213|
+Fails : | 500 12345678910111213|
+Passes: |2 . 05|
+Fails : | o|
+Fails : |  f|
 Fails : |11511.72934812|
-Fails : |mark|
+Fails : |-123|
 Passes: |123.456|
+Fails : | f   5|
 Fails : |lu.ke|
 Passes: |19.|
+Passes: | - 0 . 5 |
+Passes: |    6. 05 |
+Fails : |o|
+Fails : |-.005|
 Fails : |kusanagi.motoko|
+Fails : |  17 . 76 m|
 Passes: |79.052|
-Fails : |2501|
 Fails : |17..76|
 Passes: |19.95|
+Fails : |MYN4M3J3FF|
 Fails : |01.2.34|
 Fails : |mega...deth|
+Fails : |a5|
 Fails : |1842.295.|
 Fails : |.1393.45.223|
+Fails : |2501|
+Fails : |-m a r k|
+Fails : | 01989.|
+Passes: |-40.201|
+Fails : |-16..|
+Fails : | |
 #########################################################################
 #########################################################################
-TEST: \s*[0-9]{1,4}\.[0-9]{0,3}\s* with intent f7_3
+TEST: \s*-?\s*[0-9]{1,4}\s*\.\s*[0-9]{0,3}\s* with intent f7_3
 #########################################################################
 Fails : |45|
 Fails : | 45 |
@@ -98,23 +164,201 @@ Passes: |4.56|
 Fails : |40000|
 Fails : |matthew|
 Passes: |123.31|
+Passes: | 103.3|
+Passes: |1000.1|
+Fails : |0.01.02|
+Fails : |a|
+Fails : ||
+Fails : |0 . 0 1 . 0 3 |
 Fails : |john|
 Fails : |13..45|
 Fails : |.205|
 Fails : |100000.342|
-Fails : |12345678910111213|
+Fails : | 500 12345678910111213|
+Passes: |2 . 05|
+Fails : | o|
+Fails : |  f|
 Fails : |11511.72934812|
-Fails : |mark|
+Fails : |-123|
 Passes: |123.456|
+Fails : | f   5|
 Fails : |lu.ke|
 Passes: |19.|
+Passes: | - 0 . 5 |
+Passes: |    6. 05 |
+Fails : |o|
+Fails : |-.005|
 Fails : |kusanagi.motoko|
+Fails : |  17 . 76 m|
 Passes: |79.052|
-Fails : |2501|
 Fails : |17..76|
 Passes: |19.95|
+Fails : |MYN4M3J3FF|
 Fails : |01.2.34|
 Fails : |mega...deth|
+Fails : |a5|
 Fails : |1842.295.|
 Fails : |.1393.45.223|
+Fails : |2501|
+Fails : |-m a r k|
+Fails : | 01989.|
+Passes: |-40.201|
+Fails : |-16..|
+Fails : | |
+#########################################################################
+#########################################################################
+TEST: \s*-?\s*[0-9]{1,3}\s*\.\s*[0-9]{0,1}\s* with intent f5_1
+#########################################################################
+Fails : |45|
+Fails : | 45 |
+Fails : | 4a6|
+Fails : |4.56|
+Fails : |40000|
+Fails : |matthew|
+Fails : |123.31|
+Passes: | 103.3|
+Fails : |1000.1|
+Fails : |0.01.02|
+Fails : |a|
+Fails : ||
+Fails : |0 . 0 1 . 0 3 |
+Fails : |john|
+Fails : |13..45|
+Fails : |.205|
+Fails : |100000.342|
+Fails : | 500 12345678910111213|
+Fails : |2 . 05|
+Fails : | o|
+Fails : |  f|
+Fails : |11511.72934812|
+Fails : |-123|
+Fails : |123.456|
+Fails : | f   5|
+Fails : |lu.ke|
+Passes: |19.|
+Passes: | - 0 . 5 |
+Fails : |    6. 05 |
+Fails : |o|
+Fails : |-.005|
+Fails : |kusanagi.motoko|
+Fails : |  17 . 76 m|
+Fails : |79.052|
+Fails : |17..76|
+Fails : |19.95|
+Fails : |MYN4M3J3FF|
+Fails : |01.2.34|
+Fails : |mega...deth|
+Fails : |a5|
+Fails : |1842.295.|
+Fails : |.1393.45.223|
+Fails : |2501|
+Fails : |-m a r k|
+Fails : | 01989.|
+Fails : |-40.201|
+Fails : |-16..|
+Fails : | |
+#########################################################################
+#########################################################################
+TEST: \s*-?\s*[0-9]{1,3}\s*\.\s*[0-9]{0,2}\s* with intent f5_2
+#########################################################################
+Fails : |45|
+Fails : | 45 |
+Fails : | 4a6|
+Passes: |4.56|
+Fails : |40000|
+Fails : |matthew|
+Passes: |123.31|
+Passes: | 103.3|
+Fails : |1000.1|
+Fails : |0.01.02|
+Fails : |a|
+Fails : ||
+Fails : |0 . 0 1 . 0 3 |
+Fails : |john|
+Fails : |13..45|
+Fails : |.205|
+Fails : |100000.342|
+Fails : | 500 12345678910111213|
+Passes: |2 . 05|
+Fails : | o|
+Fails : |  f|
+Fails : |11511.72934812|
+Fails : |-123|
+Fails : |123.456|
+Fails : | f   5|
+Fails : |lu.ke|
+Passes: |19.|
+Passes: | - 0 . 5 |
+Passes: |    6. 05 |
+Fails : |o|
+Fails : |-.005|
+Fails : |kusanagi.motoko|
+Fails : |  17 . 76 m|
+Fails : |79.052|
+Fails : |17..76|
+Passes: |19.95|
+Fails : |MYN4M3J3FF|
+Fails : |01.2.34|
+Fails : |mega...deth|
+Fails : |a5|
+Fails : |1842.295.|
+Fails : |.1393.45.223|
+Fails : |2501|
+Fails : |-m a r k|
+Fails : | 01989.|
+Fails : |-40.201|
+Fails : |-16..|
+Fails : | |
+#########################################################################
+#########################################################################
+TEST: \s*-?\s*[0-9]{1,5}\s*\.\s*[0-9]{0,4}\s* with intent f10_4
+#########################################################################
+Fails : |45|
+Fails : | 45 |
+Fails : | 4a6|
+Passes: |4.56|
+Fails : |40000|
+Fails : |matthew|
+Passes: |123.31|
+Passes: | 103.3|
+Passes: |1000.1|
+Fails : |0.01.02|
+Fails : |a|
+Fails : ||
+Fails : |0 . 0 1 . 0 3 |
+Fails : |john|
+Fails : |13..45|
+Fails : |.205|
+Fails : |100000.342|
+Fails : | 500 12345678910111213|
+Passes: |2 . 05|
+Fails : | o|
+Fails : |  f|
+Fails : |11511.72934812|
+Fails : |-123|
+Passes: |123.456|
+Fails : | f   5|
+Fails : |lu.ke|
+Passes: |19.|
+Passes: | - 0 . 5 |
+Passes: |    6. 05 |
+Fails : |o|
+Fails : |-.005|
+Fails : |kusanagi.motoko|
+Fails : |  17 . 76 m|
+Passes: |79.052|
+Fails : |17..76|
+Passes: |19.95|
+Fails : |MYN4M3J3FF|
+Fails : |01.2.34|
+Fails : |mega...deth|
+Fails : |a5|
+Fails : |1842.295.|
+Fails : |.1393.45.223|
+Fails : |2501|
+Fails : |-m a r k|
+Passes: | 01989.|
+Passes: |-40.201|
+Fails : |-16..|
+Fails : | |
 #########################################################################

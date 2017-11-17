@@ -234,13 +234,14 @@ void button_manager::fill_regex_vectors(vector<regex>& icntrl_6_patterns,
 	//to be a decimal, so something like 1776. would be acceptable
 	//if precision is too big, it will work, but it'll get cut off
 	//need - in there if negative
-	regex int5("\\s*-?[0-9]{0,5}\\s*");
-	regex f10_3("\\s*-?[0-9]{1,6}\\.[0-9]{0,3}\\s*");
-	regex f8_4 ("\\s*-?[0-9]{1,4}\\.[0-9]{0,4}\\s*");
-	regex f10_4("\\s*-?[0-9]{1,5}\\.[0-9]{0,4}\\s*");
-	regex f5_2 ("\\s*-?[0-9]{1,3}\\.[0-9]{0,2}\\s*");
-	regex f5_1 ("\\s*-?[0-9]{1,3}\\.[0-9]{0,1}\\s*");
-	regex f7_3 ("\\s*-?[0-9]{1,4}\\.[0-9]{0,3}\\s*");
+
+	regex int5("\\s*-?\\s*[0-9]{1,5}\\s*");
+	regex f10_3("\\s*-?\\s*[0-9]{1,6}\\s*\\.\\s*[0-9]{0,3}\\s*");
+	regex f8_4 ("\\s*-?\\s*[0-9]{1,4}\\s*\\.\\s*[0-9]{0,4}\\s*");
+	regex f10_4("\\s*-?\\s*[0-9]{1,5}\\s*\\.\\s*[0-9]{0,4}\\s*");
+	regex f5_2 ("\\s*-?\\s*[0-9]{1,3}\\s*\\.\\s*[0-9]{0,2}\\s*");
+	regex f5_1 ("\\s*-?\\s*[0-9]{1,3}\\s*\\.\\s*[0-9]{0,1}\\s*");
+	regex f7_3 ("\\s*-?\\s*[0-9]{1,4}\\s*\\.\\s*[0-9]{0,3}\\s*");
 
 
 	//set up icntrl_6 tests
@@ -269,7 +270,7 @@ void button_manager::fill_regex_vectors(vector<regex>& icntrl_6_patterns,
 	//set up ilv_2 tests
 	//ilv_2_patterns;
 
-    /*// icntrl10 may not be implemented
+    /* // icntrl10 may not be implemented
 	//set up icntrl_10 tests
     //line '1'
 	icntrl_10_patterns.push_back(int5);
@@ -300,7 +301,6 @@ void button_manager::fill_regex_vectors(vector<regex>& icntrl_6_patterns,
 	//set up ilv3_ilv5 tests 
 	ilv3_ilv5_patterns.push_back(int5);
 	ilv3_ilv5_patterns.push_back(f7_3);
-
 
 }
 
