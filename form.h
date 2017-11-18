@@ -186,18 +186,6 @@ class page{
 	//! destructor frees memory back to the OS, most importantly taking care of pointers to memory
 	~page();
 
-	//! this function is used when the detailed constructor can't be ran
-	/*
-	void page_init(unsigned int num_columns_in, unsigned int num_rows_in,const std::vector<std::string>& column_labels_in,
-	     std::vector<std::string>& row_labels_in,sdl_help* sdl_helper_in,TTF_Font* sdl_font_in,int additional_spacing);
-	*/
-
-	/*
-	void page_init(unsigned int num_columns_in, unsigned int rows_needed,
-		       const std::vector<std::string>& column_labels_in, std::vector<std::string>& row_labels_in,
-		       sdl_help* sdl_helper_in,TTF_Font* sdl_font_in,int additional_spacing);
-	*/
-
 	//###########################################################################################################
 	void page_init(unsigned int num_columns_in, unsigned int rows_needed,
 		       const std::vector<std::string>& column_labels_in,std::vector<std::string>& row_labels_in,
@@ -226,8 +214,20 @@ class page{
 	//! this function is a const reference getter for the text box vector
 	const std::vector<text_box>& get_const_text_boxes(){ return text_boxes;}
 
+	//! this function returns a reference to the row labels vector
+	/*! this is the const version */
+	const std::vector<std::string>& get_row_labels(){
+		return row_labels;
+	}
+	//! return modifying reference to row labels vector
+	std::vector<std::string>& get_const_row_labels(){
+		return row_labels;
+	}
+	
+
 	//! this function is a getter for the # of columns on the page
 	unsigned int get_columns(){ return num_columns;}
+
 	//! this function is a getter for the # of rows on the page
 	unsigned int get_rows(){ return num_rows;}
 

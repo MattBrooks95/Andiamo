@@ -235,6 +235,10 @@ void button_manager::fill_regex_vectors(vector<regex>& icntrl_6_patterns,
 	//if precision is too big, it will work, but it'll get cut off
 	//need - in there if negative
 
+ 	//this is passed for columns that don't care about regular
+	//expressions, like the column of row labels in the icntrl6
+	//parity form
+	//regex dummy(".*");
 	regex int5("\\s*-?\\s*[0-9]{1,5}\\s*");
 	regex f10_3("\\s*-?\\s*[0-9]{1,6}\\s*\\.\\s*[0-9]{0,3}\\s*");
 	regex f8_4 ("\\s*-?\\s*[0-9]{1,4}\\s*\\.\\s*[0-9]{0,4}\\s*");
@@ -249,6 +253,7 @@ void button_manager::fill_regex_vectors(vector<regex>& icntrl_6_patterns,
 	icntrl_6_patterns.push_back(int5); //0
     //1 2 3 4 5 6 7 8 9
     for(int c = 0; c < 9; c++){ //this line has many columns
+		cout << "Pushed 8_4 into icntrl6 patterns c = " << c << endl;
         icntrl_6_patterns.push_back(f8_4);
     }
     //for the inm2 form
@@ -259,13 +264,13 @@ void button_manager::fill_regex_vectors(vector<regex>& icntrl_6_patterns,
 
     //for the parity form
     icntrl_6_patterns.push_back(f8_4);  //14
-    icntrl_6_patterns.push_back(int5);  //15 
+    icntrl_6_patterns.push_back(int5);  //15
 
 	//set up icntrl_8 tests
-	icntrl_8_patterns.push_back(int5);
     icntrl_8_patterns.push_back(int5);
+	icntrl_8_patterns.push_back(int5);
 	icntrl_8_patterns.push_back(f10_3);
-
+	
 
 	//set up ilv_2 tests
 	//ilv_2_patterns;

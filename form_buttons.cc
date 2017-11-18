@@ -463,33 +463,15 @@ bool icntrl6_form_button::landing_was_clicked(SDL_Event& mouse_event){
 
 void icntrl6_form_button::init_form(const vector<regex>& pattern_tests){
 
-    /* order of args in pattern_tests
-	//set up icntrl_6 tests
-    //for the inm1 form
-	icntrl_6_patterns.push_back(int5); //0
-    //1 2 3 4 5 6 7 8 9
-    for(int c = 0; c < 9; c++){ //this line has many columns
-        icntrl_6_patterns.push_back(f8_4);
-    }
-    //for the inm2 form
-    icntrl_6_patterns.push_back(int5);  //10
-    icntrl_6_patterns.push_back(int5);  //11
-    icntrl_6_patterns.push_back(f10_4); //12
-    icntrl_6_patterns.push_back(f10_4); //13
-
-    //for the parity form
-    icntrl_6_patterns.push_back(f8_4);  //14
-    icntrl_6_patterns.push_back(int5);  //15 
-    */
-
 	//set up the image that lets the user switch between this button's different forms
 	setup_landing();
 
     vector<regex> inm1_patterns;
     inm1_patterns.push_back(pattern_tests[0]);
     //this line has many columns 9 floating point #'s with field width of 8 and precision of 4
-    for(int c = 0; c < 9; c++){
-        inm1_patterns.push_back(pattern_tests[c+1]);;
+    //for(int c = 0; c < 9; c++){
+	for(int c = 1; c < 10; c++){
+        inm1_patterns.push_back(pattern_tests[c]);;
     }
     vector<regex> inm2_patterns;
     inm2_patterns.push_back(pattern_tests[10]);
@@ -540,7 +522,6 @@ void icntrl6_form_button::parity_page_creation(){
 		column_spaces.push_back(100);
 
 		my_form.get_pages()[0].page_init( 3, 18, column_labels, row_labels, sdl_helper,sdl_helper->font,column_spaces);
-		
 	}
 
 

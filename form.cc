@@ -130,9 +130,7 @@ void form::init(string form_title_in,string help_msg_image_name,int xloc_in, int
 
 
 	//query the texture to figure out its height and width dimensions
-
 	SDL_QueryTexture(form_texture,NULL,NULL,&form_area.w,&form_area.h);
-
 
 	//set up active area locations
 	exit.set_loc(0,0,25,25);
@@ -142,26 +140,27 @@ void form::init(string form_title_in,string help_msg_image_name,int xloc_in, int
 }
 
 void form::set_form_title(std::string new_title){
-        //the form title should have been set by the init function, if it wasn't, something is wrong
-        if(form_title_surface == NULL){
-                error_logger.push_error("Couldn't switch the form's title, it was previously null.");
-        }
-        //destroy the old form title surface
-        SDL_FreeSurface(form_title_surface);
+	//the form title should have been set by the init function, if it wasn't, something is wrong
+	if(form_title_surface == NULL){
+		error_logger.push_error("Couldn't switch the form's title, it was previously null.");
+	}
+	//destroy the old form title surface
+	SDL_FreeSurface(form_title_surface);
         
-        //save the new title surface
-        form_title = new_title;
+	//save the new title surface
+	form_title = new_title;
 
 	//make this font a little bit bigger than the others
 	TTF_Font* title_font = TTF_OpenFont( "./Assets/fonts/LiberationSerif-Regular.ttf", 28);
-        //render the text as a graphic
-        SDL_Color black = {0,0,0,0};//black text
+	//render the text as a graphic
+	SDL_Color black = {0,0,0,0};//black text
 	form_title_surface = TTF_RenderUTF8_Blended(title_font,form_title.c_str(),black);
 
     //before we can draw the form title to the surface, 
     //we must first fill over the old form title. Make sure the color is the same as the form's
     SDL_Rect source, destination;
     destination = {30,0,650,50};//set destination to the region we have to draw over
+
     //draw a rectangle over that area, with the gray color used in the form's asset
     //change the SDL_MapRGBA call to match the new color if the form is changed, thought it
     //is possible to query the surface directly and get the color info that way....
@@ -171,7 +170,7 @@ void form::set_form_title(std::string new_title){
 	TTF_SizeText(title_font,form_title.c_str(),&source.w,&source.h);
 	source.x = 0; source.y = 0;
 	destination.w = source.w;
-        destination.h = source.h;
+    destination.h = source.h;
 	destination.x = form_area.x + 400 - (source.w / 2);
 	destination.y = form_area.y + 25  - (source.h / 2);
 
@@ -182,10 +181,10 @@ void form::set_form_title(std::string new_title){
 	//close the font
 	TTF_CloseFont(title_font);
 
-        if(form_texture != NULL){
-                SDL_DestroyTexture(form_texture);
-        }
-        form_texture = SDL_CreateTextureFromSurface(sdl_helper->renderer,form_surface);
+	if(form_texture != NULL){
+		SDL_DestroyTexture(form_texture);
+	}
+	form_texture = SDL_CreateTextureFromSurface(sdl_helper->renderer,form_surface);
 }
 
 void form::form_event_loop(SDL_Event& big_event){
@@ -193,10 +192,13 @@ void form::form_event_loop(SDL_Event& big_event){
 	SDL_StartTextInput();//turn on text input
 	//sdl_helper->toggle_resizable();//forbid resizing the window
 
-	bool done = false;//toggle to true to end the loop
-	bool click_lock = false;//used to prevent one click causing multiple things to happen, like repeatedly
-				//opening and closing the help dialogue
- while(!done){
+	//toggle to true to end the loop
+	bool done = false;
+
+	//used to prevent one click causing multiple things to happen, like repeatedly
+	bool click_lock = false;
+
+	while(!done){
 	//cout << "IN FORM MINI LOOP" << endl;
 	if( !SDL_PollEvent(&big_event) ){
 		big_event.type = 1776;//arbitrary do-nothing event pushed onto queue, so it doesn't hit any cases
@@ -285,14 +287,22 @@ void form::handle_click(SDL_Event& mouse_event,bool& done,bool& click_lock){
 					if(pages[current_page].get_text_boxes()[c].was_clicked(mouse_event) ||
 					   command == "TAB" ){
 						if(command == "TAB") command = "";//reset command container if it was set
+
                         //the columns should line up with the supplied vector of regular expressions
                         int pattern_index = 0;
-                        pattern_index =  c % pages[current_page].get_columns();
-                        cout << "NUM COLUMNS: " << pattern_index << endl;
-                        cout << "PATTERN INDEX: " << pattern_index << endl;
-                        cout << "MY PATTERNS SIZE: " << my_patterns.size() << endl;
+						if(pages[current_page].get_row_labels().size() == 0){						
+                        	pattern_index =  c % pages[current_page].get_columns();
+						//if there is a column of row labels for this page,
+						//mod by the number of actual input columns
+						} else {
+							pattern_index  = c % (pages[current_page].get_columns() - 1);
+						}
+                        //cout << "NUM COLUMNS: " << pattern_index << endl;
+                        //cout << "PATTERN INDEX: " << pattern_index << endl;
+                        //cout << "MY PATTERNS SIZE: " << my_patterns.size() << endl;
 						text_box_loop(pages[current_page].get_text_boxes()[c],mouse_event,command,
                                       my_patterns[pattern_index]);
+
 						if(command == "TAB" &&  c < pages[current_page].get_text_boxes().size()){
 							continue;//redo this step, but act on the next text box
 						} else found = true;
@@ -469,22 +479,10 @@ void form::text_box_loop(text_box& current_box,SDL_Event& event,string& command,
 			} else if(event.key.keysym.sym == SDLK_LEFT){
 
                 current_box.dec_cursor(text_was_changed);
-                /*
-				if(current_box.editing_location > 0){
-					current_box.editing_location--;
-					text_was_changed = true;
-				}
-                */
 
 			} else if(event.key.keysym.sym == SDLK_RIGHT){
 
                 current_box.inc_cursor(text_was_changed);
-                /*
-				if(current_box.editing_location < current_box.text.size()){
-					current_box.editing_location++;
-					text_was_changed = true;
-				}
-                */
 			
 			} else if(event.key.keysym.sym == SDLK_TAB){//tab over to next text box
 				command = "TAB";
@@ -523,7 +521,6 @@ void form::text_box_loop(text_box& current_box,SDL_Event& event,string& command,
 	SDL_StopTextInput();//stop text input functionality because it slows down the app
 
 }
-
 
 //###################### PAGE CLASS BELOW #############################################################
 page::page(){
@@ -748,7 +745,6 @@ void page::draw_me(){
 	}
 
 }
-
 
 
 
