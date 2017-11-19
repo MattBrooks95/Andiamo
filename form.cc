@@ -316,8 +316,6 @@ void form::handle_click(SDL_Event& mouse_event,bool& done,bool& click_lock){
 
 void form::draw_me(){
 
-
-
 	if(active){
 		if(!help_shown){
 			SDL_RenderCopy(sdl_helper->renderer,form_texture,NULL,&form_area);
@@ -327,15 +325,12 @@ void form::draw_me(){
 		} else {
 			SDL_RenderCopy(sdl_helper->renderer,form_texture,NULL,&form_area);
 			SDL_Rect help_area = form_area;
-			help_area.y = 75;//start lower than the starting point for the form + the column headers
+			help_area.y = 50;
 			help_area.h = 725;//the texture is actually shorter, it replaces the text box area
 			SDL_RenderCopy(sdl_helper->renderer,help_texture,NULL,&help_area);
 		}
 
-
-
 	} else return;
-
 
 }
 
@@ -474,7 +469,7 @@ void form::text_box_loop(text_box& current_box,SDL_Event& event,string& command,
 			
 			if(event.key.keysym.sym == SDLK_BACKSPACE){
 				//they hit backspace, so delete the end character if it is non-empty
-				current_box.back_space();
+				current_box.back_space(pattern);
 				text_was_changed = true;
 			} else if(event.key.keysym.sym == SDLK_LEFT){
 

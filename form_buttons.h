@@ -248,9 +248,9 @@ class icntrl4_form_button : public form_button{
 class ilv3_ilv5_form_button : public form_button{
 
   public:
+
 	//! sets up a form that suits the needs of icntrl4's logics per the input manual
 	void init_form(const std::vector<std::regex>& pattern_tests);
-
 
 	//! implements the special logic for this class
 	bool handle_click(SDL_Event& mouse_event);
@@ -263,7 +263,6 @@ class ilv3_ilv5_form_button : public form_button{
 
     //! this function is invoked by the input_maker to have this form output to the HF file
     void make_output(std::ofstream& outs);
-
 
   private:
         

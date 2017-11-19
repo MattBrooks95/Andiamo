@@ -14,7 +14,6 @@ button_manager::button_manager(sdl_help* sdl_helper_in){
 	tray_image_name = "button_tray.png";
 	form_tray_image_name = "form_tray.png";
 
-
 	tray_shown = true;
 
 	tray_rect.x = 0;
@@ -45,6 +44,7 @@ button_manager::~button_manager(){
 }
 
 void button_manager::init_tray(){
+
 	button_tray_surf = IMG_Load( (button_image_p+tray_image_name).c_str() );
 	if(button_tray_surf == NULL) error_logger.push_error(string(SDL_GetError()));
 	button_tray_texture = SDL_CreateTextureFromSurface(sdl_helper->renderer,button_tray_surf);
@@ -53,9 +53,10 @@ void button_manager::init_tray(){
 	//use query texture to get the texture's height and width
 	SDL_QueryTexture(button_tray_texture,NULL,NULL,&tray_rect.w,&tray_rect.h);
 
-
 	tray_rect.x = 5;//give it a little bit of distance from the right edge of the screen
-	tray_rect.y = sdl_helper->get_h_bar().get_top() - (tray_rect.h + 10);//set it to be just above the bottom scroll bar
+
+	//set it to be just above the bottom scroll bar
+	tray_rect.y = sdl_helper->get_h_bar().get_top() - (tray_rect.h + 10);
 
 }
 
@@ -85,13 +86,6 @@ void button_manager::redo_locks(){
 	icntrl_4.set_corner_loc(form_tray_rect.x+525,form_tray_rect.y);
 	ilv3_ilv5.set_corner_loc(form_tray_rect.x+630,form_tray_rect.y);
 
-/*
-	icntrl_8.set_corner_loc(form_tray_rect.x + 105,form_tray_rect.y);
-	icntrl_6.set_corner_loc(form_tray_rect.x + 210,form_tray_rect.y);
-	ilv_2.set_corner_loc(form_tray_rect.x + 315,form_tray_rect.y);
-	icntrl_10.set_corner_loc(form_tray_rect.x+420,form_tray_rect.y);
-	icntrl_4.set_corner_loc(form_tray_rect.x+525,form_tray_rect.y);
-*/
 
 	icntrl_8.make_rect();
 	icntrl_6.make_rect();
@@ -157,7 +151,7 @@ void button_manager::init_buttons(){
 	output_fname.force_corner_loc( end_of_last_button+5, tray_rect.y + 7);
 	t_coefficients.force_corner_loc( end_of_last_button+5, tray_rect.y+7 + output_fname.get_height()+10);
 
-		end_of_last_button = end_of_last_button+5+output_fname.get_width();
+	end_of_last_button = end_of_last_button+5+output_fname.get_width();
 
 	//graphing_options.force_corner_loc(end_of_last_button+5,tray_rect.y + 7);
 
@@ -253,8 +247,7 @@ void button_manager::fill_regex_vectors(vector<regex>& icntrl_6_patterns,
 	icntrl_6_patterns.push_back(int5); //0
     //1 2 3 4 5 6 7 8 9
     for(int c = 0; c < 9; c++){ //this line has many columns
-		cout << "Pushed 8_4 into icntrl6 patterns c = " << c << endl;
-        icntrl_6_patterns.push_back(f8_4);
+    	icntrl_6_patterns.push_back(f8_4);
     }
     //for the inm2 form
     icntrl_6_patterns.push_back(int5);  //10

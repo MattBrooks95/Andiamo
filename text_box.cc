@@ -48,14 +48,14 @@ text_box::text_box(const text_box& other){
 	width  = other.width;
 	height = other.height;
 
-	text        = other.text;
+	text      = other.text;
 	bad_input = other.bad_input;
 
-	text_dims   = other.text_dims;
+	text_dims  = other.text_dims;
     shown_area = other.shown_area;
 
 
-	sdl_helper = other.sdl_helper;
+	sdl_helper    = other.sdl_helper;
 	sdl_help_font = other.sdl_help_font;
 
 	editing_location = other.editing_location;
@@ -341,6 +341,7 @@ void text_box::back_space(const regex& test){
 	if(editing_location <= 0) return;
 
 	text.erase(editing_location-1,1);//erase from current editing location
+	check_text(test);
 	editing_location--;//decrement editing location
 
 	//update text size information

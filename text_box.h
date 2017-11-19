@@ -76,6 +76,7 @@ struct text_box{
 	/*! this deletion is made at the editing location, if the cursor
 	 *is not at the very beginning of the string */
 	void back_space();
+
 	//! this version of back space tests the text string against the regular expression
 	/*! \param the regular expression which indicates good input */
 	void back_space(const std::regex& test);

@@ -38,7 +38,6 @@ class button_manager{
 	//! this member updates the lock graphics after a resize - helper for location_update
 	void redo_locks();
 
-
 	//! this member displays the tray to the screen
 	void draw_tray();
 
@@ -51,7 +50,7 @@ class button_manager{
 	//########### FORM BUTTON GETTERS ########################################################################//
 	icntrl8_form_button& get_icntrl_8(){return icntrl_8;}//!< returns reference to icntrl8 form button
 	icntrl6_form_button& get_icntrl_6(){return icntrl_6;}//!< returns reference to icntrl6 form button
-	ilv2_form_button& get_ilv_2(){return ilv_2;}//!< returns reference to teh ilv2 form button
+	ilv2_form_button& get_ilv_2(){return ilv_2;}//!< returns reference to the ilv2 form button
 	icntrl10_form_button& get_icntrl_10(){return icntrl_10;}//!< returns reference to the icntrl10 form button
 	icntrl4_form_button& get_icntrl_4(){return icntrl_4;}//!< returns reference to the icntrl4 form button
 	ilv3_ilv5_form_button& get_ilv3_ilv5(){return ilv3_ilv5;}
@@ -80,7 +79,6 @@ class button_manager{
 	//! this member calls each button's virtual draw_me() member
 	/*! it also calls draw_tray() at the very beginning, so that the tray is drawn "below" the buttons */
 	void draw_buttons();
-
 
 	//! logic to handle sdl_inputs and backspaces is here
 	/*! it has to be here, because the text boxes do not have reference to all the other buttons
@@ -150,11 +148,9 @@ class button_manager{
 	bool tray_shown;//!< keep track of whether or not the tray should be drawn to the screen
 	SDL_Rect tray_rect;//!< drawing destination for the button tray
 
-
 	//! This vector contains the "normal" buttons that actually sit on the button tray
 	/*! there will be special buttons, like the exit dialogue, who do not belong here. */
 	std::vector<button> buttons;
-
 
 	fop_handler_button fop_button;//!< button that launches the fop_handler
 

@@ -214,12 +214,17 @@ void icntrl8_form_button::page_creation_helper(){
 
 	//grab val from parameter field, so the pages can be set up
 	try{
+
 	  icntrl8_val = stoi(sdl_helper->get_mgr().fields.at("line_6").at("ICNTRL8").temp_input);
+
 	} catch (out_of_range& range_error){
+
 	  error_logger.push_error("ICNTRL8 could not be found in the field map",
 				  range_error.what());
 	  icntrl8_val = 0;
+
 	} catch (invalid_argument& arg_error){
+
 	  error_logger.push_error("ICNTRL8 has been given an invalid (non-numerical?) argument.",
 				  arg_error.what());
 	  icntrl8_val = 0;
@@ -496,12 +501,6 @@ void icntrl6_form_button::init_form(const vector<regex>& pattern_tests){
                         inm2_patterns);
 
 }
-
-/*	void page_init(unsigned int num_columns_in, unsigned int num_rows_in,const std::vector<std::string>& column_labels_in,
-	     std::vector<std::string>& row_labels_in,sdl_help* sdl_helper_in,TTF_Font* sdl_font_in);
-
-	void column_logic(const std::vector<std::string>& types);
-*/
 
 //this one is kind of unique because the form itself should not change, it has a fixed size in the input manual
 void icntrl6_form_button::parity_page_creation(){
@@ -1132,47 +1131,48 @@ void ilv3_ilv5_form_button::click_helper(SDL_Event& mouse_event){
 
 void ilv3_ilv5_form_button::init_form(const vector<regex>& pattern_tests){
 
-	my_form.init("set this when page is open","default_form_help.png",0,0,sdl_helper,sdl_helper->font,
-                 pattern_tests);
+	//my_form.init("set this when page is open","default_form_help.png",0,0,sdl_helper,sdl_helper->font,
+    //             pattern_tests);
+	my_form.init("Distinct Residual Level Density","ilv3_form_help.png",0,0,sdl_helper,sdl_helper->font,
+					pattern_tests);
 
 }
-
 void ilv3_ilv5_form_button::page_creation_helper(){
-        int ilv3_val;
-        int ilv5_val;
-        try{
-          ilv3_val = stoi(sdl_helper->get_mgr().fields.at("line_5").at("ILV3").temp_input);
-          ilv5_val = stoi(sdl_helper->get_mgr().fields.at("line_5").at("ILV5").temp_input);
-        } catch(invalid_argument& bad_arg){
-          error_logger.push_error("Ilv3 or ilv5's value failed to conver to int in page_creation_helper.",
-                                  bad_arg.what());
-        }
-        //let the form know that it has been initiated
-        my_form.prev_initiated = true;
-        int rows_needed;//should be set to ilv3 or ilv5, whichever caused this form to be opened
-        vector<string> pass_column_titles;
-        vector<string> pass_row_titles;//this needs to exist, but does nothing here
+	int ilv3_val;
+	int ilv5_val;
+	try{
+		ilv3_val = stoi(sdl_helper->get_mgr().fields.at("line_5").at("ILV3").temp_input);
+		ilv5_val = stoi(sdl_helper->get_mgr().fields.at("line_5").at("ILV5").temp_input);
+	} catch(invalid_argument& bad_arg){
+		error_logger.push_error("Ilv3 or ilv5's value failed to conver to int in page_creation_helper.",
+	bad_arg.what());
+	}
+	//let the form know that it has been initiated
+	my_form.prev_initiated = true;
+	int rows_needed;//should be set to ilv3 or ilv5, whichever caused this form to be opened
+	vector<string> pass_column_titles;
+	vector<string> pass_row_titles;//this needs to exist, but does nothing here
 
-        //column labels are the same for 3 of 4
-        pass_column_titles.push_back("A for custom LD");
-        pass_column_titles.push_back("Z for custom LD");
-        //set the title to reflect which mode is being used
-        if( ilv3_val > ilv5_val){
-                my_form.set_form_title("Distinct Residual Level Density");
-                my_form.prev_init_value = ilv3_val;
-                rows_needed = ilv3_val;
-                //the third column label depends on what mode the form is in
-                pass_column_titles.push_back("Little a for A,Z");
-        } else {
-                my_form.set_form_title("Distinct Level Density Model");
-                my_form.prev_init_value = ilv5_val;
-                rows_needed = ilv5_val;
-                //the third column label depends on what mode the form is in
-                pass_column_titles.push_back("Temp for A,Z");
-        }
-        //the fourth column label is the same for both cases
-        pass_column_titles.push_back("Delta for A, Z");
-        
+	//column labels are the same for 3 of 4
+	pass_column_titles.push_back("A for custom LD");
+	pass_column_titles.push_back("Z for custom LD");
+	//set the title to reflect which mode is being used
+	if( ilv3_val > ilv5_val){
+		my_form.set_form_title("Distinct Residual Level Density");
+		my_form.prev_init_value = ilv3_val;
+		rows_needed = ilv3_val;
+	//the third column label depends on what mode the form is in
+	pass_column_titles.push_back("Little a for A,Z");
+	} else {
+		my_form.set_form_title("Distinct Level Density Model");
+		my_form.prev_init_value = ilv5_val;
+		rows_needed = ilv5_val;
+		//the third column label depends on what mode the form is in
+		pass_column_titles.push_back("Temp for A,Z");
+	}
+	//the fourth column label is the same for both cases
+	pass_column_titles.push_back("Delta for A, Z");
+      
 	int rows_per_page = floor(725.0 / 35);
 
 	unsigned int vector_size = ceil((rows_needed * 35) / 725.0);//calculate how many pages are needed
@@ -1185,26 +1185,26 @@ void ilv3_ilv5_form_button::page_creation_helper(){
 	column_spaces.push_back(0);
 	column_spaces.push_back(180);
 	column_spaces.push_back(180);
-        column_spaces.push_back(180);
+	column_spaces.push_back(180);
 
 
 	for(unsigned int c = 0; c < pages.size();c++){
 
 		if(rows_per_page >= rows_needed){
 			pages[c].page_init(4,rows_needed,pass_column_titles,pass_row_titles,
-								      sdl_helper, sdl_helper->font,column_spaces);
+			sdl_helper, sdl_helper->font,column_spaces);
 			rows_needed = 0;
 		} else {
 
 			pages[c].page_init(4,rows_per_page,pass_column_titles,pass_row_titles,
-								      sdl_helper, sdl_helper->font,column_spaces);
+						      sdl_helper, sdl_helper->font,column_spaces);
 			rows_needed = rows_needed - rows_per_page;
 		}
 		pages_made++;//we made a page, so increase the counter
 	}
 	if(pages_made != vector_size) {
-		error_logger.push_error("Error in icntrl8 page_creation_helper, # of created pages does not match",
-				       "expected value.");
+	error_logger.push_error("Error in icntrl8 page_creation_helper, # of created pages does not match",
+    					    "expected value.");
 	}
 
 	my_form.set_page_count(pages_made);

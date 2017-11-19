@@ -175,10 +175,6 @@ class page{
 	*\param num_rows_in is the # of rows of text boxes to create
 	*\param row_labels_in is the row labels, which is not always used
 	*\param column_labels_in is the column labels, which should almost always be specified */
-/*
-	page(unsigned int num_columns_in, unsigned int num_rows_in,const std::vector<std::string>& column_labels_in,
-	     std::vector<std::string>& row_labels_in,sdl_help* sdl_helper_in,TTF_Font* sdl_font_in);
-*/
 	
 	//! writing the copy constructer here prevents seg faults due to double free when pushed into a vector
 	page(const page& other);
