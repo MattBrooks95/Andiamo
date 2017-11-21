@@ -359,6 +359,50 @@ void form::prev_page(){
 	}
 }
 
+bool form::check_values(vector<index_value>& error_details){
+
+	//it should be assumed that inputs are correct, but if one is found not to be
+	//change this to false
+	bool return_me = true;
+
+	//loop over each page in this form
+	for(unsigned int c = 0; c < pages.size(); c++){
+
+		//get the number of columns for this page
+		unsigned int num_columns = pages[c].get_columns();
+
+		//if this page happens to have a column of row labels, decrement the # of columns
+		//by one to ensure that only columns that have a logical meaning are considered
+		//in the evaluation
+		if(pages[c].get_const_row_labels().size() != 0){
+			num_columns = num_columns - 1;
+		}
+
+		//then make sure each column has its own regular expression to verify inputs with
+		if(num_columns != my_patterns.size()){
+			error_logger.push_error("From form::check_values() A form doesn't have a regular expression to check each",
+				"of its column's inputs against to ensure input integrity.");
+		}
+
+		//save a reference to this page's vector in a temporary variable
+		//so I can use it instead of the getter function
+		const vector<text_box>& box_ref = pages[c].get_const_text_boxes();
+
+		//go through and check each text box against the appropriate regular expression
+		//using the mod operator
+		for(unsigned int d = 0; d < box_ref.size(); d++){
+			if(!regex_match(box_ref[d].text,my_patterns[d % num_columns])){
+				index_value temp_tuple(box_ref[d].text,d);
+				error_details.push_back(temp_tuple);
+				return_me = false;
+			}
+
+		}
+
+	}
+	return return_me;
+}
+
 void form::set_page_count(int page_count_in){
 
 	page_count = page_count_in - 1;

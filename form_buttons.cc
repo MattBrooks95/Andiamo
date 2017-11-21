@@ -144,9 +144,17 @@ void form_button::toggle_lock(){
 
 }
 
-void form_button::make_output(ofstream& outs){
+bool form_button::make_output(ofstream& outs,vector<index_value>& bad_input_list){
 	error_logger.push_error("A form button has called the base classes output creation member. Each form button is",
 				" likely to have a special format, so you should customize this function in the derived class.");
+	return false;
+}
+
+bool form_button::check_values(vector<index_value>& error_details){
+
+	error_logger.push_error("A form button has had check_values() called upon it, but",
+							"it hasn't been overloaded to fit a form. This could be unintended behavior");
+	return false;
 }
 
 //#############################################################################
@@ -286,12 +294,21 @@ void icntrl8_form_button::init_form(const vector<regex>& pattern_tests){
                  pattern_tests);
 }
 
-void icntrl8_form_button::make_output(ofstream& outs){
+bool icntrl8_form_button::make_output(ofstream& outs,vector<index_value>& bad_input_list){
 	if(outs.fail()){
 		error_logger.push_error("icntrl8_form_button::make_output was not given a valid output file stream.",
 					"exiting.");
-		return;
+		return false;
 	}
+
+	std::vector<index_value> icntrl8_errors_list;
+	if(!check_values(icntrl8_errors_list)){
+		return false;
+	}
+
+
+
+
     outs << "ICNTRL 8 OUTPUT" << endl;
 
 	//outs << "TESTING ICNTRL8'S OUTPUT" << endl;
@@ -315,8 +332,15 @@ void icntrl8_form_button::make_output(ofstream& outs){
 		}
 
 	}
+	return true;
+}
+
+bool icntrl8_form_button::check_values(vector<index_value>& error_details){
+
+	return my_form.check_values(error_details);
 
 }
+
 //##############################################################################
 
 //###################### ILV2 BUTTON ###########################################
@@ -824,13 +848,20 @@ void icntrl6_form_button::show_landing(){
 
 }
 
-void icntrl6_form_button::make_output(ofstream& outs){
+bool icntrl6_form_button::make_output(ofstream& outs,vector<index_value>& bad_input_list){
 	if(outs.fail()){
 		error_logger.push_error("Icntrl6_form_button::make_output was not given a valid output file stream.",
 					"exiting.");
-		return;
+		return false;
 	}	
     outs << "ICNTRL6 OUTPUT" << endl;
+
+
+	std::vector<index_value> icntrl6_errors_list;
+	if(!check_values(icntrl6_errors_list)){
+		return false;
+	}
+
 
 	//outs << "TESTING ICNTRL6'S OUTPUT" << endl;
 	vector<page>& parity_ref = my_form.get_pages();         //handle for accessing parity form's data
@@ -881,8 +912,48 @@ void icntrl6_form_button::make_output(ofstream& outs){
         outs << endl;
     }
 
-
+	return true;
 }
+
+bool icntrl6_form_button::check_values(vector<index_value>& error_details){
+
+	bool return_me = true;
+
+	//this vector should be filled in with the errors from each of the
+	//forms - parity, search_spectra, and cross_sections
+	vector<index_value> total_errors;
+
+	vector<index_value> parity_errors;
+	vector<index_value> search_errors;
+	vector<index_value> cross_errors;
+
+	if(!my_form.check_values(parity_errors)){
+		return_me = false;
+	}
+
+	if(!search_spectra.check_values(search_errors)){
+		return_me = false;
+	}
+
+	if(!cross_sections.check_values(cross_errors)){
+		return_me = false;
+	}
+
+	for(unsigned int c = 0; c < parity_errors.size(); c++){
+		total_errors.push_back(parity_errors[c]);
+	}
+
+	for(unsigned int c = 0; c < search_errors.size(); c++){
+		total_errors.push_back(search_errors[c]);
+	}
+
+	for(unsigned int c = 0; c < cross_errors.size(); c++){
+		total_errors.push_back(cross_errors[c]);
+	}
+
+	return return_me;
+}
+
 //################################################################################
 
 //####################### ICNTRL10 BUTTON ########################################
@@ -1048,7 +1119,15 @@ void icntrl4_form_button::page_creation_helper(){
 
 }
 
-void icntrl4_form_button::make_output(ostream& outs){
+bool icntrl4_form_button::make_output(ostream& outs,vector<index_value>& bad_input_list){
+
+
+	std::vector<index_value> icntrl4_errors;
+	if(!check_values(icntrl4_errors)){
+		return false;
+	}
+
+
     vector<text_box>* boxes = &my_form.get_pages()[0].get_text_boxes();
     string spaces = "     ";
     outs << "ICNTRL4 OUTPUT" << endl;
@@ -1061,8 +1140,14 @@ void icntrl4_form_button::make_output(ostream& outs){
         outs << setprecision(1) F5 boxes->at(c+1).text << spaces I boxes->at(c+2).text F5 boxes->at(c+3).text << endl; 
 
     }
+	return true;
 }
 
+bool icntrl4_form_button::check_values(vector<index_value>& error_details){
+
+	return my_form.check_values(error_details);
+
+}
 //################################################################################
 
 //################## IVL4 || ILV5 BUTTON #########################################
@@ -1210,13 +1295,18 @@ void ilv3_ilv5_form_button::page_creation_helper(){
 	my_form.set_page_count(pages_made);
 }
 
-void ilv3_ilv5_form_button::make_output(std::ofstream& outs){
+bool ilv3_ilv5_form_button::make_output(ofstream& outs,vector<index_value>& bad_input_list){
 	if(outs.fail()){
 		error_logger.push_error("ilv3_ilv5_form_button::make_output was not given a valid output file stream.",
 					"exiting.");
-		return;
+		return false;
 	}
     outs << "ILV3 ILV5 OUTPUT" << endl;
+
+	std::vector<index_value> ilv3_ilv5_errors;
+	check_values(ilv3_ilv5_errors);
+
+
     vector<page>& pages = my_form.get_pages();
 
     for(unsigned int c = 0; c < pages.size(); c++){
@@ -1227,6 +1317,12 @@ void ilv3_ilv5_form_button::make_output(std::ofstream& outs){
         }
     }
 
+	return true;
+}
+
+bool ilv3_ilv5_form_button::check_values(vector<index_value>& error_details){
+
+	return my_form.check_values(error_details);
 
 }
 //#################################################################################

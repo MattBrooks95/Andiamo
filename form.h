@@ -12,6 +12,8 @@
 
 #include "button.h"
 #include "text_box.h"
+#include "c_tuples.h"
+
 class page;
 
 //! A form is a class that is housed by a form_button, which allows for dynamic parameter entry
@@ -45,7 +47,6 @@ class form{
      *title, so the new one can be applied. */
     void set_form_title(std::string new_title);
 
-
 	//! form_event_loop is a member that enacts an event loop similar to the one in main
 	/* it is specifically tailored to be useful for form parameter entry, and it is virtual so it could be
 	 *inherited by narrow forms to allow specialized functionality */
@@ -71,14 +72,19 @@ class form{
 	//! prev_page presents the previous page to the user, if possible
 	void prev_page();
 
+	//! this function checks all of the inputs to make sure they are correct
+	bool check_values(std::vector<index_value>& error_details);
+
 	//! getter for the vector that stores the pages of text boxes
 	std::vector<page>& get_pages() { return pages;} 
 
 	//! this funciton sets page_count to the passed value
 	void set_page_count(int page_count_in);
+
 	//! this function updates the sprites that represent which page the user is currently on
 	/*! these are the numbers at the top right of the form, next to the page left and right buttons */
 	void update_page_indicator();
+
 	//! this function destroys the pages that were previously created, so they can be recreated
 	void flush_pages();
 
@@ -99,6 +105,7 @@ class form{
 
     //! title of the form, which is displayed at the top of the form
 	std::string form_title;
+
   private:
 
     //! save the title surface so it can be blitted to the form's surface
@@ -131,17 +138,22 @@ class form{
 
     //! keep track of the clickable location for the exit button in the top left
 	active_area exit;
+
     //! keep track of the clickable location for the help arrow in the top left 
 	active_area help;
+
     //! keep track of the clickable location for the page right arrow in the top right
 	active_area right_arrow;
+
     //! keep track of the clickable locatino for the page left arrow in the top right
 	active_area left_arrow;
 
     //! store vector of pages, which each contain an array of text boxes for the user to fill in
 	std::vector<page> pages;
+
     //! keep track of how many pages there are, so it can be displayed in the top right
 	int page_count;
+
     //! keep track of what page the user is currently interacting with
     /*! this will be shown in the top right, and will change as the user hits the
      *right and left arrows */
@@ -202,11 +214,9 @@ class page{
 	//! this function draws the pages headers, labels and text boxes
 	void draw_me();
 
-	//! this function sets up the logic that keeps track of which column of rows are which fortran type
-	void column_logic(const std::vector<std::string>& types);
-
 	//! this function is a non-const reference getter for the text box vector
 	std::vector<text_box>& get_text_boxes(){ return text_boxes;}
+
 	//! this function is a const reference getter for the text box vector
 	const std::vector<text_box>& get_const_text_boxes(){ return text_boxes;}
 
@@ -244,6 +254,7 @@ class page{
 	std::vector<SDL_Texture*> row_label_textures;//!< store textures for the row labels
 	std::vector<SDL_Rect> row_label_rects;//!< store the location of the textures for the row labels
 };
+
 
 
 

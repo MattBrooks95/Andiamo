@@ -46,10 +46,10 @@ button.o: button.cc button.h derived_buttons.o
 derived_buttons.o: derived_buttons.cc derived_buttons.h logger.o
 	g++ $(c_flg) -c derived_buttons.cc
 
-form_buttons.o: form_buttons.cc form_buttons.h button.o form.o logger.o
+form_buttons.o: form_buttons.cc form_buttons.h button.o form.o logger.o c_tuples.h
 	g++ $(c_flg) -c form_buttons.cc
 
-form.o: form.cc form.h button.o text_box.o
+form.o: form.cc form.h button.o text_box.o c_tuples.h
 	g++ $(c_flg) -c form.cc
 
 manager.o: manager.cc manager.h field.o input_maker.o logger.o

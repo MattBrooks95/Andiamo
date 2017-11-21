@@ -5,6 +5,9 @@
 #include<fstream>
 #include "button.h"
 #include "form.h"
+#include "c_tuples.h"
+
+
 //! "base" class for form buttons, that provides their general form, and can be inherited from to make more specialized forms
 class form_button : public button{
 
@@ -37,10 +40,8 @@ class form_button : public button{
 	/*! It must be overloaded by the derived form_buttons to have any meaning */
 	virtual void init_form(const std::vector<std::regex>& pattern_tests);
 
-
 	//! this function resizes the window if it is too small when the user tries to open a form
 	virtual void screen_size();
-
 
 	//! this function can be overloaded or used by derived classes
 	/*! if a special message box is made, it would be wise to overload this as well, so it can be placed
@@ -58,9 +59,10 @@ class form_button : public button{
 
 	//! this member has the form objects contained herein send their information to the input_maker
 	/*! this is currently a stub */
-	virtual void make_output(std::ofstream& outs);
+	virtual bool make_output(std::ofstream& outs,std::vector<index_value>& bad_input_list);
 
-
+	//! check to make sure the inputs are properly formed
+	virtual bool check_values(std::vector<index_value>& error_details);
 
   protected:
 	SDL_Surface* lock_surface;//!< save the surface for the lock, when this button is not in use
@@ -73,7 +75,6 @@ class form_button : public button{
 
 	SDL_Surface* unlock_help_surface;
 	SDL_Texture* unlock_help_texture;
-
 };
 
 class icntrl8_form_button : public form_button{
@@ -96,7 +97,10 @@ class icntrl8_form_button : public form_button{
 	void page_creation_helper();
 
 	//! this function outputs the form's info to the input_maker's file stream when called
-	void make_output(std::ofstream& outs);
+	bool make_output(std::ofstream& outs,std::vector<index_value>& bad_input_list);
+
+	//! check to make sure the inputs are properly formed
+	bool check_values(std::vector<index_value>& error_details);
 
   private:
 	unsigned int icntrl8_val;//!< updated with the value from the field that corresponds to Cutoff Nuclei
@@ -145,7 +149,6 @@ class icntrl6_form_button : public form_button{
 	//! this fills up the row labels for the parity form
 	void fill_parity_labels(std::vector<std::string>& row_labels,std::vector<std::string>& column_labels);
 
-
 	//! this member sets up the search spectra form's pages
 	void search_spectra_page_creation();
 	//! this helper member fills in the column labels for the search spectra form
@@ -179,7 +182,10 @@ class icntrl6_form_button : public form_button{
 	bool landing_was_clicked(SDL_Event& mouse_event);
 
 	//! this sends this object's info the input_manager's file stream
-	void make_output(std::ofstream& outs);
+	bool make_output(std::ofstream& outs,std::vector<index_value>& bad_input_list);
+
+	//! check to make sure the inputs are properly formed
+	bool check_values(std::vector<index_value>& error_details);
 
   private:
 
@@ -238,9 +244,13 @@ class icntrl4_form_button : public form_button{
 	void click_helper(SDL_Event& mouse_event);
 
     //! outputs form info to the input_maker file stream
-    void make_output(std::ostream& outs);
+    bool make_output(std::ostream& outs,std::vector<index_value>& bad_input_list);
+
+	//! check to make sure the inputs are properly formed
+	bool check_values(std::vector<index_value>& error_details);
 
   private:
+
     //! not called icntrl4_val because derivative parameter nch4 controls # of text boxes needed
     unsigned int nch4_val;
 };
@@ -262,7 +272,10 @@ class ilv3_ilv5_form_button : public form_button{
     void page_creation_helper();
 
     //! this function is invoked by the input_maker to have this form output to the HF file
-    void make_output(std::ofstream& outs);
+    bool make_output(std::ofstream& outs,std::vector<index_value>& bad_input_list);
+
+	//! check to make sure the inputs are properly formed
+	bool check_values(std::vector<index_value>& error_details);
 
   private:
         

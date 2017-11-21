@@ -375,7 +375,10 @@ void input_maker::output(){
     }
 
     //do line 5D or 5E
-    b_manager->get_ilv3_ilv5().make_output(outs);
+	std::vector<index_value> ilv3_ilv5_bad_inputs;
+    if(!b_manager->get_ilv3_ilv5().make_output(outs,ilv3_ilv5_bad_inputs)){
+		cout << "DO SOMETHING ABOUT BAD INPUTS HERE" << endl;
+	}
 
 	//do line 6
 	do_line6(outs,int4_params);
@@ -388,7 +391,10 @@ void input_maker::output(){
 		//do line 8
 		do_line8(outs,int4_params);
 		//do the form's output
-		b_manager->get_icntrl_4().make_output(outs);
+		std::vector<index_value> icntrl4_bad_inputs;
+		if(!b_manager->get_icntrl_4().make_output(outs,icntrl4_bad_inputs)){
+			cout << "DO SOMETHING ABOUT BAD INPUTS HERE" << endl;
+		}
 	}//elsewise, don't do lines 8&9
 
 
@@ -398,9 +404,20 @@ void input_maker::output(){
 
 
 	//#########MAKE OUTPUTS FROM FORM_BUTTONS ##############################################################//
-	b_manager->get_icntrl_6().make_output(outs);
-	b_manager->get_icntrl_8().make_output(outs);
-	b_manager->get_icntrl_10().make_output(outs);
+	std::vector<index_value> icntrl6_bad_inputs;
+	if(!b_manager->get_icntrl_6().make_output(outs,icntrl6_bad_inputs)){
+		cout << "DO SOMETHING ABOUT BAD INPUTS HERE" << endl;
+	}
+
+	std::vector<index_value> icntrl8_bad_inputs;
+	if(!b_manager->get_icntrl_8().make_output(outs,icntrl8_bad_inputs)){
+		cout << "DO SOMETHING ABOUT BAD INPUTS HERE" << endl;
+	}
+
+	std::vector<index_value> icntrl10_bad_inputs;
+	if(!b_manager->get_icntrl_10().make_output(outs,icntrl10_bad_inputs)){
+		cout << "DO SOMETHING ABOUT BAD INPUTS HERE" << endl;
+	}
 	//######################################################################################################//
 
 
