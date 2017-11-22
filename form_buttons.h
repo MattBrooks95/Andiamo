@@ -222,6 +222,9 @@ class icntrl10_form_button : public form_button{
 	//! this function opens the icntrl10 form on click
 	void click_helper(SDL_Event& mouse_event);
 
+	//!  outputs form info to the input_maker file stream
+	bool make_output(std::ofstream& outs, std::vector<index_value>& bad_input_list);
+
   private:
 };
 

@@ -400,6 +400,7 @@ bool form::check_values(vector<index_value>& error_details){
 		}
 
 	}
+
 	return return_me;
 }
 

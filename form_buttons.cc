@@ -301,8 +301,7 @@ bool icntrl8_form_button::make_output(ofstream& outs,vector<index_value>& bad_in
 		return false;
 	}
 
-	std::vector<index_value> icntrl8_errors_list;
-	if(!check_values(icntrl8_errors_list)){
+	if(!check_values(bad_input_list)){
 		return false;
 	}
 
@@ -856,9 +855,7 @@ bool icntrl6_form_button::make_output(ofstream& outs,vector<index_value>& bad_in
 	}	
     outs << "ICNTRL6 OUTPUT" << endl;
 
-
-	std::vector<index_value> icntrl6_errors_list;
-	if(!check_values(icntrl6_errors_list)){
+	if(!check_values(bad_input_list)){
 		return false;
 	}
 
@@ -905,12 +902,13 @@ bool icntrl6_form_button::make_output(ofstream& outs,vector<index_value>& bad_in
 	}
 
 	//and finally, parity
-
-    for(unsigned int c = 0; c < parity_ref[0].get_text_boxes().size();c += 2){
-        outs << setprecision(4);
-        outs F8 parity_ref[0].get_text_boxes()[c].text I parity_ref[0].get_text_boxes()[c+1].text;
-        outs << endl;
-    }
+	if(parity_ref.size() != 0){
+    	for(unsigned int c = 0; c < parity_ref[0].get_text_boxes().size();c += 2){
+        	outs << setprecision(4);
+        	outs F8 parity_ref[0].get_text_boxes()[c].text
+				 I parity_ref[0].get_text_boxes()[c+1].text << endl;
+    	}
+	}
 
 	return true;
 }
@@ -982,6 +980,15 @@ void icntrl10_form_button::init_form(const vector<regex>& pattern_tests){
                  pattern_tests);
 
 }
+
+bool icntrl10_form_button::make_output(ofstream& outs,vector<index_value>& bad_input_list){
+
+		//code stub just to make this thing seem satisfied, icntrl10 isn't actually
+		//implemented yet
+		if(my_form.get_pages().size() == 0) return true;
+		else return false;
+}
+
 
 //################################################################################
 

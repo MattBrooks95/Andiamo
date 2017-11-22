@@ -12,7 +12,7 @@ field::field(string tile_name_in,string display_name_in,string image_name_in, in
 	image_name = image_name_in;
 
 	size.width = width;
-        size.height = height;
+    size.height = height;
 
 	help_mode = false; //start off in normal mode
 
@@ -21,7 +21,8 @@ field::field(string tile_name_in,string display_name_in,string image_name_in, in
 	am_I_locking = false;//not in locking mode at default
 
 	temp_input = "temp_input -> default failure"; //start off input blank. Default value loaded in by input
-		    //manager, overridden by user
+	//manager, overridden by user
+
 	editing_location = 0;
 	text_dims.w = 0;
 	text_dims.h = 0;
@@ -38,13 +39,13 @@ field::field(string tile_name_in,string display_name_in,string image_name_in, in
 	sdl_font = NULL;
 
 	my_text_surf = NULL;
-	my_text_tex = NULL;//these need to start off null, then be created later
+	my_text_tex  = NULL;//these need to start off null, then be created later
 
 	my_surf = NULL; //these will be taken care of by graphics_init() later
-	my_tex = NULL;
+	my_tex  = NULL;
 
 	my_help_surf = NULL; //these will be set up by graphics_init's helper text_init
-	my_help_tex = NULL;
+	my_help_tex  = NULL;
 
 	sdl_help_renderer = NULL;
 
@@ -53,19 +54,140 @@ field::field(string tile_name_in,string display_name_in,string image_name_in, in
 	lock_texture = NULL;
 	is_locked = false;
 
-
-
-
 	//this will allow the field to change values in the input manager's vectors
 	//they will be set up by give_defaults. Note that it's likely that any one tile will only have one
 	//of these not be null
-	int4_hook = NULL;
-	real8_hook = NULL;
-	string_hook = NULL;
+	int4_hook       = NULL;
+	real8_hook      = NULL;
+	string_hook     = NULL;
 	int4_array_hook = NULL;
-	r8_array_hook = NULL;
+	r8_array_hook   = NULL;
 
 }
+
+field::field(const field& other){
+	//cout << "Copy constructor for fields called!" << endl;
+
+	tile_name = other.tile_name;
+	display_name = other.display_name;
+
+	//copy over the description lines, if any
+	for(unsigned int c = 0; c < other.descriptions.size(); c++){
+		descriptions.push_back(other.descriptions[c]);
+	}
+
+	int4_hook       = other.int4_hook;
+	real8_hook      = other.real8_hook;
+	string_hook     = other.string_hook;
+	int4_array_hook = other.int4_array_hook;
+	r8_array_hook   = other.r8_array_hook;
+
+	temp_input = other.temp_input; 
+
+	editing_location = other.editing_location;
+
+	text_dims.w = other.text_dims.w;
+	text_dims.h = other.text_dims.h;
+
+	text_dims.x = other.text_dims.x;
+	text_dims.y = other.text_dims.y;
+
+	is_red = other.is_red;
+
+	is_locked = other.is_locked;
+
+	am_I_locking = other.am_I_locking;//not in locking mode at default
+
+	xloc = other.xloc;
+	yloc = other.yloc;
+
+	image_p = other.image_p;
+
+	image_name = other.image_name;
+
+	help_mode = other.help_mode; //start off in normal mode
+
+	sdl_xscroll = other.sdl_xscroll;
+
+	sdl_yscroll = other.sdl_yscroll;
+
+	sdl_font = other.sdl_font;
+
+	sdl_help_renderer = other.sdl_help_renderer;
+
+	lock_surface = NULL;
+
+	lock_texture = NULL;
+
+	my_text_surf = NULL;
+
+	my_text_tex  = NULL;
+
+	my_surf = NULL; 
+
+	my_tex  = NULL;
+
+	my_help_surf = NULL;
+	my_help_tex  = NULL;
+
+	size.width  = other.size.width;
+    size.height = other.size.height;
+
+
+	text_box.y_offset = other.text_box.y_offset; 
+
+	text_box.text_color = other.text_box.text_color;
+
+	text_box.box_surf  = NULL;
+	text_box.box_tex   = NULL;
+
+	text_box.text_surf = NULL;
+	text_box.text_tex  = NULL;
+
+	text_box.cursor_surface = NULL;
+	text_box.cursor_texture = NULL;
+
+}
+
+field::~field(){
+	if(my_text_surf != NULL && my_text_tex != NULL){
+		SDL_FreeSurface(my_text_surf);
+		my_text_surf = NULL;
+		SDL_DestroyTexture(my_text_tex);
+		my_text_tex  = NULL;
+	} else {
+		error_logger.push_error("Attempted double free in ~field!");
+	}
+
+	if(my_surf != NULL && my_tex != NULL){
+		SDL_FreeSurface(my_surf);
+		my_surf = NULL;
+		SDL_DestroyTexture(my_tex);
+		my_tex  = NULL;
+	} else {
+		error_logger.push_error("Attempted double free in ~field!");
+	}
+
+	if(my_help_surf != NULL && my_help_tex != NULL){
+		SDL_FreeSurface(my_help_surf);
+		my_help_surf = NULL;
+		SDL_DestroyTexture(my_help_tex);
+		my_help_tex = NULL;
+	} else {
+		error_logger.push_error("Attempted double free in ~field!");
+	}
+
+	if(lock_surface != NULL && lock_texture != NULL){
+		SDL_FreeSurface(lock_surface);
+		lock_surface = NULL;
+		SDL_DestroyTexture(lock_texture);
+		lock_texture = NULL;
+	} else {
+		error_logger.push_error("Attempted double free in ~field!");
+	}
+
+}
+
 SDL_Rect field::get_rect() const{
 	SDL_Rect return_me = {xloc+ (*sdl_xscroll),yloc+ (*sdl_yscroll),size.width,size.height};
 
@@ -105,14 +227,11 @@ void field::graphics_init(SDL_Renderer* sdl_help_renderer_in,string image_p_in,
 	lock_texture = SDL_CreateTextureFromSurface(sdl_help_renderer,lock_surface);
 	if(lock_texture == NULL) error_logger.push_error(string(SDL_GetError()));
 
-
-
-
-
 	text_init();
 
-	//note that text_box_init() is called from manager::give_fields_defaults because of a timing issue where this code would run
-	//before it was given access to the info in the input_maker
+	//note that text_box_init() is called from manager::give_fields_defaults because of a
+	//timing issue where this code would run before it was given 
+	//access to the info in the input_maker
 
 	sdl_xscroll = xscroll_in;
 	sdl_yscroll = yscroll_in;
@@ -559,22 +678,6 @@ void field::go_back(){
 }
 
 
-field::~field(){
-	SDL_FreeSurface(my_text_surf);//give back memory
-	SDL_DestroyTexture(my_text_tex);//give back memory
-
-	SDL_FreeSurface(my_surf); //free memory
-	SDL_DestroyTexture(my_tex); //free memory
-
-	SDL_FreeSurface(my_help_surf);
-	SDL_DestroyTexture(my_help_tex);
-
-	SDL_FreeSurface(lock_surface);
-	SDL_DestroyTexture(lock_texture);
-
-}
-
-
 void field::text_box_init(){
 	//      v distance below tile =     v tile height - v constant pixel height
 	text_box.y_offset =                 size.height   - 25;
@@ -617,11 +720,12 @@ void field::text_box_init(){
 }
 
 sdl_text_box::sdl_text_box(){
+
 	box_surf = NULL;
-	box_tex = NULL;
+	box_tex  = NULL;
 
 	text_surf = NULL;
-	text_tex = NULL;
+	text_tex  = NULL;
 
 	cursor_surface = NULL;
 	cursor_texture = NULL;
@@ -635,21 +739,27 @@ sdl_text_box::~sdl_text_box(){
 
     if(box_surf != NULL){
 	    SDL_FreeSurface(box_surf);
+		box_surf = NULL;
     }
     if(box_tex != NULL){
 	    SDL_DestroyTexture(box_tex);
+		box_tex = NULL;
     }
     if(text_surf != NULL){
 	    SDL_FreeSurface(text_surf);
+		text_surf = NULL;
     }
     if(text_tex != NULL){
     	SDL_DestroyTexture(text_tex);
+		text_tex = NULL;
     }
     if(cursor_surface != NULL){
 	    SDL_FreeSurface(cursor_surface);
+		cursor_surface = NULL;
     }
     if(cursor_texture != NULL){
 	    SDL_DestroyTexture(cursor_texture);
+		cursor_texture = NULL;
     }
 }
 

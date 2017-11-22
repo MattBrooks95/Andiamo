@@ -74,6 +74,12 @@ class field{
 	 *\param height is the height of the image supplied for the title (and the tile height) */
 	field(std::string tile_name_in,std::string display_name_in,std::string image_name_in, int width, int height);
 
+	//! copy constructor ensures that memory is not lost or double free'd
+	field(const field& other);
+
+	//! frees dynamic memory
+	~field();
+
 	//! fields should save their render information to save time and readability in main loop and drawing
 	/*! this is not done, and will likely change the structure of the program. This function now also allows
 	 *field objects access to the font information through sdl_font* */
@@ -101,10 +107,6 @@ class field{
 	 * give_fields_render
 	 */
 	void draw_me();
-
-
-	//! this the destructor for the field/tile object - does nothing
-	~field();
 	
 	//! this member prints a message if the user clicks on this tile
 	/*! this function prints to the error logger
@@ -141,6 +143,7 @@ class field{
 	 *will go bad. This would cause illegal reads of memory, and mayhem.
 	 *\return true if everything went well, false if an illegal string issue occured */
 	bool update_my_value();
+
 	//! this function is used to swap the box background texture to red
 	/*! this is enacted by the manager when this tile fails to convert the user's information
 	 *with stoi or stod. It serves as an error indicator for the fields that failed the test. */
@@ -155,10 +158,8 @@ class field{
 	 *on the next frame that occurs */
 	void update_texture();
 
-
 	//! this function deletes the last character, unless the string is empty, then it does nothing
 	void back_space();
-
 
 	//! this void member prints the field's info to a given stream
 	/*! it prints to the error logger*/

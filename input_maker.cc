@@ -388,8 +388,8 @@ void input_maker::output(){
 
 	//if the conditions from the input manual are met
 	if( int4_params.at("ICNTRL4").value != 0 ){
-		//do line 8
 		do_line8(outs,int4_params);
+		//do line 8
 		//do the form's output
 		std::vector<index_value> icntrl4_bad_inputs;
 		if(!b_manager->get_icntrl_4().make_output(outs,icntrl4_bad_inputs)){
@@ -406,17 +406,22 @@ void input_maker::output(){
 	//#########MAKE OUTPUTS FROM FORM_BUTTONS ##############################################################//
 	std::vector<index_value> icntrl6_bad_inputs;
 	if(!b_manager->get_icntrl_6().make_output(outs,icntrl6_bad_inputs)){
-		cout << "DO SOMETHING ABOUT BAD INPUTS HERE" << endl;
+		cout << "DO SOMETHING ABOUT ICNTRL6 BAD INPUTS HERE" << endl;
 	}
 
 	std::vector<index_value> icntrl8_bad_inputs;
 	if(!b_manager->get_icntrl_8().make_output(outs,icntrl8_bad_inputs)){
-		cout << "DO SOMETHING ABOUT BAD INPUTS HERE" << endl;
+		cout << "DO SOMETHING ABOUT ICNTRL8 BAD INPUTS HERE" << endl;
+		cout << "Icntrl8 error list: " << endl;
+		for(unsigned int c = 0; c < icntrl8_bad_inputs.size(); c++){
+			cout << "Text: " << icntrl8_bad_inputs[c].value
+				 << " Index: " << icntrl8_bad_inputs[c].index << endl;
+		}
 	}
 
 	std::vector<index_value> icntrl10_bad_inputs;
 	if(!b_manager->get_icntrl_10().make_output(outs,icntrl10_bad_inputs)){
-		cout << "DO SOMETHING ABOUT BAD INPUTS HERE" << endl;
+		cout << "DO SOMETHING ABOUT ICNTRL10 BAD INPUTS HERE" << endl;
 	}
 	//######################################################################################################//
 

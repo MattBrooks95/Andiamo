@@ -28,32 +28,41 @@ void manager::init(){
 	string temp_string;//used to store unidentified line
 
 	regex img_pattern("\\s*?.*\\.png\\s*?"); //this line specifies an image name
-	regex field_size_pattern("\\s*?[0-9]+?\\s*?x\\s*?[0-9]+?\\s*?");//this recognizes lines that specify tile size
-					 //lines should be of the form widthxheight EX:100x100
 
-	regex name_pattern("\\s*?([a-z0-9_A-Z]+?):?(.*)?\\s*?"); //this line specifies a tile name
-	regex semi_pattern(":");//used to tell if the name line is of the form ->   HFvariable:EnglishVariable
+	//this recognizes lines that specify tile size lines should be of the
+	//form widthxheight EX:100x100
+	regex field_size_pattern("\\s*?[0-9]+?\\s*?x\\s*?[0-9]+?\\s*?");
+
+	//this line specifies a tile name
+	regex name_pattern("\\s*?([a-z0-9_A-Z]+?):?(.*)?\\s*?");
+
+	//used to tell if the name line is of the form ->   HFvariable:EnglishVariable
+	regex semi_pattern(":");
+
+	//describes a pattern for tile/input descriptors that starts with a 'c'
+	//and is followed by exactly one space, then contains any number of any characters
 	regex desc_pattern("c .*");
-		//describes a pattern for tile/input descriptors that starts with a 'c'
-		//and is followed by exactly one space, then contains any number of any characters
 
-	regex line_separator("\\s*?line_[0-9]+?[A-Z]?.*"); //this line recognizes the lines that separate
-		//the parameters into lines that correspond with the input manual,
-		//so they can be stored together and easily (and readably) printed to the HF file later
+	//this line recognizes the lines that separate
+	//the parameters into lines that correspond with the input manual,
+	//so they can be stored together and easily (and readably) printed to the HF file later
+	regex line_separator("\\s*?line_[0-9]+?[A-Z]?.*");
 
-	/*  This map of maps needs to be filled by this subroutine
-	std::map<std::string,std::map<std::string,field>> fields;//!< trying something new, to keep relevant tiles together
-	*/
+
 	getline(ins,temp_string);//priming read
+
 	//loop over the entire tile_Input/tiles.txt configuration file
 	while(!ins.eof() ){
+
 		if(ins.fail()) break;//get out on potentially erroneous last run
 
 		//reset new line container each run of loop
 		map<string,field> new_line;
 		string line_name;
 
-		while( !ins.eof() && !regex_match(temp_string,line_separator) ){ //read until a line start indicator/separator is found
+	 	//read until a line start indicator/separator is found
+		while( !ins.eof() && !regex_match(temp_string,line_separator) ){
+
 			if( ins.fail() || temp_string.empty() ){
 				//we may not necessarily find this case in error, as the very last group in the config file won't
 				//end with a line separator, because no line will come after it
@@ -144,9 +153,12 @@ void manager::init(){
 			temp_field.print();
 			error_logger.push_msg("##########################################");
 
-			new_line.emplace(tile_name,temp_field);//push the field into the map for that parameter's line
+			//push the field into the map for that parameter's line
+			new_line.emplace(tile_name,temp_field);
+
 			if( !ins.fail() ){
-				getline(ins,temp_string);//"andy" is the current line, so go ahead and read the next one
+				//"andy" is the current line, so go ahead and read the next one
+				getline(ins,temp_string);
 			}
 		}
 
@@ -163,11 +175,12 @@ void manager::init(){
 	}
 }
 
+/*
 manager::~manager(){
 
 
 }
-
+*/
 
 void manager::set_input_maker_hook(input_maker* input_maker_hook_in){
 	//seems to be working
@@ -248,9 +261,10 @@ void manager::give_int4_fields_defaults(){
 		  //try to find the desired parameter in this line
 		  try {
 
-		    	line_it->second.at(big_it->first).int4_hook = &big_it->second; //let the field reference it's place in the
-										       //input_maker map, so it can output the new
-										       //given to it by the user, to the HF output
+			//let the field reference it's place in the input_maker map,
+			//so it can output the new value given to it by the user, to the HF output
+		    line_it->second.at(big_it->first).int4_hook = &big_it->second;
+
 			//-1804 means that this parameter shouldn't have a default value, so set the text box's text
 			//to a message instead
 			if(big_it->second.value == -1804) {
@@ -279,7 +293,6 @@ void manager::give_int4_fields_defaults(){
 			     		      +"\n have matching names.");
 
 		}
-
 
 	}
 }

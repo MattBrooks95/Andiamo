@@ -31,7 +31,7 @@ class manager{
 	manager();
 
 	//! destructor is left empty for now.
-	~manager();
+	//~manager();
 
 	//! This member loads a map of parameters into the map of lines
 	/*! this way, when the parameters are output to the HF file,

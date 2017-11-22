@@ -37,7 +37,7 @@ bool exit_button::handle_click(SDL_Event& mouse_event){
 		which = my_click(mouse_event);//see if they clicked on the yes or no boxes
 
 		my_click_helper(which,satisfied);
-		if(which == 1 || which ==2) did_something = true;
+		if(which == 1 || which == 2) did_something = true;
 		SDL_Delay(50);
 	}
 	return did_something;
