@@ -374,10 +374,19 @@ void input_maker::output(){
         do_line5A(outs,real8_params);
     }
 
+
+	//this vector of strings containes messages about the user's bad inputs in
+	//the form buttons. Each form's errors should be shoved into this vector
+	//so that it's possible to render an error message
+	vector<string> total_form_errors;
+
+
+
+
     //do line 5D or 5E
 	std::vector<index_value> ilv3_ilv5_bad_inputs;
     if(!b_manager->get_ilv3_ilv5().make_output(outs,ilv3_ilv5_bad_inputs)){
-		cout << "DO SOMETHING ABOUT BAD INPUTS HERE" << endl;
+		total_form_errors.push_back("##############Ilv3/ilv5 error list##############\n");
 	}
 
 	//do line 6
@@ -393,7 +402,7 @@ void input_maker::output(){
 		//do the form's output
 		std::vector<index_value> icntrl4_bad_inputs;
 		if(!b_manager->get_icntrl_4().make_output(outs,icntrl4_bad_inputs)){
-			cout << "DO SOMETHING ABOUT BAD INPUTS HERE" << endl;
+			total_form_errors.push_back("##############Icntrl4 error list##############\n");
 		}
 	}//elsewise, don't do lines 8&9
 
@@ -406,25 +415,34 @@ void input_maker::output(){
 	//#########MAKE OUTPUTS FROM FORM_BUTTONS ##############################################################//
 	std::vector<index_value> icntrl6_bad_inputs;
 	if(!b_manager->get_icntrl_6().make_output(outs,icntrl6_bad_inputs)){
-		cout << "DO SOMETHING ABOUT ICNTRL6 BAD INPUTS HERE" << endl;
+		total_form_errors.push_back("##############Icntrl6 error list##############\n");
 	}
 
 	std::vector<index_value> icntrl8_bad_inputs;
 	if(!b_manager->get_icntrl_8().make_output(outs,icntrl8_bad_inputs)){
-		cout << "DO SOMETHING ABOUT ICNTRL8 BAD INPUTS HERE" << endl;
-		cout << "Icntrl8 error list: " << endl;
+		total_form_errors.push_back("##############Icntrl8 error list##############\n");
+
 		for(unsigned int c = 0; c < icntrl8_bad_inputs.size(); c++){
-			cout << "Text: " << icntrl8_bad_inputs[c].value
-				 << " Index: " << icntrl8_bad_inputs[c].index << endl;
+			string temp_error =  "Index: " +to_string(icntrl8_bad_inputs[c].index)
+							     + "  Argument: " + icntrl8_bad_inputs[c].value
+						  		 + "\n";
+			total_form_errors.push_back(temp_error);
+			//cout << "Text: " << icntrl8_bad_inputs[c].value
+				 //<< " Index: " << icntrl8_bad_inputs[c].index << endl;
 		}
 	}
 
 	std::vector<index_value> icntrl10_bad_inputs;
 	if(!b_manager->get_icntrl_10().make_output(outs,icntrl10_bad_inputs)){
-		cout << "DO SOMETHING ABOUT ICNTRL10 BAD INPUTS HERE" << endl;
+		total_form_errors.push_back("##############Icntrl10 error list#############\n");
 	}
 	//######################################################################################################//
 
+
+	for(unsigned int c = 0; c < total_form_errors.size();c++){
+		cout << total_form_errors[c];
+
+	}
 
 	outs.flush();//push changes to file, if this is not here C++ will wait to do the writing until
 		     //the program is terminated

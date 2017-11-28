@@ -298,6 +298,8 @@ void button_manager::fill_regex_vectors(vector<regex>& icntrl_6_patterns,
 
 	//set up ilv3_ilv5 tests 
 	ilv3_ilv5_patterns.push_back(int5);
+	ilv3_ilv5_patterns.push_back(int5);
+	ilv3_ilv5_patterns.push_back(f7_3);
 	ilv3_ilv5_patterns.push_back(f7_3);
 
 }
