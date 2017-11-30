@@ -15,6 +15,10 @@
 #include "logger.h"
 extern logger error_logger;
 
+using std::string;
+using std::vector;
+
+
 //! this is a handy bag for the textures and surfaces necessary for text box creation. To be used in a field object
 struct sdl_text_box{
 	//! the constructor sets all pointers to NULL, it seems like it's the safe thing to do
@@ -72,7 +76,7 @@ class field{
 	 *\param image_name_in is the name of the actual image used. This must be correct.
 	 *\param width is the width of the image supplied for the tile (and the tile width)
 	 *\param height is the height of the image supplied for the title (and the tile height) */
-	field(std::string tile_name_in,std::string display_name_in,std::string image_name_in, int width, int height);
+	field(string tile_name_in,string display_name_in,string image_name_in, int width, int height);
 
 	//! copy constructor ensures that memory is not lost or double free'd
 	field(const field& other);
@@ -83,7 +87,7 @@ class field{
 	//! fields should save their render information to save time and readability in main loop and drawing
 	/*! this is not done, and will likely change the structure of the program. This function now also allows
 	 *field objects access to the font information through sdl_font* */
-	void graphics_init(SDL_Renderer* sdl_help_renderer_in,std::string image_p_in,
+	void graphics_init(SDL_Renderer* sdl_help_renderer_in,string image_p_in,
 			   int* xscroll_in,int* yscroll_in,TTF_Font* font_in);
 	//! This is a function, called from graphics_init(), that sets up the text's surface
 	/*! it should contain a logic that makes sure that the text does not run off the tile's size
@@ -128,12 +132,12 @@ class field{
 
 	//! this function is used by manager::give_fields_defaults to set the text as read in from the HF config file
 	/*! this helper will also update the text's surface dimensions, to be used when the text is drawn to the screen */
-	void init_temp_input(std::string data);
+	void init_temp_input(string data);
 
 	//! this function takes the file name of a different tile background in the images folder, and uses it instead
 	/*! The tiles that have logical control over other parameters (cause locking), will be made purple
 	 *to indicate that they are the reason some tiles are unavailable.*/
-	void change_tile_background(std::string image_name);
+	void change_tile_background(string image_name);
 
 
 	//! this function copies the temp value that was likely entered by the user into the output vectors
@@ -179,17 +183,17 @@ class field{
 
 	tile_size get_size() { return size;}//!< getter for the private tile_size field
 
-	std::string get_img_name(){ return image_name;}//!< getter for private image name field
+	string get_img_name(){ return image_name;}//!< getter for private image name field
 
 	//! the tile_name should be a parameter name for an HF_input file
 	/*! this name should correspond to a parameter name in the HF_config file. They are associated by 
 	 *this parameter name */
-	std::string tile_name;
+	string tile_name;
 
 	//! the display name is a name that takes the place of the variable's acronym in the graphics
-	std::string display_name;
+	string display_name;
 
-	std::vector<std::string> descriptions; //!< input description lines
+	vector<string> descriptions; //!< input description lines
 
 	//! access to this tile's fortran struct in input_maker vector. Set up by manager::give_fields_defaults
 	param_int4* int4_hook;
@@ -206,7 +210,7 @@ class field{
 	param_r8_array* r8_array_hook;
 
 	//! stores text entered from the user overtop the default value which is loaded in with the appropriate ftran_struct hook
-	std::string temp_input;
+	string temp_input;
 
 	//! save the text entry location
 	/*! this controls the cursor when the user is typing */
@@ -231,7 +235,7 @@ class field{
   private:
 
 	//! string that corresponds to the path to the image resource directory. set by graphics_init
-	std::string image_p;
+	string image_p;
 	bool help_mode;//!< this boolean variable controls whether the field will draw it's normal box or help box
 
 	//################################### SDL_HELP HOOKS #####################################################
@@ -259,7 +263,7 @@ class field{
 	SDL_Texture* my_tex;//!< saves the texture, so that it isn't recreated every frame
 
 
-	std::string image_name; //!< the name of the image, so it can be found in Assets/Images
+	string image_name; //!< the name of the image, so it can be found in Assets/Images
 
 	tile_size size; //!< tile_size struct containing the dimensions for this particular card/tile/block
 };

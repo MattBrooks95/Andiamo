@@ -175,8 +175,8 @@ void input_maker::init(){
 						  //and their size
 				error_logger.push_msg("Is a string line!");
 				error_logger.push_msg("This is that line split along spaces:");
-			//split across spaces, except for spaces within ""
-			vector<string> tokens = split(temp_string,' ');
+				//split across spaces, except for spaces within ""
+				vector<string> tokens = split(temp_string,' ');
 				for(unsigned int c = 0; c < tokens.size() ;c++){
 					error_logger.push_msg("\t:"+ tokens[c]);
 				}
@@ -303,7 +303,7 @@ void input_maker::init(){
 	ins.close();
 }
 
-void input_maker::output(){
+bool input_maker::output(vector<string>& form_bad_inputs){
 	//note that this will not yet be properly formatted for HF input, mostly here for testing field input
 	//and this class's output logic
 
@@ -315,7 +315,7 @@ void input_maker::output(){
 		outs.open( (output_p+output_file_name).c_str(),std::fstream::trunc);
 		if(outs.fail()){
 			error_logger.push_error("Opening output stream failed again.");
-			return;
+			return false;
 		} 
 
 	}
@@ -362,7 +362,6 @@ void input_maker::output(){
 
 		do_line4B(outs,r8_array_params);
 		//###############################################################################################
-
 	}
 	//####################### IENCH = 7 LINES ###############################################################
 
@@ -375,18 +374,17 @@ void input_maker::output(){
     }
 
 
-	//this vector of strings containes messages about the user's bad inputs in
-	//the form buttons. Each form's errors should be shoved into this vector
-	//so that it's possible to render an error message
-	vector<string> total_form_errors;
-
-
-
-
     //do line 5D or 5E
 	std::vector<index_value> ilv3_ilv5_bad_inputs;
     if(!b_manager->get_ilv3_ilv5().make_output(outs,ilv3_ilv5_bad_inputs)){
-		total_form_errors.push_back("##############Ilv3/ilv5 error list##############\n");
+		form_bad_inputs.push_back("##############Ilv3/ilv5 error list##############\n");
+		form_bad_inputs.push_back("Distinct Residual Level Density - Ilv3 OR Distinct Level Density Model form\n");
+			for(unsigned int c = 0; c < ilv3_ilv5_bad_inputs.size(); c++){
+				string temp_error =  "Index: " +to_string(ilv3_ilv5_bad_inputs[c].index)
+								     + "  Argument: " + ilv3_ilv5_bad_inputs[c].value
+							  		 + "\n";
+				form_bad_inputs.push_back(temp_error);
+			}
 	}
 
 	//do line 6
@@ -402,7 +400,14 @@ void input_maker::output(){
 		//do the form's output
 		std::vector<index_value> icntrl4_bad_inputs;
 		if(!b_manager->get_icntrl_4().make_output(outs,icntrl4_bad_inputs)){
-			total_form_errors.push_back("##############Icntrl4 error list##############\n");
+			form_bad_inputs.push_back("##############Icntrl4 error list##############\n");
+			form_bad_inputs.push_back("Resolved Level + Continuum form\n");
+			for(unsigned int c = 0; c < icntrl4_bad_inputs.size(); c++){
+				string temp_error =  "Index: " +to_string(icntrl4_bad_inputs[c].index)
+								     + "  Argument: " + icntrl4_bad_inputs[c].value
+							  		 + "\n";
+				form_bad_inputs.push_back(temp_error);
+			}
 		}
 	}//elsewise, don't do lines 8&9
 
@@ -415,18 +420,25 @@ void input_maker::output(){
 	//#########MAKE OUTPUTS FROM FORM_BUTTONS ##############################################################//
 	std::vector<index_value> icntrl6_bad_inputs;
 	if(!b_manager->get_icntrl_6().make_output(outs,icntrl6_bad_inputs)){
-		total_form_errors.push_back("##############Icntrl6 error list##############\n");
+		form_bad_inputs.push_back("##############Icntrl6 error list##############\n");
+		form_bad_inputs.push_back("Parameter Search form\n");
+		for(unsigned int c = 0; c < icntrl6_bad_inputs.size(); c++){
+			string temp_error =  "Index: " +to_string(icntrl6_bad_inputs[c].index)
+							     + "  Argument: " + icntrl6_bad_inputs[c].value
+						  		 + "\n";
+			form_bad_inputs.push_back(temp_error);
+		}
 	}
 
 	std::vector<index_value> icntrl8_bad_inputs;
 	if(!b_manager->get_icntrl_8().make_output(outs,icntrl8_bad_inputs)){
-		total_form_errors.push_back("##############Icntrl8 error list##############\n");
-
+		form_bad_inputs.push_back("##############Icntrl8 error list##############\n");
+		form_bad_inputs.push_back("Residual Level Threshold Count form\n");
 		for(unsigned int c = 0; c < icntrl8_bad_inputs.size(); c++){
 			string temp_error =  "Index: " +to_string(icntrl8_bad_inputs[c].index)
 							     + "  Argument: " + icntrl8_bad_inputs[c].value
 						  		 + "\n";
-			total_form_errors.push_back(temp_error);
+			form_bad_inputs.push_back(temp_error);
 			//cout << "Text: " << icntrl8_bad_inputs[c].value
 				 //<< " Index: " << icntrl8_bad_inputs[c].index << endl;
 		}
@@ -434,24 +446,37 @@ void input_maker::output(){
 
 	std::vector<index_value> icntrl10_bad_inputs;
 	if(!b_manager->get_icntrl_10().make_output(outs,icntrl10_bad_inputs)){
-		total_form_errors.push_back("##############Icntrl10 error list#############\n");
+		form_bad_inputs.push_back("##############Icntrl10 error list#############\n");
+		form_bad_inputs.push_back("Specify Spin Cutoff? form\n");
+		for(unsigned int c = 0; c < icntrl10_bad_inputs.size(); c++){
+			string temp_error =  "Index: " +to_string(icntrl10_bad_inputs[c].index)
+							     + "  Argument: " + icntrl10_bad_inputs[c].value
+						  		 + "\n";
+			form_bad_inputs.push_back(temp_error);
+		}
 	}
 	//######################################################################################################//
 
+	//if the vector of error message's size is not 0, don't make the output file
+	//and present a message to the user
+	if(form_bad_inputs.size() != 0){
 
-	for(unsigned int c = 0; c < total_form_errors.size();c++){
-		cout << total_form_errors[c];
+		return false;
 
+	} else {
+
+		outs.flush();//push changes to file, if this is not here C++ will wait
+					 // to do the writing until the program is ends
+		//close the output file stream
+		outs.close();
+		output_was_made = true;//make this boolean true, so that during the closing
+							   //process we know that we don't need to remind the user
+							   // to generate an input file first
+		check_map();
+		return true;
 	}
-
-	outs.flush();//push changes to file, if this is not here C++ will wait to do the writing until
-		     //the program is terminated
-	//close the output file stream
-	outs.close();
-	output_was_made = true;//make this boolean true, so that during the closing process we know that we don't
-			       //need to remind the user to generate an input file first
-	check_map();
 }
+
 //########################## NON MEMBER HELPERS #################################################################
 void output_string(ofstream& outs,const unsigned int& size,const string& string_in){
 	//set up output flags

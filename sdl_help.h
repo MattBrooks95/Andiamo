@@ -11,6 +11,10 @@
 #include "input_maker.h"
 
 #include "logger.h"
+
+using std::string;
+using std::vector;
+
 extern logger error_logger;
 
 class button_manager; //forward declaration,so sdl can be passed a button_manager pointer without needing
@@ -32,8 +36,8 @@ struct win_size{
 };
 //! the following struct is used by calc_corners to remember the tiles it's currently considering
 struct names_and_width{
-	std::string line_name;
-	std::string param_name;
+	string line_name;
+	string param_name;
 	unsigned int width;
 };
 bool compare_width(names_and_width& left, names_and_width& right);
@@ -48,7 +52,7 @@ class sdl_help{
 	/*! It initializes SDL and SDL image. Window size is based on a
 	 *SDL_GetCurrentDisplayMode call. \param name_in is the desired name of
          * the window.*/
-	sdl_help(std::string name_in = "Andiamo!",std::string HF_input_file_in = "HF_config.txt",std::string bg_image_name_in = "hubble_deep_field.png");
+	sdl_help(string name_in = "Andiamo!",string HF_input_file_in = "HF_config.txt",string bg_image_name_in = "hubble_deep_field.png");
 
 	//! This is a destructor member for the sdl_help class.
 	/*! It enacts SDL_Quit() and IMG_Quit(). */
@@ -89,12 +93,12 @@ class sdl_help{
 	 *\param start_height is the height at which the tile should start placing fields.
 	 *This is what will allow the lines to not overlap each other. Before this function exits,
 	 *it should update the start_height value to account for the then completed field placement. */
-	void calc_corners_helper(const std::string line_in, std::map<std::string,field>& map_in,
+	void calc_corners_helper(const string line_in, map<string,field>& map_in,
 				 unsigned int& start_height,int row_limit);
 
 	//! this is an alternative helper that prints line 6 in the order they appear in the manual, instead of alphabetical
-	void calc_corners_ordered(const std::string line_in,std::map<std::string,field>& map_in,
-					 unsigned int& start_height,int row_limit,std::vector<std::string>& ordered);
+	void calc_corners_ordered(const string line_in,std::map<string,field>& map_in,
+					 unsigned int& start_height,int row_limit,vector<string>& ordered);
 
 
 	//! This member changes this class's x_scroll and y_scroll values to the given parameters
@@ -235,12 +239,12 @@ class sdl_help{
 	//I have no friends
 
   private:
-	std::string window_name; //!<  \brief A string that contains the window name, usually Andiamo."
-	std::string image_p; //!<  \brief a string that points to the resource image directory 
-	std::string hf_input_p; //!< \brief a path string to the algorithm's input file folder 
-	std::string font_p;//!< \brief a path string to the font folder
+	string window_name; //!<  \brief A string that contains the window name, usually Andiamo."
+	string image_p; //!<  \brief a string that points to the resource image directory 
+	string hf_input_p; //!< \brief a path string to the algorithm's input file folder 
+	string font_p;//!< \brief a path string to the font folder
 
-	std::string bg_image_name;
+	string bg_image_name;
 	SDL_Surface* bg_surface;
 	SDL_Texture* bg_texture;
 

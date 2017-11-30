@@ -917,10 +917,6 @@ bool icntrl6_form_button::check_values(vector<index_value>& error_details){
 
 	bool return_me = true;
 
-	//this vector should be filled in with the errors from each of the
-	//forms - parity, search_spectra, and cross_sections
-	vector<index_value> total_errors;
-
 	vector<index_value> parity_errors;
 	vector<index_value> search_errors;
 	vector<index_value> cross_errors;
@@ -938,15 +934,15 @@ bool icntrl6_form_button::check_values(vector<index_value>& error_details){
 	}
 
 	for(unsigned int c = 0; c < parity_errors.size(); c++){
-		total_errors.push_back(parity_errors[c]);
+		error_details.push_back(parity_errors[c]);
 	}
 
 	for(unsigned int c = 0; c < search_errors.size(); c++){
-		total_errors.push_back(search_errors[c]);
+		error_details.push_back(search_errors[c]);
 	}
 
 	for(unsigned int c = 0; c < cross_errors.size(); c++){
-		total_errors.push_back(cross_errors[c]);
+		error_details.push_back(cross_errors[c]);
 	}
 
 	return return_me;
@@ -1191,17 +1187,17 @@ void ilv3_ilv5_form_button::click_helper(SDL_Event& mouse_event){
                 //versa
 		} else if(my_form.prev_init_value == curr_ilv3 || my_form.prev_init_value == curr_ilv5 ){
 
-                        if(my_form.form_title.compare("Distinct Residual Level Density") == 0 && curr_ilv5 > curr_ilv3 ){
+			if(my_form.form_title.compare("Distinct Residual Level Density") == 0 && curr_ilv5 > curr_ilv3 ){
 			        my_form.flush_pages();
-                                my_form.set_form_title("Distinct Level Density Model");
+					my_form.set_form_title("Distinct Level Density Model");
 			        page_creation_helper();
 
-                        } else if(my_form.form_title.compare("Distinct Level Density Model") == 0 && curr_ilv3 > curr_ilv5){
+			} else if(my_form.form_title.compare("Distinct Level Density Model") == 0 && curr_ilv3 > curr_ilv5){
 			        my_form.flush_pages();
-                                my_form.set_form_title("Distinct Residual Level Density");
+					my_form.set_form_title("Distinct Residual Level Density");
 			        page_creation_helper();
 
-                        }
+			}
 
 			my_form.toggle_active();//let the form know that it is now active
 			my_form.form_event_loop(mouse_event);//enter the mini loop for form entry
@@ -1310,8 +1306,7 @@ bool ilv3_ilv5_form_button::make_output(ofstream& outs,vector<index_value>& bad_
 	}
     outs << "ILV3 ILV5 OUTPUT" << endl;
 
-	std::vector<index_value> ilv3_ilv5_errors;
-	check_values(ilv3_ilv5_errors);
+	check_values(bad_input_list);
 
 
     vector<page>& pages = my_form.get_pages();

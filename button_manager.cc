@@ -4,6 +4,8 @@
 
 using namespace std;
 
+#define OU_GREEN 105,78,255
+#define BLACK {0,0,0}
 
 
 button_manager::button_manager(sdl_help* sdl_helper_in){
@@ -453,9 +455,10 @@ void button_manager::text_box_loop(text_box_button* current_button,SDL_Event& ev
 }
 
 bool button_manager::click_handling(SDL_Event& mouse_event){
-	bool done_something = false;//turn off when a button has actually been clicked
-			 	    //no need to check all buttons if one has already been clicked
-			 	    //shouldn't be possible to click two at the same time
+	//turn true when a button has actually been clicked
+	//no need to check all buttons if one has already been clicked
+	//shouldn't be possible to click two at the same time
+	bool done_something = false;
 
 	error_logger.push_msg("HANDLING BUTTON CLICKS");
 	if(!done_something && fop_button.shown){
@@ -482,18 +485,32 @@ bool button_manager::click_handling(SDL_Event& mouse_event){
 	}
 	if(!done_something && lets_go.shown){
 		if( lets_go.handle_click(mouse_event) ){
-			vector<string> bad_input_list;//filled up by update_io_maker if there are issues
-						      //that way user can be given a list of errors
+			//filled up by update_io_maker if there are issues
+			//that way user can be given a list of errors
+			vector<string> bad_input_list;
+
 			//if everything is in place, go ahead and make the file
 			if( clean_up() == 0){
 
 				//update input_maker's info from the tiles
-				if( !sdl_helper->get_mgr().update_io_maker(bad_input_list) ){
+				if( !sdl_helper->get_mgr().update_io_maker(bad_input_list) &&
+					bad_input_list.size() != 0 ){
 					//if something went wrong, this code is executed
 					bad_tile_input_warnings(bad_input_list);
-				} else { //if there were no errors, this is ran
+				} else { 
+					//if there were no errors, this is ran
 					//have input_maker output to the file
-					sdl_helper->get_io_handler().output();
+					vector<string> form_bad_inputs;
+					if(!sdl_helper->get_io_handler().output(form_bad_inputs)){
+						make_form_error_message(form_bad_inputs);
+						//this hangs the application until they do something
+						//dirty solution but it gives them time to read it
+						//maybe put this in its own window at some point?
+						while( !(SDL_PollEvent(&mouse_event) == 1 &&
+							   (mouse_event.type == SDL_MOUSEBUTTONDOWN ||
+							    mouse_event.type == SDL_QUIT ||
+								mouse_event.type == SDL_KEYDOWN)) );
+					}
 				}
 			}
 			done_something = true; //don't consider the other cases, this one has been hit
@@ -585,6 +602,72 @@ bool button_manager::click_handling(SDL_Event& mouse_event){
 
 	error_logger.push_msg("DONE HANDLING BUTTON CLICKS");
 	return done_something;//let main know if it should check tiles or not
+}
+
+void button_manager::make_form_error_message(const vector<string>& form_bad_inputs){
+
+	//get window info to figure out what we're drawing to
+	int window_h = sdl_helper->get_win_size()->height;
+	int window_w = sdl_helper->get_win_size()->width;
+	SDL_Rect destination = {0,0,window_w,window_h};
+
+
+	//set up the surface's pixel masks. I don't fully understand this but it's from
+	//the sdl documentation  https://wiki.libsdl.org/SDL_CreateRGBSurface
+	Uint32 red,green,blue,alpha;
+	#if SDL_BYTEORDER == SDL_BIG_ENDIAN
+	red   = 0xff000000;
+	green = 0x00ff0000;
+	blue  = 0x0000ff00;
+	alpha = 0x000000ff;
+	#else
+	red   = 0x000000ff;
+	green = 0x0000ff00;
+	blue  =	0x00ff0000;
+	alpha = 0xff000000;
+	#endif
+
+	//create a surface w/o a source image that can be blittted to for making error messages
+	SDL_Surface* message_surf = SDL_CreateRGBSurface(0,window_w,window_h,32,red,green,blue,alpha);
+
+	//draw in the created surface with the background color
+	SDL_FillRect(message_surf,NULL,SDL_MapRGBA(message_surf->format,0,OU_GREEN));
+
+	//define the color for the text to be plastered onto the error message
+	SDL_Color text_color = BLACK;
+
+	//keep track of where to draw the next line
+	SDL_Rect line_destination = {0,0,0,0};
+
+	//loop over lines that need rendered to the screen
+	for(unsigned int c = 0; c < form_bad_inputs.size();c++){
+		SDL_Surface* text_surface;
+		text_surface = TTF_RenderUTF8_Blended(sdl_helper->font,form_bad_inputs[c].c_str(),text_color);
+		TTF_SizeText(sdl_helper->font,form_bad_inputs[c].c_str(),&line_destination.w,
+					 &line_destination.h);
+		SDL_BlitSurface(text_surface,NULL,message_surf,&line_destination);
+		line_destination.y += line_destination.h;
+
+		//give memory for this line back
+		SDL_FreeSurface(text_surface);
+	}
+
+	//turn the surface we've created and drawn to into a texture
+	SDL_Texture* message_texture;
+	message_texture = SDL_CreateTextureFromSurface(sdl_helper->renderer,message_surf);
+
+	//draw texture on the screen
+	SDL_RenderCopy(sdl_helper->renderer,message_texture,&destination,&destination);
+	sdl_helper->present();
+
+	//give back memory
+	if(message_surf != NULL){
+		SDL_FreeSurface(message_surf);
+	}
+	if(message_texture != NULL){
+		SDL_DestroyTexture(message_texture);
+	}
+
 }
 
 int button_manager::clean_up(){

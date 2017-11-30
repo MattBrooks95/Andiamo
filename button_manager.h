@@ -109,6 +109,14 @@ class button_manager{
 	 *and false elsewise */
 	bool click_handling(SDL_Event& mouse_event);
 
+	//! this is a helper function for click_handling that makes an error message about form input
+	/*! \param form_bad_inputs is a string list of error messages from the form button's
+	 *output members. This function makes the message instead of the input maker,
+	 *which fills the error list, because input_maker does not have access to the
+	 *sdl drawing class. */	
+	void make_form_error_message(const std::vector<std::string>& form_bad_inputs);
+
+
 	//GETTERS AND SETTERS
 	//! this member returns the exit button by reference, so its members can be called by other things
 	exit_button& get_exit_dialogue(){ return exit_dialogue;}
