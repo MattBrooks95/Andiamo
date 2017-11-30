@@ -186,11 +186,11 @@ void icntrl8_form_button::click_helper(SDL_Event& mouse_event){
 		screen_size();
 
 		//in this case the form has not been previously created
-		if(!my_form.prev_initiated){
+		if(!my_form.prev_initialized){
 
-
-			page_creation_helper();//most of this work is shared with the recreation case
-					       //so it has been put into a helper function
+			//most of this work is shared with the recreation case
+	    	//so it has been put into a helper function
+			page_creation_helper();
 
 			my_form.toggle_active();//let the form know that it is now active
 			my_form.form_event_loop(mouse_event);//enter the mini loop for form entry
@@ -283,7 +283,7 @@ void icntrl8_form_button::page_creation_helper(){
 
 	my_form.set_page_count(pages_made);
 
-	my_form.prev_initiated = true;//let the form class know that it's pages have been set up
+	my_form.prev_initialized = true;//let the form class know that it's pages have been set up
 	my_form.prev_init_value = icntrl8_val;//and also what conditions caused such a creation
 
 
@@ -528,9 +528,9 @@ void icntrl6_form_button::init_form(const vector<regex>& pattern_tests){
 //this one is kind of unique because the form itself should not change, it has a fixed size in the input manual
 void icntrl6_form_button::parity_page_creation(){
 
-	if( !my_form.prev_initiated ){
+	if( !my_form.prev_initialized ){
 
-		my_form.prev_initiated = true;
+		my_form.prev_initialized = true;
 		my_form.prev_init_value = 18;
 
 		my_form.get_pages().resize(1);//make room for the first and only page
@@ -590,12 +590,12 @@ void icntrl6_form_button::search_spectra_page_creation(){
 					" logics.");
 	}
 
-	if( !search_spectra.prev_initiated ){
+	if( !search_spectra.prev_initialized ){
 
 		search_spectra_page_helper();
 
 	//case where form has been previously created, but INM1's val has not changed, so it does not need to be remade
-	} else if( search_spectra.prev_initiated && search_spectra.prev_init_value == current_INM1_val ){
+	} else if( search_spectra.prev_initialized && search_spectra.prev_init_value == current_INM1_val ){
 		return;
 
 	//case where form has been previously created, and the value of INM1 has been changed
@@ -622,7 +622,7 @@ void icntrl6_form_button::search_spectra_page_helper(){
 	  INM1_val = 0;
   	}
 
-	search_spectra.prev_initiated = true;
+	search_spectra.prev_initialized = true;
 	search_spectra.prev_init_value = INM1_val;
 
 	vector<string> pass_column_labels,pass_row_labels;
@@ -660,7 +660,7 @@ void icntrl6_form_button::search_spectra_page_helper(){
 
 	search_spectra.set_page_count(pages_made);
 
-	search_spectra.prev_initiated = true;//let the form class know that it's pages have been set up
+	search_spectra.prev_initialized = true;//let the form class know that it's pages have been set up
 	search_spectra.prev_init_value = INM1_val;//and also what conditions caused such a creation
 
 
@@ -702,12 +702,12 @@ void icntrl6_form_button::cross_sections_page_creation(){
 					" logics.");
 	}
 
-	if( !cross_sections.prev_initiated ){
+	if( !cross_sections.prev_initialized ){
 
 		cross_sections_helper();
 
 	//case where form has been previously created, but INM2's val has not changed, so it does not need to be remade
-	} else if( cross_sections.prev_initiated && cross_sections.prev_init_value == current_INM2_val ){
+	} else if( cross_sections.prev_initialized && cross_sections.prev_init_value == current_INM2_val ){
 		return;
 
 	//case where form has been previously created, and the value of INM2 has been changed
@@ -733,7 +733,7 @@ void icntrl6_form_button::cross_sections_helper(){
 	  INM2_val = 0;
   	}
 
-	cross_sections.prev_initiated = true;
+	cross_sections.prev_initialized = true;
 	cross_sections.prev_init_value = INM2_val;
 
 	//fill in column labels
@@ -784,7 +784,7 @@ void icntrl6_form_button::cross_sections_helper(){
 
 	cross_sections.set_page_count(pages_made);
 
-	search_spectra.prev_initiated = true;//let the form class know that it's pages have been set up
+	search_spectra.prev_initialized = true;//let the form class know that it's pages have been set up
 	search_spectra.prev_init_value = INM2_val;//and also what conditions caused such a creation
 
 
@@ -1023,7 +1023,7 @@ void icntrl4_form_button::click_helper(SDL_Event& mouse_event){
 		screen_size();
 
 		//in this case the form has not been previously created
-		if(!my_form.prev_initiated){
+		if(!my_form.prev_initialized){
 
 
 			page_creation_helper();//most of this work is shared with the recreation case
@@ -1116,7 +1116,7 @@ void icntrl4_form_button::page_creation_helper(){
 
 	my_form.set_page_count(pages_made);
 
-	my_form.prev_initiated = true;//let the form class know that it's pages have been set up
+	my_form.prev_initialized = true;//let the form class know that it's pages have been set up
 	my_form.prev_init_value = nch4_val;//and also what conditions caused such a creation
 
 
@@ -1174,7 +1174,7 @@ void ilv3_ilv5_form_button::click_helper(SDL_Event& mouse_event){
 		screen_size();
 
 		//in this case the form has not been previously created
-		if(!my_form.prev_initiated){
+		if(!my_form.prev_initialized){
 
 
 			page_creation_helper();//most of this work is shared with the recreation case
@@ -1236,7 +1236,7 @@ void ilv3_ilv5_form_button::page_creation_helper(){
 	bad_arg.what());
 	}
 	//let the form know that it has been initiated
-	my_form.prev_initiated = true;
+	my_form.prev_initialized = true;
 	int rows_needed;//should be set to ilv3 or ilv5, whichever caused this form to be opened
 	vector<string> pass_column_titles;
 	vector<string> pass_row_titles;//this needs to exist, but does nothing here
@@ -1306,7 +1306,9 @@ bool ilv3_ilv5_form_button::make_output(ofstream& outs,vector<index_value>& bad_
 	}
     outs << "ILV3 ILV5 OUTPUT" << endl;
 
-	check_values(bad_input_list);
+	if(!check_values(bad_input_list)){
+		return false;
+	}
 
 
     vector<page>& pages = my_form.get_pages();

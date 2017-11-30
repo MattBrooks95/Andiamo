@@ -203,6 +203,7 @@ void handle_key_down(const SDL_Event& big_event, sdl_help& sdl_help){
             SDL_Event push_me;
             push_me.type = SDL_QUIT;
             SDL_PushEvent(&push_me);
+			break;
 		default:
 			error_logger.push_msg("Unknown key pressed down.");
 			break;

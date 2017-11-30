@@ -64,6 +64,9 @@ class form_button : public button{
 	//! check to make sure the inputs are properly formed
 	virtual bool check_values(std::vector<index_value>& error_details);
 
+	//! this function is a const getter by reference for this button's form
+	const form& get_form(){ return my_form;}
+
   protected:
 	SDL_Surface* lock_surface;//!< save the surface for the lock, when this button is not in use
 	SDL_Texture* lock_texture;//!< save the texture for the lock, when this button is not in use
@@ -81,7 +84,7 @@ class icntrl8_form_button : public form_button{
 
   public:
 
-	//! this function changes the default help message to one that explains icntrl8's conditions
+		//! this function changes the default help message to one that explains icntrl8's conditions
 	void setup_help_msg();
 
 	//! implements the special logic for this class

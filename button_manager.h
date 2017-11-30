@@ -114,7 +114,13 @@ class button_manager{
 	 *output members. This function makes the message instead of the input maker,
 	 *which fills the error list, because input_maker does not have access to the
 	 *sdl drawing class. */	
-	void make_form_error_message(const std::vector<std::string>& form_bad_inputs);
+	void make_form_error_message(const std::vector<std::string>& form_bad_inputs,
+								 SDL_Texture* message_texture, SDL_Rect& destination);
+
+	//! implements the loop that allows the user to view the form error message
+	/*! scrolling is allowed, so the whole error message can be viewed */
+	void form_error_message_loop(SDL_Event& mouse_event, SDL_Texture* message_texture,
+								 SDL_Rect& destination);
 
 
 	//GETTERS AND SETTERS

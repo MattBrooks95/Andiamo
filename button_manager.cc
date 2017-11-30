@@ -146,8 +146,8 @@ void button_manager::init_buttons(){
 	//assign their locations
 	fop_button.force_corner_loc( tray_rect.x+5,tray_rect.y+7 );
 
-		//keep track of where the next button placement should start
-		end_of_last_button = end_of_last_button + tray_rect.x+5 + fop_button.get_width();
+	//keep track of where the next button placement should start
+	end_of_last_button = end_of_last_button + tray_rect.x+5 + fop_button.get_width();
 	
 	//these two are thin enough to occupy the same horizontal space, with one above and one below
 	output_fname.force_corner_loc( end_of_last_button+5, tray_rect.y + 7);
@@ -502,14 +502,14 @@ bool button_manager::click_handling(SDL_Event& mouse_event){
 					//have input_maker output to the file
 					vector<string> form_bad_inputs;
 					if(!sdl_helper->get_io_handler().output(form_bad_inputs)){
-						make_form_error_message(form_bad_inputs);
-						//this hangs the application until they do something
-						//dirty solution but it gives them time to read it
-						//maybe put this in its own window at some point?
-						while( !(SDL_PollEvent(&mouse_event) == 1 &&
-							   (mouse_event.type == SDL_MOUSEBUTTONDOWN ||
-							    mouse_event.type == SDL_QUIT ||
-								mouse_event.type == SDL_KEYDOWN)) );
+						//set up the texture to draw the error message
+						SDL_Texture* error_message = NULL;
+						SDL_Rect destination;												
+						make_form_error_message(form_bad_inputs,
+												error_message,destination);
+
+						form_error_message_loop(mouse_event,error_message,destination);
+
 					}
 				}
 			}
@@ -604,12 +604,74 @@ bool button_manager::click_handling(SDL_Event& mouse_event){
 	return done_something;//let main know if it should check tiles or not
 }
 
-void button_manager::make_form_error_message(const vector<string>& form_bad_inputs){
+void button_manager::form_error_message_loop(SDL_Event& event,SDL_Texture* message_texture,
+											 SDL_Rect& destination){
+
+	bool changed = false;
+	bool leave   = false;
+
+
+	while(!leave){
+
+		SDL_PollEvent(&event);
+
+		switch(event.type){
+
+			case SDL_QUIT:
+				return;
+
+			case SDL_KEYDOWN:
+
+				switch(event.key.keysym.sym){
+
+					//literal down arrow key
+					case SDLK_DOWN:
+						changed = true;
+						break;
+
+					//scroll down
+					case SDLK_UP:
+						changed = true;
+						break;
+
+					//scroll down
+					case SDLK_RIGHT:
+						changed = true;
+						break;
+
+					//scroll down
+					case SDLK_LEFT:
+						changed = true;
+					break;
+					case SDLK_ESCAPE:
+			            SDL_Event push_me;
+			            push_me.type = SDL_QUIT;
+			            SDL_PushEvent(&push_me);
+						changed = true;
+					break;
+				}
+
+		}
+
+		if(changed){
+			changed = false;
+			SDL_RenderClear(sdl_helper->renderer);
+			SDL_RenderCopy(sdl_helper->renderer,message_texture,NULL,&destination);
+			sdl_helper->present();
+		}
+
+	}
+
+}
+
+void button_manager::make_form_error_message(const vector<string>& form_bad_inputs,
+											 SDL_Texture* drawing_info,
+											 SDL_Rect& destination){
 
 	//get window info to figure out what we're drawing to
 	int window_h = sdl_helper->get_win_size()->height;
 	int window_w = sdl_helper->get_win_size()->width;
-	SDL_Rect destination = {0,0,window_w,window_h};
+	destination = {0,0,window_w,window_h};
 
 
 	//set up the surface's pixel masks. I don't fully understand this but it's from
@@ -653,21 +715,21 @@ void button_manager::make_form_error_message(const vector<string>& form_bad_inpu
 	}
 
 	//turn the surface we've created and drawn to into a texture
-	SDL_Texture* message_texture;
-	message_texture = SDL_CreateTextureFromSurface(sdl_helper->renderer,message_surf);
+	//SDL_Texture* message_texture;
+	//message_texture = SDL_CreateTextureFromSurface(sdl_helper->renderer,message_surf);
+	drawing_info = SDL_CreateTextureFromSurface(sdl_helper->renderer,message_surf);
 
 	//draw texture on the screen
-	SDL_RenderCopy(sdl_helper->renderer,message_texture,&destination,&destination);
-	sdl_helper->present();
+	//SDL_RenderCopy(sdl_helper->renderer,message_texture,&destination,&destination);
+	//sdl_helper->present();
 
 	//give back memory
 	if(message_surf != NULL){
 		SDL_FreeSurface(message_surf);
 	}
-	if(message_texture != NULL){
-		SDL_DestroyTexture(message_texture);
-	}
-
+	//if(message_texture != NULL){
+	//	SDL_DestroyTexture(message_texture);
+	//}
 }
 
 int button_manager::clean_up(){

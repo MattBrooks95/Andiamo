@@ -100,7 +100,7 @@ class form{
 
     //these two functions are used to know when a form needs smashed and recreated
     //because the user specified another size
-	bool prev_initiated;  //!< remember if this form has been initialized or not
+	bool prev_initialized;  //!< remember if this form has been initialized or not
 	int prev_init_value;  //!< keep track of the value this form was initialized with
 
     //! title of the form, which is displayed at the top of the form

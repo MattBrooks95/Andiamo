@@ -24,7 +24,7 @@ form::form(){
 
 	help_shown = false;
 
-	prev_initiated = false;
+	prev_initialized = false;
 	prev_init_value = 0;
 
 	page_count = 0;
@@ -361,6 +361,14 @@ void form::prev_page(){
 
 bool form::check_values(vector<index_value>& error_details){
 
+	if(!prev_initialized){
+		//string push_me = "Form: " + form_title + " has not been filled it at all: ";
+		error_details.push_back("Form: " + form_title + " has not been filled it at all: ");
+		error_details.push_back(string("it can be filled in by clicking its corresponding button on the toolbar."));
+
+		return false;
+	}
+
 	//it should be assumed that inputs are correct, but if one is found not to be
 	//change this to false
 	bool return_me = true;
@@ -391,7 +399,8 @@ bool form::check_values(vector<index_value>& error_details){
 		//go through and check each text box against the appropriate regular expression
 		//using the mod operator
 		for(unsigned int d = 0; d < box_ref.size(); d++){
-			if(!regex_match(box_ref[d].text,my_patterns[d % num_columns])){
+			if(!regex_match(box_ref[d].text,my_patterns[d % num_columns]) ||
+				box_ref[d].text.compare(" ") || box_ref[d].text.length() == 0){
 				index_value temp_tuple(box_ref[d].text,d);
 				error_details.push_back(temp_tuple);
 				return_me = false;

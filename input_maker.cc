@@ -431,7 +431,9 @@ bool input_maker::output(vector<string>& form_bad_inputs){
 	}
 
 	std::vector<index_value> icntrl8_bad_inputs;
-	if(!b_manager->get_icntrl_8().make_output(outs,icntrl8_bad_inputs)){
+	if(!b_manager->get_icntrl_8().get_is_locked() && 
+	   !b_manager->get_icntrl_8().make_output(outs,icntrl8_bad_inputs)){
+
 		form_bad_inputs.push_back("##############Icntrl8 error list##############\n");
 		form_bad_inputs.push_back("Residual Level Threshold Count form\n");
 		for(unsigned int c = 0; c < icntrl8_bad_inputs.size(); c++){
