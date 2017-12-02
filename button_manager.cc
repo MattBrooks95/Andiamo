@@ -507,9 +507,11 @@ bool button_manager::click_handling(SDL_Event& mouse_event){
 						SDL_Rect destination;												
 						make_form_error_message(form_bad_inputs,
 												error_message,destination);
-
-						form_error_message_loop(mouse_event,error_message,destination);
-
+						if(error_message == NULL){
+							error_logger.push_error("Error message was not created properly.");
+						} else {
+							form_error_message_loop(mouse_event,error_message,destination);
+						}
 					}
 				}
 			}
@@ -637,13 +639,13 @@ void button_manager::form_error_message_loop(SDL_Event& event,SDL_Texture* messa
 
 					//literal down arrow key
 					case SDLK_DOWN:
-						destination.y += 5;
+						destination.y -= 5;
 						changed = true;
 						break;
 
 					//scroll down
 					case SDLK_UP:
-						destination.y -= 5;
+						destination.y += 5;
 						changed = true;
 						break;
 
@@ -690,11 +692,10 @@ void button_manager::make_form_error_message(const vector<string>& form_bad_inpu
 											 SDL_Texture*& drawing_info,
 											 SDL_Rect& destination){
 
-	//get window info to figure out what we're drawing to
-	int window_h = sdl_helper->get_win_size()->height;
-	int window_w = sdl_helper->get_win_size()->width;
-	destination = {0,0,window_w,window_h};
-
+	if(form_bad_inputs.size() == 0){
+		error_logger.push_error("make_form_error_message was called with an empty list.");
+		return;
+	}
 
 	//set up the surface's pixel masks. I don't fully understand this but it's from
 	//the sdl documentation  https://wiki.libsdl.org/SDL_CreateRGBSurface
@@ -711,8 +712,39 @@ void button_manager::make_form_error_message(const vector<string>& form_bad_inpu
 	alpha = 0xff000000;
 	#endif
 
+	int max_message_width = 0;
+	int message_height    = 0;
+	//it's unfortunate to have to loop over the inputs here to figure how big
+	//of a background to make, but this is crucial to the scrolling being a boon
+	//to the visualization of the errors
+	for(unsigned int c = 0; c < form_bad_inputs.size();c++){
+		int temp_width;
+		int temp_height;
+		TTF_SizeText(sdl_helper->font,form_bad_inputs[c].c_str(),&temp_width,
+					 &temp_height);
+		if(temp_width > max_message_width){
+			max_message_width = temp_width;
+		}
+		message_height += temp_height;
+	}
+
+
+	//get window info to figure out what we're drawing to
+	int window_h = sdl_helper->get_win_size()->height;
+	int window_w = sdl_helper->get_win_size()->width;
+
+	if(max_message_width < window_w){
+		max_message_width = window_w;
+	}
+	if(message_height < window_h){
+		message_height = window_h;
+	}
+	destination = {0,0,max_message_width,message_height};
+
+
+
 	//create a surface w/o a source image that can be blittted to for making error messages
-	SDL_Surface* message_surf = SDL_CreateRGBSurface(0,window_w,window_h,32,red,green,blue,alpha);
+	SDL_Surface* message_surf = SDL_CreateRGBSurface(0,max_message_width,message_height,32,red,green,blue,alpha);
 
 	//draw in the created surface with the background color
 	SDL_FillRect(message_surf,NULL,SDL_MapRGBA(message_surf->format,0,OU_GREEN));
@@ -741,17 +773,11 @@ void button_manager::make_form_error_message(const vector<string>& form_bad_inpu
 	//message_texture = SDL_CreateTextureFromSurface(sdl_helper->renderer,message_surf);
 	drawing_info = SDL_CreateTextureFromSurface(sdl_helper->renderer,message_surf);
 
-	//draw texture on the screen
-	//SDL_RenderCopy(sdl_helper->renderer,message_texture,&destination,&destination);
-	//sdl_helper->present();
-
 	//give back memory
 	if(message_surf != NULL){
 		SDL_FreeSurface(message_surf);
 	}
-	//if(message_texture != NULL){
-	//	SDL_DestroyTexture(message_texture);
-	//}
+
 }
 
 int button_manager::clean_up(){
