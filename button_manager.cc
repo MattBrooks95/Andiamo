@@ -607,9 +607,15 @@ bool button_manager::click_handling(SDL_Event& mouse_event){
 void button_manager::form_error_message_loop(SDL_Event& event,SDL_Texture* message_texture,
 											 SDL_Rect& destination){
 
+	//save the destination parameter so it can be reset
+	//by the user hitting space
+	SDL_Rect dest_copy = destination;
+
 	bool changed = false;
 	bool leave   = false;
 
+	SDL_RenderCopy(sdl_helper->renderer,message_texture,NULL,&destination);
+	sdl_helper->present();
 
 	while(!leave){
 
@@ -618,6 +624,11 @@ void button_manager::form_error_message_loop(SDL_Event& event,SDL_Texture* messa
 		switch(event.type){
 
 			case SDL_QUIT:
+				//leave message and prompt to exit Andiamo!
+				//on SDL_Quit signal
+				SDL_Event push_me;
+				push_me.type = SDL_QUIT;
+				SDL_PushEvent(&push_me);
 				return;
 
 			case SDL_KEYDOWN:
@@ -626,34 +637,45 @@ void button_manager::form_error_message_loop(SDL_Event& event,SDL_Texture* messa
 
 					//literal down arrow key
 					case SDLK_DOWN:
+						destination.y += 5;
 						changed = true;
 						break;
 
 					//scroll down
 					case SDLK_UP:
+						destination.y -= 5;
 						changed = true;
 						break;
 
 					//scroll down
 					case SDLK_RIGHT:
+						destination.x -= 5;
 						changed = true;
 						break;
 
 					//scroll down
 					case SDLK_LEFT:
+						destination.x += 5;
 						changed = true;
-					break;
+						break;
+
+					//reset the scrolling to how it was when
+					//this loop function was called
+					case SDLK_SPACE:
+						destination = dest_copy;
+						changed = true;
+						break;
+
+					//leave message if they hit q or escape
+					case SDLK_q:
 					case SDLK_ESCAPE:
-			            SDL_Event push_me;
-			            push_me.type = SDL_QUIT;
-			            SDL_PushEvent(&push_me);
-						changed = true;
-					break;
+						leave = true;
+						break;
 				}
 
 		}
 
-		if(changed){
+		if(changed && !leave){
 			changed = false;
 			SDL_RenderClear(sdl_helper->renderer);
 			SDL_RenderCopy(sdl_helper->renderer,message_texture,NULL,&destination);
@@ -665,7 +687,7 @@ void button_manager::form_error_message_loop(SDL_Event& event,SDL_Texture* messa
 }
 
 void button_manager::make_form_error_message(const vector<string>& form_bad_inputs,
-											 SDL_Texture* drawing_info,
+											 SDL_Texture*& drawing_info,
 											 SDL_Rect& destination){
 
 	//get window info to figure out what we're drawing to

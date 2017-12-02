@@ -172,6 +172,7 @@ void icntrl8_form_button::setup_help_msg(){
 
 bool icntrl8_form_button::handle_click(SDL_Event& mouse_event){
 	if(button::was_clicked(mouse_event)){
+		SDL_RenderClear(sdl_helper->renderer);
 		click_helper(mouse_event);
 		return true;
 	}
@@ -345,6 +346,7 @@ bool icntrl8_form_button::check_values(vector<index_value>& error_details){
 //###################### ILV2 BUTTON ###########################################
 bool ilv2_form_button::handle_click(SDL_Event& mouse_event){
 	if(button::was_clicked(mouse_event)){
+		SDL_RenderClear(sdl_helper->renderer);
 		click_helper(mouse_event);
 		return true;
 	}
@@ -394,6 +396,7 @@ void icntrl6_form_button::setup_lock(){
 
 bool icntrl6_form_button::handle_click(SDL_Event& mouse_event){
 	if(button::was_clicked(mouse_event)){
+		SDL_RenderClear(sdl_helper->renderer);
 		click_helper(mouse_event);
 		return true;
 	}
@@ -954,6 +957,7 @@ bool icntrl6_form_button::check_values(vector<index_value>& error_details){
 
 bool icntrl10_form_button::handle_click(SDL_Event& mouse_event){
 	if(button::was_clicked(mouse_event)){
+		SDL_RenderClear(sdl_helper->renderer);
 		click_helper(mouse_event);
 		return true;
 	}
@@ -1008,6 +1012,7 @@ void icntrl4_form_button::init_form(const vector<regex>& pattern_tests){
 
 bool icntrl4_form_button::handle_click(SDL_Event& mouse_event){
 	if(button::was_clicked(mouse_event)){
+		SDL_RenderClear(sdl_helper->renderer);
 		click_helper(mouse_event);
 		return true;
 	}
@@ -1157,6 +1162,7 @@ bool icntrl4_form_button::check_values(vector<index_value>& error_details){
 
 bool ilv3_ilv5_form_button::handle_click(SDL_Event& mouse_event){
 	if(button::was_clicked(mouse_event)){
+		SDL_RenderClear(sdl_helper->renderer);
 		click_helper(mouse_event);
 		return true;
 	}
