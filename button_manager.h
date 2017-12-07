@@ -15,6 +15,12 @@
 
 
 #include "logger.h"
+
+
+using std::string;
+using std::vector;
+using std::regex;
+
 extern logger error_logger;
 
 //! button_manager is a manager for the different derivations of class button
@@ -50,7 +56,6 @@ class button_manager{
 	//########### FORM BUTTON GETTERS ########################################################################//
 	icntrl8_form_button& get_icntrl_8(){return icntrl_8;}//!< returns reference to icntrl8 form button
 	icntrl6_form_button& get_icntrl_6(){return icntrl_6;}//!< returns reference to icntrl6 form button
-	ilv2_form_button& get_ilv_2(){return ilv_2;}//!< returns reference to the ilv2 form button
 	icntrl10_form_button& get_icntrl_10(){return icntrl_10;}//!< returns reference to the icntrl10 form button
 	icntrl4_form_button& get_icntrl_4(){return icntrl_4;}//!< returns reference to the icntrl4 form button
 	ilv3_ilv5_form_button& get_ilv3_ilv5(){return ilv3_ilv5;}
@@ -66,12 +71,11 @@ class button_manager{
 
 	//! this member sets up the regex array parameters given to forms
 	/*! the forms will use these to do type/input checking */
-	void fill_regex_vectors(std::vector<std::regex>& icntrl_6_patterns,
-							std::vector<std::regex>& icntrl_8_patterns,
-							std::vector<std::regex>& ilv_2_patterns,
-					   		std::vector<std::regex>& icntrl_10_patterns,
-							std::vector<std::regex>& icntrl_4_patterns,
-							std::vector<std::regex>& ilv3_ilv5_patterns);
+	void fill_regex_vectors(vector<regex>& icntrl_6_patterns,
+							vector<regex>& icntrl_8_patterns,
+					   		vector<regex>& icntrl_10_patterns,
+							vector<regex>& icntrl_4_patterns,
+							vector<regex>& ilv3_ilv5_patterns);
 
 	//! this member calls each buttons virtual print_me() member
 	void print_buttons();
@@ -100,7 +104,7 @@ class button_manager{
 	//! this function displays a warning message when tiles fail to convert user inputs to scientific values
 	/*! it used the vector of strings created by manger::update_io_maker to print the names of the
 	 * tiles in question, and also changes them to be red, for a visual indicator */
-	void bad_tile_input_warnings(std::vector<std::string>& bad_tile_input_warnings);
+	void bad_tile_input_warnings(vector<string>& bad_tile_input_warnings);
 
 	//! this member calls each button's virtual handle_click() member
 	/*! a notable exception is the 'exit dialogue' button, because it's logic is partially controlled
@@ -114,7 +118,7 @@ class button_manager{
 	 *output members. This function makes the message instead of the input maker,
 	 *which fills the error list, because input_maker does not have access to the
 	 *sdl drawing class. */	
-	void make_form_error_message(const std::vector<std::string>& form_bad_inputs,
+	void make_form_error_message(const vector<string>& form_bad_inputs,
 								 SDL_Texture*& message_texture, SDL_Rect& destination);
 
 	//! implements the loop that allows the user to view the form error message
@@ -129,7 +133,7 @@ class button_manager{
 	//! this member returns the default, example button by reference, so its members can be called
 	button& get_fop_button(){ return fop_button;}
 
-	std::string button_image_p;//!< this is a string that describes the path to the button's image files
+	string button_image_p;//!< this is a string that describes the path to the button's image files
 
 	sdl_help* sdl_helper;//!< this is a pointer to the main graphics class, for renderer and font access
   private:
@@ -139,14 +143,13 @@ class button_manager{
 
 	//####################### FORM BUTTONS ##################################################################
 	//! name for the form tray's image file. Defaults to button_image_p + "form_tray.png" in constructor
-	std::string form_tray_image_name;
+	string form_tray_image_name;
 
 	SDL_Surface* form_tray_surface;//!< save the surface for the tray on which the form buttons sit
 	SDL_Texture* form_tray_texture;//!< save the texture for the tray on which the form buttons sit
 	
 	icntrl8_form_button icntrl_8;//!< allows user to enter extra lines as a resault of icntrl8 being used
 	icntrl6_form_button icntrl_6;//!< allows user to enter extra lines as a result of icntrl6 being used
-	ilv2_form_button ilv_2;//!< allows user to enter extra lines as a result of ilv_2 being used
 	icntrl10_form_button icntrl_10;//!< allows user to enter extra lines as a result of ilv_2 being used
 	icntrl4_form_button icntrl_4;//!< allows user to enter extra lines as a result of icntrl4 being used
 	ilv3_ilv5_form_button ilv3_ilv5;//!< allows user to enter parameters for ILV3 or ILV5
@@ -157,14 +160,14 @@ class button_manager{
 
 
 	//! name for the tray's image file. Defaults to button_image_p + "button_tray.png" in constructor
-	std::string tray_image_name;
+	string tray_image_name;
 
 	bool tray_shown;//!< keep track of whether or not the tray should be drawn to the screen
 	SDL_Rect tray_rect;//!< drawing destination for the button tray
 
 	//! This vector contains the "normal" buttons that actually sit on the button tray
 	/*! there will be special buttons, like the exit dialogue, who do not belong here. */
-	std::vector<button> buttons;
+	vector<button> buttons;
 
 	fop_handler_button fop_button;//!< button that launches the fop_handler
 

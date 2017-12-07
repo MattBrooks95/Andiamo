@@ -21,6 +21,7 @@
 using std::string;
 using std::vector;
 using std::map;
+using std::ostream;
 
 extern logger error_logger;
 class button_manager;
@@ -139,49 +140,49 @@ class input_maker{
 /*! \param outs is the fstream to print to (such as output/output.txt)
  *\param size is the size read in by input_maker from the configuration file
  *\param output_me is the ftran_struct string_param to print to the file */
-void output_string(std::ofstream& outs,const unsigned int& size,const string& string_in); 
+void output_string(ofstream& outs,const unsigned int& size,const string& string_in); 
 
 //! this function sets up line one of the HF input file
-void do_line1(std::ofstream& outs,const map<string,param_string>& string_params);
+void do_line1(ofstream& outs,const map<string,param_string>& string_params);
 
 //! this function sets up line two of the HF input file
-void do_line2(std::ofstream& outs,const map<string,param_real8>& real8_params,const map<string,param_int4>& int4_params);
+void do_line2(ofstream& outs,const map<string,param_real8>& real8_params,const map<string,param_int4>& int4_params);
 
 //! this function implements the reading loop over the transmission coefficients
 /* NENT, LMAX and NGF control the loops, and TC_input_file button sets this class's TC_input_file_name variable
  *and the coefficients are read in from there */
 void do_TC_coefficients(const map<string,param_real8>& real8_params, const map<string,param_int4_array>& array_map,
-			string TC_input_file_name,std::ofstream& outs);
+			string TC_input_file_name,ofstream& outs);
 
 //! this helper outputs the variables found in line 4 of the input description manual
-void do_line4(std::ofstream& outs,const map<string,param_real8>& real8_params, const map<string,param_int4>& int4_params);
+void do_line4(ofstream& outs,const map<string,param_real8>& real8_params, const map<string,param_int4>& int4_params);
 
 //! this helper outputs the variables in line 4A (if IENCH = 7, logic in output() )
-void do_line4A(std::ofstream& outs,const map<string,param_real8>& real8_params,const map<string,param_int4>& int4_params);
+void do_line4A(ofstream& outs,const map<string,param_real8>& real8_params,const map<string,param_int4>& int4_params);
 
 //! this helper outputs the variables in line 4B (if IENCH = 7,logic in output() )
-void do_line4B(std::ofstream& outs,const map<string, param_r8_array>& e_params);
+void do_line4B(ofstream& outs,const map<string, param_r8_array>& e_params);
 
 //! this helper prints out line 5
-void do_line5(std::ofstream& outs,const map<string, param_int4>& int4_params);
+void do_line5(ofstream& outs,const map<string, param_int4>& int4_params);
 
 //! prints line 5A, should only be called if ILV1 is == 6
-void do_line5A(std::ofstream& outs, const map<string, param_real8>& real8_params);
+void do_line5A(ofstream& outs, const map<string, param_real8>& real8_params);
 
 //! this helper outputs the values for the parameters in line 6
-void do_line6(std::ofstream& outs,const map<string,param_int4>& int4_params);
+void do_line6(ofstream& outs,const map<string,param_int4>& int4_params);
 
 //! this helper outputs the values for the parameters in line 7
-void do_line7(std::ofstream& outs,const map<string,param_real8>& real8_params);
+void do_line7(ofstream& outs,const map<string,param_real8>& real8_params);
 
 //! this helper outputs the variables in line 8, if ICNTRL4 != 0 (logic should be in output(), which calls this)
-void do_line8(std::ofstream& outs,const map<string,param_int4>& int4_params);
+void do_line8(ofstream& outs,const map<string,param_int4>& int4_params);
 
 //! this helper outputs the variables in line 9
-void do_line9(std::ofstream& outs,const map<string,param_int4>& int4_params,const map<string,param_real8>& real8_params);
+void do_line9(ofstream& outs,const map<string,param_int4>& int4_params,const map<string,param_real8>& real8_params);
 
 //! this helper outputs the variables in line 10
-void do_line10(std::ofstream&outs,const map<string,param_int4>& int4_params);
+void do_line10(ofstream&outs,const map<string,param_int4>& int4_params);
 //######################################################################################################################
 
 

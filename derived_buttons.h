@@ -7,6 +7,9 @@
 #include "input_maker.h"
 //########################## EXIT BUTTON ###########################################################################
 
+
+using std::string;
+
 //! this class describes the exit dialogue that pops up when the main loop encounters SDL_QUIT
 /*! it inherits members and fields from the default button class in button.h, so a lot of that
  *functionality doesn't need re-written here. The only things that need implemented here are new
@@ -51,7 +54,7 @@ class exit_button : public button{
 	 *\param image_name_in parameter for button::init
 	 *\param image_p_in parameter for button::init
 	 *\param sdl_help_in parameter for button::init */
-	void init(std::string image_name_in, std::string image_p_in,sdl_help* sdl_help_in);
+	void init(string image_name_in, string image_p_in,sdl_help* sdl_help_in);
 
 
   private:
@@ -85,7 +88,7 @@ class text_box_button : public button{
 	void handle_resize(int yloc_in);
 
 	//! init also sets up the text box
-	void init(const std::string& image_name_in,const std::string& image_p_in,sdl_help* sdl_help_in);
+	void init(const string& image_name_in,const string& image_p_in,sdl_help* sdl_help_in);
 
 	//! force_corner_loc also updates the text box
 	void force_corner_loc(int xloc_in, int yloc_in);
@@ -138,7 +141,7 @@ class graphing_button : public text_box_button{
 	int work(input_maker& io_handler);
 
 	//! does button::init() and also sets up the checked texture
-	void init(const std::string& image_name_in, const std::string& image_p_in,sdl_help* sdl_help_in);
+	void init(const string& image_name_in, const string& image_p_in,sdl_help* sdl_help_in);
 
 	//! force_corner_lock does normal stuff, and forces the active area to update as well
 	void force_corner_loc(int xloc_in, int yloc_in);

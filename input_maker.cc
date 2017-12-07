@@ -640,7 +640,7 @@ void do_line4B(ofstream& outs,const map<string, param_r8_array>& r8_array_params
 void do_line5(ofstream& outs, const map<string,param_int4>& int4_params){
     
     int ilv_1 = int4_params.at("ILV1").value;
-    int ilv_2 = int4_params.at("ILV2").value;
+    int ilv_2 = 0;
     int ilv_3 = int4_params.at("ILV3").value;
     int ilv_4 = int4_params.at("ILV4").value;
     int ilv_5 = int4_params.at("ILV5").value;

@@ -145,7 +145,7 @@ class sdl_help{
 	 *make the manager do this book keeping, but I'd have to make my own struct  \param outs is the 
          *desired output stream. Likely to be cout in development, but may later be a file to support error 
          *logging features*/
-	void print_tile_locs(std::ostream& outs);
+	void print_tile_locs(ostream& outs);
 
 	//! this member allows the sdl_help and input_maker classes to gain a reference to the button manager
 	/*! reason being that the form_buttons are critical to creating the output file */
@@ -161,13 +161,13 @@ class sdl_help{
 	 *\param outs output stream to send messages to
 	 *\param click_x mouse click's x value (distance horizontaly from left side of window)
 	 *\param click_y mouse click's y value (distance vertically from top of window) */
-	void click_detection(std::ostream& outs, SDL_Event& event,button_manager* b_manager, int click_x, int click_y);
+	void click_detection(ostream& outs, SDL_Event& event,button_manager* b_manager, int click_x, int click_y);
 
 	//! this function handles the mini-loop where the user can edit the text box
 	/*! should turn off keybindings so keystrokes are interpreted as input to the respective fields
 	 *temporary storage string. This member started off being in class field, but I've since moved it to
 	 *sdl_help, because sdl_help needs to be able to draw in this loop */
-	void text_box_mini_loop(std::ostream& outs, SDL_Event& event,button_manager* b_manager, field& current_tile);
+	void text_box_mini_loop(ostream& outs, SDL_Event& event,button_manager* b_manager, field& current_tile);
 
 	//! this function helps text_box_mini_loop by doing the functions related to the text input event
 	void text_box_mini_loop_helper(SDL_Keysym& key,field& current_tile,bool& text_was_changed);
@@ -202,14 +202,8 @@ class sdl_help{
 	//! this member serves as a getter for the SDL window
 	SDL_Window* get_window(){ return window;}
 
-	//!this member is a const getter for the tile_locations vector
-	//const std::vector<SDL_Rect>& get_locations() const { return tile_locations;}
-	//!this member is non-const getter for the tile_locations vector
-	//std::vector<SDL_Rect>& get_locations(){ return tile_locations;}
-
 	//! this member provides by-reference access to the input_maker object
 	input_maker& get_io_handler() { return io_handler; }
-
 
         //! This member is a const getter for the tile/card manager
 	/*! \return tile_bag is a const reference to the tile_bag field. It is accessed

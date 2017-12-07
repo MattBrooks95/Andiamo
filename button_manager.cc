@@ -79,26 +79,20 @@ void button_manager::init_form_tray(){
 
 void button_manager::redo_locks(){
 
-
-
-	icntrl_6.set_corner_loc(form_tray_rect.x + 420,form_tray_rect.y);
+	icntrl_6.set_corner_loc(form_tray_rect.x + 315,form_tray_rect.y);
 	icntrl_8.set_corner_loc(form_tray_rect.x + 210,form_tray_rect.y);
-	ilv_2.set_corner_loc(form_tray_rect.x + 315,form_tray_rect.y);
 	icntrl_10.set_corner_loc(form_tray_rect.x+105,form_tray_rect.y);
-	icntrl_4.set_corner_loc(form_tray_rect.x+525,form_tray_rect.y);
-	ilv3_ilv5.set_corner_loc(form_tray_rect.x+630,form_tray_rect.y);
-
+	icntrl_4.set_corner_loc(form_tray_rect.x+420,form_tray_rect.y);
+	ilv3_ilv5.set_corner_loc(form_tray_rect.x+525,form_tray_rect.y);
 
 	icntrl_8.make_rect();
 	icntrl_6.make_rect();
-	ilv_2.make_rect();
 	icntrl_10.make_rect();
 	icntrl_4.make_rect();
 	ilv3_ilv5.make_rect();
 
 	icntrl_8.setup_lock();
 	icntrl_6.setup_lock();
-	ilv_2.setup_lock();
 	icntrl_10.setup_lock();
 	icntrl_4.setup_lock();
 	ilv3_ilv5.setup_lock();
@@ -169,35 +163,30 @@ void button_manager::init_form_buttons(){
 	icntrl_6.set_bmanager_reference(this);
 
 	icntrl_8.init(sdl_helper);
-	ilv_2.init(sdl_helper);
 	icntrl_10.init(sdl_helper);
 	icntrl_4.init(sdl_helper);
 	ilv3_ilv5.init(sdl_helper);
 
-	icntrl_6.set_corner_loc(form_tray_rect.x + 420,form_tray_rect.y);
+	icntrl_6.set_corner_loc(form_tray_rect.x + 315,form_tray_rect.y);
 	icntrl_8.set_corner_loc(form_tray_rect.x + 210,form_tray_rect.y);
-	ilv_2.set_corner_loc(form_tray_rect.x + 315,form_tray_rect.y);
 	icntrl_10.set_corner_loc(form_tray_rect.x+105,form_tray_rect.y);
-	icntrl_4.set_corner_loc(form_tray_rect.x+525,form_tray_rect.y);
-	ilv3_ilv5.set_corner_loc(form_tray_rect.x+630,form_tray_rect.y);
+	icntrl_4.set_corner_loc(form_tray_rect.x+420,form_tray_rect.y);
+	ilv3_ilv5.set_corner_loc(form_tray_rect.x+525,form_tray_rect.y);
 
 	icntrl_6.make_rect();
 	icntrl_8.make_rect();
-	ilv_2.make_rect();
 	icntrl_10.make_rect();
 	icntrl_4.make_rect();
 	ilv3_ilv5.make_rect();
 
 	icntrl_6.setup_lock();
 	icntrl_8.setup_lock();
-	ilv_2.setup_lock();
 	icntrl_10.setup_lock();
 	icntrl_4.setup_lock();
 	ilv3_ilv5.setup_lock();
 
 	icntrl_6.setup_help_msg();
 	icntrl_8.setup_help_msg();
-	ilv_2.setup_help_msg();
 	icntrl_10.setup_help_msg();
 	icntrl_4.setup_help_msg();
 	ilv3_ilv5.setup_help_msg();
@@ -208,12 +197,11 @@ void button_manager::init_form_buttons(){
 	vector<regex> icntrl_10_patterns;
 	vector<regex> icntrl_4_patterns;
 	vector<regex> ilv3_ilv5_patterns;
-	fill_regex_vectors(icntrl_6_patterns,icntrl_8_patterns,ilv_2_patterns,
-					   icntrl_10_patterns,icntrl_4_patterns, ilv3_ilv5_patterns);
+	fill_regex_vectors(icntrl_6_patterns,icntrl_8_patterns, icntrl_10_patterns,
+					   icntrl_4_patterns, ilv3_ilv5_patterns);
 
 	icntrl_6.init_form(icntrl_6_patterns);
 	icntrl_8.init_form(icntrl_8_patterns);
-	ilv_2.init_form(ilv_2_patterns);
 	icntrl_10.init_form(icntrl_10_patterns);
 	icntrl_4.init_form(icntrl_4_patterns);
 	ilv3_ilv5.init_form(ilv3_ilv5_patterns);
@@ -221,7 +209,6 @@ void button_manager::init_form_buttons(){
 
 void button_manager::fill_regex_vectors(vector<regex>& icntrl_6_patterns,
 										vector<regex>& icntrl_8_patterns,
-										vector<regex>& ilv_2_patterns,
 					   					vector<regex>& icntrl_10_patterns,
 										vector<regex>& icntrl_4_patterns,
 										vector<regex>& ilv3_ilv5_patterns){
@@ -267,8 +254,6 @@ void button_manager::fill_regex_vectors(vector<regex>& icntrl_6_patterns,
 	icntrl_8_patterns.push_back(f10_3);
 	
 
-	//set up ilv_2 tests
-	//ilv_2_patterns;
 
     /* // icntrl10 may not be implemented
 	//set up icntrl_10 tests
@@ -333,7 +318,6 @@ void button_manager::draw_form_tray(){
 	SDL_RenderCopy(sdl_helper->renderer,form_tray_texture,NULL,&form_tray_rect);
 	icntrl_8.draw_lock();
 	icntrl_6.draw_lock();
-	ilv_2.draw_lock();
 	icntrl_10.draw_lock();
 	icntrl_4.draw_lock();
 	ilv3_ilv5.draw_lock();
@@ -544,17 +528,6 @@ bool button_manager::click_handling(SDL_Event& mouse_event){
 		} else if( icntrl_6.handle_click(mouse_event) ){
 			if(icntrl_6.get_is_locked()){
 				icntrl_6.draw_help_msg(mouse_event,msg_dest);
-			} else {
-				//incase a resize happened within the form functions,
-				//update the button_manager's location, called here bc
-				//buttons don't have reference to the button_manager
-				location_update();
-			}
-			done_something = true;
-
-		} else if( ilv_2.handle_click(mouse_event) ){
-			if(ilv_2.get_is_locked()){
-				ilv_2.draw_help_msg(mouse_event,msg_dest);
 			} else {
 				//incase a resize happened within the form functions,
 				//update the button_manager's location, called here bc
@@ -837,9 +810,6 @@ void button_manager::clean_up_warnings(bool bad_output_fname,bool bad_tc_input_f
 
 	SDL_Surface* output_fname_error_surf = NULL;
 	SDL_Texture* output_fname_error_texture = NULL;
-
-
-
 
 	//make the error message for the output file name
 	if(bad_output_fname){

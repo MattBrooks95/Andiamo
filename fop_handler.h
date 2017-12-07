@@ -12,6 +12,8 @@
 //so these may be FOP outputs that haven't been mapped to HF inputs yet
 #define SCRATCH_PATH "./FOP/FopScratch/"
 
+using std::string;
+using std::vector;
 
 class sdl_help;
 class input_maker;
@@ -35,12 +37,12 @@ class fop_handler{
 	input_maker* io_manager;//!< handy access to the input maker, so these classes can communicate easily
 
 	//! list of all file names in OMP_PATH subdirectory
-	std::vector<std::string> optical_model_files;
+	vector<string> optical_model_files;
 	//! list of all files in the transmission coefficients files
 	/*! these are files previously made by FOP */
-	std::vector<std::string> transmission_coefficients_files;
+	vector<string> transmission_coefficients_files;
 	//! list of all files that aren't yet ready for use by HF, but fop_handler may need
-	std::vector<std::string> scratch_files;
+	vector<string> scratch_files;
 };
 
 

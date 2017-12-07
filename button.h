@@ -12,6 +12,9 @@
 
 
 #include "logger.h"
+
+using std::string;
+
 extern logger error_logger;
 
 //! this is the base class for the static buttons that implement features
@@ -76,7 +79,7 @@ class button{
 	/*! \param image_name_in is what the name of the image will be set to, like "default_button.png"
 	 *\param image_p_in is what the path to the button's asset directory will be set to
 	 *\param sdl_help_in is the pointer to the main graphics class that will be saved in sdl_helper */
-	virtual void init(const std::string& image_name_in,const std::string& image_p_in,
+	virtual void init(const string& image_name_in,const string& image_p_in,
 			  sdl_help* sdl_help_in);
 
 	//##################### GETTERS AND SETTERS ###########################################
@@ -92,8 +95,8 @@ class button{
 
 
   protected:
-	std::string image_name;//!< name of the image file
-	std::string total_image_p;//!< image file directory's path
+	string image_name;//!< name of the image file
+	string total_image_p;//!< image file directory's path
 
 	sdl_help* sdl_helper;//!< pointer to the main graphics class
 

@@ -471,27 +471,20 @@ void sdl_help::calc_corners(){
 		row_limit = window_s.width;//else wise, fill up the window as best it can 
 	}
 
-	//just traversing the maps causes line10 to be placed before line 2, because map contents
-	//are traversed alphabetically by the iterator, so this won't work well
-
-	//for(map<string,map<string,field>>::iterator line_it = tile_bag.fields.begin();
-	    //line_it != tile_bag.fields.end();
-	    //line_it++){
-
-		//calc_corners_helper(line_it->first,line_it->second,row_height,row_limit);
-
-	//}	
-
 	//but, I saved the line names as they were read in my manager::init(), so we can just walk that
 	//vector and ensure that lines are placed in the same order in which they were read
 	for(unsigned int c = 0; c < tile_bag.line_order.size();c++){
 		if(tile_bag.line_order[c] == "line_6"){
 			//create a vector with the row parameter names in the order in which they should appear
-			vector<string> line_6_order = {"ICNTRL1","ICNTRL2","ICNTRL3","ICNTRL4","ICNTRL5","ICNTRL6","ICNTRL7",
+			vector<string> line_6_order = {"ICNTRL1","ICNTRL2","ICNTRL4","ICNTRL5","ICNTRL6","ICNTRL7",
 						       "ICNTRL8","ICNTRL9","ICNTRL10"};
-			//and pass it into the alternative calc_corners helper function
-			calc_corners_ordered(tile_bag.line_order[c],tile_bag.fields.at(tile_bag.line_order[c]),
-						    row_height, row_limit,line_6_order);
+			try{
+				//and pass it into the alternative calc_corners helper function
+				calc_corners_ordered(tile_bag.line_order[c],tile_bag.fields.at(tile_bag.line_order[c]),
+							    row_height, row_limit,line_6_order);
+			} catch(out_of_range& fail){
+				error_logger.push_error("Error in calc_corners, couldn't find a parameter in line 6.");
+			}
 		} else {
 			//this is the standard calc_corners helper function
 			calc_corners_helper(tile_bag.line_order[c],tile_bag.fields.at(tile_bag.line_order[c]),

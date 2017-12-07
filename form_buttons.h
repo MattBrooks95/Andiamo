@@ -7,6 +7,10 @@
 #include "form.h"
 #include "c_tuples.h"
 
+using std::string;
+using std::vector;
+using std::regex;
+using std::ofstream;
 
 //! "base" class for form buttons, that provides their general form, and can be inherited from to make more specialized forms
 class form_button : public button{
@@ -38,7 +42,7 @@ class form_button : public button{
 
 	//! this function initializes this buttons form object
 	/*! It must be overloaded by the derived form_buttons to have any meaning */
-	virtual void init_form(const std::vector<std::regex>& pattern_tests);
+	virtual void init_form(const vector<regex>& pattern_tests);
 
 	//! this function resizes the window if it is too small when the user tries to open a form
 	virtual void screen_size();
@@ -59,10 +63,10 @@ class form_button : public button{
 
 	//! this member has the form objects contained herein send their information to the input_maker
 	/*! this is currently a stub */
-	virtual bool make_output(std::ofstream& outs,std::vector<index_value>& bad_input_list);
+	virtual bool make_output(ofstream& outs,vector<index_value>& bad_input_list);
 
 	//! check to make sure the inputs are properly formed
-	virtual bool check_values(std::vector<index_value>& error_details);
+	virtual bool check_values(vector<index_value>& error_details);
 
 	//! this function is a const getter by reference for this button's form
 	const form& get_form(){ return my_form;}
@@ -91,7 +95,7 @@ class icntrl8_form_button : public form_button{
 	bool handle_click(SDL_Event& mouse_event);
 
 	//! sets up a form that suits the needs of icntrl8's logics per the input manual
-	void init_form(const std::vector<std::regex>& pattern_tests);
+	void init_form(const vector<regex>& pattern_tests);
 
 	//! this function opens the icntrl8 form on click
 	void click_helper(SDL_Event& mouse_event);
@@ -100,30 +104,13 @@ class icntrl8_form_button : public form_button{
 	void page_creation_helper();
 
 	//! this function outputs the form's info to the input_maker's file stream when called
-	bool make_output(std::ofstream& outs,std::vector<index_value>& bad_input_list);
+	bool make_output(ofstream& outs,vector<index_value>& bad_input_list);
 
 	//! check to make sure the inputs are properly formed
-	bool check_values(std::vector<index_value>& error_details);
+	bool check_values(vector<index_value>& error_details);
 
   private:
 	unsigned int icntrl8_val;//!< updated with the value from the field that corresponds to Cutoff Nuclei
-
-};
-
-class ilv2_form_button : public form_button{
-
-  public:
-	//! implements the special logic for this class
-	bool handle_click(SDL_Event& mouse_event);
-
-	//! sets up a form that suits the needs of ilv2's logics per the input manual
-	void init_form(const std::vector<std::regex>& pattern_tests);
-
-	//! this function opens the ilv2 form on click
-	void click_helper(SDL_Event& mouse_event);
-
-
-  private:
 
 };
 
@@ -138,7 +125,7 @@ class icntrl6_form_button : public form_button{
 	void setup_lock();
 
 	//! sets up a form that suits the needs of icntrl6's logics per the input manual
-	void init_form(const std::vector<std::regex>& pattern_tests);
+	void init_form(const vector<regex>& pattern_tests);
 
 	//! this function sets up a reference to the button manager
 	/* this object needs reference to the button_manager because it needs to be able to draw the
@@ -150,12 +137,12 @@ class icntrl6_form_button : public form_button{
 	//! this member sets up the parity form's pages
 	void parity_page_creation();
 	//! this fills up the row labels for the parity form
-	void fill_parity_labels(std::vector<std::string>& row_labels,std::vector<std::string>& column_labels);
+	void fill_parity_labels(vector<string>& row_labels,vector<string>& column_labels);
 
 	//! this member sets up the search spectra form's pages
 	void search_spectra_page_creation();
 	//! this helper member fills in the column labels for the search spectra form
-	void fill_spectra_vectors(std::vector<std::string>& pass_column_labels,std::vector<int>& column_spaces);
+	void fill_spectra_vectors(vector<string>& pass_column_labels,vector<int>& column_spaces);
 	//! This helper abstracts some code to make search_spectra_page_creation more readable
 	void search_spectra_page_helper();
 
@@ -185,10 +172,10 @@ class icntrl6_form_button : public form_button{
 	bool landing_was_clicked(SDL_Event& mouse_event);
 
 	//! this sends this object's info the input_manager's file stream
-	bool make_output(std::ofstream& outs,std::vector<index_value>& bad_input_list);
+	bool make_output(ofstream& outs,vector<index_value>& bad_input_list);
 
 	//! check to make sure the inputs are properly formed
-	bool check_values(std::vector<index_value>& error_details);
+	bool check_values(vector<index_value>& error_details);
 
   private:
 
@@ -219,14 +206,14 @@ class icntrl10_form_button : public form_button{
 	bool handle_click(SDL_Event& mouse_event);
 
 	//! sets up a form that suits the needs of icntrl10's logics per the input manual
-	void init_form(const std::vector<std::regex>& pattern_tests);
+	void init_form(const vector<regex>& pattern_tests);
 
 
 	//! this function opens the icntrl10 form on click
 	void click_helper(SDL_Event& mouse_event);
 
 	//!  outputs form info to the input_maker file stream
-	bool make_output(std::ofstream& outs, std::vector<index_value>& bad_input_list);
+	bool make_output(ofstream& outs, vector<index_value>& bad_input_list);
 
   private:
 };
@@ -238,7 +225,7 @@ class icntrl4_form_button : public form_button{
 	void setup_lock();
 
 	//! sets up a form that suits the needs of icntrl4's logics per the input manual
-	void init_form(const std::vector<std::regex>& pattern_tests);
+	void init_form(const vector<regex>& pattern_tests);
 
     //! helper function for form creation
     void page_creation_helper();
@@ -250,10 +237,10 @@ class icntrl4_form_button : public form_button{
 	void click_helper(SDL_Event& mouse_event);
 
     //! outputs form info to the input_maker file stream
-    bool make_output(std::ostream& outs,std::vector<index_value>& bad_input_list);
+    bool make_output(ostream& outs,vector<index_value>& bad_input_list);
 
 	//! check to make sure the inputs are properly formed
-	bool check_values(std::vector<index_value>& error_details);
+	bool check_values(vector<index_value>& error_details);
 
   private:
 
@@ -266,7 +253,7 @@ class ilv3_ilv5_form_button : public form_button{
   public:
 
 	//! sets up a form that suits the needs of icntrl4's logics per the input manual
-	void init_form(const std::vector<std::regex>& pattern_tests);
+	void init_form(const vector<regex>& pattern_tests);
 
 	//! implements the special logic for this class
 	bool handle_click(SDL_Event& mouse_event);
@@ -278,10 +265,10 @@ class ilv3_ilv5_form_button : public form_button{
     void page_creation_helper();
 
     //! this function is invoked by the input_maker to have this form output to the HF file
-    bool make_output(std::ofstream& outs,std::vector<index_value>& bad_input_list);
+    bool make_output(ofstream& outs,vector<index_value>& bad_input_list);
 
 	//! check to make sure the inputs are properly formed
-	bool check_values(std::vector<index_value>& error_details);
+	bool check_values(vector<index_value>& error_details);
 
   private:
         

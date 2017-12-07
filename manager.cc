@@ -5,8 +5,6 @@
 
 using namespace std;
 
-
-
 bool compare_width(field& left, field& right);//prototype for sorting function passed to algorithm::sort
 
 manager::manager(){
@@ -503,7 +501,6 @@ void manager::check_locks(){
 
 
 	//complex cases/form button cases
-	ilv2_locking();
 	icntrl10_locking();
 	icntrl4_locking();
 	icntrl8_locking();
@@ -718,42 +715,6 @@ void manager::icntrl8_locking(){
 
 
 }
-void manager::ilv2_locking(){
-  try{
-
-	regex ilv2_good("\\s*[0-9]+\\s*");
-	string ilv2_str = fields.at("line_5").at("ILV2").temp_input;
-	int ilv2_val = stoi(ilv2_str);
-
-	//if ilv2 is locking, and it shouldn't be, then make it stop unlocking
-	if( fields.at("line_5").at("ILV2").am_I_locking &&
-	    (regex_match(ilv2_str,ilv2_good) && ilv2_val > 0) ){
-		fields.at("line_5").at("ILV2").change_tile_background("andy_tile.png");
-		fields.at("line_5").at("ILV2").am_I_locking = false;
-
-	//if it is currently not locking and it should be, then make it start locking
-	} else if( !(fields.at("line_5").at("ILV2").am_I_locking) &&
-		   (!(regex_match(ilv2_str,ilv2_good)) || !(ilv2_val > 0)) ){
-		fields.at("line_5").at("ILV2").change_tile_background("purple_andy_tile.png");
-		fields.at("line_5").at("ILV2").am_I_locking = true;
-	}  
-
-  } catch (out_of_range& map_error){
-	error_logger.push_error("From: manager::ilv2_locking()| ILV2 was not found in the parameter tiles",
-				", please check that the tile and the HF config files match.");
-
-  } catch (invalid_argument& stoi_error){
-	error_logger.push_msg("ILV2 has an illegal string argument, it must be an integer in the range");
-	error_logger.push_msg(" 0 < ILV2 ");
-	fields.at("line_5").at("ILV2").change_tile_background("purple_andy_tile.png");
-	fields.at("line_5").at("ILV2").am_I_locking = true;
-  }
-
-	if( (b_manager_hook->get_ilv_2().get_is_locked() && !(fields.at("line_5").at("ILV2").am_I_locking) ) ||
-	    (!(b_manager_hook->get_ilv_2().get_is_locked()) && fields.at("line_5").at("ILV2").am_I_locking ) ){
-		b_manager_hook->get_ilv_2().toggle_lock();
-	}
-}
 
 void manager::icntrl10_locking(){
   try{
@@ -858,9 +819,6 @@ void manager::ilv3_ilv5_locking_helper(const string& target_param,const regex& u
 		fields.at("line_5").at(target_param).change_tile_background("purple_andy_tile.png");
 		fields.at("line_5").at(target_param).am_I_locking = true;
 	}
-
-
-
 
 }
 

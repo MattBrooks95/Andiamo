@@ -8,8 +8,11 @@
 #include<string>
 
 #include "sdl_help.h"
-
 #include "cursor.h"
+
+
+using std::string;
+using std::regex;
 
 struct text_box{
 
@@ -18,7 +21,7 @@ struct text_box{
 	 *has been properly set up, causing issues. So I've been writing init functions to fix that data
 	 *once the containing class is set up */
 	text_box(sdl_help* sdl_helper = NULL,TTF_Font* font_in=NULL,
-		 std::string text_in = "",int xloc_in = 0, int yloc_in = 0,int width_in = 0,
+		 string text_in = "",int xloc_in = 0, int yloc_in = 0,int width_in = 0,
 		 int height_in = 0);
 
 	//! copy constructor prevents double free() crashes when temporary text_boxes are pushed into vectors
@@ -29,7 +32,7 @@ struct text_box{
 
 	//! this function sets up the location of the text box on the screen and the renderer
 	/* this information should be passed in from whatever tile or button is instantiating the text box */
-	void init(sdl_help* sdl_helper_in,TTF_Font* font_in,std::string text_in,int xloc_in,
+	void init(sdl_help* sdl_helper_in,TTF_Font* font_in,string text_in,int xloc_in,
 		  int yloc_in,int width_in, int height_in);
 
 	//##################### CLICK FUNCTIONS ############################################################
@@ -48,7 +51,7 @@ struct text_box{
 
 	//! this function updates the text that is rendererd to the screen
 	/*! it uses update_text_bounds_check to make sure that text can't go off the edge */
-	void update_text(std::string& new_text);
+	void update_text(string& new_text);
 
 	//! update the texture when the text is changed
 	void update_texture();
@@ -56,10 +59,10 @@ struct text_box{
 	//! this version of update_text does input checking
 	/*! \param new_text is the test to be added
 	 *\param test is the pattern which indicates good input */ 
-	void update_text(std::string& new_text,const std::regex& test);
+	void update_text(string& new_text,const regex& test);
 
 	//! this function decides whether or not the input is bad, and changes the color of the text box accordingly
-	void check_text(const std::regex& test);
+	void check_text(const regex& test);
 
 	//! this function turns the textbox red
 	/*! this is usually to indicate that the input is not consistent with
@@ -79,7 +82,7 @@ struct text_box{
 
 	//! this version of back space tests the text string against the regular expression
 	/*! \param the regular expression which indicates good input */
-	void back_space(const std::regex& test);
+	void back_space(const regex& test);
 
 	SDL_Rect my_rect;//!< location information stored in an SDL_Rect for rendering
 
@@ -100,7 +103,7 @@ struct text_box{
 	cursor my_cursor;//! class that handles drawing the text editing cursor
 	unsigned int editing_location;//! keep track of where the insertion point is for text
 
-	std::string text;//!< the text that is rendered to the screen and changed by the user
+	string text;//!< the text that is rendered to the screen and changed by the user
 	bool bad_input;//!< keep track of whether this box has been given bad input or not
 
 	sdl_help* sdl_helper;//!< pointer to the sdl_help class

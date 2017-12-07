@@ -14,6 +14,10 @@
 #include<dirent.h>//allows traversing a directory and getting its file names. ./error_logs in this case
 #include<algorithm>//std::sort, to sort a vector of file names
 
+using std::string;
+using std::vector;
+using std::ofstream;
+
 //! the logger is a class that provides a means by which error messages can be printed to a file
 /*! I made this to reduce the terminal clutter involved with the many cout statements that I use(d) for debugging.
  *It has two primary functionalities: extensive debugging output and error message output. Caught exceptions or
@@ -33,12 +37,12 @@ class logger{
 	//! puts a new error message into the vector
 	/* these messages are accumulated and then printed to a file at the end of this object's life.
 	 *This function also does some book keeping, like the # of error messages pushed */
-	void push_error(std::string push_me);
+	void push_error(string push_me);
 
 	//! this is an overload of logger::push_error
 	/*! it taks two strings as arguments, to allow long messages to be split up into parts for readability
 	 * and brevity */
-	void push_error(std::string push_1,std::string push_2);
+	void push_error(string push_1,string push_2);
 
 	//! this function uses dirent functions to check the # of files, and then removes the oldest ones
 	/*! If the # of files in the /error_logs directory is greater than 30, it culls the 10 oldest
@@ -48,10 +52,10 @@ class logger{
 	//! This function accumulates messages about what happens during run time
 	/* if verbose mode is turned on by the -v argument, these are accumulated and printed.
 	 *if that argument is not present, this does nothing */
-	void push_msg(std::string push_me);
+	void push_msg(string push_me);
 
 	//! This functions pushes a message into the vector, but without a newline character
-	void push_msg_no_nl(std::string push_me);
+	void push_msg_no_nl(string push_me);
 
 	//! this function creates the error file from the errors_vector
 	/*! it is called in this class's destructor, so that it doesn't have to be called in main */
@@ -59,15 +63,15 @@ class logger{
 
 	bool verbose;
 
-	std::ofstream& get_stream(){ return errors_out;}
+	ofstream& get_stream(){ return errors_out;}
 
   private:
 	int error_msg_num;//!< keep track of the number of error messages pushed
-	std::string unique_file_name;//!< save the file name that is based on the time in which Andiamo was ran
+	string unique_file_name;//!< save the file name that is based on the time in which Andiamo was ran
 
-	std::vector<std::string> message_vector;//!< keep track of process outputs
-	std::vector<std::string> errors_vector;//!< store up error messages, so they are all written at the end
-	std::ofstream errors_out;//!< the stream that the error files will eventually be pushed to
+	vector<string> message_vector;//!< keep track of process outputs
+	vector<string> errors_vector;//!< store up error messages, so they are all written at the end
+	ofstream errors_out;//!< the stream that the error files will eventually be pushed to
 	
 
 };

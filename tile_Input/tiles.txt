@@ -221,14 +221,6 @@ c 7 = search on level density parameters
 andy_tile.png
 200x50
 andy
-ILV2:Supplement Resolved Levels?
-c Variable in HF:ILV2
-c Resolved level information
-c 0 = use BNL levels for nuclei
-c 1 <= add levels to BNL tabulation
-andy_tile.png
-270x50
-andy
 ILV3:Distinct Residual Level Density?
 c Variable name in HF: ILV3
 c input parameters for level density of particular nculei
@@ -317,12 +309,6 @@ c 0 = print total formation cross section for
 c     each residual nucleus
 c 1 = print information under ICNTRL2 = 0 plus neutron,
 c     proton, etc. cross sections for each stage
-andy_tile.png
-150x50
-andy
-ICNTRL3:moot -make always 0
-c 0 = do not print denominator sums
-c 1 = print denominator sums
 andy_tile.png
 150x50
 andy

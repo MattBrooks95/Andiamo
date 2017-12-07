@@ -14,6 +14,13 @@
 #include "text_box.h"
 #include "c_tuples.h"
 
+
+
+using std::string;
+using std::vector;
+using std::regex;
+
+
 class page;
 
 //! A form is a class that is housed by a form_button, which allows for dynamic parameter entry
@@ -36,16 +43,15 @@ class form{
 	 *\param yloc_in sets the vertical coordinate of the corner of the form, likely should be 0
 	 *\param sdl_helper_in is a pointer reference to the sdl_help object, for drawing functionality
 	 *\param sdl_font_in is a pointer to the font contained within the sdl_help object, for shorthand access */
-	void init(std::string form_title_in,std::string help_msg_image_name,
-		      int xloc_in,int yloc_in, sdl_help* sdl_helper_in,TTF_Font* sdl_font_in,
-              const std::vector<std::regex>& pattern_tests);
+	void init(string form_title_in,string help_msg_image_name, int xloc_in,int yloc_in,
+			  sdl_help* sdl_helper_in,TTF_Font* sdl_font_in, const vector<regex>& pattern_tests);
 
     //! this function changes the form's title
     /*! this is useful, for example, when a form can serve one or two logical functions
      *but the required information is the same. The ilv3/ilv5  form is one such case. Make sure to
      *account for the form title area's background color, as that color is needed to fill over the old
      *title, so the new one can be applied. */
-    void set_form_title(std::string new_title);
+    void set_form_title(string new_title);
 
 	//! form_event_loop is a member that enacts an event loop similar to the one in main
 	/* it is specifically tailored to be useful for form parameter entry, and it is virtual so it could be
@@ -73,10 +79,10 @@ class form{
 	void prev_page();
 
 	//! this function checks all of the inputs to make sure they are correct
-	bool check_values(std::vector<index_value>& error_details);
+	bool check_values(vector<index_value>& error_details);
 
 	//! getter for the vector that stores the pages of text boxes
-	std::vector<page>& get_pages() { return pages;} 
+	vector<page>& get_pages() { return pages;} 
 
 	//! this funciton sets page_count to the passed value
 	void set_page_count(int page_count_in);
@@ -94,8 +100,8 @@ class form{
 	 *\param command is a string that may be changed and returned from the functon, to tell the form_event_loop
      *\param pattern is the regex used to test user input as they type
 	 *if any necessary behaviours are needed, like tabbing to the next text box */
-	void text_box_loop(text_box& current_box,SDL_Event& event,std::string& command,
-                       const std::regex& pattern);
+	void text_box_loop(text_box& current_box,SDL_Event& event,string& command,
+                       const regex& pattern);
 
 
     //these two functions are used to know when a form needs smashed and recreated
@@ -104,7 +110,7 @@ class form{
 	int prev_init_value;  //!< keep track of the value this form was initialized with
 
     //! title of the form, which is displayed at the top of the form
-	std::string form_title;
+	string form_title;
 
   private:
 
@@ -149,7 +155,7 @@ class form{
 	active_area left_arrow;
 
     //! store vector of pages, which each contain an array of text boxes for the user to fill in
-	std::vector<page> pages;
+	vector<page> pages;
 
     //! keep track of how many pages there are, so it can be displayed in the top right
 	int page_count;
@@ -162,7 +168,7 @@ class form{
     //! store the regular expressions that can be used for real time error checking
     /*! kind of like a word processor, I want the text box to indicate if an invalid
      *input has been typed */
-	std::vector<std::regex> my_patterns;
+	vector<regex> my_patterns;
 
     //! pointer to the graphics class
 	sdl_help* sdl_helper;
@@ -196,37 +202,37 @@ class page{
 
 	//###########################################################################################################
 	void page_init(unsigned int num_columns_in, unsigned int rows_needed,
-		       const std::vector<std::string>& column_labels_in,std::vector<std::string>& row_labels_in,
-		       sdl_help* sdl_helper_in,TTF_Font* sdl_font_in, const std::vector<int>& column_spacings);
+		       const vector<string>& column_labels_in,vector<string>& row_labels_in,
+		       sdl_help* sdl_helper_in,TTF_Font* sdl_font_in, const vector<int>& column_spacings);
 	//! helper for page_init, does the mundane pass-through assignments
-	void page_init_local_var(unsigned int num_columns_in, unsigned int rows_needed, const std::vector<std::string>& column_labels_in,
-			         std::vector<std::string>& row_labels_in, sdl_help* sdl_helper_in,TTF_Font* sdl_font_in);
+	void page_init_local_var(unsigned int num_columns_in, unsigned int rows_needed, const vector<string>& column_labels_in,
+			         vector<string>& row_labels_in, sdl_help* sdl_helper_in,TTF_Font* sdl_font_in);
 	//! helper for page_init that sets up the row labels, if they exist
-	void page_init_set_row_labels(const std::vector<std::string>& row_labels_in,int& x_start_point);
+	void page_init_set_row_labels(const vector<string>& row_labels_in,int& x_start_point);
 
 	//! helper for page_init that sets up the text boxes
-	void page_init_set_text_boxes(int& x_start_point,const std::vector<int>& column_spacings,bool& row_labels_exist);
+	void page_init_set_text_boxes(int& x_start_point,const vector<int>& column_spacings,bool& row_labels_exist);
 
 	//! helper for page_init that sets up the column labels/headers
-	void page_init_column_labels(const std::vector<int>& column_spacings,int& x_start_point,bool& row_labels_exist);
+	void page_init_column_labels(const vector<int>& column_spacings,int& x_start_point,bool& row_labels_exist);
 	//###########################################################################################################
 
 	//! this function draws the pages headers, labels and text boxes
 	void draw_me();
 
 	//! this function is a non-const reference getter for the text box vector
-	std::vector<text_box>& get_text_boxes(){ return text_boxes;}
+	vector<text_box>& get_text_boxes(){ return text_boxes;}
 
 	//! this function is a const reference getter for the text box vector
-	const std::vector<text_box>& get_const_text_boxes(){ return text_boxes;}
+	const vector<text_box>& get_const_text_boxes(){ return text_boxes;}
 
 	//! this function returns a reference to the row labels vector
 	/*! this is the const version */
-	const std::vector<std::string>& get_row_labels(){
+	const vector<string>& get_row_labels(){
 		return row_labels;
 	}
 	//! return modifying reference to row labels vector
-	std::vector<std::string>& get_const_row_labels(){
+	vector<string>& get_const_row_labels(){
 		return row_labels;
 	}
 	
@@ -244,15 +250,15 @@ class page{
 	unsigned int num_columns;//!< number of columns that will be needed
 	unsigned int num_rows;//!< number of rows that will be needed
 
-	std::vector<std::string> column_labels;//!< column labels that populate the top of the page
-	std::vector<std::string> row_labels;//!< optional row labels, should be rarely used
+	vector<string> column_labels;//!< column labels that populate the top of the page
+	vector<string> row_labels;//!< optional row labels, should be rarely used
 	
-	std::vector<text_box> text_boxes;//!< array that contains all of the necessary text boxes
-	std::vector<SDL_Texture*> column_label_textures;//!< stores the column label textures for the passed labels
-	std::vector<SDL_Rect> column_label_rects;//!< store the drawing location for the column labels
+	vector<text_box> text_boxes;//!< array that contains all of the necessary text boxes
+	vector<SDL_Texture*> column_label_textures;//!< stores the column label textures for the passed labels
+	vector<SDL_Rect> column_label_rects;//!< store the drawing location for the column labels
 
-	std::vector<SDL_Texture*> row_label_textures;//!< store textures for the row labels
-	std::vector<SDL_Rect> row_label_rects;//!< store the location of the textures for the row labels
+	vector<SDL_Texture*> row_label_textures;//!< store textures for the row labels
+	vector<SDL_Rect> row_label_rects;//!< store the location of the textures for the row labels
 };
 
 

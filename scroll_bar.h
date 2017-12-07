@@ -6,6 +6,9 @@
 #include<SDL2/SDL_image.h>
 
 #include "logger.h"
+
+using std::string;
+
 extern logger error_logger;
 
 /*! \brief scroll_bar contains the internal bookkeeping necessary for creating scroll bars, and also 
@@ -39,7 +42,7 @@ class scroll_bar{
 	 *\param renderer_in SDL_Renderer pointer to the containing sdl_help object's renderer pointer
 	 *\param image_p_in string that contains the desired image name */ 
 	void init(int* x_scroll_in, int* y_scroll_in, const int* window_width_in,
-		  const int* window_height_in,SDL_Renderer* renderer_in, std::string image_p_in);
+		  const int* window_height_in,SDL_Renderer* renderer_in, string image_p_in);
 
 	//! draw_me uses it's own information to draw itself to the renderer used by the sdl_help object
 	void draw_me();
@@ -85,7 +88,7 @@ class scroll_bar{
 	int yloc; //!> keep track of the scroll bar's corner's y coordinate
 	int width; //!> keep track of scroll bar width
 	int height; //!> keep track of the scroll bar height
-	std::string image_p;
+	string image_p;
 	SDL_Texture* my_tex;
 	SDL_Surface* my_surf;
 	//! keeps track of whether or not we are in scroll mode

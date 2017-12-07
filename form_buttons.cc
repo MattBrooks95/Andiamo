@@ -15,8 +15,6 @@ using namespace std;
 #define I << setw(5) <<
 #define I10 << setw(10) <<
 
-
-
 //######################## FORM BUTTONS #####################################
 form_button::form_button(){
 	lock_surface = NULL;
@@ -343,34 +341,6 @@ bool icntrl8_form_button::check_values(vector<index_value>& error_details){
 
 //##############################################################################
 
-//###################### ILV2 BUTTON ###########################################
-bool ilv2_form_button::handle_click(SDL_Event& mouse_event){
-	if(button::was_clicked(mouse_event)){
-		SDL_RenderClear(sdl_helper->renderer);
-		click_helper(mouse_event);
-		return true;
-	}
-	return false;
-}
-
-void ilv2_form_button::click_helper(SDL_Event& mouse_event){
-	error_logger.push_msg("Clicked ilv2/  button");
-	if(!is_locked){
-		screen_size();
-		my_form.toggle_active();//let the form know that it is now active
-		my_form.form_event_loop(mouse_event);//enter the mini loop for form entry
-	}
-}
-
-void ilv2_form_button::init_form(const vector<regex>& pattern_tests){
-
-	my_form.init("Level Info (ILV2)","default_form_help.png",0,0,sdl_helper,sdl_helper->font,
-                 pattern_tests);
-
-}
-
-
-//###############################################################################
 
 //####################### ICNTRL6 BUTTON ########################################
 icntrl6_form_button::~icntrl6_form_button(){

@@ -17,6 +17,11 @@
 #include<SDL2/SDL_image.h>
 
 #include "logger.h"
+
+using std::string;
+using std::regex;
+
+
 extern logger error_logger;
 
 class button_manager;
@@ -39,14 +44,14 @@ class manager{
 	 *like "IENCH".
 	 *\param line_name is the name of the map that will be put into the map of lines
 	 *\param line_map is a map of the parameter's name, and their corresponding field*/
-	void new_line(const std::string& line_name,const std::map<std::string,field>& line_map);
+	void new_line(const string& line_name,const map<string,field>& line_map);
 
 	//! this member is called by sdl_help's constructor, and sets up input_maker object pointer
 	void set_input_maker_hook(input_maker* input_maker_hook_in);
 
 	//! this function traverses the tile bag and sets up each object with a reference to the main renderer
 	/*! it also allows fields to access sdl_help's scroll values and font pointer */
-	void give_fields_renderer(SDL_Renderer* sdl_help_renderer_in,std::string image_p_in,
+	void give_fields_renderer(SDL_Renderer* sdl_help_renderer_in,string image_p_in,
 				  int* xscroll_in, int* yscroll_in,TTF_Font* font_in);
 	//! this function walks the map, and returns the width of the widest tile
 	int get_widest_tile_width();
@@ -73,7 +78,7 @@ class manager{
 	//! this function updates input_maker's vectors with the field's new values (from user)
 	/*\return true means that there was no errors in string->data conversion
 	 *\return false means that an stoi/stod function failed, and the file wasn't created */
-	bool update_io_maker(std::vector<std::string>& bad_input_list);
+	bool update_io_maker(vector<string>& bad_input_list);
 
 	//! this member loads in tiles from the tile input file using regular expressions and file i/o
 	/*! this init member uses fstream and regex to open and process a text file, which for now defaults
@@ -112,9 +117,6 @@ class manager{
 		//! helper function for check_locks()
 		void icntrl8_locking();
 
-		//! helper function for check_locks
-		void ilv2_locking();
-
 		//! helper function for check_locks()
 		void icntrl10_locking();
 
@@ -123,7 +125,7 @@ class manager{
 		//! helper function for ilv3_ilv5_locking(), determines lock/unlock conditions of passed field
 		/*! the field passed MUST be "ILV3" or "ILV5"
 		 *\param target_param is the name of the field to check the locking status of, MUST be "ILV3" or "ILV5" */
-		void ilv3_ilv5_locking_helper(const std::string& target_param,const std::regex& unlock_condition);
+		void ilv3_ilv5_locking_helper(const string& target_param,const regex& unlock_condition);
 
 		//##### ICNTRL6 locking + helpers ######################################
 			//! helper function for check_locks()
@@ -152,15 +154,19 @@ class manager{
 	 *\param height_in is the desired new height */
 	void update_win(int width_in, int height_in);
 
-	std::vector<std::string> line_order;//!< save the order in which the lines occur, maps don't do it automatically
-	std::map<std::string,std::map<std::string,field>> fields;//!< trying something new, to keep relevant tiles together
-	//std::vector<field> tiles;//!< vector of tile information is public for easier access from sdl_help
+	vector<string> line_order;//!< save the order in which the lines occur, maps don't do it automatically
+	map<string,map<string,field>> fields;//!< trying something new, to keep relevant tiles together
 
   private:
 	input_maker* input_maker_hook; //!< allows manager access to sdl_help's input_maker object
 	button_manager* b_manager_hook; //!< allows tile manager to unlock form buttons
 
-	std::string tile_input_p; //!< \brief a path string to the tile input file folder
+	string tile_input_p; //!< \brief a path string to the tile input file folder
 	int win_w;//!< \brief keeps track of sdl window width
 	int win_h;//!< \brief keeps track of sdl window height
 };
+
+
+
+
+
