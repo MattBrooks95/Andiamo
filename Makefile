@@ -7,8 +7,8 @@ vtool = --tool=memcheck
 vopt = --log-file="memory_check.txt" --leak-check=full
 
 #object files
-objects = main.o handlers.o manager.o ftran_structs.o field.o sdl_help.o scroll_bar.o input_maker.o string+.o button_manager.o button.o form_buttons.o form.o derived_buttons.o fop_handler.o text_box.o cursor.o logger.o
-main_objects = handlers.o manager.o ftran_structs.o field.o sdl_help.o scroll_bar.o input_maker.o string+.o button_manager.o button.o form_buttons.o form.o derived_buttons.o text_box.o cursor.o logger.o
+objects = main.o handlers.o manager.o ftran_structs.o field.o sdl_help.o scroll_bar.o input_maker.o string+.o button_manager.o button.o form_buttons.o form.o derived_buttons.o fop_handler.o text_box.o cursor.o logger.o asset_manager.o
+main_objects = handlers.o manager.o ftran_structs.o field.o sdl_help.o scroll_bar.o input_maker.o string+.o button_manager.o button.o form_buttons.o form.o derived_buttons.o text_box.o cursor.o logger.o asset_manager.o
 
 #header files
 headers = button.h field.h ftran_structs.h logger.h sdl_help.h button_manager.h form_buttons.h handlers.h manager.h string+.h derived_buttons.h form.h input_maker.h scroll_bar.h text_box.h
@@ -30,6 +30,9 @@ handlers.o: handlers.cc handlers.h sdl_help.h button_manager.h
 
 sdl_help.o: sdl_help.cc sdl_help.h scroll_bar.o manager.o input_maker.o button_manager.o logger.o
 	g++ $(c_flg) -c sdl_help.cc
+
+asset_manager.o: asset_manager.h asset_manager.cc
+	g++ $(c_flg) -c asset_manager.cc
 
 scroll_bar.o: scroll_bar.cc scroll_bar.h logger.o
 	g++ $(c_flg) -c scroll_bar.cc

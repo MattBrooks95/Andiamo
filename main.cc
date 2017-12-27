@@ -6,6 +6,7 @@
 #include<iostream>
 
 #include "sdl_help.h"
+#include "asset_manager.h"
 #include "handlers.h"
 #include "input_maker.h"
 #include "button_manager.h"
@@ -14,6 +15,7 @@ using namespace std;
 
 
 logger error_logger; //global object used for error message output
+asset_manager* asset_access;
 
 //making this global and giving it a unique name, so the exit button can change it
 bool main_done = false;
@@ -41,7 +43,14 @@ int main(int argc, char *argv[]){
   }
   error_logger.push_msg("And where does the newborn go from here? The net is vast and infinite.");
 
+
   sdl_help sdl_helper("Andiamo!");
+
+  asset_manager assets(&sdl_helper);
+  asset_access = &assets;
+  asset_access->pull_assets();
+  asset_access->list_images(cout);
+
 
   button_manager b_manager(&sdl_helper);
   b_manager.init_tray();

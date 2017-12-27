@@ -2,7 +2,12 @@
 #include "field.h"
 #include <regex>
 
+#include "asset_manager.h"
+
 using namespace std;
+
+
+extern asset_manager* asset_access;
 
 field::field(string tile_name_in,string display_name_in,string image_name_in, int width, int height){
 	tile_name = tile_name_in;
@@ -216,6 +221,7 @@ void field::graphics_init(SDL_Renderer* sdl_help_renderer_in,string image_p_in,
 		error_logger.push_error("Error in field.cc's graphics init() function: "+error);
 	}
 	my_tex = SDL_CreateTextureFromSurface(sdl_help_renderer,my_surf);
+	//my_tex = asset_access->get_texture(image_name.c_str());
 	if(my_tex == NULL){
 		string error = SDL_GetError();
 		error_logger.push_error("Error in field.cc's graphics init() function: "+error);

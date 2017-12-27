@@ -1,12 +1,14 @@
 //! \file button_manager.cc this file implements the class described in button_manager.h
 
 #include "button_manager.h"
+#include "asset_manager.h"
 
 using namespace std;
 
 #define OU_GREEN 105,78,255
 #define BLACK {0,0,0}
 
+extern asset_manager* asset_access;
 
 button_manager::button_manager(sdl_help* sdl_helper_in){
 	sdl_helper = sdl_helper_in;
@@ -32,7 +34,6 @@ button_manager::button_manager(sdl_help* sdl_helper_in){
 	button_tray_surf = NULL;
 	button_tray_texture = NULL;
 
-	form_tray_surface = NULL;
 	form_tray_texture = NULL;
 }
 
@@ -41,15 +42,15 @@ button_manager::~button_manager(){
 	SDL_FreeSurface(button_tray_surf);
 	SDL_DestroyTexture(button_tray_texture);
 
-	SDL_FreeSurface(form_tray_surface);
 	SDL_DestroyTexture(form_tray_texture);
 }
 
 void button_manager::init_tray(){
 
 	button_tray_surf = IMG_Load( (button_image_p+tray_image_name).c_str() );
-	if(button_tray_surf == NULL) error_logger.push_error(string(SDL_GetError()));
+    if(button_tray_surf == NULL) error_logger.push_error(string(SDL_GetError()));
 	button_tray_texture = SDL_CreateTextureFromSurface(sdl_helper->renderer,button_tray_surf);
+	//button_tray_texture = asset_access->get_texture(button_image_p+tray_image_name);	
 	if(button_tray_texture == NULL) error_logger.push_error(string(SDL_GetError()));
 
 	//use query texture to get the texture's height and width
@@ -64,9 +65,7 @@ void button_manager::init_tray(){
 
 void button_manager::init_form_tray(){
 
-	form_tray_surface = IMG_Load( (button_image_p+form_tray_image_name).c_str() );
-	if(form_tray_surface == NULL) error_logger.push_error(SDL_GetError());
-	form_tray_texture = SDL_CreateTextureFromSurface(sdl_helper->renderer,form_tray_surface);
+	form_tray_texture = asset_access->get_texture(button_image_p+form_tray_image_name.c_str());
 	if(form_tray_texture == NULL) error_logger.push_error(SDL_GetError());
 
 	SDL_QueryTexture(form_tray_texture,NULL,NULL,&form_tray_rect.w,&form_tray_rect.h);
@@ -782,7 +781,7 @@ int button_manager::clean_up(){
 	return 0;//successful exit
 }
 void button_manager::bad_tile_input_warnings(vector<string>& bad_input_list){
-	//sdl_helper
+	
 	SDL_Surface* bad_input_msg_surface = IMG_Load("Assets/Images/bad_input_message.png");
 	if(bad_input_msg_surface == NULL) error_logger.push_error(string(SDL_GetError()));
 	SDL_Texture* bad_input_msg_texture = SDL_CreateTextureFromSurface(sdl_helper->renderer,bad_input_msg_surface);
