@@ -14,6 +14,7 @@
 #define SDL_HELP_ERROR "Attempted double free in ~sdl_help"
 using namespace std;
 
+extern asset_manager* asset_access;
 
 //######################### WIN SIZE STRUCT ################################################################
 win_size::win_size(){//initialize window dimensions to bad values so they must be initialized elsewhere
@@ -52,7 +53,7 @@ sdl_help::sdl_help(string name_in,string HF_input_file_in,string bg_image_name_i
 	if(SDL_GetCurrentDisplayMode(0,&display) < 0){
 		error_logger.push_error("Get current display mode error:");
 		error_logger.push_error(SDL_GetError());
-        };
+    }
 
 	int temp_window_w = display.w * .9;
 	int temp_window_h = display.h * .9;
@@ -96,6 +97,11 @@ sdl_help::sdl_help(string name_in,string HF_input_file_in,string bg_image_name_i
 
 
 	calc_corners(); //set up tile locations with the field's corner location 
+
+	asset_access->set_sdl_help(this);
+	asset_access->pull_assets();
+	asset_access->list_images(cout);
+
 	tile_bag.give_fields_renderer(renderer,image_p,&x_scroll,&y_scroll,font);//give fields rendering and font info
 
 	io_handler.init();
@@ -501,8 +507,6 @@ void sdl_help::calc_corners(){
 void sdl_help::calc_corners_helper(const string line_in, map<std::string,field>& map_in, unsigned int& start_height,
 				   int row_limit){
 	error_logger.push_msg("In calc_corners_helper()! Line in progress is:" + line_in);
-
-
 
 	int x_buffer = 5;//distance between the left edge and the tiles, and the distance between two tiles 
 			  //horizontally

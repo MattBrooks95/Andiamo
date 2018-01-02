@@ -14,7 +14,7 @@
 #include<SDL2/SDL_image.h>
 #include<SDL2/SDL_ttf.h>
 
-#include "sdl_help.h"
+class sdl_help;
 
 using std::string;
 
@@ -23,12 +23,15 @@ class asset_manager{
 
   public:
 	//! sets sdl_helper reference, so textures can be made
-	asset_manager(sdl_help* sdl_helper_in);
+	asset_manager(sdl_help* sdl_helper_in = NULL);
 	//! copies another asset_manager to this one
 	/*! shouldn't ever happen */
 	asset_manager(const asset_manager& other);
 	//! clean up memory by walking the map of texture pointers
 	~asset_manager();
+
+	//! arbitrarily set the pointer to the sdl_helper class
+	void set_sdl_help(sdl_help* sdl_helper_in);
 
 	//! this function crawls through the assets folder, loading all png files
 	void pull_assets();

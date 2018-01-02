@@ -9,7 +9,7 @@
 #include "scroll_bar.h"
 #include "manager.h"
 #include "input_maker.h"
-
+#include "asset_manager.h"
 #include "logger.h"
 
 using std::string;

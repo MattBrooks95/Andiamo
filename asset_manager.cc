@@ -1,7 +1,7 @@
 //! \file asset_manager.cc implements the asset_manager class
 
 #include "asset_manager.h"
-
+#include "sdl_help.h"
 #include "logger.h"
 
 using namespace std;
@@ -30,6 +30,11 @@ asset_manager::~asset_manager(){
 			SDL_DestroyTexture(it->second);
 		}
 	}
+
+}
+
+void asset_manager::set_sdl_help(sdl_help* sdl_helper_in){
+	sdl_helper = sdl_helper_in;
 
 }
 
@@ -99,8 +104,6 @@ void asset_manager::pull_helper(const string& subroot_path){
 					cout << texture_path << " ain't a PNG file." << endl;
 				}
 
-
-
 			//if it is another dir, call the helper on it
 			} else if(current_file->d_type == DT_DIR){
 
@@ -156,7 +159,6 @@ SDL_Texture* asset_manager::load_image(const string& load_me){
 
 		textures.insert(pair<string,SDL_Texture*>(load_me,temp_texture));
 														
-
 	} else {
 		error_logger.push_error("File "+ load_me + " not found in",
 								"load_image!.");
@@ -172,7 +174,6 @@ void asset_manager::list_images(ostream& outs){
 		it != textures.end();
 		it++){
 		outs << it->first << " " << it->second << endl;
-
 	}
 }
 

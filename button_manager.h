@@ -138,7 +138,6 @@ class button_manager{
 	sdl_help* sdl_helper;//!< this is a pointer to the main graphics class, for renderer and font access
   private:
 
-	SDL_Surface* button_tray_surf;//!< save the surface for the tray on which buttons sit
 	SDL_Texture* button_tray_texture;//!< save the texture for the tray on which buttons sit
 
 	//####################### FORM BUTTONS ##################################################################

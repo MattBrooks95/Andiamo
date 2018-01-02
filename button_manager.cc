@@ -30,8 +30,6 @@ button_manager::button_manager(sdl_help* sdl_helper_in){
 	form_tray_rect.w = 0;
 	form_tray_rect.h = 0;
 
-
-	button_tray_surf = NULL;
 	button_tray_texture = NULL;
 
 	form_tray_texture = NULL;
@@ -39,18 +37,12 @@ button_manager::button_manager(sdl_help* sdl_helper_in){
 
 button_manager::~button_manager(){
 
-	SDL_FreeSurface(button_tray_surf);
-	SDL_DestroyTexture(button_tray_texture);
-
-	SDL_DestroyTexture(form_tray_texture);
 }
 
 void button_manager::init_tray(){
 
-	button_tray_surf = IMG_Load( (button_image_p+tray_image_name).c_str() );
-    if(button_tray_surf == NULL) error_logger.push_error(string(SDL_GetError()));
-	button_tray_texture = SDL_CreateTextureFromSurface(sdl_helper->renderer,button_tray_surf);
-	//button_tray_texture = asset_access->get_texture(button_image_p+tray_image_name);	
+	button_tray_texture = asset_access->get_texture(button_image_p+tray_image_name);	
+
 	if(button_tray_texture == NULL) error_logger.push_error(string(SDL_GetError()));
 
 	//use query texture to get the texture's height and width
@@ -781,12 +773,11 @@ int button_manager::clean_up(){
 	return 0;//successful exit
 }
 void button_manager::bad_tile_input_warnings(vector<string>& bad_input_list){
-	
-	SDL_Surface* bad_input_msg_surface = IMG_Load("Assets/Images/bad_input_message.png");
-	if(bad_input_msg_surface == NULL) error_logger.push_error(string(SDL_GetError()));
-	SDL_Texture* bad_input_msg_texture = SDL_CreateTextureFromSurface(sdl_helper->renderer,bad_input_msg_surface);
-	if(bad_input_msg_surface == NULL) error_logger.push_error(string(SDL_GetError()));
-	
+
+	string msg_target = "Assets/Images/bad_input_message.png";
+	SDL_Texture* bad_input_msg_texture = asset_access->get_texture(msg_target);
+	if(bad_input_msg_texture == NULL) error_logger.push_error(string(SDL_GetError()));
+
 	SDL_Rect msg_dest;//calculate where to put the error message
 	SDL_QueryTexture(bad_input_msg_texture,NULL,NULL,&msg_dest.w,&msg_dest.h);
 	msg_dest.x = (sdl_helper->get_win_size()->width / 2 ) - (.5 * msg_dest.w);
@@ -796,27 +787,20 @@ void button_manager::bad_tile_input_warnings(vector<string>& bad_input_list){
 	sdl_helper->present();//update the screen to show the message
 	SDL_Delay(5000);//delay for 3 seconds so they can read the message
 
-
-
-
-	SDL_FreeSurface(bad_input_msg_surface);
 	SDL_DestroyTexture(bad_input_msg_texture);//free memory back up
 
 }
 void button_manager::clean_up_warnings(bool bad_output_fname,bool bad_tc_input_fname){
-	SDL_Surface* tc_input_error_surf = NULL;
+
 	SDL_Texture* tc_input_error_texture = NULL;
 
-	SDL_Surface* output_fname_error_surf = NULL;
 	SDL_Texture* output_fname_error_texture = NULL;
 
 	//make the error message for the output file name
 	if(bad_output_fname){
 
-		output_fname_error_surf = IMG_Load("Assets/Images/Buttons/output_fname_err.png");
-		if(output_fname_error_surf == NULL) error_logger.push_error(string(SDL_GetError()));
-
-		output_fname_error_texture = SDL_CreateTextureFromSurface(sdl_helper->renderer,output_fname_error_surf);
+		string output_fname_err_target = "Assets/Images/Buttons/output_fname_err.png";
+		output_fname_error_texture = asset_access->get_texture(output_fname_err_target);
 		if(output_fname_error_texture == NULL) error_logger.push_error(string(SDL_GetError()));
 
 		//plan where to draw image
@@ -843,9 +827,8 @@ void button_manager::clean_up_warnings(bool bad_output_fname,bool bad_tc_input_f
 	//make the error message for the transmission coefficient input file name
 	if(bad_tc_input_fname){
 
-		tc_input_error_surf = IMG_Load("Assets/Images/Buttons/TC_input_err.png");
-		if(tc_input_error_surf == NULL) error_logger.push_error(SDL_GetError());
-		tc_input_error_texture = SDL_CreateTextureFromSurface(sdl_helper->renderer,tc_input_error_surf);
+		string bad_tc_input_target = "Assets/Images/Buttons/TC_input_err.png";
+		tc_input_error_texture = asset_access->get_texture(bad_tc_input_target);
 		if(tc_input_error_texture == NULL) error_logger.push_error(SDL_GetError());
 
 		SDL_Rect dest = {0,0,0,0};
@@ -875,12 +858,6 @@ void button_manager::clean_up_warnings(bool bad_output_fname,bool bad_tc_input_f
 	sdl_helper->present();//show the error messages to the screen
 	SDL_Delay(5000);//delay for 5 seconds, so they can read the messages
 
-	//free up memory, this stuff is temporary
-	if(output_fname_error_surf != NULL) SDL_FreeSurface(output_fname_error_surf);
-	if(output_fname_error_texture != NULL) SDL_DestroyTexture(output_fname_error_texture);
-
-	if(tc_input_error_surf != NULL) SDL_FreeSurface(tc_input_error_surf);
-	if(tc_input_error_texture != NULL) SDL_DestroyTexture(tc_input_error_texture);
 }
 
 

@@ -43,13 +43,19 @@ int main(int argc, char *argv[]){
   }
   error_logger.push_msg("And where does the newborn go from here? The net is vast and infinite.");
 
-
+  //run constructor with no args, it will exist here, but get set up by the
+  //sdl_helper constructor
+  asset_manager assets;
+  asset_access = &assets;
   sdl_help sdl_helper("Andiamo!");
 
-  asset_manager assets(&sdl_helper);
+  //this actually needs to be done in the sdl_help constructor
+  //elsewise the fields try to create their graphics while the
+  //pointer to the asset_manager is null
+  /*asset_manager assets(&sdl_helper);
   asset_access = &assets;
   asset_access->pull_assets();
-  asset_access->list_images(cout);
+  asset_access->list_images(cout);*/
 
 
   button_manager b_manager(&sdl_helper);

@@ -46,16 +46,13 @@ field::field(string tile_name_in,string display_name_in,string image_name_in, in
 	my_text_surf = NULL;
 	my_text_tex  = NULL;//these need to start off null, then be created later
 
-	my_surf = NULL; //these will be taken care of by graphics_init() later
 	my_tex  = NULL;
 
-	my_help_surf = NULL; //these will be set up by graphics_init's helper text_init
 	my_help_tex  = NULL;
 
 	sdl_help_renderer = NULL;
 
 	//LOCKING VARIABLES
-	lock_surface = NULL;
 	lock_texture = NULL;
 	is_locked = false;
 
@@ -120,19 +117,14 @@ field::field(const field& other){
 
 	sdl_help_renderer = other.sdl_help_renderer;
 
-	lock_surface = NULL;
-
 	lock_texture = NULL;
 
 	my_text_surf = NULL;
 
 	my_text_tex  = NULL;
 
-	my_surf = NULL; 
-
 	my_tex  = NULL;
 
-	my_help_surf = NULL;
 	my_help_tex  = NULL;
 
 	size.width  = other.size.width;
@@ -143,13 +135,11 @@ field::field(const field& other){
 
 	text_box.text_color = other.text_box.text_color;
 
-	text_box.box_surf  = NULL;
 	text_box.box_tex   = NULL;
 
 	text_box.text_surf = NULL;
 	text_box.text_tex  = NULL;
 
-	text_box.cursor_surface = NULL;
 	text_box.cursor_texture = NULL;
 
 }
@@ -164,29 +154,9 @@ field::~field(){
 		error_logger.push_error("Attempted double free in ~field!");
 	}
 
-	if(my_surf != NULL && my_tex != NULL){
-		SDL_FreeSurface(my_surf);
-		my_surf = NULL;
-		SDL_DestroyTexture(my_tex);
-		my_tex  = NULL;
-	} else {
-		error_logger.push_error("Attempted double free in ~field!");
-	}
-
-	if(my_help_surf != NULL && my_help_tex != NULL){
-		SDL_FreeSurface(my_help_surf);
-		my_help_surf = NULL;
+	if(my_help_tex != NULL){
 		SDL_DestroyTexture(my_help_tex);
 		my_help_tex = NULL;
-	} else {
-		error_logger.push_error("Attempted double free in ~field!");
-	}
-
-	if(lock_surface != NULL && lock_texture != NULL){
-		SDL_FreeSurface(lock_surface);
-		lock_surface = NULL;
-		SDL_DestroyTexture(lock_texture);
-		lock_texture = NULL;
 	} else {
 		error_logger.push_error("Attempted double free in ~field!");
 	}
@@ -215,22 +185,13 @@ void field::graphics_init(SDL_Renderer* sdl_help_renderer_in,string image_p_in,
 	sdl_font = font_in;//sets up the "hook" to true text font information pointer
 
 	//load in tile background
-	my_surf = IMG_Load(image_name.c_str());
-	if(my_surf == NULL){
-		string error = SDL_GetError();
-		error_logger.push_error("Error in field.cc's graphics init() function: "+error);
-	}
-	my_tex = SDL_CreateTextureFromSurface(sdl_help_renderer,my_surf);
-	//my_tex = asset_access->get_texture(image_name.c_str());
+	my_tex = asset_access->get_texture(image_name);
 	if(my_tex == NULL){
 		string error = SDL_GetError();
 		error_logger.push_error("Error in field.cc's graphics init() function: "+error);
 	}
-
-
-	lock_surface = IMG_Load((image_p+"lock.png").c_str());
-	if(lock_surface == NULL) error_logger.push_error(string(SDL_GetError()));
-	lock_texture = SDL_CreateTextureFromSurface(sdl_help_renderer,lock_surface);
+	string lock_target = image_p+"lock.png";
+	lock_texture = asset_access->get_texture(lock_target);
 	if(lock_texture == NULL) error_logger.push_error(string(SDL_GetError()));
 
 	text_init();
@@ -255,6 +216,7 @@ void field::text_init(){
 		error_logger.push_error("Error in field.cc's graphics init() function: "+error);
 
 	}
+
 	my_text_tex = SDL_CreateTextureFromSurface(sdl_help_renderer,my_text_surf);
 	if(my_text_tex == NULL){
 		string error = SDL_GetError();
@@ -348,10 +310,6 @@ void field::draw_me(){
 		SDL_Rect text_box_src = {0,0,size.width,25};
 		SDL_RenderCopy(sdl_help_renderer,text_box.box_tex,&text_box_src,&text_box_dest);
 
-
-
-		//SDL_Rect text_box_text_src = {0,0,0,0}; //become -> text_dims in field class
-		//TTF_SizeText(sdl_font,temp_input.c_str(),&text_dims.w,&text_dims.h);
 		SDL_Rect text_box_text_dest = {xloc+(*sdl_xscroll), yloc + text_box.y_offset + (*sdl_yscroll),0,0};
 
 		//I had a "funny" bug here where I was drawing the text box's text using the dimensions of the 
@@ -400,8 +358,8 @@ void field::print(){
 
 	error_logger.push_msg("CORNER x:y = "+to_string(xloc)+":"+to_string(yloc));
 	error_logger.push_msg("scroll value hooks x_ptr:y_ptr = "+to_string(size_t(sdl_xscroll))+":"+to_string(size_t(sdl_yscroll))); 
-	error_logger.push_msg("SDL pointers surface:texture:renderer = "+to_string(size_t(my_surf))+":"
-			      +to_string(size_t(&my_tex))+":"+to_string(size_t(sdl_help_renderer)) );
+	error_logger.push_msg("SDL pointers texture:renderer = "+to_string(size_t(&my_tex))+":"+
+							to_string(size_t(sdl_help_renderer)) );
 	error_logger.push_msg("SDL font hook: "+to_string(size_t(sdl_font)) );
 	error_logger.push_msg("Description lines:");
 
@@ -457,15 +415,10 @@ void field::init_temp_input(string data){
 
 void field::change_tile_background(string image_name){
 	string full_path = image_p + image_name;
-	SDL_FreeSurface(my_surf);
-	SDL_DestroyTexture(my_tex);
 
-	my_surf = NULL;
 	my_tex = NULL;
 
-	my_surf = IMG_Load(full_path.c_str());
-	if(my_surf == NULL) error_logger.push_error(SDL_GetError());
-	my_tex = SDL_CreateTextureFromSurface(sdl_help_renderer,my_surf);
+	my_tex = asset_access->get_texture(full_path);
 	if(my_tex == NULL) error_logger.push_error(SDL_GetError());
 }
 
@@ -522,9 +475,6 @@ void field::draw_cursor(){
 		cursor_dest = {xloc+ (*sdl_xscroll) + text_dims.w, yloc + text_box.y_offset + (*sdl_yscroll),
 				6,text_dims.h};
 	}
-
-
-
 
 	if( SDL_RenderCopy(sdl_help_renderer,text_box.cursor_texture,NULL,&cursor_dest) ){
 		error_logger.push_error(SDL_GetError());
@@ -646,17 +596,9 @@ bool field::update_my_value(){
 }
 
 void field::go_red(){
-	SDL_FreeSurface(my_surf); //free memory from previous look
-	SDL_DestroyTexture(my_tex);
-	my_surf = NULL; //null out the pointers for safety
 	my_tex = NULL;
 
-	my_surf = IMG_Load( (image_p+"bad_tile.png").c_str() );//load up error indicating surface
-	if(my_surf == NULL){
-		string error = SDL_GetError();
-		error_logger.push_error("Error changing tile:"+display_name+" to red."+error);
-	}
-	my_tex = SDL_CreateTextureFromSurface(sdl_help_renderer,my_surf);//turn that surface into a texture
+	my_tex = asset_access->get_texture(image_p+"bad_tile.png");
 	if(my_tex == NULL){
 		string error = SDL_GetError();
 		error_logger.push_error("Error changing tile:"+display_name+" to red."+error);
@@ -665,18 +607,10 @@ void field::go_red(){
 }
 
 void field::go_back(){
-	SDL_FreeSurface(my_surf);
-	SDL_DestroyTexture(my_tex);//free up old memory
 
-	my_surf = NULL;//set pointers to nothing for safety
 	my_tex = NULL;
 
-	my_surf = IMG_Load(image_name.c_str());//go back to original texture & surface
-	if(my_surf == NULL){
-		string error = SDL_GetError();
-		error_logger.push_error("Error in field::go_back() function: "+error);
-	}
-	my_tex = SDL_CreateTextureFromSurface(sdl_help_renderer,my_surf);
+	my_tex = asset_access->get_texture(image_name);
 	if(my_tex == NULL){
 		string error = SDL_GetError();
 		error_logger.push_error("Error in field::go_back() function: "+error);
@@ -692,20 +626,13 @@ void field::text_box_init(){
 	SDL_Color color = {0,0,0,0};//text black as davy jones's heart
 
 	//set up text box background
-	text_box.box_surf = IMG_Load((image_p+"text_box.png").c_str());
-	if(text_box.box_surf == NULL){
-		string error = SDL_GetError();
-		error_logger.push_error("Error in text_box_init! "+error);
-	}
-	text_box.box_tex = SDL_CreateTextureFromSurface(sdl_help_renderer,text_box.box_surf);
+	text_box.box_tex = asset_access->get_texture(image_p+"text_box.png");
 	if(text_box.box_tex == NULL){
 		string error = SDL_GetError();
 		error_logger.push_error("Error in text_box_init! "+error);
 	}
 
-	text_box.cursor_surface = IMG_Load("Assets/Images/cursor.png");
-	if(text_box.cursor_surface == NULL) error_logger.push_error(SDL_GetError());
-	text_box.cursor_texture = SDL_CreateTextureFromSurface(sdl_help_renderer,text_box.cursor_surface);
+	text_box.cursor_texture = asset_access->get_texture("Assets/Images/cursor.png");
 	if(text_box.cursor_texture == NULL) error_logger.push_error(SDL_GetError());
 
 	//set up text box text
@@ -727,13 +654,11 @@ void field::text_box_init(){
 
 sdl_text_box::sdl_text_box(){
 
-	box_surf = NULL;
 	box_tex  = NULL;
 
 	text_surf = NULL;
 	text_tex  = NULL;
 
-	cursor_surface = NULL;
 	cursor_texture = NULL;
 
 	text_color = {0,0,0,0};
@@ -743,14 +668,6 @@ sdl_text_box::sdl_text_box(){
 
 sdl_text_box::~sdl_text_box(){
 
-    if(box_surf != NULL){
-	    SDL_FreeSurface(box_surf);
-		box_surf = NULL;
-    }
-    if(box_tex != NULL){
-	    SDL_DestroyTexture(box_tex);
-		box_tex = NULL;
-    }
     if(text_surf != NULL){
 	    SDL_FreeSurface(text_surf);
 		text_surf = NULL;
@@ -758,14 +675,6 @@ sdl_text_box::~sdl_text_box(){
     if(text_tex != NULL){
     	SDL_DestroyTexture(text_tex);
 		text_tex = NULL;
-    }
-    if(cursor_surface != NULL){
-	    SDL_FreeSurface(cursor_surface);
-		cursor_surface = NULL;
-    }
-    if(cursor_texture != NULL){
-	    SDL_DestroyTexture(cursor_texture);
-		cursor_texture = NULL;
     }
 }
 
