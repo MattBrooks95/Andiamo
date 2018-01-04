@@ -10,6 +10,7 @@
 #include<SDL2/SDL_ttf.h>
 #include<iostream>
 
+#include "asset_manager.h"
 #include "logger.h"
 
 using std::string;
@@ -61,7 +62,6 @@ class cursor{
 
   private:
 
-	SDL_Surface* my_surface;//!< surface for this object
 	SDL_Texture* my_texture;//!< texture for this object
 
 	SDL_Rect* box_location;//!< pointer to text box's location info

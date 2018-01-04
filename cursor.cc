@@ -4,9 +4,10 @@
 
 using namespace std;
 
+extern asset_manager* asset_access;
+
 //#################### RULE OF THREE ######################################
 cursor::cursor(){
-	my_surface    = NULL;
 	my_texture    = NULL;
 	box_location  = NULL;
 	cursor_dest   = {0,0,0,0};	
@@ -20,28 +21,15 @@ cursor::cursor(const cursor& other){
 }
 
 cursor::~cursor(){
-	if(my_surface != NULL){
-		SDL_FreeSurface(my_surface);
-		my_surface = NULL;
-	}
-
-	if(my_texture != NULL){
-		SDL_DestroyTexture(my_texture);
-		my_surface = NULL;
-	}
 
 }
 //#########################################################################
 void cursor::init(SDL_Renderer* renderer, SDL_Rect* box_location_in){
 	string cursor_p = "./Assets/Images/cursor.png";
 
-	my_surface = IMG_Load(cursor_p.c_str());
-	if(my_surface == NULL){
-		error_logger.push_error("Failed to load image: " + cursor_p); 
-	}
-	my_texture = SDL_CreateTextureFromSurface(renderer,my_surface);
+	my_texture = asset_access->get_texture(cursor_p);
 	if(my_texture == NULL){
-		error_logger.push_error("Failure to create cursor texture, surface was NULL");
+		error_logger.push_error("Failure to find cursor texture");
 	}
 
 	//set up pointer to containing box's info
@@ -102,7 +90,7 @@ void cursor::draw_me(SDL_Renderer* renderer){
 
 void cursor::print(std::ostream& outs){
 	outs << "-----------------------------------------------------------------------\n";
-	outs << "Surface ptr: " << my_surface << " Texture ptr: " << my_texture << endl;
+	outs << "Texture ptr: " << my_texture << endl;
 	outs << "Containing box's rectangle: "; print_sdl_rect(outs,*box_location);
 	outs << "Destination rectangle: "; print_sdl_rect(outs,cursor_dest);
 	outs << "-----------------------------------------------------------------------\n";
@@ -112,8 +100,7 @@ void cursor::print(){
 	//can't do this, printing messages will get put in the 'errors' section
 	//print(error_logger.get_stream());
 	string message = "-----------------------------------------------------------------------\n";
-	message += "Surface ptr: " + to_string(size_t(my_surface)) + " Texture ptr: "
-				+ to_string(size_t(my_texture)) + "\n";
+	message += "Texture ptr: " + to_string(size_t(my_texture)) + "\n";
 	message += "Containing box's rectangle: " + to_string(box_location->x)
 			   + to_string(box_location->y) + to_string(box_location->w)  
 			   + to_string(box_location->h) + "\n";

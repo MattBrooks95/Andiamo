@@ -6,6 +6,7 @@
 #include "button.h"
 #include "form.h"
 #include "c_tuples.h"
+#include "asset_manager.h"
 
 using std::string;
 using std::vector;
@@ -72,7 +73,6 @@ class form_button : public button{
 	const form& get_form(){ return my_form;}
 
   protected:
-	SDL_Surface* lock_surface;//!< save the surface for the lock, when this button is not in use
 	SDL_Texture* lock_texture;//!< save the texture for the lock, when this button is not in use
 	SDL_Rect lock_rect;//!< save location & size of the lock
 
@@ -80,7 +80,6 @@ class form_button : public button{
 
 	form my_form;//!< object which allows for dynamic parameter entry
 
-	SDL_Surface* unlock_help_surface;
 	SDL_Texture* unlock_help_texture;
 };
 
@@ -184,7 +183,6 @@ class icntrl6_form_button : public form_button{
 
 	button_manager* b_manager;//!< pointer to the button manager, to call it's drawing functions
 
-	SDL_Surface* landing_surface;//!< saves surface for the form selection image
 	SDL_Texture* landing_texture;//!< saves texture for the form selection image
 
 	SDL_Rect landing_rect;//!< saves the location info for the form selection feature

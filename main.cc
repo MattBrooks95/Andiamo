@@ -183,13 +183,10 @@ int main(int argc, char *argv[]){
 
 void no_work_done_message(sdl_help& sdl_helper,exit_button& exit_dialogue){
 
-	SDL_Surface* no_work_surf = NULL;
+	//SDL_Surface* no_work_surf = NULL;
 	SDL_Texture* no_work_texture = NULL;
 
-	no_work_surf = IMG_Load("Assets/Images/no_work_done_msg.png");
-	if(no_work_surf == NULL) error_logger.push_error(SDL_GetError());
-
-	no_work_texture = SDL_CreateTextureFromSurface(sdl_helper.renderer,no_work_surf);
+	no_work_texture = asset_access->get_texture("Assets/Images/no_work_done_msg.png");
 	if(no_work_texture == NULL) error_logger.push_error(SDL_GetError());
 	//plan where to draw
 	SDL_Rect dest = {0,0,0,0};
@@ -204,10 +201,6 @@ void no_work_done_message(sdl_help& sdl_helper,exit_button& exit_dialogue){
 
 
 	SDL_RenderCopy(sdl_helper.renderer,no_work_texture,NULL,&dest);
-
-
-	if(no_work_surf != NULL) SDL_FreeSurface(no_work_surf);
-	if(no_work_texture != NULL) SDL_DestroyTexture(no_work_texture);
 
 }
 
