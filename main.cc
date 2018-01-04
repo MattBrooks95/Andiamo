@@ -6,6 +6,7 @@
 #include<iostream>
 
 #include "sdl_help.h"
+#include "asset_manager.h"
 #include "handlers.h"
 #include "input_maker.h"
 #include "button_manager.h"
@@ -14,6 +15,7 @@ using namespace std;
 
 
 logger error_logger; //global object used for error message output
+asset_manager* asset_access;
 
 //making this global and giving it a unique name, so the exit button can change it
 bool main_done = false;
@@ -41,7 +43,20 @@ int main(int argc, char *argv[]){
   }
   error_logger.push_msg("And where does the newborn go from here? The net is vast and infinite.");
 
+  //run constructor with no args, it will exist here, but get set up by the
+  //sdl_helper constructor
+  asset_manager assets;
+  asset_access = &assets;
   sdl_help sdl_helper("Andiamo!");
+
+  //this actually needs to be done in the sdl_help constructor
+  //elsewise the fields try to create their graphics while the
+  //pointer to the asset_manager is null
+  /*asset_manager assets(&sdl_helper);
+  asset_access = &assets;
+  asset_access->pull_assets();
+  asset_access->list_images(cout);*/
+
 
   button_manager b_manager(&sdl_helper);
   b_manager.init_tray();
@@ -168,13 +183,10 @@ int main(int argc, char *argv[]){
 
 void no_work_done_message(sdl_help& sdl_helper,exit_button& exit_dialogue){
 
-	SDL_Surface* no_work_surf = NULL;
+	//SDL_Surface* no_work_surf = NULL;
 	SDL_Texture* no_work_texture = NULL;
 
-	no_work_surf = IMG_Load("Assets/Images/no_work_done_msg.png");
-	if(no_work_surf == NULL) error_logger.push_error(SDL_GetError());
-
-	no_work_texture = SDL_CreateTextureFromSurface(sdl_helper.renderer,no_work_surf);
+	no_work_texture = asset_access->get_texture("Assets/Images/no_work_done_msg.png");
 	if(no_work_texture == NULL) error_logger.push_error(SDL_GetError());
 	//plan where to draw
 	SDL_Rect dest = {0,0,0,0};
@@ -189,10 +201,6 @@ void no_work_done_message(sdl_help& sdl_helper,exit_button& exit_dialogue){
 
 
 	SDL_RenderCopy(sdl_helper.renderer,no_work_texture,NULL,&dest);
-
-
-	if(no_work_surf != NULL) SDL_FreeSurface(no_work_surf);
-	if(no_work_texture != NULL) SDL_DestroyTexture(no_work_texture);
 
 }
 

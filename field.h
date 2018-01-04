@@ -32,13 +32,11 @@ struct sdl_text_box{
 
 	SDL_Color text_color;//! keep track of the text color
 
-	SDL_Surface* box_surf; //!< keep track of the surface for the (usually) white background
 	SDL_Texture* box_tex;  //!< keep track of the texture for the (usually) white background
 
 	SDL_Surface* text_surf; //!< keep track of the surface for the current text in the text box
 	SDL_Texture* text_tex;  //!< keep track of the texture for the current text in the text box
 
-	SDL_Surface* cursor_surface;//!< save the surface for the text entry indicator
 	SDL_Texture* cursor_texture;//!< save the texture for text entry indicator
 
 };
@@ -245,21 +243,17 @@ class field{
 	SDL_Renderer* sdl_help_renderer;//!< a pointer to sdl_help's rendering context
 	//########################################################################################################
 
-	SDL_Surface* lock_surface;//!< save the sdl surface for the lock icon
 	SDL_Texture* lock_texture;//!< save the sdl texture for the lock icon
-
 
 	SDL_Surface* my_text_surf;//!< saves the surface for the tile name text, so that it isn't recreated every frame
 	SDL_Texture* my_text_tex;//!< saves the texture for the tile name text, so that it isn't recreated every frame
 
 	sdl_text_box text_box; //!< struct that keeps track of the surfaces and textures required for the text box implementation
 
-
-	SDL_Surface* my_help_surf;//!< saves the surface for this tile's 'help' mode
+	SDL_Surface* my_help_surf;
 	SDL_Texture* my_help_tex; //!< saves the texture for this tile's 'help' mode
 
 
-	SDL_Surface* my_surf;//!< saves the surface, so that it isn't recreated every frame
 	SDL_Texture* my_tex;//!< saves the texture, so that it isn't recreated every frame
 
 

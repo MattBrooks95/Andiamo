@@ -9,7 +9,7 @@
 
 #include "sdl_help.h"
 #include "cursor.h"
-
+#include "asset_manager.h"
 
 using std::string;
 using std::regex;

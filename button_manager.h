@@ -138,14 +138,12 @@ class button_manager{
 	sdl_help* sdl_helper;//!< this is a pointer to the main graphics class, for renderer and font access
   private:
 
-	SDL_Surface* button_tray_surf;//!< save the surface for the tray on which buttons sit
 	SDL_Texture* button_tray_texture;//!< save the texture for the tray on which buttons sit
 
 	//####################### FORM BUTTONS ##################################################################
 	//! name for the form tray's image file. Defaults to button_image_p + "form_tray.png" in constructor
 	string form_tray_image_name;
 
-	SDL_Surface* form_tray_surface;//!< save the surface for the tray on which the form buttons sit
 	SDL_Texture* form_tray_texture;//!< save the texture for the tray on which the form buttons sit
 	
 	icntrl8_form_button icntrl_8;//!< allows user to enter extra lines as a resault of icntrl8 being used

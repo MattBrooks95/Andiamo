@@ -3,6 +3,9 @@
 #include "button.h"
 using namespace std;
 
+extern asset_manager* asset_access;
+
+
 //###################### BUTTON class ########################################
 button::button(sdl_help* sdl_help_in){
 
@@ -18,15 +21,12 @@ button::button(sdl_help* sdl_help_in){
 	image_name = "No name.";
 	total_image_p = "illegal image path";
 
-	button_surface = NULL;
 	button_texture = NULL;
 
 	sdl_helper = sdl_help_in;
 }
 
 button::~button(){
-	SDL_FreeSurface(button_surface);
-	SDL_DestroyTexture(button_texture);
 }
 
 void button::init(const string& image_name_in,const string& image_p_in,sdl_help* sdl_help_in){
@@ -38,9 +38,7 @@ void button::init(const string& image_name_in,const string& image_p_in,sdl_help*
 
 	total_image_p = image_p_in + image_name;
 
-	button_surface = IMG_Load(total_image_p.c_str());
-	if(button_surface == NULL) error_logger.push_error(string(SDL_GetError()));
-	button_texture = SDL_CreateTextureFromSurface(sdl_helper->renderer,button_surface);
+	button_texture = asset_access->get_texture(total_image_p);
 	if(button_texture == NULL) error_logger.push_error(string(SDL_GetError()));
 
 	SDL_QueryTexture(button_texture,NULL,NULL,&width,&height);
@@ -55,8 +53,7 @@ void button::print_me(){
 	error_logger.push_msg("SDL_HELP HOOK: "+to_string(size_t(sdl_helper))+" XLOC:YLOC = "+to_string(xloc)
                               +":"+to_string(yloc));
 	error_logger.push_msg("WIDTH = "+to_string(width)+" HEIGHT = "+to_string(height));
-	error_logger.push_msg("SURFACE PTR: "+to_string(size_t(button_surface))+" TEXTURE PTR: "
-                              +to_string(size_t(button_texture)));
+	error_logger.push_msg(" TEXTURE PTR: " +to_string(size_t(button_texture)));
 	error_logger.push_msg("SHOWN? = "+to_string(shown));
 }
 

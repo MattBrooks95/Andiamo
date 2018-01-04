@@ -13,13 +13,12 @@
 #include "button.h"
 #include "text_box.h"
 #include "c_tuples.h"
-
+#include "asset_manager.h"
 
 
 using std::string;
 using std::vector;
 using std::regex;
-
 
 class page;
 
@@ -123,7 +122,8 @@ class form{
 	SDL_Texture* form_texture;
 
     //! save the help page's surface
-	SDL_Surface* help_surface;
+	//SDL_Surface* help_surface;
+
     //! save the help page's texture
 	SDL_Texture* help_texture;
 

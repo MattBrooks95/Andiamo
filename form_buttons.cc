@@ -15,41 +15,24 @@ using namespace std;
 #define I << setw(5) <<
 #define I10 << setw(10) <<
 
+extern asset_manager* asset_access;
+
 //######################## FORM BUTTONS #####################################
 form_button::form_button(){
-	lock_surface = NULL;
 	lock_texture = NULL;
 	is_locked = true;
-	unlock_help_surface = NULL;
 	unlock_help_texture = NULL;
 }
 
 form_button::~form_button(){
-
-	//###############################################################################################
-	if(lock_surface != NULL) SDL_FreeSurface(lock_surface);
-	else error_logger.push_error("Lock surface for form_button NULL upon destructor being called");
-
-	if(lock_texture != NULL) SDL_DestroyTexture(lock_texture);
-	else error_logger.push_error("Lock texture for form_button NULL upon destructor being called");
-	//###############################################################################################
-
-	//###############################################################################################
-	if(unlock_help_surface != NULL) SDL_FreeSurface(unlock_help_surface);
-	else error_logger.push_error("Help message surface for form_button NULL upon destructor being called");
-
-	if(unlock_help_texture != NULL) SDL_DestroyTexture(unlock_help_texture);
-	else error_logger.push_error("Help message texture for form_button NULL upon destructor being called");
-	//###############################################################################################
 
 }
 
 void form_button::init(sdl_help* sdl_help_in){
 	sdl_helper = sdl_help_in;
 	
-	lock_surface = IMG_Load("Assets/Images/lock.png");
-	if(lock_surface == NULL) error_logger.push_error(SDL_GetError());
-	lock_texture = SDL_CreateTextureFromSurface(sdl_helper->renderer,lock_surface);
+
+	lock_texture = asset_access->get_texture("Assets/Images/lock.png");
 	if(lock_texture == NULL) error_logger.push_error(SDL_GetError());
 	is_locked = true;
 
@@ -80,10 +63,8 @@ void form_button::setup_lock(){
 
 void form_button::setup_help_msg(){
 
-	unlock_help_surface = IMG_Load("Assets/Images/form_assets/general_form_locked_msg.png");
-	if(unlock_help_surface == NULL) error_logger.push_error(SDL_GetError());
-
-	unlock_help_texture = SDL_CreateTextureFromSurface(sdl_helper->renderer,unlock_help_surface);
+	string unlock_target = "Assets/Images/form_assets/general_form_locked_msg.png";
+	unlock_help_texture = asset_access->get_texture(unlock_target);
 	if(unlock_help_texture == NULL) error_logger.push_error(SDL_GetError());
 
 }
@@ -161,10 +142,9 @@ bool form_button::check_values(vector<index_value>& error_details){
 //####################### ICNTRL8 BUTTON ######################################
 
 void icntrl8_form_button::setup_help_msg(){
-	unlock_help_surface = IMG_Load("Assets/Images/form_assets/icntrl8_form_locked_msg.png");
-	if(unlock_help_surface == NULL) error_logger.push_error(SDL_GetError());
 
-	unlock_help_texture = SDL_CreateTextureFromSurface(sdl_helper->renderer,unlock_help_surface);
+	string unlock_target = "Assets/Images/form_assets/icntrl8_form_locked_msg.png";
+	unlock_help_texture = asset_access->get_texture(unlock_target);	
 	if(unlock_help_texture == NULL) error_logger.push_error(SDL_GetError());
 }
 
@@ -344,13 +324,6 @@ bool icntrl8_form_button::check_values(vector<index_value>& error_details){
 
 //####################### ICNTRL6 BUTTON ########################################
 icntrl6_form_button::~icntrl6_form_button(){
-	if(landing_surface != NULL){
-		SDL_FreeSurface(landing_surface);
-	}
-	if(landing_texture != NULL){
-		SDL_DestroyTexture(landing_texture);
-	}
-
 
 }
 
@@ -767,12 +740,8 @@ void icntrl6_form_button::cross_sections_helper(){
 void icntrl6_form_button::setup_landing(){
 
 	//setup the graphics pointers
-	landing_surface = IMG_Load("./Assets/Images/form_assets/icntrl6_landing.png");
-	if(landing_surface == NULL){
-		error_logger.push_error("Could not init the icntrl6 form selection surface.",
-				        SDL_GetError());
-	}
-	landing_texture = SDL_CreateTextureFromSurface(sdl_helper->renderer,landing_surface);
+	string landing_target = "./Assets/Images/form_assets/icntrl6_landing.png";
+	landing_texture = asset_access->get_texture(landing_target);
 	if(landing_texture == NULL){
 		error_logger.push_error("Could not init the the icntrl6 form selection texture.",
 					SDL_GetError());

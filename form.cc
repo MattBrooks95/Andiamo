@@ -7,6 +7,7 @@
 #define SPRITE_OFFSET 20
 using namespace std;
 
+extern asset_manager* asset_access;
 
 //######################## FORM CLASS #########################################################################
 form::form(){
@@ -33,7 +34,6 @@ form::form(){
 	sdl_helper = NULL;
 	sdl_font = NULL;
 
-	help_surface = NULL;
 	form_texture = NULL;
 }
 
@@ -47,8 +47,7 @@ form::~form(){
 		SDL_DestroyTexture(form_texture);
 	} else error_logger.push_error(FORM_ERROR);
 
-	if(help_surface != NULL && help_texture != NULL){
-		SDL_FreeSurface(help_surface);
+	if(help_texture != NULL){
 		SDL_DestroyTexture(help_texture);
 	} else error_logger.push_error(FORM_ERROR);
 
@@ -122,9 +121,7 @@ void form::init(string form_title_in,string help_msg_image_name,int xloc_in, int
 
 	//initialize the help message that is shown upon the question mark being clicked
 	string help_target = "Assets/Images/form_assets/"+help_msg_image_name;
-	help_surface = IMG_Load(help_target.c_str());
-	if(help_surface == NULL) error_logger.push_error(SDL_GetError());
-	help_texture = SDL_CreateTextureFromSurface(sdl_helper->renderer,help_surface);
+	help_texture = asset_access->get_texture(help_target);
 	if(help_texture == NULL) error_logger.push_error(SDL_GetError());
 	//################################################################################################
 
@@ -602,15 +599,7 @@ page::~page(){
 	}
 
 }
-/*
-void page::page_init(unsigned int num_columns_in, unsigned int num_rows_in,const vector<string>& column_labels_in,
-	   vector<string>& row_labels_in,sdl_help* sdl_helper_in,TTF_Font* sdl_font_in,int additional_spacing){
-*/
-/*
-void page::page_init(unsigned int num_columns_in, unsigned int rows_needed,
-			const vector<string>& column_labels_in, vector<string>& row_labels_in,
-			sdl_help* sdl_helper_in,TTF_Font* sdl_font_in,int additional_spacing){
-*/
+
 void page::page_init(unsigned int num_columns_in, unsigned int rows_needed,
 		     const vector<string>& column_labels_in, vector<string>& row_labels_in,
 		     sdl_help* sdl_helper_in,TTF_Font* sdl_font_in,const vector<int>& column_spacings){
@@ -794,39 +783,6 @@ void page::draw_me(){
 	}
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

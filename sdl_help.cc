@@ -14,6 +14,7 @@
 #define SDL_HELP_ERROR "Attempted double free in ~sdl_help"
 using namespace std;
 
+extern asset_manager* asset_access;
 
 //######################### WIN SIZE STRUCT ################################################################
 win_size::win_size(){//initialize window dimensions to bad values so they must be initialized elsewhere
@@ -52,7 +53,7 @@ sdl_help::sdl_help(string name_in,string HF_input_file_in,string bg_image_name_i
 	if(SDL_GetCurrentDisplayMode(0,&display) < 0){
 		error_logger.push_error("Get current display mode error:");
 		error_logger.push_error(SDL_GetError());
-        };
+    }
 
 	int temp_window_w = display.w * .9;
 	int temp_window_h = display.h * .9;
@@ -76,26 +77,27 @@ sdl_help::sdl_help(string name_in,string HF_input_file_in,string bg_image_name_i
 	x_scroll = 0; y_scroll = 0; //set scrolling variables to 0
 
 
+	tile_bag.init();
+
+	calc_corners(); //set up tile locations with the field's corner location 
+
+	asset_access->set_sdl_help(this);
+	asset_access->pull_assets();
+	asset_access->list_images(cout);
+
 
 	//################ background image initialization ############################//
-	bg_surface = IMG_Load( ("Assets/Images/Backgrounds/"+bg_image_name).c_str() );
-	if(bg_surface == NULL) error_logger.push_error(SDL_GetError());
-	bg_texture = SDL_CreateTextureFromSurface(renderer,bg_surface);
-	if(bg_surface == NULL) error_logger.push_error(SDL_GetError());
+	bg_texture = asset_access->get_texture("Assets/Images/Backgrounds/"+bg_image_name);
+	if(bg_texture == NULL) error_logger.push_error(SDL_GetError());
 
 
-
-	tile_bag.init();
 
 	//give vertical scroll bar the addresses of the info it needs from the sdl_help object
 	vert_bar.init(&x_scroll,&y_scroll, &window_s.width, &window_s.height, renderer,"v_ou_dark_green_quarter.png");
 	//give horizontal scroll bar the address of the info it needs from the sdl_help object
 	horiz_bar.init(&x_scroll,&y_scroll, &window_s.width, &window_s.height, renderer,"h_ou_grey_quarter.png");
 
-	//resizable = false;
 
-
-	calc_corners(); //set up tile locations with the field's corner location 
 	tile_bag.give_fields_renderer(renderer,image_p,&x_scroll,&y_scroll,font);//give fields rendering and font info
 
 	io_handler.init();
@@ -103,10 +105,6 @@ sdl_help::sdl_help(string name_in,string HF_input_file_in,string bg_image_name_i
 }
 
 sdl_help::~sdl_help(){
-	if( bg_surface != NULL && bg_texture != NULL){
-		SDL_FreeSurface(bg_surface);
-		SDL_DestroyTexture(bg_texture);//free up the memory from the background image
-	} else error_logger.push_error(SDL_HELP_ERROR);
 
 	if(renderer != NULL && window != NULL && font != NULL){
 		SDL_DestroyRenderer(renderer);//stops memory leaks
@@ -501,8 +499,6 @@ void sdl_help::calc_corners(){
 void sdl_help::calc_corners_helper(const string line_in, map<std::string,field>& map_in, unsigned int& start_height,
 				   int row_limit){
 	error_logger.push_msg("In calc_corners_helper()! Line in progress is:" + line_in);
-
-
 
 	int x_buffer = 5;//distance between the left edge and the tiles, and the distance between two tiles 
 			  //horizontally

@@ -10,7 +10,7 @@
 #include<fstream>
 #include "sdl_help.h"
 
-
+#include "asset_manager.h"
 #include "logger.h"
 
 using std::string;
@@ -83,9 +83,9 @@ class button{
 			  sdl_help* sdl_help_in);
 
 	//##################### GETTERS AND SETTERS ###########################################
-	int get_xloc() { return xloc;}
-	int get_yloc() { return yloc;}
-	int get_width() { return width;}
+	int get_xloc()   { return xloc;}
+	int get_yloc()   { return yloc;}
+	int get_width()  { return width;}
 	int get_height() { return height;}
 
 	//#####################################################################################
@@ -108,8 +108,7 @@ class button{
 
 	SDL_Rect my_rect;//!< xloc, yloc, width and height in a SDL_Rect, for SDL functions
 
-	SDL_Surface* button_surface;//!< save the surface
-	SDL_Texture* button_texture;//!< save the texture created from the surface
+	SDL_Texture* button_texture;//!< save the texture pointer from the access manager
 
 };
 

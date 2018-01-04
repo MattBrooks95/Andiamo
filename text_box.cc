@@ -3,6 +3,8 @@
 
 using namespace std;
 
+extern asset_manager* asset_access;
+
 text_box::text_box(sdl_help* sdl_help_in,TTF_Font* font_in, string text_in, int xloc_in, int 
 		   yloc_in,int width_in, int height_in){
 
@@ -27,13 +29,11 @@ text_box::text_box(sdl_help* sdl_help_in,TTF_Font* font_in, string text_in, int 
 	editing_location = 0;
 	shown_area       = {0,0,0,0};
 
-	text_box_surface = NULL;
 	text_box_texture = NULL;
 
 	text_surface = NULL;
 	text_texture = NULL;
 
-	bad_surface  = NULL;
 	bad_texture  = NULL;
 }
 
@@ -66,10 +66,8 @@ text_box::text_box(const text_box& other){
 	my_cursor.init(sdl_helper->renderer,&my_rect);
 
 	if(sdl_helper != NULL){
-		text_box_surface = IMG_Load("./Assets/Images/text_box.png");;
-		text_box_texture = SDL_CreateTextureFromSurface(sdl_helper->renderer,text_box_surface);
-		bad_surface = IMG_Load("./Assets/Images/bad_tile.png");
-		bad_texture = SDL_CreateTextureFromSurface(sdl_helper->renderer,bad_surface);
+		text_box_texture = asset_access->get_texture("./Assets/Images/text_box.png");
+		bad_texture = asset_access->get_texture("./Assets/Images/bad_tile.png");
 	}
 	if(sdl_helper != NULL && sdl_help_font != NULL){
 		text_surface = TTF_RenderUTF8_Blended(sdl_help_font,text.c_str(),text_color);
@@ -78,20 +76,6 @@ text_box::text_box(const text_box& other){
 }
 
 text_box::~text_box(){
-	if(text_box_surface == NULL || text_box_texture == NULL) {
-		error_logger.push_error("Attempted double free in text_box deconstructor");
-	} else {
-		SDL_FreeSurface(text_box_surface);
-		SDL_DestroyTexture(text_box_texture);
-	}
-
-	if(text_surface == NULL || text_texture == NULL){
-		error_logger.push_error("Attempted double free in text_box deconstructor");
-	} else {
-		SDL_FreeSurface(text_surface);
-		SDL_DestroyTexture(text_texture);
-	}
-
 }
 
 void text_box::init(sdl_help* sdl_help_in,TTF_Font* font_in, string text_in, int xloc_in, int yloc_in,
@@ -118,14 +102,10 @@ void text_box::init(sdl_help* sdl_help_in,TTF_Font* font_in, string text_in, int
 	my_cursor.init(sdl_helper->renderer,&my_rect);
 
 	//load the same text box image used by the tiles
-	text_box_surface = IMG_Load("./Assets/Images/text_box.png");
-	if(text_box_surface == NULL) error_logger.push_error(SDL_GetError());
-	text_box_texture = SDL_CreateTextureFromSurface(sdl_helper->renderer,text_box_surface);
+	text_box_texture = asset_access->get_texture("./Assets/Images/text_box.png");
 	if(text_box_texture == NULL) error_logger.push_error(SDL_GetError());
 
-	bad_surface = IMG_Load("./Assets/Images/bad_tile.png");
-	if(bad_surface == NULL) error_logger.push_error(SDL_GetError());
-	bad_texture = SDL_CreateTextureFromSurface(sdl_helper->renderer,bad_surface);
+	bad_texture = asset_access->get_texture("./Assets/Images/bad_tile.png");
 	if(bad_texture == NULL) error_logger.push_error(SDL_GetError());
 
 	text_surface = TTF_RenderUTF8_Blended(sdl_help_font,text.c_str(),text_color);
