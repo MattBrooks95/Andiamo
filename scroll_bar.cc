@@ -4,6 +4,9 @@
 #include "scroll_bar.h"
 
 using namespace std;
+
+extern asset_manager* asset_access;
+
 //###################### CONSTRUCTORS/DESTRUCTORS #################################################
 scroll_bar::scroll_bar(){
 	xloc = -1;//dummy initial values to hint if things weren't initialized properly by init()
@@ -12,7 +15,6 @@ scroll_bar::scroll_bar(){
 	height = 0;
 	image_p = "notset";
 	my_tex = NULL;
-	my_surf = NULL;
 
 	scrolling_mode = false;//do not start out in scrolling mode
 
@@ -25,7 +27,6 @@ scroll_bar::scroll_bar(){
 }
 
 scroll_bar::~scroll_bar(){
-	SDL_FreeSurface(my_surf);
 	SDL_DestroyTexture(my_tex);
 }
 //################################################################################################
@@ -43,13 +44,8 @@ void scroll_bar::scroll_mode_change(bool bool_in){
 
 ///helper for init(), calcs corner location and sets up texture 
 void scroll_bar::init_corner_texture(){
-	my_surf = IMG_Load(image_p.c_str());
-	if(my_surf == NULL){
-		error_logger.push_error(string(SDL_GetError())); //something went wrong, print error to screen
-		return;
-	}
 
-	my_tex = SDL_CreateTextureFromSurface(renderer,my_surf); //turn surface into a texture
+	my_tex = asset_access->get_texture(image_p);
 	if(my_tex == NULL){
 		error_logger.push_error(string(SDL_GetError())); //something went wrong, print error to the screen
 		return;

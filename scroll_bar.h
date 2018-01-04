@@ -6,6 +6,7 @@
 #include<SDL2/SDL_image.h>
 
 #include "logger.h"
+#include "asset_manager.h"
 
 using std::string;
 
@@ -88,9 +89,8 @@ class scroll_bar{
 	int yloc; //!> keep track of the scroll bar's corner's y coordinate
 	int width; //!> keep track of scroll bar width
 	int height; //!> keep track of the scroll bar height
-	string image_p;
-	SDL_Texture* my_tex;
-	SDL_Surface* my_surf;
+	string image_p; //!> reference to image source
+	SDL_Texture* my_tex; //!> texture for the scroll bar
 	//! keeps track of whether or not we are in scroll mode
 	/*! where scroll mode refers to the point in time in which the user
          *has clicked and held down on the left mouse button, and may be

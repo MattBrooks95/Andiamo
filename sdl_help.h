@@ -238,12 +238,8 @@ class sdl_help{
 	string hf_input_p; //!< \brief a path string to the algorithm's input file folder 
 	string font_p;//!< \brief a path string to the font folder
 
-	string bg_image_name;
-	SDL_Surface* bg_surface;
-	SDL_Texture* bg_texture;
-
-	//bool resizable;//!< controls whether or not the window can be resized
-
+	string bg_image_name;//!< name of the background image to use
+	SDL_Texture* bg_texture;//!< stores the background image
 
 	/***************** FIELDS THAT PERTAIN TO SCROLLING ********************************/
 	scroll_bar vert_bar;/*!< \brief contains functions to act on, and draw, the vertical
