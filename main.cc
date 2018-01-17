@@ -16,6 +16,8 @@ using namespace std;
 
 logger error_logger; //global object used for error message output
 asset_manager* asset_access;
+sdl_help* sdl_access;
+manager* tile_access;
 
 //making this global and giving it a unique name, so the exit button can change it
 bool main_done = false;
@@ -43,29 +45,43 @@ int main(int argc, char *argv[]){
   }
   error_logger.push_msg("And where does the newborn go from here? The net is vast and infinite.");
 
-  //run constructor with no args, it will exist here, but get set up by the
-  //sdl_helper constructor
+  //set up the sdl wrapper
+  sdl_help sdl_helper("Andiamo!");
+  sdl_access = &sdl_helper;
+
+  //import all of the assets
   asset_manager assets;
   asset_access = &assets;
-  sdl_help sdl_helper("Andiamo!");
-
-  //this actually needs to be done in the sdl_help constructor
-  //elsewise the fields try to create their graphics while the
-  //pointer to the asset_manager is null
-  /*asset_manager assets(&sdl_helper);
-  asset_access = &assets;
   asset_access->pull_assets();
-  asset_access->list_images(cout);*/
+  asset_access->list_images(cout);
+
+  sdl_access->init();
+
+  //make the tiles
+  manager tile_bag;
+  tile_access = &tile_bag;
+  tile_access->init();
+
+  sdl_access->draw();
+
+  char junk;
+  cin >> junk;
+
+/*
 
 
+  //button manager init########################################################
   button_manager b_manager(&sdl_helper);
   b_manager.init_tray();
   b_manager.init_buttons();
   b_manager.init_form_tray();
-  sdl_helper.get_mgr().gain_bmanager_access(&b_manager);//give field manager access to the button manager
+  //###########################################################################
+
+  //sdl_helper.get_mgr().gain_bmanager_access(&b_manager);//give field manager access to the button manager
   sdl_helper.get_bmanager_ptr(&b_manager);
   b_manager.print_buttons();
-  sdl_helper.get_mgr().print_all();
+  //sdl_helper.get_mgr().print_all();
+  tile_access->print_all();
 
   sdl_helper.print_tile_locs(cout);
 
@@ -174,7 +190,7 @@ int main(int argc, char *argv[]){
 
 
   //SDL_Delay(5000);
-
+*/
   
   return 0;//Exit success
 }

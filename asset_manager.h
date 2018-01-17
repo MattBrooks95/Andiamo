@@ -23,7 +23,7 @@ class asset_manager{
 
   public:
 	//! sets sdl_helper reference, so textures can be made
-	asset_manager(sdl_help* sdl_helper_in = NULL);
+	asset_manager(/*sdl_help* sdl_helper_in = NULL*/);
 	//! copies another asset_manager to this one
 	/*! shouldn't ever happen */
 	asset_manager(const asset_manager& other);
@@ -31,7 +31,7 @@ class asset_manager{
 	~asset_manager();
 
 	//! arbitrarily set the pointer to the sdl_helper class
-	void set_sdl_help(sdl_help* sdl_helper_in);
+	//void set_sdl_help(sdl_help* sdl_helper_in);
 
 	//! this function crawls through the assets folder, loading all png files
 	void pull_assets();
@@ -57,7 +57,7 @@ class asset_manager{
 	void list_images(std::ostream& outs);
 
   private:
-		sdl_help* sdl_helper;
+		//sdl_help* sdl_helper;
 		std::map<std::string,SDL_Texture*> textures;
 		unsigned int num_textures;
 };

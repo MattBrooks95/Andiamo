@@ -11,7 +11,7 @@ manager::manager(){
 	input_maker_hook = NULL; //should be overwritten when sdl_help's constructor calls give_manager_io
 }
 
-bool man_test = false;
+bool man_test = true;
 
 void manager::init(){
 	
@@ -189,6 +189,7 @@ void manager::set_input_maker_hook(input_maker* input_maker_hook_in){
 	give_fields_defaults();
 }
 
+/*
 void manager::give_fields_renderer(SDL_Renderer* sdl_help_renderer_in,string image_p_in,
 				   int* xscroll_in, int* yscroll_in,TTF_Font* font_in){
 	//loop over each map in the map
@@ -204,7 +205,7 @@ void manager::give_fields_renderer(SDL_Renderer* sdl_help_renderer_in,string ima
 
 	}
 }
-
+*/
 int manager::get_widest_tile_width(){
 	int max_width = 0;
 	for(map<string,map<string,field>>::iterator lines_it = fields.begin();
@@ -241,6 +242,40 @@ void manager::give_fields_defaults(){
 	give_r8_array_fields_defaults();
 
 }
+
+void manager::draw(){
+
+	check_locks();
+
+	vector<field*> drawn_second;
+
+	//for(map<string,map<string,field>>::iterator lines_it = tile_bag.fields.begin();
+	for(map<string,map<string,field>>::iterator lines_it = fields.begin();
+	    //lines_it != tile_bag.fields.end();
+	    lines_it != fields.end();
+	    lines_it++){
+		for(map<string,field>::iterator fields_it = lines_it->second.begin();
+		    fields_it != lines_it->second.end();	
+		    fields_it++){
+
+			if( !fields_it->second.is_help_mode() ){ //don't draw it if it's in help mode, help mode tiles need to be drawn second
+								 //so they aren't overdrawn by other tiles not in help mode
+				fields_it->second.draw_me();//have the field draw itself to the screen
+
+			} else {
+				drawn_second.push_back(&fields_it->second);
+
+			}
+		}
+	}
+
+
+	for(unsigned int c = 0; c < drawn_second.size();c++){
+		drawn_second[c]->draw_me();//now the help mode tiles can be drawn
+	}
+
+}
+
 //################ GIVE_FIELDS_DEFAULTS() HELPERS #######################################################//
 void manager::give_int4_fields_defaults(){
 	//this looks dense, but is simple

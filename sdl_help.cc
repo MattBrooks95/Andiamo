@@ -15,9 +15,12 @@
 using namespace std;
 
 extern asset_manager* asset_access;
+extern manager* tile_access;
+//######################### WIN SIZE STRUCT ###################################
+//initialize window dimensions to bad values so they must
+//be initialized elsewhere
 
-//######################### WIN SIZE STRUCT ################################################################
-win_size::win_size(){//initialize window dimensions to bad values so they must be initialized elsewhere
+win_size::win_size(){
 	width = -1;
 	height = -1;
 }
@@ -29,13 +32,16 @@ win_size* sdl_help::get_win_size(){
 	win_size* return_me = &window_s;
 	return return_me;
 }
-//######################### WIN SIZE STRUCT ################################################################
+//######################### WIN SIZE STRUCT ###################################
 
-//######################### SDL_HELP CONSTRUCTORS/DESTRUCTORS ##############################################
-sdl_help::sdl_help(string name_in,string HF_input_file_in,string bg_image_name_in){
-	SDL_Init(SDL_INIT_TIMER | SDL_INIT_EVENTS|SDL_INIT_VIDEO);//for now, timer,video and keyboard
+//######################### SDL_HELP CONSTRUCTORS/DESTRUCTORS #################
+sdl_help::sdl_help(string name_in,string HF_input_file_in,
+				   string bg_image_name_in){
+	//for now, timer,video and keyboard
+	SDL_Init(SDL_INIT_TIMER | SDL_INIT_EVENTS|SDL_INIT_VIDEO);
 	IMG_Init(IMG_INIT_PNG);//allows use of .png files
-	if(TTF_Init() != 0){ //allows sdl to print text to the screen using .ttf files
+	//allows sdl to print text to the screen using .ttf files
+	if(TTF_Init() != 0){ 
 		error_logger.push_error("Error in TTF_Init()!");
 	}
 	window_name = name_in; //set window name
@@ -57,51 +63,41 @@ sdl_help::sdl_help(string name_in,string HF_input_file_in,string bg_image_name_i
 
 	int temp_window_w = display.w * .9;
 	int temp_window_h = display.h * .9;
-	error_logger.push_msg( "display width: " + to_string(display.w) + "display height:" + to_string(display.h));
-	window = SDL_CreateWindow(window_name.c_str(), 0, 0,temp_window_w,temp_window_h, SDL_WINDOW_RESIZABLE);
+	error_logger.push_msg("display width: " + to_string(display.w) +
+						  "display height:" + to_string(display.h));
+	window = SDL_CreateWindow(window_name.c_str(), 0, 0,temp_window_w,
+							  temp_window_h, SDL_WINDOW_RESIZABLE);
 	renderer = SDL_CreateRenderer(window,-1,SDL_RENDERER_PRESENTVSYNC);
 	if(renderer == NULL){
-		error_logger.push_error("MASSIVE ERROR, RENDERER COULD NOT BE CREATED");//put message in error logger
+		//put message in error logger
+		error_logger.push_error("MASSIVE ERROR, RENDERER",
+								"COULD NOT BE CREATED");
 		error_logger.make_error_file();//make the error logger output
 		exit(1984);//throw a tantrum and close program
 	}
-	font = TTF_OpenFont( "./Assets/fonts/LiberationSerif-Regular.ttf", 22);//set up pointer to font from file
+
+	//set up pointer to font from file
+	font = TTF_OpenFont( "./Assets/fonts/LiberationSerif-Regular.ttf", 22);
 	if(font == NULL) {
 		error_logger.push_error(SDL_GetError());
 	}
-        error_logger.push_msg("Enacting tile_bag update with values: " + to_string(display.w / 2) + " " + 
+        error_logger.push_msg("Enacting tile_bag update with values: " +
+							  to_string(display.w / 2) + " " + 
                               to_string(display.h) );
 
-	window_update(temp_window_w,temp_window_h);//this call updates sdl_help and manager's
-					           // dimension window fields
+	//this call updates sdl_help and manager's  dimension window fields
+	window_update(temp_window_w,temp_window_h);
+
 	x_scroll = 0; y_scroll = 0; //set scrolling variables to 0
 
+	//tile_bag.init();
 
-	tile_bag.init();
+	//calc_corners(); //set up tile locations with the field's corner location 
 
-	calc_corners(); //set up tile locations with the field's corner location 
+	//tile_bag.give_fields_renderer(renderer,image_p,&x_scroll,&y_scroll,font);//give fields rendering and font info
 
-	asset_access->set_sdl_help(this);
-	asset_access->pull_assets();
-	asset_access->list_images(cout);
-
-
-	//################ background image initialization ############################//
-	bg_texture = asset_access->get_texture("Assets/Images/Backgrounds/"+bg_image_name);
-	if(bg_texture == NULL) error_logger.push_error(SDL_GetError());
-
-
-
-	//give vertical scroll bar the addresses of the info it needs from the sdl_help object
-	vert_bar.init(&x_scroll,&y_scroll, &window_s.width, &window_s.height, renderer,"v_ou_dark_green_quarter.png");
-	//give horizontal scroll bar the address of the info it needs from the sdl_help object
-	horiz_bar.init(&x_scroll,&y_scroll, &window_s.width, &window_s.height, renderer,"h_ou_grey_quarter.png");
-
-
-	tile_bag.give_fields_renderer(renderer,image_p,&x_scroll,&y_scroll,font);//give fields rendering and font info
-
-	io_handler.init();
-	give_manager_io(&io_handler);
+	//io_handler.init();
+	//give_manager_io(&io_handler);
 }
 
 sdl_help::~sdl_help(){
@@ -119,15 +115,45 @@ sdl_help::~sdl_help(){
 
 //#####################################################################################################
 
+void sdl_help::init(){
+
+	//################ background image initialization ############################//
+	string bg_loc = "Assets/Images/Backgrounds/"+bg_image_name;
+	bg_texture = asset_access->get_texture(bg_loc);
+	if(bg_texture == NULL) error_logger.push_error(SDL_GetError());
+	SDL_RenderCopy(renderer,bg_texture,NULL,NULL);
+
+	//give vertical scroll bar the addresses of the info it needs from the sdl_help object
+	vert_bar.init(&x_scroll,&y_scroll, &window_s.width, &window_s.height, renderer,"v_ou_dark_green_quarter.png");
+
+	//give horizontal scroll bar the address of the info it needs from the sdl_help object
+	horiz_bar.init(&x_scroll,&y_scroll, &window_s.width, &window_s.height, renderer,"h_ou_grey_quarter.png");
+}
 
 void sdl_help::window_update(int width_in, int height_in){
 	window_s.width = width_in; //update sdl class's window size variables
 	window_s.height = height_in;
 	vert_bar.handle_resize();
 	horiz_bar.handle_resize();
-	tile_bag.update_win(width_in,height_in);
+	//tile_bag.update_win(width_in,height_in);
+	if(tile_access != NULL){
+		tile_access->update_win(width_in,height_in);
+	}
 }
 
+void sdl_help::draw(){
+
+	//clear off the renderer, to prepare to re-draw
+	SDL_RenderClear(renderer);
+
+	//draw the background image to the screen
+	SDL_RenderCopy(renderer,bg_texture,NULL,NULL);
+
+	draw_sbars();
+	tile_access->draw();
+
+	frame_count++;//increment the frame counter
+}
 
 //prints area window size and display 
 void sdl_help::print_size_info(){
@@ -138,23 +164,27 @@ void sdl_help::print_size_info(){
 }
 
 void sdl_help::give_manager_io(input_maker* input_maker_hook_in){
-	tile_bag.set_input_maker_hook(input_maker_hook_in);
+	//tile_bag.set_input_maker_hook(input_maker_hook_in);
+	tile_access->set_input_maker_hook(input_maker_hook_in);
 }
 
 void sdl_help::present(){
 	SDL_RenderPresent(renderer);
 }
 //draws all of the fields. It makes sure to draw field's help dialog boxes on top of themselves or other fields
-void sdl_help::draw_tiles(){
+/*void sdl_help::draw_tiles(){
 	SDL_RenderClear(renderer);//clear off the renderer, to prepare to re-draw
-	tile_bag.check_locks();
+	//tile_bag.check_locks();
+	tile_access->check_locks();
 	//draw the background image to the screen
 	SDL_RenderCopy(renderer,bg_texture,NULL,NULL);
 
 	vector<field*> drawn_second;
 
-	for(map<string,map<string,field>>::iterator lines_it = tile_bag.fields.begin();
-	    lines_it != tile_bag.fields.end();
+	//for(map<string,map<string,field>>::iterator lines_it = tile_bag.fields.begin();
+	for(map<string,map<string,field>>::iterator lines_it = tile_access->fields.begin();
+	    //lines_it != tile_bag.fields.end();
+	    lines_it != tile_access->fields.end();
 	    lines_it++){
 		for(map<string,field>::iterator fields_it = lines_it->second.begin();
 		    fields_it != lines_it->second.end();	
@@ -179,7 +209,7 @@ void sdl_help::draw_tiles(){
 	frame_count++;//increment the frame counter
 
 }//end of draw_tiles
-
+*/
 void sdl_help::draw_sbars(){
 	horiz_bar.draw_me();
 	vert_bar.draw_me();
@@ -205,8 +235,10 @@ void sdl_help::most(int& rightmost,int& leftmost,int& upmost,int& downmost){
 	//note that we are starting at 1 to avoid the massive background tile messing up this calculation
 
 
-	for(map<string,map<string,field>>::iterator lines_it = tile_bag.fields.begin();
-	    lines_it != tile_bag.fields.end();
+	//for(map<string,map<string,field>>::iterator lines_it = tile_bag.fields.begin();
+	//    lines_it != tile_bag.fields.end();
+	for(map<string,map<string,field>>::iterator lines_it = tile_access->fields.begin();
+	    lines_it != tile_access->fields.end();
 	    lines_it++){
 		for(map<string,field>::iterator params_it = lines_it->second.begin();
 		    params_it != lines_it->second.end();
@@ -291,8 +323,10 @@ int sdl_help::scroll_clicked(int click_x, int click_y) const{
 
 void sdl_help::print_tile_locs(ostream& outs){
 
-	for(map<string,map<string,field>>::iterator lines_it = tile_bag.fields.begin();
-	    lines_it != tile_bag.fields.end();
+	//for(map<string,map<string,field>>::iterator lines_it = tile_bag.fields.begin();
+	//    lines_it != tile_bag.fields.end();
+	for(map<string,map<string,field>>::iterator lines_it = tile_access->fields.begin();
+	    lines_it != tile_access->fields.end();
 	    lines_it++){
 		for(map<string,field>::iterator params_it = lines_it->second.begin();
 		    params_it != lines_it->second.end();
@@ -304,8 +338,10 @@ void sdl_help::print_tile_locs(ostream& outs){
 }
 
 void sdl_help::click_detection(ostream& outs,SDL_Event& event,button_manager* b_manager, int click_x, int click_y){
-	for(map<string,map<string,field>>::iterator lines_it = tile_bag.fields.begin();
-	    lines_it != tile_bag.fields.end();
+	//for(map<string,map<string,field>>::iterator lines_it = tile_bag.fields.begin();
+	//    lines_it != tile_bag.fields.end();
+	for(map<string,map<string,field>>::iterator lines_it = tile_access->fields.begin();
+	    lines_it != tile_access->fields.end();
 	    lines_it++){
 		for(map<string,field>::iterator params_it = lines_it->second.begin();
 		    params_it != lines_it->second.end();
@@ -394,10 +430,10 @@ void sdl_help::text_box_mini_loop(ostream& outs, SDL_Event& event,button_manager
 
 
 			//update picture
-			draw_tiles();
-			draw_sbars();
-			b_manager->draw_buttons();
-			current_tile.draw_cursor();
+			//draw_tiles();
+			//draw_sbars();
+			//b_manager->draw_buttons();
+			//current_tile.draw_cursor();
 			//text_was_changed = false;
 			//show updated picture
 			present();
@@ -458,7 +494,8 @@ void sdl_help::calc_corners(){
 
 	int row_limit;//this variable limits the width of the rows
 
-	int widest_tile = tile_bag.get_widest_tile_width();
+	//int widest_tile = tile_bag.get_widest_tile_width();
+	int widest_tile = tile_access->get_widest_tile_width();
 	error_logger.push_msg("WIDEST TILE: "+to_string(widest_tile));
 	if(widest_tile > window_s.width){
 		error_logger.push_msg("USING WIDEST TILE TO LIMIT ROWS");
@@ -471,23 +508,28 @@ void sdl_help::calc_corners(){
 
 	//but, I saved the line names as they were read in my manager::init(), so we can just walk that
 	//vector and ensure that lines are placed in the same order in which they were read
-	for(unsigned int c = 0; c < tile_bag.line_order.size();c++){
-		if(tile_bag.line_order[c] == "line_6"){
+	//for(unsigned int c = 0; c < tile_bag.line_order.size();c++){
+		//if(tile_bag.line_order[c] == "line_6"){
+	for(unsigned int c = 0; c < tile_access->line_order.size();c++){
+		if(tile_access->line_order[c] == "line_6"){
 			//create a vector with the row parameter names in the order in which they should appear
 			vector<string> line_6_order = {"ICNTRL1","ICNTRL2","ICNTRL4","ICNTRL5","ICNTRL6","ICNTRL7",
 						       "ICNTRL8","ICNTRL9","ICNTRL10"};
 			try{
 				//and pass it into the alternative calc_corners helper function
-				calc_corners_ordered(tile_bag.line_order[c],tile_bag.fields.at(tile_bag.line_order[c]),
+				//calc_corners_ordered(tile_bag.line_order[c],tile_bag.fields.at(tile_bag.line_order[c]),
+				//			    row_height, row_limit,line_6_order);
+				calc_corners_ordered(tile_access->line_order[c],tile_access->fields.at(tile_access->line_order[c]),
 							    row_height, row_limit,line_6_order);
 			} catch(out_of_range& fail){
 				error_logger.push_error("Error in calc_corners, couldn't find a parameter in line 6.");
 			}
 		} else {
 			//this is the standard calc_corners helper function
-			calc_corners_helper(tile_bag.line_order[c],tile_bag.fields.at(tile_bag.line_order[c]),
+			//calc_corners_helper(tile_bag.line_order[c],tile_bag.fields.at(tile_bag.line_order[c]),
+			//	            row_height, row_limit);
+			calc_corners_helper(tile_access->line_order[c],tile_access->fields.at(tile_access->line_order[c]),
 				            row_height, row_limit);
-
 		}
 	}
 

@@ -51,8 +51,9 @@ class manager{
 
 	//! this function traverses the tile bag and sets up each object with a reference to the main renderer
 	/*! it also allows fields to access sdl_help's scroll values and font pointer */
-	void give_fields_renderer(SDL_Renderer* sdl_help_renderer_in,string image_p_in,
-				  int* xscroll_in, int* yscroll_in,TTF_Font* font_in);
+	//void give_fields_renderer(SDL_Renderer* sdl_help_renderer_in,string image_p_in,
+	//			  int* xscroll_in, int* yscroll_in,TTF_Font* font_in);
+
 	//! this function walks the map, and returns the width of the widest tile
 	int get_widest_tile_width();
 
@@ -62,6 +63,9 @@ class manager{
 	 *shouldn't resize it's vector besides in the init function, because that could cause illegal reads
 	 *because the field's pointer points to the vector's old location. */
 	void give_fields_defaults();
+
+	//! this function draws the tiles
+	void draw();
 
 	//############# GIVE_FIELDS_DEFAULTS() HELPERS ########################################################//
 	void give_int4_fields_defaults();

@@ -7,11 +7,11 @@
 using namespace std;
 
 extern logger error_logger;
+extern sdl_help* sdl_access;
 
+asset_manager::asset_manager(/*sdl_help* sdl_helper_in*/){
 
-asset_manager::asset_manager(sdl_help* sdl_helper_in){
-
-	sdl_helper = sdl_helper_in;
+	//sdl_helper = sdl_helper_in;
 	num_textures = 0;
 
 }
@@ -33,10 +33,10 @@ asset_manager::~asset_manager(){
 
 }
 
-void asset_manager::set_sdl_help(sdl_help* sdl_helper_in){
-	sdl_helper = sdl_helper_in;
+/*void asset_manager::set_sdl_help(sdl_help* sdl_helper_in){
+	//sdl_helper = sdl_helper_in;
 
-}
+}*/
 
 void asset_manager::pull_assets(){
 	
@@ -151,7 +151,9 @@ SDL_Texture* asset_manager::load_image(const string& load_me){
 	temp_surface = IMG_Load(load_me.c_str());
 
 	SDL_Texture* temp_texture;
-	temp_texture = SDL_CreateTextureFromSurface(sdl_helper->renderer,
+	//temp_texture = SDL_CreateTextureFromSurface(sdl_helper->renderer,
+	//											 temp_surface);
+	temp_texture = SDL_CreateTextureFromSurface(sdl_access->renderer,
 												 temp_surface);
 
 	if(temp_surface != NULL){

@@ -57,11 +57,35 @@ class sdl_help{
 	//! This is a destructor member for the sdl_help class.
 	/*! It enacts SDL_Quit() and IMG_Quit(). */
 	~sdl_help();
+
+	//! this function inits parts of the sdl class
+	/*! this must be called after the asset manager
+	 *is set up */
+	void init();
+
 	
 	//! This member updates the window dimension variables in sdl_help.h and manager.h
 	/* \param width_in is the desired new window width
          * \param height_in is the desired new window height */
 	void window_update(int width_in, int height_in);
+
+	//! this function does all the drawing
+	void draw();
+
+	//! This member traverses manager's vector and calls the field's draw_me function
+	/*! it ensures that help boxes are always drawn above the tiles not in help mode
+	 * but they will sometimes conflict with eachother and overlap */
+	//void draw_tiles();
+
+	//! This member enacts the draw members of vert_bar and horiz_bar
+	/* This should likely be called directly below every call to draw_tiles() */ 
+	void draw_sbars();
+
+
+	//! This member presents the renderer and all of it's current textures to the screen
+	void present();
+
+
 
 	//! this member ensures that the manager class can access all of the input manager
 	/*! this is so that the fields and the input maker can interact with eachother
@@ -69,16 +93,6 @@ class sdl_help{
 	 *this later */
 	void give_manager_io(input_maker* input_maker_hook);
 
-	//! This member presents the renderer and all of it's current textures to the screen
-	void present();
-
-	//! This member traverses manager's vector and calls the field's draw_me function
-	/*! it ensures that help boxes are always drawn above the tiles not in help mode
-	 * but they will sometimes conflict with eachother and overlap */
-	void draw_tiles();
-	//! This member enacts the draw members of vert_bar and horiz_bar
-	/* This should likely be called directly below every call to draw_tiles() */ 
-	void draw_sbars();
 
 	////! This function uses 	SDL_SetWindowResizeable to prevent or allow window resizing
 	//void toggle_resizable();
@@ -208,17 +222,17 @@ class sdl_help{
         //! This member is a const getter for the tile/card manager
 	/*! \return tile_bag is a const reference to the tile_bag field. It is accessed
 	 * some_object.get_mgr().tile_bag_member(). Tile bag may not be changed*/
-	const manager& get_const_mgr() const{ return tile_bag;}
+	//const manager& get_const_mgr() const{ return tile_bag;}
 
 	//! This member is a non-const getter for the tile/card manager
 	/*! \return tile_bag is a const reference to the tile_bag field. It is accessed
 	 * some_object.get_mgr().tile_bag_member(). Tile bag may be changed. Be careful. */
-	manager& get_mgr(){ return tile_bag;}
+	//manager& get_mgr(){ return tile_bag;}
 
 	//!this member returns a copy of the tile_bag
 	/*! this is useful when an algorithm would require removing objects from the vector as they are
 	 * processed  */
-	manager get_mgr_copy(){ return tile_bag;}
+	//manager get_mgr_copy(){ return tile_bag;}
 	/*****************************************************************/
 
 	//! contains a running total of how many times a frame has been drawn
@@ -263,7 +277,7 @@ class sdl_help{
 	SDL_Window* window; //!< pointer to the window object
 
 	//################## MANAGER OBJECT #####################################################
-	manager tile_bag; //!< manager object that contains all the field objects
+	//manager tile_bag; //!< manager object that contains all the field objects
 	//#######################################################################################
 
 	//################## INPUT MAKER OBJECT #################################################

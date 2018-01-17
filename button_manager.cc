@@ -9,6 +9,7 @@ using namespace std;
 #define BLACK {0,0,0}
 
 extern asset_manager* asset_access;
+extern manager* tile_access;
 
 button_manager::button_manager(sdl_help* sdl_helper_in){
 	sdl_helper = sdl_helper_in;
@@ -414,8 +415,8 @@ void button_manager::text_box_loop(text_box_button* current_button,SDL_Event& ev
 		//elsewise don't do it to try and save time
 		if(text_was_changed){
 			//update picture
-			sdl_helper->draw_tiles();
-			sdl_helper->draw_sbars();
+			//sdl_helper->draw_tiles();
+			//sdl_helper->draw_sbars();
 			text_was_changed = false;
 			draw_buttons();
 			//show updated picture
@@ -468,7 +469,8 @@ bool button_manager::click_handling(SDL_Event& mouse_event){
 			if( clean_up() == 0){
 
 				//update input_maker's info from the tiles
-				if( !sdl_helper->get_mgr().update_io_maker(bad_input_list) &&
+				//if( !sdl_helper->get_mgr().update_io_maker(bad_input_list) &&
+				if( !tile_access->update_io_maker(bad_input_list) &&
 					bad_input_list.size() != 0 ){
 					//if something went wrong, this code is executed
 					bad_tile_input_warnings(bad_input_list);

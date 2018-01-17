@@ -53,7 +53,7 @@ void scrolling_mini_loop(SDL_Event& big_event, sdl_help& sdl_help,button_manager
 						//if user has drug below the bottom of this bar, scroll down
 						sdl_help.update_scroll(0,45);
 					}
-					sdl_help.draw_tiles();
+					//sdl_help.draw_tiles();
 					sdl_help.draw_sbars();
 					b_manager.draw_buttons();
 					sdl_help.present();
@@ -70,7 +70,7 @@ void scrolling_mini_loop(SDL_Event& big_event, sdl_help& sdl_help,button_manager
 						//if user has drug left of the scroll bar, scroll left
 						sdl_help.update_scroll(45,0);
 					}
-					sdl_help.draw_tiles();
+					//sdl_help.draw_tiles();
 					sdl_help.draw_sbars();	
 					b_manager.draw_buttons();
 					sdl_help.present();

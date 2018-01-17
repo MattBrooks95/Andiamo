@@ -16,6 +16,7 @@ using namespace std;
 #define I10 << setw(10) <<
 
 extern asset_manager* asset_access;
+extern manager* tile_access;
 
 //######################## FORM BUTTONS #####################################
 form_button::form_button(){
@@ -175,7 +176,8 @@ void icntrl8_form_button::click_helper(SDL_Event& mouse_event){
 			my_form.form_event_loop(mouse_event);//enter the mini loop for form entry
 
 		//in this case the form has been previously created, but the icntrl8 value has not changed, so nothing needs to be done
-		} else if(my_form.prev_init_value == stoi(sdl_helper->get_mgr().fields.at("line_6").at("ICNTRL8").temp_input) ){
+		//} else if(my_form.prev_init_value == stoi(sdl_helper->get_mgr().fields.at("line_6").at("ICNTRL8").temp_input) ){
+		} else if(my_form.prev_init_value == stoi(tile_access->fields.at("line_6").at("ICNTRL8").temp_input) ){
 			my_form.toggle_active();//let the form know that it is now active
 			my_form.form_event_loop(mouse_event);//enter the mini loop for form entry
 
@@ -202,7 +204,8 @@ void icntrl8_form_button::page_creation_helper(){
 	//grab val from parameter field, so the pages can be set up
 	try{
 
-	  icntrl8_val = stoi(sdl_helper->get_mgr().fields.at("line_6").at("ICNTRL8").temp_input);
+	  //icntrl8_val = stoi(sdl_helper->get_mgr().fields.at("line_6").at("ICNTRL8").temp_input);
+	  icntrl8_val = stoi(tile_access->fields.at("line_6").at("ICNTRL8").temp_input);
 
 	} catch (out_of_range& range_error){
 
@@ -406,8 +409,8 @@ void icntrl6_form_button::click_helper(SDL_Event& mouse_event){
 			}
 			SDL_RenderClear(sdl_helper->renderer);//clear off the screen
 
-			sdl_helper->draw_tiles();//redraw the tile field (in the background)
-			sdl_helper->draw_sbars();//likewise, redraw the scroll bars
+			//sdl_helper->draw_tiles();//redraw the tile field (in the background)
+			//sdl_helper->draw_sbars();//likewise, redraw the scroll bars
 
 			b_manager->draw_tray(); //redraw the button tray
 			b_manager->draw_form_tray(); //redraw the form button tray
@@ -530,7 +533,8 @@ void icntrl6_form_button::search_spectra_page_creation(){
 
 	int current_INM1_val;
 	try{
- 		current_INM1_val = stoi(sdl_helper->get_mgr().fields.at("line_10").at("INM1").temp_input); 
+ 		//current_INM1_val = stoi(sdl_helper->get_mgr().fields.at("line_10").at("INM1").temp_input); 
+ 		current_INM1_val = stoi(tile_access->fields.at("line_10").at("INM1").temp_input); 
 	} catch(invalid_argument& arg_error){
 		error_logger.push_error("Error reading current INM1/#Search Spectra value for page creation",
 					" logics.");
@@ -557,7 +561,9 @@ void icntrl6_form_button::search_spectra_page_creation(){
 void icntrl6_form_button::search_spectra_page_helper(){
 
 	try{
-	  INM1_val = stoi(sdl_helper->get_mgr().fields.at("line_10").at("INM1").temp_input);
+	  //INM1_val = stoi(sdl_helper->get_mgr().fields.at("line_10").at("INM1").temp_input);
+	  INM1_val = stoi(tile_access->fields.at("line_10").at("INM1").temp_input);
+
 	} catch ( out_of_range& range_error ){
 	  error_logger.push_error("ICNTRL6-INM1 could not be found in the field map.",
 					  range_error.what());
@@ -642,7 +648,8 @@ void icntrl6_form_button::cross_sections_page_creation(){
 
 	int current_INM2_val;
 	try{
- 		current_INM2_val = stoi(sdl_helper->get_mgr().fields.at("line_10").at("INM2").temp_input); 
+ 		//current_INM2_val = stoi(sdl_helper->get_mgr().fields.at("line_10").at("INM2").temp_input); 
+		current_INM2_val = stoi(tile_access->fields.at("line_10").at("INM2").temp_input); 
 	} catch(invalid_argument& arg_error){
 		error_logger.push_error("Error reading current INM2/cross sections value for page creation",
 					" logics.");
@@ -668,7 +675,9 @@ void icntrl6_form_button::cross_sections_page_creation(){
 void icntrl6_form_button::cross_sections_helper(){
 
 	try{
-	  INM2_val = stoi(sdl_helper->get_mgr().fields.at("line_10").at("INM2").temp_input);
+	  //INM2_val = stoi(sdl_helper->get_mgr().fields.at("line_10").at("INM2").temp_input);
+	  INM2_val = stoi(tile_access->fields.at("line_10").at("INM2").temp_input);
+
 	} catch ( out_of_range& range_error ){
 	  error_logger.push_error("ICNTRL6-INM2 could not be found in the field map.",
 					  range_error.what());
@@ -977,7 +986,8 @@ void icntrl4_form_button::click_helper(SDL_Event& mouse_event){
 			my_form.form_event_loop(mouse_event);//enter the mini loop for form entry
 
 		//in this case the form has been previously created, but the icntrl8 value has not changed, so nothing needs to be done
-		} else if(my_form.prev_init_value == stoi(sdl_helper->get_mgr().fields.at("line_8").at("NCH4").temp_input) ){
+		//} else if(my_form.prev_init_value == stoi(sdl_helper->get_mgr().fields.at("line_8").at("NCH4").temp_input) ){
+		} else if(my_form.prev_init_value == stoi(tile_access->fields.at("line_8").at("NCH4").temp_input) ){
 			my_form.toggle_active();//let the form know that it is now active
 			my_form.form_event_loop(mouse_event);//enter the mini loop for form entry
 
@@ -1002,7 +1012,8 @@ void icntrl4_form_button::page_creation_helper(){
 
 	//grab val from parameter field, so the pages can be set up
 	try{
-	  nch4_val = stoi(sdl_helper->get_mgr().fields.at("line_8").at("NCH4").temp_input);
+	  //nch4_val = stoi(sdl_helper->get_mgr().fields.at("line_8").at("NCH4").temp_input);
+	  nch4_val = stoi(tile_access->fields.at("line_8").at("NCH4").temp_input);
 	} catch (out_of_range& range_error){
 	  error_logger.push_error("NCH4 could not be found in the field map",
 				  range_error.what());
@@ -1111,8 +1122,10 @@ bool ilv3_ilv5_form_button::handle_click(SDL_Event& mouse_event){
 void ilv3_ilv5_form_button::click_helper(SDL_Event& mouse_event){
 	error_logger.push_msg("clicked the icntrl4/resolved levels info button ");
 
-        int curr_ilv3 = stoi(sdl_helper->get_mgr().fields.at("line_5").at("ILV3").temp_input);
-        int curr_ilv5 = stoi(sdl_helper->get_mgr().fields.at("line_5").at("ILV5").temp_input);
+        //int curr_ilv3 = stoi(sdl_helper->get_mgr().fields.at("line_5").at("ILV3").temp_input);
+        //int curr_ilv5 = stoi(sdl_helper->get_mgr().fields.at("line_5").at("ILV5").temp_input);
+        int curr_ilv3 = stoi(tile_access->fields.at("line_5").at("ILV3").temp_input);
+        int curr_ilv5 = stoi(tile_access->fields.at("line_5").at("ILV5").temp_input);
 
 	//don't consider doing anything if the form is locked
 	if(!is_locked){
@@ -1174,8 +1187,10 @@ void ilv3_ilv5_form_button::page_creation_helper(){
 	int ilv3_val;
 	int ilv5_val;
 	try{
-		ilv3_val = stoi(sdl_helper->get_mgr().fields.at("line_5").at("ILV3").temp_input);
-		ilv5_val = stoi(sdl_helper->get_mgr().fields.at("line_5").at("ILV5").temp_input);
+		//ilv3_val = stoi(sdl_helper->get_mgr().fields.at("line_5").at("ILV3").temp_input);
+		//ilv5_val = stoi(sdl_helper->get_mgr().fields.at("line_5").at("ILV5").temp_input);
+		ilv3_val = stoi(tile_access->fields.at("line_5").at("ILV3").temp_input);
+		ilv5_val = stoi(tile_access->fields.at("line_5").at("ILV5").temp_input);
 	} catch(invalid_argument& bad_arg){
 		error_logger.push_error("Ilv3 or ilv5's value failed to conver to int in page_creation_helper.",
 	bad_arg.what());

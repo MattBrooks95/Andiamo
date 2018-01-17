@@ -240,7 +240,7 @@ class field{
 	int* sdl_xscroll;//!< this pointer allows field objects access to current x scrolling value in sdl_help
 	int* sdl_yscroll;//!< this pointer allows field objects access to current y scrolling value in sdl_help
 	TTF_Font* sdl_font;//!< this pointer allows field objects access to the font setting file
-	SDL_Renderer* sdl_help_renderer;//!< a pointer to sdl_help's rendering context
+	//SDL_Renderer* sdl_help_renderer;//!< a pointer to sdl_help's rendering context
 	//########################################################################################################
 
 	SDL_Texture* lock_texture;//!< save the sdl texture for the lock icon
