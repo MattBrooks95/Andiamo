@@ -533,8 +533,6 @@ void manager::check_locks(){
 	iench_locking();
 	ilv1_locking();
 
-
-
 	//complex cases/form button cases
 	icntrl10_locking();
 	icntrl4_locking();

@@ -25,7 +25,7 @@ class form_button : public button{
 
 	//! this function is an overload of the virtual init function from the default button class
 	/*! these buttons are drawn right on the form tray, so they don't need to hold an image */
-	void init(sdl_help* sdl_help_in);
+	void init(/*sdl_help* sdl_help_in*/);
 
 
 	//! this function is used by the button manager to make sure this button lines up with its image in the form tray

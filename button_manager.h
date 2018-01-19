@@ -23,6 +23,8 @@ using std::regex;
 
 extern logger error_logger;
 
+extern sdl_help* sdl_access;
+
 //! button_manager is a manager for the different derivations of class button
 /*! these buttons should either stay in a box below the tiles, OR be fixed to the window kind of like a HUD,
  *It needs access to a lot of sdl_helper fields, like the renderer, font, window size... */
@@ -30,7 +32,7 @@ class button_manager{
   public:
 	//! the constructor expects only a pointer to the graphics class so it can draw the buttons
 	/* \param sdl_helper_in is a pointer to the main graphics class sdl_help, found in sdl_help.h */
-	button_manager(sdl_help* sdl_helper_in);
+	button_manager(/*sdl_help* sdl_helper_in*/);
 	~button_manager();
 
 	//#################### BUTTON TRAY STUFF #######################################################//
@@ -135,7 +137,7 @@ class button_manager{
 
 	string button_image_p;//!< this is a string that describes the path to the button's image files
 
-	sdl_help* sdl_helper;//!< this is a pointer to the main graphics class, for renderer and font access
+	//sdl_help* sdl_helper;//!< this is a pointer to the main graphics class, for renderer and font access
   private:
 
 	SDL_Texture* button_tray_texture;//!< save the texture for the tray on which buttons sit

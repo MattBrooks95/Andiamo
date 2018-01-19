@@ -29,8 +29,8 @@ form_button::~form_button(){
 
 }
 
-void form_button::init(sdl_help* sdl_help_in){
-	sdl_helper = sdl_help_in;
+void form_button::init(/*sdl_help* sdl_help_in*/){
+	//sdl_helper = sdl_help_in;
 	
 
 	lock_texture = asset_access->get_texture("Assets/Images/lock.png");
@@ -70,35 +70,42 @@ void form_button::setup_help_msg(){
 
 }
 void form_button::init_form(const vector<regex>& pattern_tests){
-	my_form.init("no title","default_form_help.png",0,0,sdl_helper,sdl_helper->font,pattern_tests);
+	my_form.init("no title","default_form_help.png",0,0,/*sdl_helper,sdl_helper->font,*/pattern_tests);
 
 }
 
 void form_button::screen_size(){
 	bool update = false;
-	int old_width = sdl_helper->get_win_size()->width;
-	int old_height = sdl_helper->get_win_size()->height;
+	//int old_width = sdl_helper->get_win_size()->width;
+	//int old_height = sdl_helper->get_win_size()->height;
+	int old_width = sdl_access->get_win_size()->width;
+	int old_height = sdl_access->get_win_size()->height;
 	if(old_width < 800){
 		old_width = 800; 
 		update = true;
 	}
 
-	if(sdl_helper->get_win_size()->width < 800){
+	//if(sdl_helper->get_win_size()->width < 800){
+	if(sdl_access->get_win_size()->width < 800){
 		old_height = 800;
 		update = true;
 	}
 
 	if(update){
-		SDL_SetWindowSize(sdl_helper->get_window(),old_width,old_height);
-		sdl_helper->window_update(old_width,old_height);
+		//SDL_SetWindowSize(sdl_helper->get_window(),old_width,old_height);
+		//sdl_helper->window_update(old_width,old_height);
+		SDL_SetWindowSize(sdl_access->get_window(),old_width,old_height);
+		sdl_access->window_update(old_width,old_height);
 
 		error_logger.push_msg("Updated screen size upon opening a form.");
 	}
 }
 
 void form_button::draw_help_msg(SDL_Event& big_event,SDL_Rect& destination){
-	SDL_RenderCopy(sdl_helper->renderer,unlock_help_texture,NULL,&destination);
-	sdl_helper->present();
+	//SDL_RenderCopy(sdl_helper->renderer,unlock_help_texture,NULL,&destination);
+	//sdl_helper->present();
+	SDL_RenderCopy(sdl_access->renderer,unlock_help_texture,NULL,&destination);
+	sdl_access->present();
 
 	//spin until they are done reading, and they click the mouse or push a key - I can't get this to work because
 	//of phantom events, for now it just stays up until they let the mouse button come up
@@ -111,7 +118,8 @@ void form_button::draw_help_msg(SDL_Event& big_event,SDL_Rect& destination){
 
 void form_button::draw_lock(){
 	if(is_locked){
-		SDL_RenderCopy(sdl_helper->renderer,lock_texture,NULL,&lock_rect);
+		//SDL_RenderCopy(sdl_helper->renderer,lock_texture,NULL,&lock_rect);
+		SDL_RenderCopy(sdl_access->renderer,lock_texture,NULL,&lock_rect);
 	}
 }
 
@@ -151,7 +159,8 @@ void icntrl8_form_button::setup_help_msg(){
 
 bool icntrl8_form_button::handle_click(SDL_Event& mouse_event){
 	if(button::was_clicked(mouse_event)){
-		SDL_RenderClear(sdl_helper->renderer);
+		//SDL_RenderClear(sdl_helper->renderer);
+		SDL_RenderClear(sdl_access->renderer);
 		click_helper(mouse_event);
 		return true;
 	}
@@ -248,12 +257,12 @@ void icntrl8_form_button::page_creation_helper(){
 
 		if(rows_per_page >= rows_needed){
 			pages[c].page_init(3,rows_needed,pass_column_titles,pass_row_titles,
-								      sdl_helper, sdl_helper->font,column_spaces);
+								      /*sdl_helper, sdl_helper->font,*/column_spaces);
 			rows_needed = 0;
 		} else {
 
 			pages[c].page_init(3,rows_per_page,pass_column_titles,pass_row_titles,
-								      sdl_helper, sdl_helper->font,column_spaces);
+								      /*sdl_helper, sdl_helper->font,*/column_spaces);
 			rows_needed = rows_needed - rows_per_page;
 		}
 		pages_made++;//we made a page, so increase the counter
@@ -272,7 +281,7 @@ void icntrl8_form_button::page_creation_helper(){
 }
 
 void icntrl8_form_button::init_form(const vector<regex>& pattern_tests){
-	my_form.init("Cutoff Nuclei (ICNTRL8)","icntrl8_form_help.png",0,0,sdl_helper,sdl_helper->font,
+	my_form.init("Cutoff Nuclei (ICNTRL8)","icntrl8_form_help.png",0,0/*,sdl_helper,sdl_helper->font*/,
                  pattern_tests);
 }
 
@@ -342,7 +351,8 @@ void icntrl6_form_button::setup_lock(){
 
 bool icntrl6_form_button::handle_click(SDL_Event& mouse_event){
 	if(button::was_clicked(mouse_event)){
-		SDL_RenderClear(sdl_helper->renderer);
+		//SDL_RenderClear(sdl_helper->renderer);
+		SDL_RenderClear(sdl_access->renderer);
 		click_helper(mouse_event);
 		return true;
 	}
@@ -361,7 +371,8 @@ void icntrl6_form_button::click_helper(SDL_Event& mouse_event){
 		show_landing();
 
 		//have sdl_helper update the display
-		sdl_helper->present();
+		//sdl_helper->present();
+		sdl_access->present();
 
 		//if we enter a form loop, we should ignore whatever event is in the queue when
 		//the form loop exits. So, this flag should be set to true if a form loop is entered,
@@ -407,7 +418,8 @@ void icntrl6_form_button::click_helper(SDL_Event& mouse_event){
 				did_something = true;
 
 			}
-			SDL_RenderClear(sdl_helper->renderer);//clear off the screen
+			//SDL_RenderClear(sdl_helper->renderer);//clear off the screen
+			SDL_RenderClear(sdl_access->renderer);//clear off the screen
 
 			//sdl_helper->draw_tiles();//redraw the tile field (in the background)
 			//sdl_helper->draw_sbars();//likewise, redraw the scroll bars
@@ -417,7 +429,8 @@ void icntrl6_form_button::click_helper(SDL_Event& mouse_event){
 			b_manager->draw_buttons();//redraw the buttons themselves
 			show_landing();  //redraw the form selection area
 
-			sdl_helper->present();
+			//sdl_helper->present();
+			sdl_access->present();
 
 		//loop until the user clicks off the landing screen
 		} while( did_something || landing_was_clicked(mouse_event) );
@@ -461,15 +474,15 @@ void icntrl6_form_button::init_form(const vector<regex>& pattern_tests){
     parity_patterns.push_back(pattern_tests[15]);
 
 	//my_form (from default form_button class) will be the parity info
-	my_form.init("Parameter Search (ICNTRL6)","icntrl6_parity_help.png",0,0,sdl_helper,sdl_helper->font,
+	my_form.init("Parameter Search (ICNTRL6)","icntrl6_parity_help.png",0,0,/*sdl_helper,sdl_helper->font,*/
                   parity_patterns);
 
 	//INM1 form
-	search_spectra.init("# of Search Spectra","icntrl6_spectra_help.png",0,0,sdl_helper,sdl_helper->font,
+	search_spectra.init("# of Search Spectra","icntrl6_spectra_help.png",0,0,/*sdl_helper,sdl_helper->font,*/
                         inm1_patterns);
 
 	//INM2 form
-	cross_sections.init("# of Search Cross Sections","icntrl6_xsections_help.png",0,0,sdl_helper,sdl_helper->font,
+	cross_sections.init("# of Search Cross Sections","icntrl6_xsections_help.png",0,0,/*sdl_helper,sdl_helper->font,*/
                         inm2_patterns);
 
 }
@@ -492,7 +505,7 @@ void icntrl6_form_button::parity_page_creation(){
 		column_spaces.push_back(250);
 		column_spaces.push_back(100);
 
-		my_form.get_pages()[0].page_init( 3, 18, column_labels, row_labels, sdl_helper,sdl_helper->font,column_spaces);
+		my_form.get_pages()[0].page_init( 3, 18, column_labels, row_labels,/*sdl_helper,sdl_helper->font,*/column_spaces);
 	}
 
 
@@ -595,12 +608,12 @@ void icntrl6_form_button::search_spectra_page_helper(){
 
 		if(rows_per_page >= rows_needed){
 			pages[c].page_init(9,rows_needed,pass_column_labels,pass_row_labels,
-								      sdl_helper, sdl_helper->font,column_spaces);
+								      /*sdl_helper, sdl_helper->font,*/column_spaces);
 			rows_needed = 0;
 		} else {
 
 			pages[c].page_init(9,rows_per_page,pass_column_labels,pass_row_labels,
-								      sdl_helper, sdl_helper->font,column_spaces);
+								      /*sdl_helper, sdl_helper->font,*/column_spaces);
 			rows_needed = rows_needed - rows_per_page;
 		}
 		pages_made++;//we made a page, so increase the counter
@@ -718,14 +731,14 @@ void icntrl6_form_button::cross_sections_helper(){
 								     // sdl_helper, sdl_helper->font,120);//prev 15
 
 			pages[c].page_init(4,rows_needed,pass_column_labels,pass_row_labels,
-								     sdl_helper, sdl_helper->font,column_spaces);
+								     /*sdl_helper, sdl_helper->font,*/column_spaces);
 			rows_needed = 0;
 		} else {
 
 			//pages[c].page_init(4,rows_per_page,pass_column_labels,pass_row_labels,
 								      //sdl_helper, sdl_helper->font,120);//prev 15
 			pages[c].page_init(4,rows_per_page,pass_column_labels,pass_row_labels,
-								     sdl_helper, sdl_helper->font,column_spaces);
+								     /*sdl_helper, sdl_helper->font,*/column_spaces);
 
 
 			rows_needed = rows_needed - rows_per_page;
@@ -793,8 +806,8 @@ void icntrl6_form_button::update_landing(){
 
 void icntrl6_form_button::show_landing(){
 
-	SDL_RenderCopy(sdl_helper->renderer,landing_texture,NULL,&landing_rect);
-
+	//SDL_RenderCopy(sdl_helper->renderer,landing_texture,NULL,&landing_rect);
+	SDL_RenderCopy(sdl_access->renderer,landing_texture,NULL,&landing_rect);
 
 }
 
@@ -905,7 +918,8 @@ bool icntrl6_form_button::check_values(vector<index_value>& error_details){
 
 bool icntrl10_form_button::handle_click(SDL_Event& mouse_event){
 	if(button::was_clicked(mouse_event)){
-		SDL_RenderClear(sdl_helper->renderer);
+		//SDL_RenderClear(sdl_helper->renderer);
+		SDL_RenderClear(sdl_access->renderer);
 		click_helper(mouse_event);
 		return true;
 	}
@@ -924,7 +938,7 @@ void icntrl10_form_button::click_helper(SDL_Event& mouse_event){
 
 void icntrl10_form_button::init_form(const vector<regex>& pattern_tests){
 
-	my_form.init("Spin Cutoff Information (ICNTRL10)","default_form_help.png",0,0,sdl_helper,sdl_helper->font,
+	my_form.init("Spin Cutoff Information (ICNTRL10)","default_form_help.png",0,0,/*sdl_helper,sdl_helper->font,*/
                  pattern_tests);
 
 }
@@ -953,14 +967,15 @@ void icntrl4_form_button::setup_lock(){
 
 void icntrl4_form_button::init_form(const vector<regex>& pattern_tests){
 
-	my_form.init("Resolved Levels (ICNTRL4)","icntrl4_form_help.png",0,0,sdl_helper,sdl_helper->font,
+	my_form.init("Resolved Levels (ICNTRL4)","icntrl4_form_help.png",0,0,/*sdl_helper,sdl_helper->font,*/
                  pattern_tests);
 
 }
 
 bool icntrl4_form_button::handle_click(SDL_Event& mouse_event){
 	if(button::was_clicked(mouse_event)){
-		SDL_RenderClear(sdl_helper->renderer);
+		//SDL_RenderClear(sdl_helper->renderer);
+		SDL_RenderClear(sdl_access->renderer);
 		click_helper(mouse_event);
 		return true;
 	}
@@ -1054,12 +1069,12 @@ void icntrl4_form_button::page_creation_helper(){
 
 		if(rows_per_page >= rows_needed){
 			pages[c].page_init(4,rows_needed,pass_column_titles,pass_row_titles,
-								      sdl_helper, sdl_helper->font,column_spaces);
+								      /*sdl_helper, sdl_helper->font,*/column_spaces);
 			rows_needed = 0;
 		} else {
 
 			pages[c].page_init(4,rows_per_page,pass_column_titles,pass_row_titles,
-								      sdl_helper, sdl_helper->font,column_spaces);
+								      /*sdl_helper, sdl_helper->font,*/column_spaces);
 			rows_needed = rows_needed - rows_per_page;
 		}
 		pages_made++;//we made a page, so increase the counter
@@ -1112,7 +1127,8 @@ bool icntrl4_form_button::check_values(vector<index_value>& error_details){
 
 bool ilv3_ilv5_form_button::handle_click(SDL_Event& mouse_event){
 	if(button::was_clicked(mouse_event)){
-		SDL_RenderClear(sdl_helper->renderer);
+		//SDL_RenderClear(sdl_helper->renderer);
+		SDL_RenderClear(sdl_access->renderer);
 		click_helper(mouse_event);
 		return true;
 	}
@@ -1179,7 +1195,7 @@ void ilv3_ilv5_form_button::init_form(const vector<regex>& pattern_tests){
 
 	//my_form.init("set this when page is open","default_form_help.png",0,0,sdl_helper,sdl_helper->font,
     //             pattern_tests);
-	my_form.init("Distinct Residual Level Density","ilv3_form_help.png",0,0,sdl_helper,sdl_helper->font,
+	my_form.init("Distinct Residual Level Density","ilv3_form_help.png",0,0,/*sdl_helper,sdl_helper->font,*/
 					pattern_tests);
 
 }
@@ -1240,12 +1256,12 @@ void ilv3_ilv5_form_button::page_creation_helper(){
 
 		if(rows_per_page >= rows_needed){
 			pages[c].page_init(4,rows_needed,pass_column_titles,pass_row_titles,
-			sdl_helper, sdl_helper->font,column_spaces);
+			/*sdl_helper, sdl_helper->font,*/column_spaces);
 			rows_needed = 0;
 		} else {
 
 			pages[c].page_init(4,rows_per_page,pass_column_titles,pass_row_titles,
-						      sdl_helper, sdl_helper->font,column_spaces);
+						      /*sdl_helper, sdl_helper->font,*/column_spaces);
 			rows_needed = rows_needed - rows_per_page;
 		}
 		pages_made++;//we made a page, so increase the counter

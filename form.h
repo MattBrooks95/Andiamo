@@ -43,7 +43,7 @@ class form{
 	 *\param sdl_helper_in is a pointer reference to the sdl_help object, for drawing functionality
 	 *\param sdl_font_in is a pointer to the font contained within the sdl_help object, for shorthand access */
 	void init(string form_title_in,string help_msg_image_name, int xloc_in,int yloc_in,
-			  sdl_help* sdl_helper_in,TTF_Font* sdl_font_in, const vector<regex>& pattern_tests);
+			  /*sdl_help* sdl_helper_in,TTF_Font* sdl_font_in,*/ const vector<regex>& pattern_tests);
 
     //! this function changes the form's title
     /*! this is useful, for example, when a form can serve one or two logical functions
@@ -203,10 +203,10 @@ class page{
 	//###########################################################################################################
 	void page_init(unsigned int num_columns_in, unsigned int rows_needed,
 		       const vector<string>& column_labels_in,vector<string>& row_labels_in,
-		       sdl_help* sdl_helper_in,TTF_Font* sdl_font_in, const vector<int>& column_spacings);
+		       /*sdl_help* sdl_helper_in,TTF_Font* sdl_font_in,*/ const vector<int>& column_spacings);
 	//! helper for page_init, does the mundane pass-through assignments
 	void page_init_local_var(unsigned int num_columns_in, unsigned int rows_needed, const vector<string>& column_labels_in,
-			         vector<string>& row_labels_in, sdl_help* sdl_helper_in,TTF_Font* sdl_font_in);
+			         vector<string>& row_labels_in /*,sdl_help* sdl_helper_in,TTF_Font* sdl_font_in*/);
 	//! helper for page_init that sets up the row labels, if they exist
 	void page_init_set_row_labels(const vector<string>& row_labels_in,int& x_start_point);
 
@@ -244,8 +244,8 @@ class page{
 	unsigned int get_rows(){ return num_rows;}
 
   private:
-	sdl_help* sdl_helper;//!< allows easy access to the graphics class
-	TTF_Font* sdl_font;//!< allows easy access to the text style used in other constructs
+	//sdl_help* sdl_helper;//!< allows easy access to the graphics class
+	//TTF_Font* sdl_font;//!< allows easy access to the text style used in other constructs
 
 	unsigned int num_columns;//!< number of columns that will be needed
 	unsigned int num_rows;//!< number of rows that will be needed

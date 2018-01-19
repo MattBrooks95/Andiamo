@@ -5,8 +5,10 @@
 #include "button.h"
 #include "text_box.h"
 #include "input_maker.h"
-//########################## EXIT BUTTON ###########################################################################
 
+extern input_maker* io_access;
+
+//########################## EXIT BUTTON ###########################################################################
 
 using std::string;
 
@@ -54,7 +56,7 @@ class exit_button : public button{
 	 *\param image_name_in parameter for button::init
 	 *\param image_p_in parameter for button::init
 	 *\param sdl_help_in parameter for button::init */
-	void init(string image_name_in, string image_p_in,sdl_help* sdl_help_in);
+	void init(string image_name_in, string image_p_in/*,sdl_help* sdl_help_in*/);
 
 
   private:
@@ -82,13 +84,13 @@ class text_box_button : public button{
 	//! this is a pure virtual member
 	/*! it must be implemented in classes that inherit from this class, because some will want to
 	 *READ from the input file, and some will want to WRITE to the output file */
-	virtual int work(input_maker& io_handler) = 0;
+	virtual int work(/*(input_maker& io_handler*/) = 0;
 
 	//! overload parent's handle_resize() function, also updates the text box coordinates
 	void handle_resize(int yloc_in);
 
 	//! init also sets up the text box
-	void init(const string& image_name_in,const string& image_p_in,sdl_help* sdl_help_in);
+	void init(const string& image_name_in,const string& image_p_in/*,sdl_help* sdl_help_in*/);
 
 	//! force_corner_loc also updates the text box
 	void force_corner_loc(int xloc_in, int yloc_in);
@@ -108,7 +110,7 @@ class TC_input_file_button : public text_box_button{
 	/*! it modifies the transmission coefficient input file name variable in input_maker
 	 *in the event that the text box for the file name is empty, it will return -1 and
 	 *prevent button_manager::clean_up() from executing */
-	int work(input_maker& io_helper);
+	int work(/*input_maker& io_helper*/);
   private:
 
 };
@@ -116,7 +118,7 @@ class TC_input_file_button : public text_box_button{
 class output_file_button : public text_box_button{
   public:
 	//! this function should make sure input_maker writes to the given file name
-	int work(input_maker& io_helper);
+	int work(/*input_maker& io_helper*/);
 
   private:
 
@@ -138,10 +140,10 @@ class graphing_button : public text_box_button{
 	void print_me();
 
 	//! this work function needs implemented to make sure graphing is output to the given file name
-	int work(input_maker& io_handler);
+	int work(/*input_maker& io_handler*/);
 
 	//! does button::init() and also sets up the checked texture
-	void init(const string& image_name_in, const string& image_p_in,sdl_help* sdl_help_in);
+	void init(const string& image_name_in, const string& image_p_in/*,sdl_help* sdl_help_in*/);
 
 	//! force_corner_lock does normal stuff, and forces the active area to update as well
 	void force_corner_loc(int xloc_in, int yloc_in);

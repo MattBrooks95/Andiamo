@@ -11,8 +11,8 @@ using namespace std;
 extern asset_manager* asset_access;
 extern manager* tile_access;
 
-button_manager::button_manager(sdl_help* sdl_helper_in){
-	sdl_helper = sdl_helper_in;
+button_manager::button_manager(/*sdl_help* sdl_helper_in*/){
+	//sdl_helper = sdl_helper_in;
 
 	button_image_p = "./Assets/Images/Buttons/";
 
@@ -52,8 +52,8 @@ void button_manager::init_tray(){
 	tray_rect.x = 5;//give it a little bit of distance from the right edge of the screen
 
 	//set it to be just above the bottom scroll bar
-	tray_rect.y = sdl_helper->get_h_bar().get_top() - (tray_rect.h + 10);
-
+	//tray_rect.y = sdl_helper->get_h_bar().get_top() - (tray_rect.h + 10);
+	tray_rect.y = sdl_access->get_h_bar().get_top() - (tray_rect.h + 10);
 }
 
 void button_manager::init_form_tray(){
@@ -93,7 +93,8 @@ void button_manager::redo_locks(){
 //this follows the logic used in init_buttons
 //there is a lot of hard coded stuff, but I'm hoping the button manager won't need changed often
 void button_manager::location_update(){
-	int new_y = sdl_helper->get_h_bar().get_top() - (tray_rect.h + 10);
+	//int new_y = sdl_helper->get_h_bar().get_top() - (tray_rect.h + 10);
+	int new_y = sdl_access->get_h_bar().get_top() - (tray_rect.h + 10);
 
 	//move buttons to fit the tray
 	//+7 is padding from the top of the button tray
@@ -118,14 +119,14 @@ void button_manager::location_update(){
 
 void button_manager::init_buttons(){
 	//initialize the placeholder buttons
-	fop_button.init("fop_button.png",button_image_p,sdl_helper);
-	output_fname.init("output_name_button.png",button_image_p,sdl_helper);
-	t_coefficients.init("tc_file_button.png",button_image_p,sdl_helper);
-	//graphing_options.init("graphing_options.png",button_image_p,sdl_helper);
-	lets_go.init("lets_go.png",button_image_p,sdl_helper);
+	fop_button.init("fop_button.png",button_image_p/*,sdl_helper*/);
+	output_fname.init("output_name_button.png",button_image_p/*,sdl_helper*/);
+	t_coefficients.init("tc_file_button.png",button_image_p/*,sdl_helper*/);
+	//graphing_options.init("graphing_options.png",button_image_p/*,sdl_helper*/);
+	lets_go.init("lets_go.png",button_image_p/*,sdl_helper*/);
 
 	//exit dialogue is a special snowflake, handles its own location
-	exit_dialogue.init("exit_button.png",button_image_p,sdl_helper);
+	exit_dialogue.init("exit_button.png",button_image_p/*,sdl_helper*/);
 
 	int end_of_last_button = 0;//keep track of where the last button ended
 
@@ -151,13 +152,13 @@ void button_manager::init_buttons(){
 }
 
 void button_manager::init_form_buttons(){
-	icntrl_6.init(sdl_helper);
+	icntrl_6.init(/*sdl_helper*/);
 	icntrl_6.set_bmanager_reference(this);
 
-	icntrl_8.init(sdl_helper);
-	icntrl_10.init(sdl_helper);
-	icntrl_4.init(sdl_helper);
-	ilv3_ilv5.init(sdl_helper);
+	icntrl_8.init(/*sdl_helper*/);
+	icntrl_10.init(/*sdl_helper*/);
+	icntrl_4.init(/*sdl_helper*/);
+	ilv3_ilv5.init(/*sdl_helper*/);
 
 	icntrl_6.set_corner_loc(form_tray_rect.x + 315,form_tray_rect.y);
 	icntrl_8.set_corner_loc(form_tray_rect.x + 210,form_tray_rect.y);
@@ -302,12 +303,14 @@ void button_manager::print_buttons(){
 
 void button_manager::draw_tray(){
 	if(tray_shown){
-		SDL_RenderCopy(sdl_helper->renderer,button_tray_texture,NULL,&tray_rect);
+		//SDL_RenderCopy(sdl_helper->renderer,button_tray_texture,NULL,&tray_rect);
+		SDL_RenderCopy(sdl_access->renderer,button_tray_texture,NULL,&tray_rect);
 	}
 }
 
 void button_manager::draw_form_tray(){
-	SDL_RenderCopy(sdl_helper->renderer,form_tray_texture,NULL,&form_tray_rect);
+	//SDL_RenderCopy(sdl_helper->renderer,form_tray_texture,NULL,&form_tray_rect);
+	SDL_RenderCopy(sdl_access->renderer,form_tray_texture,NULL,&form_tray_rect);
 	icntrl_8.draw_lock();
 	icntrl_6.draw_lock();
 	icntrl_10.draw_lock();
@@ -420,7 +423,8 @@ void button_manager::text_box_loop(text_box_button* current_button,SDL_Event& ev
 			text_was_changed = false;
 			draw_buttons();
 			//show updated picture
-			sdl_helper->present();
+			//sdl_helper->present();
+			sdl_access->present();
 		}
 
 		//c++;
@@ -478,7 +482,8 @@ bool button_manager::click_handling(SDL_Event& mouse_event){
 					//if there were no errors, this is ran
 					//have input_maker output to the file
 					vector<string> form_bad_inputs;
-					if(!sdl_helper->get_io_handler().output(form_bad_inputs)){
+					//if(!sdl_helper->get_io_handler().output(form_bad_inputs)){
+					if(!io_access->output(form_bad_inputs)){
 						//set up the texture to draw the error message
 						SDL_Texture* error_message = NULL;
 						SDL_Rect destination;												
@@ -582,8 +587,12 @@ void button_manager::form_error_message_loop(SDL_Event& event,SDL_Texture* messa
 	bool changed = false;
 	bool leave   = false;
 
-	SDL_RenderCopy(sdl_helper->renderer,message_texture,NULL,&destination);
-	sdl_helper->present();
+	//SDL_RenderCopy(sdl_helper->renderer,message_texture,NULL,&destination);
+	//sdl_helper->present();
+
+	SDL_RenderCopy(sdl_access->renderer,message_texture,NULL,&destination);
+	sdl_access->present();
+
 
 	while(!leave){
 
@@ -645,9 +654,12 @@ void button_manager::form_error_message_loop(SDL_Event& event,SDL_Texture* messa
 
 		if(changed && !leave){
 			changed = false;
-			SDL_RenderClear(sdl_helper->renderer);
-			SDL_RenderCopy(sdl_helper->renderer,message_texture,NULL,&destination);
-			sdl_helper->present();
+			//SDL_RenderClear(sdl_helper->renderer);
+			//SDL_RenderCopy(sdl_helper->renderer,message_texture,NULL,&destination);
+			//sdl_helper->present();
+			SDL_RenderClear(sdl_access->renderer);
+			SDL_RenderCopy(sdl_access->renderer,message_texture,NULL,&destination);
+			sdl_access->present();
 		}
 
 	}
@@ -686,7 +698,9 @@ void button_manager::make_form_error_message(const vector<string>& form_bad_inpu
 	for(unsigned int c = 0; c < form_bad_inputs.size();c++){
 		int temp_width;
 		int temp_height;
-		TTF_SizeText(sdl_helper->font,form_bad_inputs[c].c_str(),&temp_width,
+		//TTF_SizeText(sdl_helper->font,form_bad_inputs[c].c_str(),&temp_width,
+		//			 &temp_height);
+		TTF_SizeText(sdl_access->font,form_bad_inputs[c].c_str(),&temp_width,
 					 &temp_height);
 		if(temp_width > max_message_width){
 			max_message_width = temp_width;
@@ -696,8 +710,10 @@ void button_manager::make_form_error_message(const vector<string>& form_bad_inpu
 
 
 	//get window info to figure out what we're drawing to
-	int window_h = sdl_helper->get_win_size()->height;
-	int window_w = sdl_helper->get_win_size()->width;
+	//int window_h = sdl_helper->get_win_size()->height;
+	//int window_w = sdl_helper->get_win_size()->width;
+	int window_h = sdl_access->get_win_size()->height;
+	int window_w = sdl_access->get_win_size()->width;
 
 	if(max_message_width < window_w){
 		max_message_width = window_w;
@@ -724,8 +740,11 @@ void button_manager::make_form_error_message(const vector<string>& form_bad_inpu
 	//loop over lines that need rendered to the screen
 	for(unsigned int c = 0; c < form_bad_inputs.size();c++){
 		SDL_Surface* text_surface;
-		text_surface = TTF_RenderUTF8_Blended(sdl_helper->font,form_bad_inputs[c].c_str(),text_color);
-		TTF_SizeText(sdl_helper->font,form_bad_inputs[c].c_str(),&line_destination.w,
+		//text_surface = TTF_RenderUTF8_Blended(sdl_helper->font,form_bad_inputs[c].c_str(),text_color);
+		//TTF_SizeText(sdl_helper->font,form_bad_inputs[c].c_str(),&line_destination.w,
+		//			 &line_destination.h);
+		text_surface = TTF_RenderUTF8_Blended(sdl_access->font,form_bad_inputs[c].c_str(),text_color);
+		TTF_SizeText(sdl_access->font,form_bad_inputs[c].c_str(),&line_destination.w,
 					 &line_destination.h);
 		SDL_BlitSurface(text_surface,NULL,message_surf,&line_destination);
 		line_destination.y += line_destination.h;
@@ -737,7 +756,8 @@ void button_manager::make_form_error_message(const vector<string>& form_bad_inpu
 	//turn the surface we've created and drawn to into a texture
 	//SDL_Texture* message_texture;
 	//message_texture = SDL_CreateTextureFromSurface(sdl_helper->renderer,message_surf);
-	drawing_info = SDL_CreateTextureFromSurface(sdl_helper->renderer,message_surf);
+	//drawing_info = SDL_CreateTextureFromSurface(sdl_helper->renderer,message_surf);
+	drawing_info = SDL_CreateTextureFromSurface(sdl_access->renderer,message_surf);
 
 	//give back memory
 	if(message_surf != NULL){
@@ -747,17 +767,20 @@ void button_manager::make_form_error_message(const vector<string>& form_bad_inpu
 }
 
 int button_manager::clean_up(){
-	input_maker& io_handler = sdl_helper->get_io_handler();
+	//input_maker& io_handler = sdl_helper->get_io_handler();
+
 	bool bad_output_fname = false;
 	bool bad_tc_input_fname = false;
 
 	//set up input_makers output file location variable
-	if(output_fname.work(io_handler) != 0){
+	//if(output_fname.work(io_handler) != 0){
+	if(output_fname.work() != 0){
 		bad_output_fname = true;
 	}
 
 	//set up input_makers transmission coefficients input file location variable
-	if(t_coefficients.work(io_handler) != 0){
+	//if(t_coefficients.work(io_handler) != 0){
+	if(t_coefficients.work() != 0){
 		//exit if t_coefficients.work returns a bad number
 		//but it defaults to "output.txt", so it should just run 
 		bad_tc_input_fname = true;
@@ -782,11 +805,18 @@ void button_manager::bad_tile_input_warnings(vector<string>& bad_input_list){
 
 	SDL_Rect msg_dest;//calculate where to put the error message
 	SDL_QueryTexture(bad_input_msg_texture,NULL,NULL,&msg_dest.w,&msg_dest.h);
-	msg_dest.x = (sdl_helper->get_win_size()->width / 2 ) - (.5 * msg_dest.w);
-	msg_dest.y = (sdl_helper->get_win_size()->height / 2) - (.5 * msg_dest.h);
-	SDL_RenderCopy(sdl_helper->renderer,bad_input_msg_texture,NULL,&msg_dest);
+	//msg_dest.x = (sdl_helper->get_win_size()->width / 2 ) - (.5 * msg_dest.w);
+	//msg_dest.y = (sdl_helper->get_win_size()->height / 2) - (.5 * msg_dest.h);
+	//SDL_RenderCopy(sdl_helper->renderer,bad_input_msg_texture,NULL,&msg_dest);
 	
-	sdl_helper->present();//update the screen to show the message
+	//sdl_helper->present();//update the screen to show the message
+
+	msg_dest.x = (sdl_access->get_win_size()->width / 2 ) - (.5 * msg_dest.w);
+	msg_dest.y = (sdl_access->get_win_size()->height / 2) - (.5 * msg_dest.h);
+	SDL_RenderCopy(sdl_access->renderer,bad_input_msg_texture,NULL,&msg_dest);
+	
+	sdl_access->present();//update the screen to show the message
+
 	SDL_Delay(5000);//delay for 3 seconds so they can read the message
 
 	SDL_DestroyTexture(bad_input_msg_texture);//free memory back up
@@ -811,19 +841,26 @@ void button_manager::clean_up_warnings(bool bad_output_fname,bool bad_tc_input_f
 		SDL_QueryTexture(output_fname_error_texture,NULL,NULL,&dest.w,&dest.h);
 		
 		//yloc should stay the same
-		dest.y = sdl_helper->get_win_size()->height/2 - dest.h/2;
-		//if we are also going to make an error message box for the transmission coefficient input file
-		//we will have to draw to the right of the center of the window
-		if(bad_tc_input_fname){
-			dest.x = sdl_helper->get_win_size()->width/2 + 5;//constant 5 is padding
+		//dest.y = sdl_helper->get_win_size()->height/2 - dest.h/2;
+		dest.y = sdl_access->get_win_size()->height/2 - dest.h/2;
 
+		//if we are also going to make an error message box for the 
+		//transmission coefficient input file we will have to draw to the right
+		// of the center of the window
+		if(bad_tc_input_fname){
+			//dest.x = sdl_helper->get_win_size()->width/2 + 5;//constant 5 is padding
+			//constant 5 is padding
+			dest.x = sdl_access->get_win_size()->width/2 + 5;
 		} else {
-			//if this is the only error messaeg being printed, draw it dead center
-			dest.x = sdl_helper->get_win_size()->width/2 - (dest.w/2);
+			//if this is the only error messaeg being printed, draw it
+			//dead center
+			//dest.x = sdl_helper->get_win_size()->width/2 - (dest.w/2);
+			dest.x = sdl_access->get_win_size()->width/2 - (dest.w/2);
 		}
 
-		SDL_RenderCopy(sdl_helper->renderer,output_fname_error_texture,NULL,&dest);
-
+		//SDL_RenderCopy(sdl_helper->renderer,output_fname_error_texture,NULL,&dest);
+		SDL_RenderCopy(sdl_access->renderer,output_fname_error_texture,
+						NULL,&dest);
 	}
 
 	//make the error message for the transmission coefficient input file name
@@ -841,23 +878,29 @@ void button_manager::clean_up_warnings(bool bad_output_fname,bool bad_tc_input_f
 		SDL_QueryTexture(tc_input_error_texture,NULL,NULL,&dest.w,&dest.h);
 
 		//height should stay the same no matter how many error messages are made
-		dest.y = sdl_helper->get_win_size()->height/2-dest.h/2;
+		//dest.y = sdl_helper->get_win_size()->height/2-dest.h/2;
+		dest.y = sdl_access->get_win_size()->height/2-dest.h/2;
 
 		//if both output messages have been made, this one will need to the left of the center
 		if(bad_output_fname){
-			dest.x = sdl_helper->get_win_size()->width/2 - (dest.w + 5);//constant 5 is padding
+			//dest.x = sdl_helper->get_win_size()->width/2 - (dest.w + 5);//constant 5 is padding
+			//constant 5 is padding
+			dest.x = sdl_access->get_win_size()->width/2 - (dest.w + 5);
 
 		} else {
-			//if this is the only error message, then it can be exactly centered
-			dest.x = sdl_helper->get_win_size()->width/2 - dest.w/2;
-
+			//if this is the only error message, then it can be exactly
+			//centered
+			//dest.x = sdl_helper->get_win_size()->width/2 - dest.w/2;
+			dest.x = sdl_access->get_win_size()->width/2 - dest.w/2;
 		}
 
-		SDL_RenderCopy(sdl_helper->renderer,tc_input_error_texture,NULL,&dest);
+		//SDL_RenderCopy(sdl_helper->renderer,tc_input_error_texture,NULL,&dest);
+		SDL_RenderCopy(sdl_access->renderer,tc_input_error_texture,NULL,&dest);
 	}
 
 
-	sdl_helper->present();//show the error messages to the screen
+	//sdl_helper->present();//show the error messages to the screen
+	sdl_access->present();//show the error messages to the screen
 	SDL_Delay(5000);//delay for 5 seconds, so they can read the messages
 
 }

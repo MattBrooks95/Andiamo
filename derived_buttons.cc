@@ -16,8 +16,10 @@ exit_button::exit_button(){
 
 void exit_button::set_corner_loc(){
 	//set center of tile in the exact center of the screen 
-	xloc = (sdl_helper->get_win_size()->width / 2) - (width / 2);
-	yloc = (sdl_helper->get_win_size()->height / 2) - (height / 2);
+	//xloc = (sdl_helper->get_win_size()->width / 2) - (width / 2);
+	//yloc = (sdl_helper->get_win_size()->height / 2) - (height / 2);
+	xloc = (sdl_access->get_win_size()->width / 2) - (width / 2);
+	yloc = (sdl_access->get_win_size()->height / 2) - (height / 2);
 }
 
 bool exit_button::handle_click(SDL_Event& mouse_event){
@@ -26,7 +28,8 @@ bool exit_button::handle_click(SDL_Event& mouse_event){
 	int which = 0;
 	bool did_something = false;
     draw_me();
-    sdl_helper->present();
+    //sdl_helper->present();
+	sdl_access->present();
 
 	while(!satisfied){
 
@@ -79,9 +82,9 @@ void exit_button::print_me(){
 }
 
 
-void exit_button::init(string image_name_in, string image_p_in,sdl_help* sdl_help_in){
+void exit_button::init(string image_name_in, string image_p_in/*,sdl_help* sdl_help_in*/){
 	//run default procedure
-	button::init(image_name_in,image_p_in,sdl_help_in);
+	button::init(image_name_in,image_p_in/*,sdl_help_in*/);
 
 	//change up corner info,exit button has special location
 	set_corner_loc();
@@ -114,7 +117,8 @@ void exit_button::init(string image_name_in, string image_p_in,sdl_help* sdl_hel
 
 void text_box_button::draw_me(){
 	if(shown){
-		SDL_RenderCopy(sdl_helper->renderer,button_texture,NULL,&my_rect);
+		//SDL_RenderCopy(sdl_helper->renderer,button_texture,NULL,&my_rect);
+		SDL_RenderCopy(sdl_access->renderer,button_texture,NULL,&my_rect);
 		my_text_box.draw_me();
 	}
 }
@@ -129,12 +133,12 @@ void text_box_button::print_me(){
 	my_text_box.print_me();
 }
 	
-void text_box_button::init(const std::string& image_name_in,const std::string& image_p_in,sdl_help* sdl_help_in){
-	button::init(image_name_in,image_p_in,sdl_help_in);
+void text_box_button::init(const std::string& image_name_in,const std::string& image_p_in/*,sdl_help* sdl_help_in*/){
+	button::init(image_name_in,image_p_in/*,sdl_help_in*/);
 
-	sdl_help_font = sdl_helper->font;
+	//sdl_help_font = sdl_helper->font;
 
-	my_text_box.init(sdl_helper,sdl_help_font,"",xloc,yloc+height-25,width,25);
+	my_text_box.init(/*sdl_helper,*/sdl_help_font,"",xloc,yloc+height-25,width,25);
 
 }
 
@@ -151,9 +155,12 @@ void text_box_button::force_corner_loc(int xloc_in, int yloc_in){
 //###############################################################################################
 
 //###################### TRANSMISSION COEFFICIENTS FILE BUTTON ##################################
-int TC_input_file_button::work(input_maker& io_handler){
-	io_handler.TC_input_file_name = my_text_box.text;//set up the TC In put var in the
+int TC_input_file_button::work(/*input_maker& io_handler*/){
+	//io_handler.TC_input_file_name = my_text_box.text;//set up the TC In put var in the
 							 //input maker
+	//set up the TC In put var in the input maker
+	io_access->TC_input_file_name = my_text_box.text;
+
 	if(my_text_box.text.size() == 0 || my_text_box.text == " "){
 			//return -1 to let button_manager.clean_up() know that a TC input file has not
 			//been supplied. This should halt output, because there's no reason to make
@@ -162,7 +169,8 @@ int TC_input_file_button::work(input_maker& io_handler){
 
 	}
 	ifstream ins_test;
-	ins_test.open("./TC_files/"+io_handler.TC_input_file_name);
+	//ins_test.open("./TC_files/"+io_handler.TC_input_file_name);
+	ins_test.open("./TC_files/"+io_access->TC_input_file_name);
         if(ins_test.fail()){
 
 		//return -1, failed to open file
@@ -178,13 +186,16 @@ int TC_input_file_button::work(input_maker& io_handler){
 
 //######################## CREATED HF FILE OUTPUT BUTTON ########################################
 
-int output_file_button::work(input_maker& io_handler){
+int output_file_button::work(/*input_maker& io_handler*/){
 	if(my_text_box.text.size() == 0 || my_text_box.text == " "){
 		error_logger.push_error("Output file name was not supplied, using the default \"output.txt\".");
 		return -1;
 	} else {
-		io_handler.output_file_name = my_text_box.text;//set up the output file name var
+		//io_handler.output_file_name = my_text_box.text;//set up the output file name var
 							       //in input maker
+		//set up the output file name var in input maker
+		io_access->output_file_name = my_text_box.text;
+
 	}
 	return 0;
 }
@@ -203,11 +214,12 @@ void graphing_button::draw_me(){
 	if(shown){
 		//show the version with the check box checked
 		if(show_check_version){
-			SDL_RenderCopy(sdl_helper->renderer,checked_texture,NULL,&my_rect);
-
+			//SDL_RenderCopy(sdl_helper->renderer,checked_texture,NULL,&my_rect);
+			SDL_RenderCopy(sdl_access->renderer,checked_texture,NULL,&my_rect);
 		//show the version with the check box unchecked
 		} else {
-			SDL_RenderCopy(sdl_helper->renderer,button_texture,NULL,&my_rect);
+			//SDL_RenderCopy(sdl_helper->renderer,button_texture,NULL,&my_rect);
+			SDL_RenderCopy(sdl_access->renderer,button_texture,NULL,&my_rect);
 		}
 		//the graphing_button class doesn't call the text_box_button draw function because
 		//it can render the wrong version of the texture. It causes a bug where the check mark
@@ -226,7 +238,7 @@ void graphing_button::print_me(){
 	check_box.print_me();
 }
 
-int graphing_button::work(input_maker& io_handler){
+int graphing_button::work(/*input_maker& io_handler*/){
 	return 0;
 }
 
@@ -254,9 +266,9 @@ void graphing_button::force_corner_loc(int xloc_in, int yloc_in){
 	check_box.yloc = yloc_in + 35;
 }
 
-void graphing_button::init(const std::string& image_name_in,const std::string& image_p_in,sdl_help* sdl_help_in){
+void graphing_button::init(const std::string& image_name_in,const std::string& image_p_in/*,sdl_help* sdl_help_in*/){
 	//do the base class's setting up
-	text_box_button::init(image_name_in,image_p_in,sdl_help_in);
+	text_box_button::init(image_name_in,image_p_in/*,sdl_help_in*/);
 
 	show_check_version = false;
 
@@ -270,7 +282,8 @@ void graphing_button::init(const std::string& image_name_in,const std::string& i
 	//set up the checked version texture
 	checked_surface = IMG_Load( (image_p_in+"graphing_options_checked.png").c_str() );
 	if(checked_surface == NULL) error_logger.push_error(string(SDL_GetError()));
-	checked_texture = SDL_CreateTextureFromSurface(sdl_helper->renderer,checked_surface);
+	//checked_texture = SDL_CreateTextureFromSurface(sdl_helper->renderer,checked_surface);
+	checked_texture = SDL_CreateTextureFromSurface(sdl_access->renderer,checked_surface);
 	if(checked_texture == NULL) error_logger.push_error(string(SDL_GetError()));
 }
 

@@ -14,13 +14,16 @@
 using std::string;
 using std::regex;
 
+extern sdl_help* sdl_access;
+
+
 struct text_box{
 
 	//! this constructor can initialize the location of the text box, runs without params
 	/*! it does so because I believe the default constructor can get called before the containing class
 	 *has been properly set up, causing issues. So I've been writing init functions to fix that data
 	 *once the containing class is set up */
-	text_box(sdl_help* sdl_helper = NULL,TTF_Font* font_in=NULL,
+	text_box(/*sdl_help* sdl_helper = NULL,*/TTF_Font* font_in=NULL,
 		 string text_in = "",int xloc_in = 0, int yloc_in = 0,int width_in = 0,
 		 int height_in = 0);
 
@@ -32,7 +35,7 @@ struct text_box{
 
 	//! this function sets up the location of the text box on the screen and the renderer
 	/* this information should be passed in from whatever tile or button is instantiating the text box */
-	void init(sdl_help* sdl_helper_in,TTF_Font* font_in,string text_in,int xloc_in,
+	void init(/*sdl_help* sdl_helper_in,*/TTF_Font* font_in,string text_in,int xloc_in,
 		  int yloc_in,int width_in, int height_in);
 
 	//##################### CLICK FUNCTIONS ############################################################
@@ -106,7 +109,7 @@ struct text_box{
 	string text;//!< the text that is rendered to the screen and changed by the user
 	bool bad_input;//!< keep track of whether this box has been given bad input or not
 
-	sdl_help* sdl_helper;//!< pointer to the sdl_help class
+	//sdl_help* sdl_helper;//!< pointer to the sdl_help class
 	TTF_Font* sdl_help_font;//!< pointer to the font in the sdl_help class
 
 

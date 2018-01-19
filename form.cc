@@ -31,8 +31,8 @@ form::form(){
 	page_count = 0;
 	current_page = 0;
 
-	sdl_helper = NULL;
-	sdl_font = NULL;
+	//sdl_helper = NULL;
+	//sdl_font = NULL;
 
 	form_texture = NULL;
 }
@@ -57,7 +57,7 @@ form::~form(){
 }
 
 void form::init(string form_title_in,string help_msg_image_name,int xloc_in, int yloc_in,
-		     sdl_help* sdl_helper_in,TTF_Font* sdl_font_in,const vector<regex>& pattern_tests){
+		     /*sdl_help* sdl_helper_in,TTF_Font* sdl_font_in,*/const vector<regex>& pattern_tests){
 
 	//set up state variables
 	form_title = form_title_in;
@@ -66,8 +66,8 @@ void form::init(string form_title_in,string help_msg_image_name,int xloc_in, int
     my_patterns = pattern_tests;
 
 	//set up pointers to graphics class
-	sdl_helper = sdl_helper_in;
-	sdl_font = sdl_font_in;	
+	//sdl_helper = sdl_helper_in;
+	//sdl_font = sdl_font_in;	
 
 	//initialize the page number spritesheet
 	//these numbers are blitted onto the form surface, to indicate which page the user is on
@@ -115,7 +115,8 @@ void form::init(string form_title_in,string help_msg_image_name,int xloc_in, int
 		TTF_CloseFont(title_font);
 	}
 	
-	form_texture = SDL_CreateTextureFromSurface(sdl_helper->renderer,form_surface);
+	//form_texture = SDL_CreateTextureFromSurface(sdl_helper->renderer,form_surface);
+	form_texture = SDL_CreateTextureFromSurface(sdl_access->renderer,form_surface);
 	if(form_texture == NULL) error_logger.push_error(SDL_GetError());
 	//################################################################################################
 
@@ -181,7 +182,8 @@ void form::set_form_title(std::string new_title){
 	if(form_texture != NULL){
 		SDL_DestroyTexture(form_texture);
 	}
-	form_texture = SDL_CreateTextureFromSurface(sdl_helper->renderer,form_surface);
+	//form_texture = SDL_CreateTextureFromSurface(sdl_helper->renderer,form_surface);
+	form_texture = SDL_CreateTextureFromSurface(sdl_access->renderer,form_surface);
 }
 
 void form::form_event_loop(SDL_Event& big_event){
@@ -229,7 +231,8 @@ void form::form_event_loop(SDL_Event& big_event){
 
 	}
 	draw_me();
-	sdl_helper->present();
+	//sdl_helper->present();
+	sdl_access->present();
 	SDL_Delay(50);
 
  }
@@ -315,16 +318,19 @@ void form::draw_me(){
 
 	if(active){
 		if(!help_shown){
-			SDL_RenderCopy(sdl_helper->renderer,form_texture,NULL,&form_area);
+			//SDL_RenderCopy(sdl_helper->renderer,form_texture,NULL,&form_area);
+			SDL_RenderCopy(sdl_access->renderer,form_texture,NULL,&form_area);
 			if(!pages.empty()){
 				pages[current_page].draw_me();
 			}
 		} else {
-			SDL_RenderCopy(sdl_helper->renderer,form_texture,NULL,&form_area);
+			//SDL_RenderCopy(sdl_helper->renderer,form_texture,NULL,&form_area);
+			SDL_RenderCopy(sdl_access->renderer,form_texture,NULL,&form_area);
 			SDL_Rect help_area = form_area;
 			help_area.y = 50;
 			help_area.h = 725;//the texture is actually shorter, it replaces the text box area
-			SDL_RenderCopy(sdl_helper->renderer,help_texture,NULL,&help_area);
+			//SDL_RenderCopy(sdl_helper->renderer,help_texture,NULL,&help_area);
+			SDL_RenderCopy(sdl_access->renderer,help_texture,NULL,&help_area);
 		}
 
 	} else return;
@@ -430,7 +436,8 @@ void form::set_page_count(int page_count_in){
 
 	if(form_texture != NULL){
 		SDL_DestroyTexture(form_texture);	
-		form_texture = SDL_CreateTextureFromSurface(sdl_helper->renderer,form_surface);//update the texture
+		//form_texture = SDL_CreateTextureFromSurface(sdl_helper->renderer,form_surface);//update the texture
+		form_texture = SDL_CreateTextureFromSurface(sdl_access->renderer,form_surface);//update the texture
 	} else {
 		error_logger.push_error("Error in set_page_count, previous form texture was NULL");
 	}
@@ -450,7 +457,8 @@ void form::update_page_indicator(){
 
 	if(form_texture != NULL){
 		SDL_DestroyTexture(form_texture);
-		form_texture = SDL_CreateTextureFromSurface(sdl_helper->renderer,form_surface);
+		//form_texture = SDL_CreateTextureFromSurface(sdl_helper->renderer,form_surface);
+		form_texture = SDL_CreateTextureFromSurface(sdl_access->renderer,form_surface);
 	} else {
 		error_logger.push_error("Error in update_page_indicator, previous form texture was NULL");
 	}
@@ -558,7 +566,8 @@ void form::text_box_loop(text_box& current_box,SDL_Event& event,string& command,
 			draw_me();
 			text_was_changed = false;
 			//show updated picture
-			sdl_helper->present();
+			//sdl_helper->present();
+			//sdl_access->present();
 		}
 
 		//c++;
@@ -573,8 +582,8 @@ page::page(){
 	num_columns = 0;
 	num_rows = 0;
 
-	sdl_helper = NULL;
-	sdl_font = NULL;
+	//sdl_helper = NULL;
+	//sdl_font = NULL;
 }
 
 page::page(const page& other){
@@ -582,8 +591,8 @@ page::page(const page& other){
 	num_rows = other.num_rows;
 	column_labels = other.column_labels;
 	row_labels = other.row_labels;
-	sdl_helper = other.sdl_helper;
-	sdl_font = sdl_font;
+	//sdl_helper = other.sdl_helper;
+	//sdl_font = sdl_font;
 }
 
 
@@ -602,10 +611,10 @@ page::~page(){
 
 void page::page_init(unsigned int num_columns_in, unsigned int rows_needed,
 		     const vector<string>& column_labels_in, vector<string>& row_labels_in,
-		     sdl_help* sdl_helper_in,TTF_Font* sdl_font_in,const vector<int>& column_spacings){
+		     /*sdl_help* sdl_helper_in,TTF_Font* sdl_font_in,*/const vector<int>& column_spacings){
 
 	//abstracts some of the assignments to save space here
-	page_init_local_var(num_columns_in, rows_needed, column_labels_in, row_labels_in, sdl_helper_in, sdl_font_in);
+	page_init_local_var(num_columns_in, rows_needed, column_labels_in, row_labels_in/*, sdl_helper_in, sdl_font_in*/);
 
 	bool row_labels_exist = false;//turn true to make room for row labels
 	int x_start_point = 0;//used to control where the text boxes start to be drawn
@@ -636,13 +645,13 @@ void page::page_init(unsigned int num_columns_in, unsigned int rows_needed,
 
 }
 void page::page_init_local_var(unsigned int num_columns_in, unsigned int rows_needed, const vector<string>& column_labels_in,
-			       vector<string>& row_labels_in, sdl_help* sdl_helper_in,TTF_Font* sdl_font_in){
+			       vector<string>& row_labels_in/*, sdl_help* sdl_helper_in,TTF_Font* sdl_font_in*/){
 	num_columns = num_columns_in;
 	num_rows = rows_needed;
 	column_labels = column_labels_in;
 	row_labels = row_labels_in;
-	sdl_helper = sdl_helper_in;
-	sdl_font = sdl_font_in;
+	//sdl_helper = sdl_helper_in;
+	//sdl_font = sdl_font_in;
 }
 
 void page::page_init_set_row_labels(const std::vector<std::string>& row_labels_in,int& x_start_point){
@@ -657,20 +666,22 @@ void page::page_init_set_row_labels(const std::vector<std::string>& row_labels_i
 			row_label_textures.push_back(temp_texture);//shove in null pointer
 
 			//create surface from the text
-			temp_surface = TTF_RenderUTF8_Blended(sdl_font,row_labels[c].c_str(),black);
-
+			//temp_surface = TTF_RenderUTF8_Blended(sdl_font,row_labels[c].c_str(),black);
+			temp_surface = TTF_RenderUTF8_Blended(sdl_access->font,row_labels[c].c_str(),black);
 			int width;
 			int height;
 
 			
-			if(TTF_SizeText(sdl_font,row_labels[c].c_str(),&width,&height) != 0){
+			//if(TTF_SizeText(sdl_font,row_labels[c].c_str(),&width,&height) != 0){
+			if(TTF_SizeText(sdl_access->font,row_labels[c].c_str(),&width,&height) != 0){
 				error_logger.push_error("Error while making row labels in page, TTF_SizeText failure.",
 							TTF_GetError());
 			}
 
 			
 			//make the previously shoved null pointer now point to a texture created from the surface
-			row_label_textures.back() = SDL_CreateTextureFromSurface(sdl_helper->renderer,temp_surface);
+			//row_label_textures.back() = SDL_CreateTextureFromSurface(sdl_helper->renderer,temp_surface);
+			row_label_textures.back() = SDL_CreateTextureFromSurface(sdl_access->renderer,temp_surface);
 
 			//calc location & use the size
 			//explicit cast of c to int stops compiler warnings
@@ -707,7 +718,8 @@ void page::page_init_set_text_boxes(int& x_start_point,const vector<int>& column
 			int x_val = x_start_point+x_offset+column_spacings[j];
 			x_offset += column_spacings[j];
 			int y_val = 80+25*i+10*i;
-			new_text_box.init(sdl_helper,sdl_font,"",x_val,y_val,60,25);
+			//new_text_box.init(sdl_helper,sdl_font,"",x_val,y_val,60,25);
+			new_text_box.init(/*sdl_access,*/sdl_access->font,"",x_val,y_val,60,25);
 			text_boxes.push_back(new_text_box);
 		}
 		//reset the j variable, because the for loop will no longer do it
@@ -732,16 +744,17 @@ void page::page_init_column_labels(const vector<int>& column_spacings,int& x_sta
 	for(unsigned int c = 0; c < column_labels.size();c++){
 		column_label_textures.push_back(temp_texture);//shove in a null pointer
 
-		temp_surf = TTF_RenderUTF8_Blended(sdl_font,column_labels[c].c_str(),black);//render the text
+		temp_surf = TTF_RenderUTF8_Blended(sdl_access->font,column_labels[c].c_str(),black);//render the text
 
 		//make the pointer we shoved point at the desired texture
-		column_label_textures.back() = SDL_CreateTextureFromSurface(sdl_helper->renderer,temp_surf);
+		//column_label_textures.back() = SDL_CreateTextureFromSurface(sdl_helper->renderer,temp_surf);
+		column_label_textures.back() = SDL_CreateTextureFromSurface(sdl_access->renderer,temp_surf);
 
 		//calculate drawing info for the column label
 		SDL_Rect temp_rect = {x_start_point+x_offset+column_spacings[c],50,0,0};
 		x_offset += column_spacings[c];
 		//size the text and shove it into the vector
-		TTF_SizeText(sdl_font,column_labels[c].c_str(),&temp_rect.w,&temp_rect.h);
+		TTF_SizeText(sdl_access->font,column_labels[c].c_str(),&temp_rect.w,&temp_rect.h);
 		column_label_rects.push_back(temp_rect);//shove it into the drawing info vector
 
 		SDL_FreeSurface(temp_surf);//give memory back
@@ -759,7 +772,8 @@ void page::draw_me(){
 	}
 
 	for(unsigned int c = 0; c < column_label_textures.size();c++){
-		if(SDL_RenderCopy(sdl_helper->renderer,column_label_textures[c],NULL,&column_label_rects[c]) != 0){
+		//if(SDL_RenderCopy(sdl_helper->renderer,column_label_textures[c],NULL,&column_label_rects[c]) != 0){
+		if(SDL_RenderCopy(sdl_access->renderer,column_label_textures[c],NULL,&column_label_rects[c]) != 0){
 			error_logger.push_error("Could not draw column title.");
 		}
 	}
@@ -771,7 +785,8 @@ void page::draw_me(){
 	}
 
 	for(unsigned int c = 0; c < row_label_textures.size();c++){
-		if( SDL_RenderCopy(sdl_helper->renderer,row_label_textures[c],NULL,&row_label_rects[c]) != 0 ){
+		//if( SDL_RenderCopy(sdl_helper->renderer,row_label_textures[c],NULL,&row_label_rects[c]) != 0 ){
+		if( SDL_RenderCopy(sdl_access->renderer,row_label_textures[c],NULL,&row_label_rects[c]) != 0 ){
 
 		}
 

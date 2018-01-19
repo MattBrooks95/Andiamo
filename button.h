@@ -16,6 +16,7 @@
 using std::string;
 
 extern logger error_logger;
+extern sdl_help* sdl_access;
 
 //! this is the base class for the static buttons that implement features
 /*! some possible features are going to include graphing options, the exit dialogue opening,
@@ -26,7 +27,7 @@ class button{
 	/* the constructor does the same thing everytime, but it has an sdl_help* param that can be left blank.
 	 *I'm leaving it in, in case it is useful later
 	 *\param sdl_help_in defaults to NULL, and is later set by init */
-	button(sdl_help* sdl_help_in = NULL);
+	button(/*sdl_help* sdl_help_in = NULL*/);
 
 	//! this frees the memory held by the surface and texture of a class
 	/*! if an inherited class implements more textures and surfaces, then that derived class
@@ -79,8 +80,8 @@ class button{
 	/*! \param image_name_in is what the name of the image will be set to, like "default_button.png"
 	 *\param image_p_in is what the path to the button's asset directory will be set to
 	 *\param sdl_help_in is the pointer to the main graphics class that will be saved in sdl_helper */
-	virtual void init(const string& image_name_in,const string& image_p_in,
-			  sdl_help* sdl_help_in);
+	virtual void init(const string& image_name_in,const string& image_p_in/*,
+			  sdl_help* sdl_help_in*/);
 
 	//##################### GETTERS AND SETTERS ###########################################
 	int get_xloc()   { return xloc;}
@@ -98,7 +99,7 @@ class button{
 	string image_name;//!< name of the image file
 	string total_image_p;//!< image file directory's path
 
-	sdl_help* sdl_helper;//!< pointer to the main graphics class
+	//sdl_help* sdl_helper;//!< pointer to the main graphics class
 
 	int xloc;//!< horizontal location of the button's corner
 	int yloc;//!< vertical location of the button's corner

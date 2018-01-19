@@ -7,7 +7,7 @@ extern asset_manager* asset_access;
 
 
 //###################### BUTTON class ########################################
-button::button(sdl_help* sdl_help_in){
+button::button(/*sdl_help* sdl_help_in*/){
 
 	width = 0;
 	height = 0;
@@ -23,15 +23,15 @@ button::button(sdl_help* sdl_help_in){
 
 	button_texture = NULL;
 
-	sdl_helper = sdl_help_in;
+	//sdl_helper = sdl_help_in;
 }
 
 button::~button(){
 }
 
-void button::init(const string& image_name_in,const string& image_p_in,sdl_help* sdl_help_in){
+void button::init(const string& image_name_in,const string& image_p_in/*,sdl_help* sdl_help_in*/){
 
-	sdl_helper = sdl_help_in;
+	//sdl_helper = sdl_help_in;
 
 
 	image_name = image_name_in;
@@ -50,7 +50,9 @@ void button::init(const string& image_name_in,const string& image_p_in,sdl_help*
 //virtual
 void button::print_me(){
 	error_logger.push_msg("IMAGE NAME: "+image_name+" TOTAL IMAGE PATH: "+total_image_p);
-	error_logger.push_msg("SDL_HELP HOOK: "+to_string(size_t(sdl_helper))+" XLOC:YLOC = "+to_string(xloc)
+	//error_logger.push_msg("SDL_HELP HOOK: "+to_string(size_t(sdl_helper))+" XLOC:YLOC = "+to_string(xloc)
+    //                          +":"+to_string(yloc));
+	error_logger.push_msg("SDL_HELP HOOK: "+to_string(size_t(sdl_access))+" XLOC:YLOC = "+to_string(xloc)
                               +":"+to_string(yloc));
 	error_logger.push_msg("WIDTH = "+to_string(width)+" HEIGHT = "+to_string(height));
 	error_logger.push_msg(" TEXTURE PTR: " +to_string(size_t(button_texture)));
@@ -68,7 +70,8 @@ void button::make_rect(){
 //virtual
 void button::draw_me(){
 	if(shown){
-		SDL_RenderCopy(sdl_helper->renderer,button_texture,NULL,&my_rect);
+		//SDL_RenderCopy(sdl_helper->renderer,button_texture,NULL,&my_rect);
+		SDL_RenderCopy(sdl_access->renderer,button_texture,NULL,&my_rect);
 	}
 }
 
@@ -77,7 +80,8 @@ void button::set_corner_loc(){
 	xloc = 0;
 	//this puts the tile in a fixed position just above the horizonal scroll bar
 	//this is what the HUD style of buttons could look like
-	yloc = sdl_helper->get_h_bar().get_top() - height;
+	//yloc = sdl_helper->get_h_bar().get_top() - height;
+	yloc = sdl_access->get_h_bar().get_top() - height;
 }
 
 //virtual

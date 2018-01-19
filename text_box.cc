@@ -5,11 +5,11 @@ using namespace std;
 
 extern asset_manager* asset_access;
 
-text_box::text_box(sdl_help* sdl_help_in,TTF_Font* font_in, string text_in, int xloc_in, int 
+text_box::text_box(/*sdl_help* sdl_help_in,*/TTF_Font* font_in, string text_in, int xloc_in, int 
 		   yloc_in,int width_in, int height_in){
 
 
-	sdl_helper = sdl_help_in;
+	//sdl_helper = sdl_help_in;
 	sdl_help_font = font_in;
 
 	//set up the text to be black
@@ -55,7 +55,7 @@ text_box::text_box(const text_box& other){
     shown_area = other.shown_area;
 
 
-	sdl_helper    = other.sdl_helper;
+	//sdl_helper    = other.sdl_helper;
 	sdl_help_font = other.sdl_help_font;
 
 	editing_location = other.editing_location;
@@ -63,25 +63,30 @@ text_box::text_box(const text_box& other){
 	//init the cursor, this needs to be called or else cursor
 	//won't have a reference to sdl class, or this class's location
 	//and may cause a seg fault
-	my_cursor.init(sdl_helper->renderer,&my_rect);
+	//my_cursor.init(sdl_helper->renderer,&my_rect);
+	my_cursor.init(sdl_access->renderer,&my_rect);
 
-	if(sdl_helper != NULL){
+	/*if(sdl_helper != NULL){
 		text_box_texture = asset_access->get_texture("./Assets/Images/text_box.png");
 		bad_texture = asset_access->get_texture("./Assets/Images/bad_tile.png");
-	}
-	if(sdl_helper != NULL && sdl_help_font != NULL){
+	}*/
+	/*if(sdl_helper != NULL && sdl_help_font != NULL){
 		text_surface = TTF_RenderUTF8_Blended(sdl_help_font,text.c_str(),text_color);
 		text_texture = SDL_CreateTextureFromSurface(sdl_helper->renderer,text_surface);
+	}*/
+	if(sdl_access != NULL && sdl_help_font != NULL){
+		text_surface = TTF_RenderUTF8_Blended(sdl_help_font,text.c_str(),text_color);
+		text_texture = SDL_CreateTextureFromSurface(sdl_access->renderer,text_surface);
 	}
 }
 
 text_box::~text_box(){
 }
 
-void text_box::init(sdl_help* sdl_help_in,TTF_Font* font_in, string text_in, int xloc_in, int yloc_in,
+void text_box::init(/*sdl_help* sdl_help_in,*/TTF_Font* font_in, string text_in, int xloc_in, int yloc_in,
 		    int width_in, int height_in){
 
-	sdl_helper = sdl_help_in;
+	//sdl_helper = sdl_help_in;
 	sdl_help_font = font_in;
 	text = text_in;
 
@@ -99,7 +104,8 @@ void text_box::init(sdl_help* sdl_help_in,TTF_Font* font_in, string text_in, int
 	my_rect.h = height;
 
 	//call the cursor's set up function
-	my_cursor.init(sdl_helper->renderer,&my_rect);
+	//my_cursor.init(sdl_helper->renderer,&my_rect);
+	my_cursor.init(sdl_access->renderer,&my_rect);
 
 	//load the same text box image used by the tiles
 	text_box_texture = asset_access->get_texture("./Assets/Images/text_box.png");
@@ -110,7 +116,8 @@ void text_box::init(sdl_help* sdl_help_in,TTF_Font* font_in, string text_in, int
 
 	text_surface = TTF_RenderUTF8_Blended(sdl_help_font,text.c_str(),text_color);
 	if(text_surface == NULL) error_logger.push_error(SDL_GetError());
-	text_texture = SDL_CreateTextureFromSurface(sdl_helper->renderer,text_surface);
+	//text_texture = SDL_CreateTextureFromSurface(sdl_helper->renderer,text_surface);
+	text_texture = SDL_CreateTextureFromSurface(sdl_access->renderer,text_surface);
 	if(text_texture == NULL) error_logger.push_error(SDL_GetError());
 
 	TTF_SizeText(sdl_help_font,text.c_str(),&text_dims.w,&text_dims.h);
@@ -133,7 +140,8 @@ void text_box::print_me(){
 	error_logger.push_msg("Color: "+to_string(text_color.r)+":"+to_string(text_color.g)+":"+to_string(text_color.b)
 	     		      +":"+to_string(text_color.a)); 
 	error_logger.push_msg("Text: "+text);
-	error_logger.push_msg("sdl_help ptr: "+to_string(size_t(sdl_helper)));
+	//error_logger.push_msg("sdl_help ptr: "+to_string(size_t(sdl_helper)));
+	error_logger.push_msg("sdl_help ptr: "+to_string(size_t(sdl_access)));
 	error_logger.push_msg("sdl_help_font: "+to_string(size_t(sdl_help_font)));
 
 	error_logger.push_msg("Text box surface: "+to_string(size_t(text_box_surface))+" text box texture "
@@ -151,11 +159,13 @@ void text_box::draw_me(){
 	//if the text box hasn't been given bad input, or this text box just "doesn't care"
 	//then draw the normal white box
 	if(!bad_input){
-		SDL_RenderCopy(sdl_helper->renderer,text_box_texture,NULL,&my_rect);//render the white box
-
+		//SDL_RenderCopy(sdl_helper->renderer,text_box_texture,NULL,&my_rect);//render the white box
+		//render the white box
+		SDL_RenderCopy(sdl_access->renderer,text_box_texture,NULL,&my_rect);
 	//elsewise, draw the text box as being red, to indicate that it has been given bad input
 	} else {
-		SDL_RenderCopy(sdl_helper->renderer,bad_texture,NULL,&my_rect);
+		//SDL_RenderCopy(sdl_helper->renderer,bad_texture,NULL,&my_rect);
+		SDL_RenderCopy(sdl_access->renderer,bad_texture,NULL,&my_rect);
 	}
 
 	if(text != " " && !text.empty() ){
@@ -166,8 +176,10 @@ void text_box::draw_me(){
 
 		//my_cursor.calc_location returns what it's x value would be if it didn't
 		//care about the constraining text box
-		raw_cursor_location = my_cursor.calc_location(sdl_helper->font,text,editing_location);
-		my_cursor.draw_me(sdl_helper->renderer);
+		//raw_cursor_location = my_cursor.calc_location(sdl_helper->font,text,editing_location);
+		//my_cursor.draw_me(sdl_helper->renderer);
+		raw_cursor_location = my_cursor.calc_location(sdl_access->font,text,editing_location);
+		my_cursor.draw_me(sdl_access->renderer);
 		my_cursor.print();
 
 
@@ -179,7 +191,8 @@ void text_box::draw_me(){
 			mod_rect   = my_rect; //half of the info will be the same 
 			mod_rect.w = text_dims.w;  //width and height should match text exactly
 			mod_rect.h = text_dims.h;
-			SDL_RenderCopy(sdl_helper->renderer,text_texture,NULL,&mod_rect);
+			//SDL_RenderCopy(sdl_helper->renderer,text_texture,NULL,&mod_rect);
+			SDL_RenderCopy(sdl_access->renderer,text_texture,NULL,&mod_rect);
 
 		//if the text is bigger than the text box, use the shown_area as source info
 		//things get a bit more complicated here
@@ -214,7 +227,8 @@ void text_box::draw_me(){
 			//the text in the last sub bin, or they haven't been touched
 			//and using the whole sub-bin as a source and the whole text box as a
 			//destination is fine
-			SDL_RenderCopy(sdl_helper->renderer,text_texture,&mod_src,&mod_dest);
+			//SDL_RenderCopy(sdl_helper->renderer,text_texture,&mod_src,&mod_dest);
+			SDL_RenderCopy(sdl_access->renderer,text_texture,&mod_src,&mod_dest);
 		}
 	}
 }
@@ -231,7 +245,8 @@ void text_box::update_text(string& new_text){
 
 	text.insert(editing_location,new_text);
 	editing_location += strlen(new_text.c_str());
-	TTF_SizeText(sdl_helper->font,text.c_str(),&text_dims.w,&text_dims.h);
+	//TTF_SizeText(sdl_helper->font,text.c_str(),&text_dims.w,&text_dims.h);
+	TTF_SizeText(sdl_access->font,text.c_str(),&text_dims.w,&text_dims.h);
 	shown_area.h = text_dims.h;
 
 	//update the texture for the text
@@ -243,7 +258,8 @@ void text_box::update_text(string& new_text,const regex& test){
 	text.insert(editing_location,new_text);
 	check_text(test);
 	editing_location += strlen(new_text.c_str());
-	TTF_SizeText(sdl_helper->font,text.c_str(),&text_dims.w,&text_dims.h);
+	//TTF_SizeText(sdl_helper->font,text.c_str(),&text_dims.w,&text_dims.h);
+	TTF_SizeText(sdl_access->font,text.c_str(),&text_dims.w,&text_dims.h);
 	shown_area.h = text_dims.h;
 
 	//update the texture for the text
@@ -289,7 +305,7 @@ void text_box::update_texture(){
 		error_logger.push_error(SDL_GetError());
 		text_surface = TTF_RenderUTF8_Blended(sdl_help_font," ",text_color);
 	}
-	text_texture = SDL_CreateTextureFromSurface(sdl_helper->renderer,text_surface);
+	text_texture = SDL_CreateTextureFromSurface(sdl_access->renderer,text_surface);
 	if(text_texture == NULL){
 		error_logger.push_error(SDL_GetError());
 	}

@@ -13,11 +13,18 @@
 #include "logger.h"
 using namespace std;
 
-
-logger error_logger; //global object used for error message output
-asset_manager* asset_access;
-sdl_help* sdl_access;
-manager* tile_access;
+//global object used for error message output
+logger          error_logger;
+//manages textures
+asset_manager*  asset_access;
+//graphics library wrapper
+sdl_help*       sdl_access;
+//handles HF parameter entry
+manager*        tile_access;
+//makes HF file
+input_maker*    io_access;
+//manages various buttons
+button_manager* button_access;
 
 //making this global and giving it a unique name, so the exit button can change it
 bool main_done = false;
@@ -61,6 +68,15 @@ int main(int argc, char *argv[]){
   manager tile_bag;
   tile_access = &tile_bag;
   tile_access->init();
+
+  input_maker io_handler;
+  io_access = & io_handler;
+
+  button_manager b_manager;
+  b_manager.init_tray();
+  b_manager.init_buttons();
+  b_manager.init_form_tray();
+
 
   sdl_access->draw();
 
