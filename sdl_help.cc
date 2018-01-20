@@ -163,11 +163,11 @@ void sdl_help::print_size_info(){
 	error_logger.push_msg("Printing display info: "+to_string(display.w)+"x"+to_string(display.h));
 }
 
-void sdl_help::give_manager_io(input_maker* input_maker_hook_in){
+/*void sdl_help::give_manager_io(input_maker* input_maker_hook_in){
 	//tile_bag.set_input_maker_hook(input_maker_hook_in);
 	tile_access->set_input_maker_hook(input_maker_hook_in);
 }
-
+*/
 void sdl_help::present(){
 	SDL_RenderPresent(renderer);
 }

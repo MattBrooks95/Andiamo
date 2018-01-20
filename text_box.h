@@ -110,7 +110,7 @@ struct text_box{
 	bool bad_input;//!< keep track of whether this box has been given bad input or not
 
 	//sdl_help* sdl_helper;//!< pointer to the sdl_help class
-	TTF_Font* sdl_help_font;//!< pointer to the font in the sdl_help class
+	TTF_Font* font;//!< pointer to the font in the sdl_help class
 
 
 	SDL_Surface* text_box_surface;//!< surface for the text box

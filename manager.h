@@ -23,6 +23,7 @@ using std::regex;
 
 
 extern logger error_logger;
+extern button_manager* button_access;
 
 class button_manager;
 
@@ -47,7 +48,7 @@ class manager{
 	void new_line(const string& line_name,const map<string,field>& line_map);
 
 	//! this member is called by sdl_help's constructor, and sets up input_maker object pointer
-	void set_input_maker_hook(input_maker* input_maker_hook_in);
+	//void set_input_maker_hook(input_maker* input_maker_hook_in);
 
 	//! this function traverses the tile bag and sets up each object with a reference to the main renderer
 	/*! it also allows fields to access sdl_help's scroll values and font pointer */
@@ -148,7 +149,7 @@ class manager{
 
 	//! this function allows manager access to the button manager, for the purpose of unlocking the form buttons
 	/*! This will need to be called from main unfortunately. */
-	void gain_bmanager_access(button_manager* b_manager_hook_in);
+	//void gain_bmanager_access(button_manager* b_manager_hook_in);
 
 
 	//! This member updates the window's dimension values win_w and win_h
@@ -162,8 +163,8 @@ class manager{
 	map<string,map<string,field>> fields;//!< trying something new, to keep relevant tiles together
 
   private:
-	input_maker* input_maker_hook; //!< allows manager access to sdl_help's input_maker object
-	button_manager* b_manager_hook; //!< allows tile manager to unlock form buttons
+	//input_maker* input_maker_hook; //!< allows manager access to sdl_help's input_maker object
+	//button_manager* b_manager_hook; //!< allows tile manager to unlock form buttons
 
 	string tile_input_p; //!< \brief a path string to the tile input file folder
 	int win_w;//!< \brief keeps track of sdl window width

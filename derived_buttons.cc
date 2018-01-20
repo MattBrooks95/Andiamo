@@ -138,8 +138,8 @@ void text_box_button::init(const std::string& image_name_in,const std::string& i
 
 	//sdl_help_font = sdl_helper->font;
 
-	my_text_box.init(/*sdl_helper,*/sdl_help_font,"",xloc,yloc+height-25,width,25);
-
+	//my_text_box.init(/*sdl_helper,*/sdl_help_font,"",xloc,yloc+height-25,width,25);
+	my_text_box.init(/*sdl_helper,*/sdl_access->font,"",xloc,yloc+height-25,width,25);
 }
 
 void text_box_button::force_corner_loc(int xloc_in, int yloc_in){

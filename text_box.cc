@@ -10,7 +10,7 @@ text_box::text_box(/*sdl_help* sdl_help_in,*/TTF_Font* font_in, string text_in, 
 
 
 	//sdl_helper = sdl_help_in;
-	sdl_help_font = font_in;
+	font = font_in;
 
 	//set up the text to be black
 	text_color.r = 0;
@@ -56,7 +56,7 @@ text_box::text_box(const text_box& other){
 
 
 	//sdl_helper    = other.sdl_helper;
-	sdl_help_font = other.sdl_help_font;
+	font = other.font;
 
 	editing_location = other.editing_location;
 
@@ -74,8 +74,8 @@ text_box::text_box(const text_box& other){
 		text_surface = TTF_RenderUTF8_Blended(sdl_help_font,text.c_str(),text_color);
 		text_texture = SDL_CreateTextureFromSurface(sdl_helper->renderer,text_surface);
 	}*/
-	if(sdl_access != NULL && sdl_help_font != NULL){
-		text_surface = TTF_RenderUTF8_Blended(sdl_help_font,text.c_str(),text_color);
+	if(sdl_access != NULL && font != NULL){
+		text_surface = TTF_RenderUTF8_Blended(font,text.c_str(),text_color);
 		text_texture = SDL_CreateTextureFromSurface(sdl_access->renderer,text_surface);
 	}
 }
@@ -87,7 +87,7 @@ void text_box::init(/*sdl_help* sdl_help_in,*/TTF_Font* font_in, string text_in,
 		    int width_in, int height_in){
 
 	//sdl_helper = sdl_help_in;
-	sdl_help_font = font_in;
+	font = font_in;
 	text = text_in;
 
 	//set up location
@@ -114,13 +114,14 @@ void text_box::init(/*sdl_help* sdl_help_in,*/TTF_Font* font_in, string text_in,
 	bad_texture = asset_access->get_texture("./Assets/Images/bad_tile.png");
 	if(bad_texture == NULL) error_logger.push_error(SDL_GetError());
 
-	text_surface = TTF_RenderUTF8_Blended(sdl_help_font,text.c_str(),text_color);
+	text_surface = TTF_RenderUTF8_Blended(font,text.c_str(),text_color);
+
 	if(text_surface == NULL) error_logger.push_error(SDL_GetError());
 	//text_texture = SDL_CreateTextureFromSurface(sdl_helper->renderer,text_surface);
 	text_texture = SDL_CreateTextureFromSurface(sdl_access->renderer,text_surface);
 	if(text_texture == NULL) error_logger.push_error(SDL_GetError());
 
-	TTF_SizeText(sdl_help_font,text.c_str(),&text_dims.w,&text_dims.h);
+	TTF_SizeText(font,text.c_str(),&text_dims.w,&text_dims.h);
 
     //x source should start at 0, but be shifted as needed to control what
     //parts of the text are shown, y should likely always stay 0
@@ -142,7 +143,7 @@ void text_box::print_me(){
 	error_logger.push_msg("Text: "+text);
 	//error_logger.push_msg("sdl_help ptr: "+to_string(size_t(sdl_helper)));
 	error_logger.push_msg("sdl_help ptr: "+to_string(size_t(sdl_access)));
-	error_logger.push_msg("sdl_help_font: "+to_string(size_t(sdl_help_font)));
+	error_logger.push_msg("font: "+to_string(size_t(font)));
 
 	error_logger.push_msg("Text box surface: "+to_string(size_t(text_box_surface))+" text box texture "
 			      +to_string(size_t(text_box_texture)));
@@ -300,10 +301,10 @@ void text_box::update_texture(){
 		SDL_DestroyTexture(text_texture);
 	}
 
-	text_surface = TTF_RenderUTF8_Blended(sdl_help_font,text.c_str(),text_color);
+	text_surface = TTF_RenderUTF8_Blended(font,text.c_str(),text_color);
 	if(text_surface == NULL){
 		error_logger.push_error(SDL_GetError());
-		text_surface = TTF_RenderUTF8_Blended(sdl_help_font," ",text_color);
+		text_surface = TTF_RenderUTF8_Blended(font," ",text_color);
 	}
 	text_texture = SDL_CreateTextureFromSurface(sdl_access->renderer,text_surface);
 	if(text_texture == NULL){
@@ -327,7 +328,7 @@ void text_box::back_space(){
 	editing_location--;//decrement editing location
 
 	//update text size information
-	TTF_SizeText(sdl_help_font,text.c_str(),&text_dims.w,&text_dims.h);
+	TTF_SizeText(font,text.c_str(),&text_dims.w,&text_dims.h);
 	update_texture();
 
 }
@@ -341,7 +342,7 @@ void text_box::back_space(const regex& test){
 	editing_location--;//decrement editing location
 
 	//update text size information
-	TTF_SizeText(sdl_help_font,text.c_str(),&text_dims.w,&text_dims.h);
+	TTF_SizeText(font,text.c_str(),&text_dims.w,&text_dims.h);
 
 	check_text(test);
 	update_texture();

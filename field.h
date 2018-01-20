@@ -86,7 +86,7 @@ class field{
 	/*! this is not done, and will likely change the structure of the program. This function now also allows
 	 *field objects access to the font information through sdl_font* */
 	void graphics_init(SDL_Renderer* sdl_help_renderer_in,string image_p_in,
-			   int* xscroll_in,int* yscroll_in,TTF_Font* font_in);
+			   int* xscroll_in,int* yscroll_in/*,TTF_Font* font_in*/);
 	//! This is a function, called from graphics_init(), that sets up the text's surface
 	/*! it should contain a logic that makes sure that the text does not run off the tile's size
 	 *and it also should not overrite any text boxes in the tile, which have not yet been implemented */
@@ -237,9 +237,9 @@ class field{
 	bool help_mode;//!< this boolean variable controls whether the field will draw it's normal box or help box
 
 	//################################### SDL_HELP HOOKS #####################################################
-	int* sdl_xscroll;//!< this pointer allows field objects access to current x scrolling value in sdl_help
-	int* sdl_yscroll;//!< this pointer allows field objects access to current y scrolling value in sdl_help
-	TTF_Font* sdl_font;//!< this pointer allows field objects access to the font setting file
+	//int* sdl_xscroll;//!< this pointer allows field objects access to current x scrolling value in sdl_help
+	//int* sdl_yscroll;//!< this pointer allows field objects access to current y scrolling value in sdl_help
+	TTF_Font* font;//!< this pointer allows field objects access to the font setting file
 	//SDL_Renderer* sdl_help_renderer;//!< a pointer to sdl_help's rendering context
 	//########################################################################################################
 

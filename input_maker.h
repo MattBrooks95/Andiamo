@@ -45,12 +45,12 @@ class input_maker{
 
 	//! this function takes a pointer to button_manager
 	/*! this is necessary so that the input_maker can tell the form_buttons when to make their output lines */
-	void set_bmanager_ptr(button_manager* b_manager_in){ b_manager = b_manager_in;}
+	//void set_bmanager_ptr(button_manager* b_manager_in){ b_manager = b_manager_in;}
 
 	//! this function allows the input maker to access the button manager
 	/*! reason being is that the form buttons are necessary to creating some of the later lines in the
 	 *input manual */
-	void get_bmanager_ptr(button_manager* b_manager_in) { b_manager = b_manager_in;}
+	//void get_bmanager_ptr(button_manager* b_manager_in) { b_manager = b_manager_in;}
 
 
 	//! output() prints out the information in the order and format needed to be used by HF

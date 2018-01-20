@@ -8,7 +8,7 @@ using namespace std;
 bool compare_width(field& left, field& right);//prototype for sorting function passed to algorithm::sort
 
 manager::manager(){
-	input_maker_hook = NULL; //should be overwritten when sdl_help's constructor calls give_manager_io
+	//input_maker_hook = NULL; //should be overwritten when sdl_help's constructor calls give_manager_io
 }
 
 bool man_test = true;
@@ -179,7 +179,7 @@ manager::~manager(){
 
 }
 */
-
+/*
 void manager::set_input_maker_hook(input_maker* input_maker_hook_in){
 	//seems to be working
 	error_logger.push_msg("SETTING INPUT MAKER HOOK!");
@@ -188,6 +188,7 @@ void manager::set_input_maker_hook(input_maker* input_maker_hook_in){
 	error_logger.push_msg("AFTER: "+to_string(size_t(input_maker_hook_in)) );
 	give_fields_defaults();
 }
+*/
 
 /*
 void manager::give_fields_renderer(SDL_Renderer* sdl_help_renderer_in,string image_p_in,
@@ -284,8 +285,10 @@ void manager::give_int4_fields_defaults(){
 	//param. It's better to go through input_maker's parameters and find them in the fields map than it is to loop through
 	//the fields map and find the parameters. This is because the second way would involve checking each map in input_maker,
 	//when the first way just checks the 2d map in the manager object - these may actually be the same thing now that I think about it
-	for(map<string,param_int4>::iterator big_it = input_maker_hook->get_int4_params().begin();
-		big_it != input_maker_hook->get_int4_params().end();
+	//for(map<string,param_int4>::iterator big_it = input_maker_hook->get_int4_params().begin();
+	//	big_it != input_maker_hook->get_int4_params().end();
+	for(map<string,param_int4>::iterator big_it = io_access->get_int4_params().begin();
+		big_it != io_access->get_int4_params().end();
 		big_it++){
 		bool found = false; //start off false, turn to true if the desired parameter is found
 		for(map<string,map<string,field>>::iterator line_it = fields.begin();
@@ -332,8 +335,10 @@ void manager::give_int4_fields_defaults(){
 
 void manager::give_int4_array_fields_defaults(){
 
-	for(map<string,param_int4_array>::iterator big_it = input_maker_hook->get_i4_array_params().begin();
-	    big_it != input_maker_hook->get_i4_array_params().end();
+	//for(map<string,param_int4_array>::iterator big_it = input_maker_hook->get_i4_array_params().begin();
+	//    big_it != input_maker_hook->get_i4_array_params().end();
+	for(map<string,param_int4_array>::iterator big_it = io_access->get_i4_array_params().begin();
+	    big_it != io_access->get_i4_array_params().end();
 	    big_it++){
 		bool found = false;
 		for(map<string,map<string,field>>::iterator line_it = fields.begin();
@@ -364,8 +369,10 @@ void manager::give_int4_array_fields_defaults(){
 
 void manager::give_real8_fields_defaults(){
 
-	for(map<string,param_real8>::iterator big_it = input_maker_hook->get_real8_params().begin();
-	    big_it != input_maker_hook->get_real8_params().end();
+	//for(map<string,param_real8>::iterator big_it = input_maker_hook->get_real8_params().begin();
+	//    big_it != input_maker_hook->get_real8_params().end();
+	for(map<string,param_real8>::iterator big_it = io_access->get_real8_params().begin();
+	    big_it != io_access->get_real8_params().end();
 	    big_it++){
 
 		bool found = false;
@@ -407,8 +414,10 @@ void manager::give_real8_fields_defaults(){
 
 void manager::give_string_fields_defaults(){
 
-	for(map<string,param_string>::iterator big_it = input_maker_hook->get_string_params().begin();
-	    big_it != input_maker_hook->get_string_params().end();
+	//for(map<string,param_string>::iterator big_it = input_maker_hook->get_string_params().begin();
+	//    big_it != input_maker_hook->get_string_params().end();
+	for(map<string,param_string>::iterator big_it = io_access->get_string_params().begin();
+	    big_it != io_access->get_string_params().end();
 	    big_it++){
 		bool found = false;
 		for(map<string,map<string,field>>::iterator line_it = fields.begin();
@@ -437,8 +446,10 @@ void manager::give_string_fields_defaults(){
 }
 
 void manager::give_r8_array_fields_defaults(){
-	for(map<string,param_r8_array>::iterator big_it = input_maker_hook->get_r8_array_params().begin();
-	    big_it != input_maker_hook->get_r8_array_params().end();
+	//for(map<string,param_r8_array>::iterator big_it = input_maker_hook->get_r8_array_params().begin();
+	//big_it != input_maker_hook->get_r8_array_params().end();
+	for(map<string,param_r8_array>::iterator big_it = io_access->get_r8_array_params().begin();
+	big_it != io_access->get_r8_array_params().end();
 	    big_it++){
 		bool found = false;
 		for(map<string,map<string,field>>::iterator lines_it = fields.begin();
@@ -628,8 +639,10 @@ void manager::icntrl4_locking(){
 
 		fields.at("line_8").at("ICH4").is_locked  = true;
 		fields.at("line_8").at("NCH4").is_locked  = true;
-		if( !(b_manager_hook->get_icntrl_4().get_is_locked()) ){
-			b_manager_hook->get_icntrl_4().toggle_lock();
+		//if( !(b_manager_hook->get_icntrl_4().get_is_locked()) ){
+		//	b_manager_hook->get_icntrl_4().toggle_lock();
+		if( !(button_access->get_icntrl_4().get_is_locked()) ){
+			button_access->get_icntrl_4().toggle_lock();
 		} 
 
 
@@ -686,14 +699,16 @@ void manager::ich4_nch4_locking(){
 		fields.at("line_8").at("NCH4").am_I_locking = true;
 	}
 
-	if( b_manager_hook->get_icntrl_4().get_is_locked() && 
+//	if( b_manager_hook->get_icntrl_4().get_is_locked() && 
+	if( button_access->get_icntrl_4().get_is_locked() && 
 	    (!(fields.at("line_8").at("ICH4").am_I_locking) && !(fields.at("line_8").at("NCH4").am_I_locking)) ){
-		b_manager_hook->get_icntrl_4().toggle_lock();//unlock the button, both are satisfied
+		button_access->get_icntrl_4().toggle_lock();//unlock the button, both are satisfied
 
 	} else if( (fields.at("line_8").at("ICH4").am_I_locking || fields.at("line_8").at("NCH4").am_I_locking)
-		   && !(b_manager_hook->get_icntrl_4().get_is_locked()) ){
-
-		b_manager_hook->get_icntrl_4().toggle_lock();//lock the button
+//		   && !(b_manager_hook->get_icntrl_4().get_is_locked()) ){
+//		b_manager_hook->get_icntrl_4().toggle_lock();//lock the button
+		   && !(button_access->get_icntrl_4().get_is_locked()) ){
+		button_access->get_icntrl_4().toggle_lock();//lock the button
 	}
 
 
@@ -741,9 +756,12 @@ void manager::icntrl8_locking(){
 
 	//toggle if the conditions are met for unlocking, and it is currently locked, or if the conditions are not met
 	//and it is unlocked
-	if( ( !(fields.at("line_6").at("ICNTRL8").am_I_locking) && b_manager_hook->get_icntrl_8().get_is_locked() ) ||
-	    (fields.at("line_6").at("ICNTRL8").am_I_locking && !b_manager_hook->get_icntrl_8().get_is_locked()) ){
-		b_manager_hook->get_icntrl_8().toggle_lock();//
+	//if( ( !(fields.at("line_6").at("ICNTRL8").am_I_locking) && b_manager_hook->get_icntrl_8().get_is_locked() ) ||
+	//    (fields.at("line_6").at("ICNTRL8").am_I_locking && !b_manager_hook->get_icntrl_8().get_is_locked()) ){
+	//	b_manager_hook->get_icntrl_8().toggle_lock();//
+	if( ( !(fields.at("line_6").at("ICNTRL8").am_I_locking) && button_access->get_icntrl_8().get_is_locked() ) ||
+	    (fields.at("line_6").at("ICNTRL8").am_I_locking && !button_access->get_icntrl_8().get_is_locked()) ){
+		button_access->get_icntrl_8().toggle_lock();//
 	}
 
 
@@ -785,9 +803,12 @@ void manager::icntrl10_locking(){
 
   }
 
-	if( ( !(fields.at("line_6").at("ICNTRL10").am_I_locking) && b_manager_hook->get_icntrl_10().get_is_locked() ) ||
-	    ( fields.at("line_6").at("ICNTRL10").am_I_locking && !(b_manager_hook->get_icntrl_10().get_is_locked()) ) ){
-		b_manager_hook->get_icntrl_10().toggle_lock();
+	//if( ( !(fields.at("line_6").at("ICNTRL10").am_I_locking) && b_manager_hook->get_icntrl_10().get_is_locked() ) ||
+	//    ( fields.at("line_6").at("ICNTRL10").am_I_locking && !(b_manager_hook->get_icntrl_10().get_is_locked()) ) ){
+	//	b_manager_hook->get_icntrl_10().toggle_lock();
+	if( ( !(fields.at("line_6").at("ICNTRL10").am_I_locking) && button_access->get_icntrl_10().get_is_locked() ) ||
+	    ( fields.at("line_6").at("ICNTRL10").am_I_locking && !(button_access->get_icntrl_10().get_is_locked()) ) ){
+		button_access->get_icntrl_10().toggle_lock();
 	}
 
 
@@ -820,12 +841,16 @@ void manager::ilv3_ilv5_locking(){
 	bool ilv3_locking = fields.at("line_5").at("ILV3").am_I_locking;
 	bool ilv5_locking = fields.at("line_5").at("ILV5").am_I_locking;
 
-	    //if the form button is locked, and ILV3 XOR ILV5 (one is true, one is false), then unlock it (by toggling)
-	if( (b_manager_hook->get_ilv3_ilv5().get_is_locked() && ((ilv3_locking && !ilv5_locking) || ((!ilv3_locking && ilv5_locking))))
-	    //or, if the form button is not locked, and ILV3 XOR ILV5 is false (both are false, or both are true), then toggle
-	    || (!b_manager_hook->get_ilv3_ilv5().get_is_locked() && !((ilv3_locking && !ilv5_locking) || ((!ilv3_locking && ilv5_locking))))
+    //if the form button is locked, and ILV3 XOR ILV5 (one is true, one is false), then unlock it (by toggling)
+    //or, if the form button is not locked, and ILV3 XOR ILV5 is false (both are false, or both are true), then toggle
+	//if( (b_manager_hook->get_ilv3_ilv5().get_is_locked() && ((ilv3_locking && !ilv5_locking) || ((!ilv3_locking && ilv5_locking))))
+	//    || (!b_manager_hook->get_ilv3_ilv5().get_is_locked() && !((ilv3_locking && !ilv5_locking) || ((!ilv3_locking && ilv5_locking))))
+    //      ){
+	//	b_manager_hook->get_ilv3_ilv5().toggle_lock();
+	if( (button_access->get_ilv3_ilv5().get_is_locked() && ((ilv3_locking && !ilv5_locking) || ((!ilv3_locking && ilv5_locking))))
+	    || (!button_access->get_ilv3_ilv5().get_is_locked() && !((ilv3_locking && !ilv5_locking) || ((!ilv3_locking && ilv5_locking))))
           ){
-		b_manager_hook->get_ilv3_ilv5().toggle_lock();
+		button_access->get_ilv3_ilv5().toggle_lock();
 	}
 
 }
@@ -892,17 +917,19 @@ void manager::icntrl6_locking(){
 		bool inm1_lock_status = fields.at("line_10").at("INM1").am_I_locking;
 		bool inm2_lock_status = fields.at("line_10").at("INM2").am_I_locking;
 		bool iter_lock_status = fields.at("line_10").at("ITER").am_I_locking;
-		bool icntrl6_locked = b_manager_hook->get_icntrl_6().get_is_locked();
+		//bool icntrl6_locked = b_manager_hook->get_icntrl_6().get_is_locked();
+		bool icntrl6_locked = button_access->get_icntrl_6().get_is_locked();
 
-//the following assumes that ITER must be greater than 0, and atleast one of INM1 or INM2 must be nonzero
-			 //if form_button is not locked, and all are locking, then lock it
+		//the following assumes that ITER must be greater than 0, and atleast one of INM1 or INM2 must be nonzero
+		//if form_button is not locked, and all are locking, then lock it
 		if( (icntrl6_locked && !iter_lock_status && (!inm1_lock_status || !inm2_lock_status)) ||
 		    (!icntrl6_locked && iter_lock_status) ||
 		    (!icntrl6_locked && !iter_lock_status && (inm1_lock_status && inm2_lock_status))
 		     
 		  ){
 			//cout << icntrl6_lock_status << " " << inm1_lock_status << " " << inm2_lock_status << " " << iter_lock_status << endl;
-			b_manager_hook->get_icntrl_6().toggle_lock();
+			//b_manager_hook->get_icntrl_6().toggle_lock();
+			button_access->get_icntrl_6().toggle_lock();
 		}
 	}
 
@@ -990,12 +1017,9 @@ void manager::iter_locking(){
 
 }
 
-void manager::gain_bmanager_access(button_manager* b_manager_hook_in){
-	b_manager_hook = b_manager_hook_in;
-
-
-}
-
+//void manager::gain_bmanager_access(button_manager* b_manager_hook_in){
+//	b_manager_hook = b_manager_hook_in;
+//}
 
 
 

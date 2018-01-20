@@ -70,13 +70,16 @@ int main(int argc, char *argv[]){
   tile_access->init();
 
   input_maker io_handler;
-  io_access = & io_handler;
+  io_access = &io_handler;
+  io_access->init();
+
+  tile_access->give_fields_defaults();
 
   button_manager b_manager;
   b_manager.init_tray();
   b_manager.init_buttons();
   b_manager.init_form_tray();
-
+  button_access = &b_manager;
 
   sdl_access->draw();
 

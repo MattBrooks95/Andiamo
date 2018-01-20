@@ -91,7 +91,7 @@ class sdl_help{
 	/*! this is so that the fields and the input maker can interact with eachother
 	 *relatively simply. I'm sure there's a better solution than this, so look at improving
 	 *this later */
-	void give_manager_io(input_maker* input_maker_hook);
+	//void give_manager_io(input_maker* input_maker_hook);
 
 
 	////! This function uses 	SDL_SetWindowResizeable to prevent or allow window resizing
