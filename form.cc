@@ -568,6 +568,7 @@ void form::text_box_loop(text_box& current_box,SDL_Event& event,string& command,
 			//show updated picture
 			//sdl_helper->present();
 			//sdl_access->present();
+			sdl_access->present();
 		}
 
 		//c++;
@@ -721,6 +722,7 @@ void page::page_init_set_text_boxes(int& x_start_point,const vector<int>& column
 			//new_text_box.init(sdl_helper,sdl_font,"",x_val,y_val,60,25);
 			new_text_box.init(/*sdl_access,*/sdl_access->font,"",x_val,y_val,60,25);
 			text_boxes.push_back(new_text_box);
+			//text_boxes.back().init(/*sdl_access,*/sdl_access->font,"",x_val,y_val,60,25);
 		}
 		//reset the j variable, because the for loop will no longer do it
 		//since it was declared at the start of the function and not in the loop

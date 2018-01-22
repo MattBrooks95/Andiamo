@@ -172,8 +172,8 @@ void field::force_size(int width_in,int height_in){
 	size.height = height_in;
 }
 
-void field::graphics_init(SDL_Renderer* sdl_help_renderer_in,string image_p_in,
-			  int* xscroll_in, int* yscroll_in/*,TTF_Font* font_in*/){
+void field::graphics_init(/*SDL_Renderer* sdl_help_renderer_in,*/string image_p_in/*,
+			  int* xscroll_in, int* yscroll_in,TTF_Font* font_in*/){
 	//sdl_help_renderer = sdl_help_renderer_in;//set up "hook" to sdl_help's renderer
 	image_p = image_p_in;
 	image_name = image_p_in + image_name;//get asset directory from sdl_help, and change image name to the
@@ -405,9 +405,9 @@ bool field::text_box_clicked(const int& click_x, const int& click_y){
 		return false;
 	}
 	//if( (click_y >  yloc + (*sdl_yscroll) + size.height - 25  && click_y < yloc + (*sdl_yscroll) + size.height ) &&
-	if( (click_y >  yloc +sdl_access->get_yscroll() + size.height - 25  && click_y < yloc + sdl_access->get_xscroll() + size.height ) &&
+	if( (click_y >  yloc +sdl_access->get_yscroll() + size.height - 25  && click_y < yloc + sdl_access->get_yscroll() + size.height ) &&
 	    //(click_x > xloc + (*sdl_xscroll) && click_x < xloc + (*sdl_xscroll) + size.width ) ){
-	    (click_x > xloc + sdl_access->get_xscroll() && click_x < xloc +sdl_access->get_yscroll() + size.width ) ){
+	    (click_x > xloc + sdl_access->get_xscroll() && click_x < xloc +sdl_access->get_xscroll() + size.width ) ){
 		return true;
 	}
 	return false;
@@ -664,8 +664,8 @@ void field::text_box_init(){
 	//set up text box text
 	text_box.text_surf = TTF_RenderUTF8_Blended(sdl_access->font,temp_input.c_str(),color);
 
-	SDL_Rect delete_me = {0,0,0,0};
-	TTF_SizeText(sdl_access->font,temp_input.c_str(),&delete_me.w,&delete_me.h);
+	//SDL_Rect delete_me = {0,0,0,0};
+	//TTF_SizeText(sdl_access->font,temp_input.c_str(),&delete_me.w,&delete_me.h);
 	if(text_box.text_surf == NULL){
 		string error = SDL_GetError();
 		error_logger.push_error("Error in text_box_init! "+error);

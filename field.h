@@ -85,8 +85,8 @@ class field{
 	//! fields should save their render information to save time and readability in main loop and drawing
 	/*! this is not done, and will likely change the structure of the program. This function now also allows
 	 *field objects access to the font information through sdl_font* */
-	void graphics_init(SDL_Renderer* sdl_help_renderer_in,string image_p_in,
-			   int* xscroll_in,int* yscroll_in/*,TTF_Font* font_in*/);
+	void graphics_init(/*SDL_Renderer* sdl_help_renderer_in,*/string image_p_in/*,
+			   int* xscroll_in,int* yscroll_in,TTF_Font* font_in*/);
 	//! This is a function, called from graphics_init(), that sets up the text's surface
 	/*! it should contain a logic that makes sure that the text does not run off the tile's size
 	 *and it also should not overrite any text boxes in the tile, which have not yet been implemented */
@@ -255,7 +255,6 @@ class field{
 
 
 	SDL_Texture* my_tex;//!< saves the texture, so that it isn't recreated every frame
-
 
 	string image_name; //!< the name of the image, so it can be found in Assets/Images
 

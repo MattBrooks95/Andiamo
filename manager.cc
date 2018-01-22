@@ -7,8 +7,9 @@ using namespace std;
 
 bool compare_width(field& left, field& right);//prototype for sorting function passed to algorithm::sort
 
-manager::manager(){
+manager::manager(string image_p_in){
 	//input_maker_hook = NULL; //should be overwritten when sdl_help's constructor calls give_manager_io
+	image_p = image_p_in;
 }
 
 bool man_test = true;
@@ -241,6 +242,22 @@ void manager::give_fields_defaults(){
 
 	//call helper function connecting 'e' parameters to their tiles
 	give_r8_array_fields_defaults();
+
+}
+
+void manager::init_fields_graphics(/*string image_p_in*/){
+
+	for(map<string,map<string,field>>::iterator big_it = fields.begin();
+	    big_it != fields.end();
+	    big_it++){
+	    for(map<string,field>::iterator small_it = big_it->second.begin();
+			small_it != big_it->second.end();
+			small_it++){
+			small_it->second.graphics_init(/*sdl_help_renderer_in,*/image_p/*,xscroll_in,
+						       yscroll_in,font_in*/);
+	    }
+
+	}
 
 }
 

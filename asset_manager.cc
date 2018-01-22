@@ -48,9 +48,10 @@ void asset_manager::pull_assets(){
 		//readdir is kind of like a getline statement, read in info then act on it
 		while( (file_in_dir = readdir(assets_home)) ){
 
-			//if it is a regular file, load it if it is a png file
+			//regular files should not appear in top level of Assets tree
 			if( file_in_dir->d_type == DT_REG){
-				cout << "in reg file mode: " << file_in_dir->d_name << endl;
+				error_logger.push_error("Not loading file in Assets folder.",
+										" Files should be in subdirectories.");
 			//if it is another dir, call the helper on it
 			} else if(file_in_dir->d_type == DT_DIR){
 
@@ -60,7 +61,7 @@ void asset_manager::pull_assets(){
 				if(ignore1.compare(file_in_dir->d_name) != 0 &&
 				   ignore2.compare(file_in_dir->d_name) != 0){
 
-					cout << "in dir file mode: " << file_in_dir->d_name << endl;
+					//cout << "in dir file mode: " << file_in_dir->d_name << endl;
 					//build path to new subdirectories for the helper calls
 					string path_to_subdir = "./Assets";
 					path_to_subdir += "/";
@@ -80,7 +81,7 @@ void asset_manager::pull_assets(){
 
 void asset_manager::pull_helper(const string& subroot_path){
 
-	cout << "From pull_helper, path to subroot: " << subroot_path << endl;
+	//cout << "From pull_helper, path to subroot: " << subroot_path << endl;
 	
 	DIR* current_root;
 	current_root = opendir(subroot_path.c_str());
@@ -91,17 +92,17 @@ void asset_manager::pull_helper(const string& subroot_path){
 
 			//if it is a regular file, load it if it is a png file
 			if( current_file->d_type == DT_REG){
-				cout << "in reg file mode: " << current_file->d_name << endl;
+				//cout << "in reg file mode: " << current_file->d_name << endl;
 
 				string texture_path = subroot_path;
 				texture_path += "/";
 				texture_path += current_file->d_name;
 				regex is_png(".*?\\.png");
 				if(regex_match(texture_path,is_png)){
-					cout << "Could open file: " << texture_path << endl;
+					//cout << "Could open file: " << texture_path << endl;
 					get_texture(texture_path);
 				} else {
-					cout << texture_path << " ain't a PNG file." << endl;
+					//cout << texture_path << " ain't a PNG file." << endl;
 				}
 
 			//if it is another dir, call the helper on it
@@ -113,7 +114,7 @@ void asset_manager::pull_helper(const string& subroot_path){
 				if(ignore1.compare(current_file->d_name) != 0 &&
 				   ignore2.compare(current_file->d_name) != 0){
 
-					cout << "in dir file mode: " << current_file->d_name << endl;
+					//cout << "in dir file mode: " << current_file->d_name << endl;
 					//build path to new subdirectories for the helper calls
 					string path_to_subdir = subroot_path;
 					path_to_subdir += "/";
@@ -124,7 +125,8 @@ void asset_manager::pull_helper(const string& subroot_path){
 		}
 
 	} else {
-		cout << "From pull_helper, could not open: " << subroot_path << endl;
+		error_logger.push_error("From pull_helper, could not open: ",
+								subroot_path);
 	}
 
 }

@@ -74,6 +74,12 @@ text_box::text_box(const text_box& other){
 		text_surface = TTF_RenderUTF8_Blended(sdl_help_font,text.c_str(),text_color);
 		text_texture = SDL_CreateTextureFromSurface(sdl_helper->renderer,text_surface);
 	}*/
+	text_box_texture = asset_access->get_texture("./Assets/Images/text_box.png");
+	bad_texture = asset_access->get_texture("./Assets/Images/bad_tile.png");
+
+	text_surface = TTF_RenderUTF8_Blended(font,text.c_str(),text_color);
+	text_texture = SDL_CreateTextureFromSurface(sdl_access->renderer,text_surface);
+
 	if(sdl_access != NULL && font != NULL){
 		text_surface = TTF_RenderUTF8_Blended(font,text.c_str(),text_color);
 		text_texture = SDL_CreateTextureFromSurface(sdl_access->renderer,text_surface);
@@ -145,13 +151,13 @@ void text_box::print_me(){
 	error_logger.push_msg("sdl_help ptr: "+to_string(size_t(sdl_access)));
 	error_logger.push_msg("font: "+to_string(size_t(font)));
 
-	error_logger.push_msg("Text box surface: "+to_string(size_t(text_box_surface))+" text box texture "
-			      +to_string(size_t(text_box_texture)));
+	//error_logger.push_msg("Text box surface: "+to_string(size_t(text_box_surface))+" text box texture "
+	//		      +to_string(size_t(text_box_texture)));
 	error_logger.push_msg("Text surface: "+to_string(size_t(text_surface))+" text texture "
 			      +to_string(size_t(text_texture)));
 	
-	error_logger.push_msg("bad box surface: "+to_string(size_t(bad_surface))+" bad box texture "
-			      +to_string(size_t(bad_texture)));
+	//error_logger.push_msg("bad box surface: "+to_string(size_t(bad_surface))+" bad box texture "
+	//		      +to_string(size_t(bad_texture)));
 
 }
 

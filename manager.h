@@ -34,7 +34,7 @@ class manager{
 	//! this is the constructor for the manager class, which implements some features on top of a std vector
 	/*! the manager constructor doesn't do anything right now, as set up must occur after sdl_help's
 	 *constructor */
-	manager();
+	manager(string image_p_in);
 
 	//! destructor is left empty for now.
 	//~manager();
@@ -64,6 +64,9 @@ class manager{
 	 *shouldn't resize it's vector besides in the init function, because that could cause illegal reads
 	 *because the field's pointer points to the vector's old location. */
 	void give_fields_defaults();
+
+	//! sets the graphics for the main parameter fields, besides the text box
+	void init_fields_graphics(/*string image_p_in*/);
 
 	//! this function draws the tiles
 	void draw();
@@ -165,7 +168,7 @@ class manager{
   private:
 	//input_maker* input_maker_hook; //!< allows manager access to sdl_help's input_maker object
 	//button_manager* b_manager_hook; //!< allows tile manager to unlock form buttons
-
+	string image_p; //!< \brief path to the image directory for the tiles
 	string tile_input_p; //!< \brief a path string to the tile input file folder
 	int win_w;//!< \brief keeps track of sdl window width
 	int win_h;//!< \brief keeps track of sdl window height

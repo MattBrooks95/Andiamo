@@ -30,29 +30,29 @@ int filter_mini(void* userdata, SDL_Event* event);
  *\param sdl_help reference to the sdl_help object so that the mini loop can draw and access scroll bar info
  *\param which_bar and 'v' means we are working with the vertical bar, 'h' means the horizontal
  * bar */
-void scrolling_mini_loop(SDL_Event& big_event, sdl_help& sdl_help,button_manager& b_manager,char which_bar);
+void scrolling_mini_loop(SDL_Event& big_event,/*sdl_help& sdl_help,*/button_manager& b_manager,char which_bar);
 //#############################################################################################################
 
 //############################## JERRY STUFF ##################################################################
 //! handle_mouseb_down implements the sub-switch statement that handles mouse buttons being pressed down
-void handle_mouseb_down( SDL_Event& big_event, sdl_help& sdl_help,button_manager& b_manager);
+void handle_mouseb_down( SDL_Event& big_event/*, sdl_help& sdl_help,button_manager& b_manager*/);
 
 //! handle_mouseb_up implements the sub-switch statement that handles mouse buttons being released
-void handle_mouseb_up(const SDL_Event& big_event, const sdl_help& sdl_help);
+void handle_mouseb_up(const SDL_Event& big_event/*, const sdl_help& sdl_help*/);
 
 //! handle_mouse_wheel handles scrolling via the mousewheel
 /*! will very likely behave differently than the scrolling functions found in handle_key_down. However,
  *it is the same in essence, because it just modifies the x_scroll and y_scroll members. Right now it scrolls
  *by 60 per mousewheel down or up, which is higher than the key input*/
-void handle_mouse_wheel(const SDL_Event& big_event, sdl_help& sdl_help);
+void handle_mouse_wheel(const SDL_Event& big_event/*, sdl_help& sdl_help*/);
 //############################## JERRY STUFF ##################################################################
 
 //############################## KEYBOARD STUFF ###############################################################
 //! handle_key_down impelements a sub-switch statement that handles keys being pressed down
-void handle_key_down(const SDL_Event& big_event, sdl_help& sdl_help);
+void handle_key_down(const SDL_Event& big_event/*, sdl_help& sdl_help*/);
 
 //! handle_key_up implements a sub-switch statement that handles keys being released
-void handle_key_up(const SDL_Event& big_event, const sdl_help& sdl_help);
+void handle_key_up(const SDL_Event& big_event/*, const sdl_help& sdl_help*/);
 //#############################################################################################################
 
 

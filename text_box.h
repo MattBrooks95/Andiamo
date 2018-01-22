@@ -113,13 +113,13 @@ struct text_box{
 	TTF_Font* font;//!< pointer to the font in the sdl_help class
 
 
-	SDL_Surface* text_box_surface;//!< surface for the text box
+	//SDL_Surface* text_box_surface;//!< surface for the text box
 	SDL_Texture* text_box_texture;//!< texture for the text box
 
 	SDL_Surface* text_surface;//!< surface for the text
 	SDL_Texture* text_texture;//!< texture for the tex
 
-	SDL_Surface* bad_surface;//!< surface for text box to indicate bad input
+	//SDL_Surface* bad_surface;//!< surface for text box to indicate bad input
 	SDL_Texture* bad_texture;//!< texture for text box to indicate bad input
 
 };

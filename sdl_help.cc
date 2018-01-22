@@ -45,7 +45,7 @@ sdl_help::sdl_help(string name_in,string HF_input_file_in,
 		error_logger.push_error("Error in TTF_Init()!");
 	}
 	window_name = name_in; //set window name
-	image_p = "./Assets/Images/";
+	//image_p = "./Assets/Images/";
 	font_p = "./Assets/fonts/";
 	hf_input_p = "./HF_Input/";
 
@@ -151,6 +151,10 @@ void sdl_help::draw(){
 
 	draw_sbars();
 	tile_access->draw();
+
+	button_access->draw_tray();
+	button_access->draw_form_tray();
+	button_access->draw_buttons();
 
 	frame_count++;//increment the frame counter
 }
@@ -337,7 +341,7 @@ void sdl_help::print_tile_locs(ostream& outs){
 
 }
 
-void sdl_help::click_detection(ostream& outs,SDL_Event& event,button_manager* b_manager, int click_x, int click_y){
+void sdl_help::click_detection(ostream& outs,SDL_Event& event,/*button_manager* b_manager,*/ int click_x, int click_y){
 	//for(map<string,map<string,field>>::iterator lines_it = tile_bag.fields.begin();
 	//    lines_it != tile_bag.fields.end();
 	for(map<string,map<string,field>>::iterator lines_it = tile_access->fields.begin();
@@ -349,14 +353,14 @@ void sdl_help::click_detection(ostream& outs,SDL_Event& event,button_manager* b_
 
 			//if the mouse click coordinates fall within a tile
 			if( in( click_x,click_y, params_it->second.get_rect() ) ){
-
 				if(params_it->second.text_box_clicked(click_x,click_y) ){
 					//if the click fell within the text box
 					//go into text entry loop
 					if(!params_it->second.is_locked){
-						text_box_mini_loop(outs,event,b_manager,params_it->second);
+						text_box_mini_loop(outs,event,/*b_manager,*/params_it->second);
 					}
 				} else {
+					cout << "Decided that the help section was clicked." << endl;
 					//if the click was not on the text box, enact clicked()
 				 	params_it->second.clicked(event,click_x,click_y);
 				}
@@ -368,7 +372,7 @@ void sdl_help::click_detection(ostream& outs,SDL_Event& event,button_manager* b_
 
 //thanks to http://lazyfoo.net/tutorials/SDL/32_text_input_and_clipboard_handling/index.php
 //which was used as a reference 
-void sdl_help::text_box_mini_loop(ostream& outs, SDL_Event& event,button_manager* b_manager,field& current_tile){
+void sdl_help::text_box_mini_loop(ostream& outs, SDL_Event& event,/*button_manager* b_manager,*/field& current_tile){
 
 	SDL_StartTextInput();//turn on the text input background functions
 
@@ -436,6 +440,9 @@ void sdl_help::text_box_mini_loop(ostream& outs, SDL_Event& event,button_manager
 			//current_tile.draw_cursor();
 			//text_was_changed = false;
 			//show updated picture
+			sdl_access->draw();
+			current_tile.draw_cursor();
+			text_was_changed = false;
 			present();
 
 	}//end of loop
