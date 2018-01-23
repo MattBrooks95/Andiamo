@@ -95,7 +95,7 @@ class input_maker{
 
   private:
 
-	button_manager* b_manager;//!< pointer allows access to the button manager, because form_buttons need to make output
+	//button_manager* b_manager;//!< pointer allows access to the button manager, because form_buttons need to make output
 
 	string config_p; //!< \brief contains a string that provides the relative path to the config files
 

@@ -14,6 +14,8 @@
 
 using namespace std;
 
+extern button_manager* button_access;
+
 input_maker::input_maker(string output_file_name_in,string config_file_name_in){
 	config_p = "./config/";
 	output_p = "./output/";
@@ -376,7 +378,11 @@ bool input_maker::output(vector<string>& form_bad_inputs){
 
     //do line 5D or 5E
 	std::vector<index_value> ilv3_ilv5_bad_inputs;
-    if(!b_manager->get_ilv3_ilv5().make_output(outs,ilv3_ilv5_bad_inputs)){
+    //if(!b_manager->get_ilv3_ilv5().make_output(outs,ilv3_ilv5_bad_inputs)){
+	if(//button_access->get_ilv3_ilv5().get_form().prev_initialized && 
+		!(int4_params.at("ILV3") == 0 && int4_params.at("ILV5") == 0) &&
+		!(int4_params.at("ILV3").value > 0 && int4_params.at("ILV5").value > 0)   &&
+		!button_access->get_ilv3_ilv5().make_output(outs,ilv3_ilv5_bad_inputs)){
 		form_bad_inputs.push_back("##############Ilv3/ilv5 error list##############\n");
 		form_bad_inputs.push_back("Distinct Residual Level Density - Ilv3 OR Distinct Level Density Model form\n");
 			for(unsigned int c = 0; c < ilv3_ilv5_bad_inputs.size(); c++){
@@ -399,7 +405,8 @@ bool input_maker::output(vector<string>& form_bad_inputs){
 		//do line 8
 		//do the form's output
 		std::vector<index_value> icntrl4_bad_inputs;
-		if(!b_manager->get_icntrl_4().make_output(outs,icntrl4_bad_inputs)){
+		//if(!b_manager->get_icntrl_4().make_output(outs,icntrl4_bad_inputs)){
+		if(!button_access->get_icntrl_4().make_output(outs,icntrl4_bad_inputs)){
 			form_bad_inputs.push_back("##############Icntrl4 error list##############\n");
 			form_bad_inputs.push_back("Resolved Level + Continuum form\n");
 			for(unsigned int c = 0; c < icntrl4_bad_inputs.size(); c++){
@@ -419,7 +426,11 @@ bool input_maker::output(vector<string>& form_bad_inputs){
 
 	//#########MAKE OUTPUTS FROM FORM_BUTTONS ##############################################################//
 	std::vector<index_value> icntrl6_bad_inputs;
-	if(!b_manager->get_icntrl_6().make_output(outs,icntrl6_bad_inputs)){
+	//if(!b_manager->get_icntrl_6().make_output(outs,icntrl6_bad_inputs)){
+	if(//button_access->get_icntrl_6().get_form().prev_initialized &&
+		!(int4_params.at("ICNTRL6") == 0) &&
+		!button_access->get_icntrl_6().make_output(outs,icntrl6_bad_inputs)){
+
 		form_bad_inputs.push_back("##############Icntrl6 error list##############\n");
 		form_bad_inputs.push_back("Parameter Search form\n");
 		for(unsigned int c = 0; c < icntrl6_bad_inputs.size(); c++){
@@ -431,8 +442,10 @@ bool input_maker::output(vector<string>& form_bad_inputs){
 	}
 
 	std::vector<index_value> icntrl8_bad_inputs;
-	if(!b_manager->get_icntrl_8().get_is_locked() && 
-	   !b_manager->get_icntrl_8().make_output(outs,icntrl8_bad_inputs)){
+//	if(!b_manager->get_icntrl_8().get_is_locked() && 
+//	   !b_manager->get_icntrl_8().make_output(outs,icntrl8_bad_inputs)){
+	if(!button_access->get_icntrl_8().get_is_locked() && 
+	   !button_access->get_icntrl_8().make_output(outs,icntrl8_bad_inputs)){
 
 		form_bad_inputs.push_back("##############Icntrl8 error list##############\n");
 		form_bad_inputs.push_back("Residual Level Threshold Count form\n");
@@ -447,7 +460,8 @@ bool input_maker::output(vector<string>& form_bad_inputs){
 	}
 
 	std::vector<index_value> icntrl10_bad_inputs;
-	if(!b_manager->get_icntrl_10().make_output(outs,icntrl10_bad_inputs)){
+//	if(!b_manager->get_icntrl_10().make_output(outs,icntrl10_bad_inputs)){
+	if(!button_access->get_icntrl_10().make_output(outs,icntrl10_bad_inputs)){
 		form_bad_inputs.push_back("##############Icntrl10 error list#############\n");
 		form_bad_inputs.push_back("Specify Spin Cutoff? form\n");
 		for(unsigned int c = 0; c < icntrl10_bad_inputs.size(); c++){
