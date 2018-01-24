@@ -7,7 +7,9 @@
 #include<iostream>
 #include<fstream>
 #include<regex>  //allows checking if file is a png file
-//allows traversing a directory and getting its file names. ./Assets in this case
+
+//allows traversing a directory and getting its file names.
+//./Assets in this case
 #include<dirent.h>
 
 #include<SDL2/SDL.h>

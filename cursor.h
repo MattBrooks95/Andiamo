@@ -34,7 +34,8 @@ class cursor{
 
 	//! this function calculates the cursor's raw location and returns it
 	/*! it also sets up the cursor_dest rect to later be drawn by draw_me */
-	int calc_location(TTF_Font* font, const string& text, const unsigned int& editing_location);
+	int calc_location(TTF_Font* font, const string& text,
+						 const unsigned int& editing_location);
 
 	//! this function draws the cursor the passed renderer
 	void draw_me(SDL_Renderer* renderer);

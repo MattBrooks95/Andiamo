@@ -6,9 +6,9 @@
 #include "logger.h"
 using namespace std;
 
-fop_handler::fop_handler(sdl_help* sdl_helper_in, input_maker* io_manager_in){
-	sdl_helper = sdl_helper_in;
-	io_manager = io_manager_in;	
+fop_handler::fop_handler(/*sdl_help* sdl_helper_in, input_maker* io_manager_in*/){
+	//sdl_helper = sdl_helper_in;
+	//io_manager = io_manager_in;	
 }
 
 fop_handler::~fop_handler(){
@@ -71,13 +71,15 @@ void fop_handler::print_file_lists(){
 	}
 	cout << "########################################################" << endl;
 
-	cout << "############## FOLDER: " << TRANSMISSION_PATH << " ##################" << endl;
+	cout << "############## FOLDER: " << TRANSMISSION_PATH
+		 << " ##################" << endl;
 	for(unsigned int c = 0; c < transmission_coefficients_files.size(); c++){
 		cout << transmission_coefficients_files[c] << endl;
 	}
 	cout << "########################################################" << endl;
 
-	cout << "############## FOLDER: " << SCRATCH_PATH << " ##################" << endl;
+	cout << "############## FOLDER: " << SCRATCH_PATH
+		 << " ##################" << endl;
 	for(unsigned int c = 0; c < scratch_files.size(); c++){
 		cout << scratch_files[c] << endl;
 	}
