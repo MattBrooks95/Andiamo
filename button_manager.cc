@@ -152,13 +152,12 @@ void button_manager::init_buttons(){
 }
 
 void button_manager::init_form_buttons(){
-	icntrl_6.init(/*sdl_helper*/);
-	icntrl_6.set_bmanager_reference(this);
+	icntrl_6.init();
 
-	icntrl_8.init(/*sdl_helper*/);
-	icntrl_10.init(/*sdl_helper*/);
-	icntrl_4.init(/*sdl_helper*/);
-	ilv3_ilv5.init(/*sdl_helper*/);
+	icntrl_8.init();
+	icntrl_10.init();
+	icntrl_4.init();
+	ilv3_ilv5.init();
 
 	icntrl_6.set_corner_loc(form_tray_rect.x + 315,form_tray_rect.y);
 	icntrl_8.set_corner_loc(form_tray_rect.x + 210,form_tray_rect.y);

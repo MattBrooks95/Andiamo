@@ -418,18 +418,13 @@ void icntrl6_form_button::click_helper(SDL_Event& mouse_event){
 				did_something = true;
 
 			}
-			//SDL_RenderClear(sdl_helper->renderer);//clear off the screen
 			SDL_RenderClear(sdl_access->renderer);//clear off the screen
 
-			//sdl_helper->draw_tiles();//redraw the tile field (in the background)
-			//sdl_helper->draw_sbars();//likewise, redraw the scroll bars
-
-			b_manager->draw_tray(); //redraw the button tray
-			b_manager->draw_form_tray(); //redraw the form button tray
-			b_manager->draw_buttons();//redraw the buttons themselves
+			button_access->draw_tray(); //redraw the button tray
+			button_access->draw_form_tray(); //redraw the form button tray
+			button_access	->draw_buttons();//redraw the buttons themselves
 			show_landing();  //redraw the form selection area
 
-			//sdl_helper->present();
 			sdl_access->present();
 
 		//loop until the user clicks off the landing screen

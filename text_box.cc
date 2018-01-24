@@ -64,7 +64,7 @@ text_box::text_box(const text_box& other){
 	//won't have a reference to sdl class, or this class's location
 	//and may cause a seg fault
 	//my_cursor.init(sdl_helper->renderer,&my_rect);
-	my_cursor.init(sdl_access->renderer,&my_rect);
+	my_cursor.init(&my_rect);
 
 	/*if(sdl_helper != NULL){
 		text_box_texture = asset_access->get_texture("./Assets/Images/text_box.png");
@@ -111,7 +111,7 @@ void text_box::init(/*sdl_help* sdl_help_in,*/TTF_Font* font_in, string text_in,
 
 	//call the cursor's set up function
 	//my_cursor.init(sdl_helper->renderer,&my_rect);
-	my_cursor.init(sdl_access->renderer,&my_rect);
+	my_cursor.init(&my_rect);
 
 	//load the same text box image used by the tiles
 	text_box_texture = asset_access->get_texture("./Assets/Images/text_box.png");
@@ -186,7 +186,7 @@ void text_box::draw_me(){
 		//raw_cursor_location = my_cursor.calc_location(sdl_helper->font,text,editing_location);
 		//my_cursor.draw_me(sdl_helper->renderer);
 		raw_cursor_location = my_cursor.calc_location(sdl_access->font,text,editing_location);
-		my_cursor.draw_me(sdl_access->renderer);
+		my_cursor.draw_me();
 		my_cursor.print();
 
 

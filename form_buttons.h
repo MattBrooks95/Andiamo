@@ -25,7 +25,7 @@ class form_button : public button{
 
 	//! this function is an overload of the virtual init function from the default button class
 	/*! these buttons are drawn right on the form tray, so they don't need to hold an image */
-	void init(/*sdl_help* sdl_help_in*/);
+	void init();
 
 
 	//! this function is used by the button manager to make sure this button lines up with its image in the form tray
@@ -36,6 +36,7 @@ class form_button : public button{
 
 	//! this function sets up the lock's location
 	virtual void setup_lock();
+
 	//! this function can be overloaded or used by derived classes
 	/*! overloading it allows a specific picture file to be used as the help dialogue when the user
 	 *clicks on the form while it is still locked, and explains its purpose and unlocking conditions */ 
@@ -87,7 +88,7 @@ class icntrl8_form_button : public form_button{
 
   public:
 
-		//! this function changes the default help message to one that explains icntrl8's conditions
+	//! this function changes the default help message to one that explains icntrl8's conditions
 	void setup_help_msg();
 
 	//! implements the special logic for this class
@@ -109,7 +110,8 @@ class icntrl8_form_button : public form_button{
 	bool check_values(vector<index_value>& error_details);
 
   private:
-	unsigned int icntrl8_val;//!< updated with the value from the field that corresponds to Cutoff Nuclei
+	//! updated with the value from the field that corresponds to Cutoff Nuclei
+	unsigned int icntrl8_val;
 
 };
 
@@ -126,27 +128,25 @@ class icntrl6_form_button : public form_button{
 	//! sets up a form that suits the needs of icntrl6's logics per the input manual
 	void init_form(const vector<regex>& pattern_tests);
 
-	//! this function sets up a reference to the button manager
-	/* this object needs reference to the button_manager because it needs to be able to draw the
-	 *button tray in it's form selection loop */
-	void set_bmanager_reference(button_manager* b_manager_in) { b_manager = b_manager_in; }
-
-
 	//################ PAGE CREATION HELPERS ##################################################
 	//! this member sets up the parity form's pages
 	void parity_page_creation();
+
 	//! this fills up the row labels for the parity form
 	void fill_parity_labels(vector<string>& row_labels,vector<string>& column_labels);
 
 	//! this member sets up the search spectra form's pages
 	void search_spectra_page_creation();
+
 	//! this helper member fills in the column labels for the search spectra form
 	void fill_spectra_vectors(vector<string>& pass_column_labels,vector<int>& column_spaces);
+
 	//! This helper abstracts some code to make search_spectra_page_creation more readable
 	void search_spectra_page_helper();
 
 	//! this member sets up the xsection form's pages
 	void cross_sections_page_creation();
+
 	//! this helper abstracts some code to make cross_sections_page_creation more readable
 	void cross_sections_helper();
 	//#########################################################################################
@@ -180,8 +180,6 @@ class icntrl6_form_button : public form_button{
 
 	int INM1_val;//!< used to keep track of what conditions caused the current pages to be made
 	int INM2_val;//!< used to keep track of what conditions caused the current pages to be made
-
-	button_manager* b_manager;//!< pointer to the button manager, to call it's drawing functions
 
 	SDL_Texture* landing_texture;//!< saves texture for the form selection image
 
@@ -271,20 +269,6 @@ class ilv3_ilv5_form_button : public form_button{
   private:
         
 };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

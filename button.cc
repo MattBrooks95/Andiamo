@@ -26,9 +26,6 @@ button::button(/*sdl_help* sdl_help_in*/){
 	//sdl_helper = sdl_help_in;
 }
 
-button::~button(){
-}
-
 void button::init(const string& image_name_in,const string& image_p_in/*,sdl_help* sdl_help_in*/){
 
 	//sdl_helper = sdl_help_in;

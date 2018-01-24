@@ -1,10 +1,6 @@
 //! file cursor.h describes the class that implements the text editing cursor
 
-//! this class allows the cursor to remember its current drawing state
-/*! hopefull this will fix the issues I'm running into with figuring out
- *its location at draw time, without any context about what happened
- *previously */
-
+#pragma once
 #include<SDL2/SDL.h>
 #include<SDL2/SDL_image.h>
 #include<SDL2/SDL_ttf.h>
@@ -12,11 +8,13 @@
 
 #include "asset_manager.h"
 #include "logger.h"
+#include "sdl_help.h"
 
 using std::string;
 using std::ostream;
 
 extern logger error_logger;
+extern sdl_help* sdl_access;
 
 //! \class cursor draws and keeps track of where the cursor is drawn
 class cursor{
@@ -24,13 +22,14 @@ class cursor{
 
 	//! cursor sets up the surface and texture for the cursor
 	cursor();
-	//! copy constructor ensures no double frees 
-	cursor(const cursor& other);
+	////! copy constructor ensures no double frees 
+	//cursor(const cursor& other);
+
 	//! clean up memory
 	~cursor();
 
 	//! this function sets up the cursor class
-	void init(SDL_Renderer* renderer,SDL_Rect* box_location_in);
+	void init(SDL_Rect* box_location_in);
 
 	//! this function calculates the cursor's raw location and returns it
 	/*! it also sets up the cursor_dest rect to later be drawn by draw_me */
@@ -38,7 +37,7 @@ class cursor{
 						 const unsigned int& editing_location);
 
 	//! this function draws the cursor the passed renderer
-	void draw_me(SDL_Renderer* renderer);
+	void draw_me();
 
 	//! this function prints all of the cursor's info to a passed stream
 	/* or the error/message logger if no reference is given */
@@ -63,9 +62,11 @@ class cursor{
 
   private:
 
-	SDL_Texture* my_texture;//!< texture for this object
+	//! texture for this object
+	SDL_Texture* my_texture;
 
-	SDL_Rect* box_location;//!< pointer to text box's location info
+	//!< pointer to text box's location info
+	SDL_Rect* box_location;
 
 	//! save where the cursor should be drawn
 	/*! the height and width here will be figured out by using the size

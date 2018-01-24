@@ -21,16 +21,13 @@
 using std::string;
 using std::vector;
 
-//class sdl_help;
-//class input_maker;
-
 extern sdl_help* sdl_access;
 extern input_maker* io_access;
 
 class fop_handler{
   public:
 	//! constructor for the fop_handler class
-	fop_handler(/*sdl_help* sdl_helper_in, input_maker* io_manager_in*/);
+	fop_handler();
 
 	//fop_handler(const fop_handler& other);
 
@@ -47,17 +44,14 @@ class fop_handler{
 	void print_file_lists();
 
   private:
-	//!< handy access to the sdl_help class for graphics
-	//sdl_help* sdl_helper;
-
-	//!< handy access to the input maker, so these classes can communicate easily
-	//input_maker* io_manager;
 
 	//! list of all file names in OMP_PATH subdirectory
 	vector<string> optical_model_files;
+
 	//! list of all files in the transmission coefficients files
 	/*! these are files previously made by FOP */
 	vector<string> transmission_coefficients_files;
+
 	/*! list of all files that aren't yet ready for use by HF,
 	 * but fop_handler may need */
 	vector<string> scratch_files;

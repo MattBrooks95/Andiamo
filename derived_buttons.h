@@ -33,6 +33,7 @@ class exit_button : public button{
 	//! this special version of handle_click uses helper functions to implement the yes/no quit dialogue
 	bool handle_click(SDL_Event& mouse_event);
 	//###########################################################
+
 	//! this member is used instead of the (optional) virtual members in this case
 	/*! this is used instead of the virtual members because the exit dialogue has two active areas
 	 *the yes part and the no part, so the normal boolean won't work here, so it implements
@@ -43,6 +44,7 @@ class exit_button : public button{
 	 *\return 1, no was clicked
 	 *\return 2, yes was clicked */
 	int my_click(SDL_Event& mouse_event);
+
 	//! used instead of optional default click_helper - does work according to return value of my_click
 	/*! has logic for yes or no being hit
 	 *\param which is used to control logic
@@ -54,9 +56,8 @@ class exit_button : public button{
 	 *the special bits of exit_button like the shown boolean defaulting to false, and a different
 	 *corner location
 	 *\param image_name_in parameter for button::init
-	 *\param image_p_in parameter for button::init
-	 *\param sdl_help_in parameter for button::init */
-	void init(string image_name_in, string image_p_in/*,sdl_help* sdl_help_in*/);
+	 *\param image_p_in parameter for button::init */
+	void init(string image_name_in, string image_p_in);
 
 
   private:
@@ -84,13 +85,14 @@ class text_box_button : public button{
 	//! this is a pure virtual member
 	/*! it must be implemented in classes that inherit from this class, because some will want to
 	 *READ from the input file, and some will want to WRITE to the output file */
-	virtual int work(/*(input_maker& io_handler*/) = 0;
+	virtual int work() = 0;
 
-	//! overload parent's handle_resize() function, also updates the text box coordinates
+	/*! overload parent's handle_resize() function, also
+	 *updates the text box's coordinates */
 	void handle_resize(int yloc_in);
 
 	//! init also sets up the text box
-	void init(const string& image_name_in,const string& image_p_in/*,sdl_help* sdl_help_in*/);
+	void init(const string& image_name_in,const string& image_p_in);
 
 	//! force_corner_loc also updates the text box
 	void force_corner_loc(int xloc_in, int yloc_in);
@@ -103,14 +105,15 @@ class text_box_button : public button{
 
 
 
-//! this is derived from the text_box_button class, it should read inputs from the given TC file 
+/*! this is derived from the text_box_button class, it should read
+ *inputs from the given TC file */ 
 class TC_input_file_button : public text_box_button{
   public:
 	//! this function should make sure that the transmission coefficients are read from the given file
 	/*! it modifies the transmission coefficient input file name variable in input_maker
 	 *in the event that the text box for the file name is empty, it will return -1 and
 	 *prevent button_manager::clean_up() from executing */
-	int work(/*input_maker& io_helper*/);
+	int work();
   private:
 
 };
@@ -118,7 +121,7 @@ class TC_input_file_button : public text_box_button{
 class output_file_button : public text_box_button{
   public:
 	//! this function should make sure input_maker writes to the given file name
-	int work(/*input_maker& io_helper*/);
+	int work();
 
   private:
 
@@ -140,10 +143,10 @@ class graphing_button : public text_box_button{
 	void print_me();
 
 	//! this work function needs implemented to make sure graphing is output to the given file name
-	int work(/*input_maker& io_handler*/);
+	int work();
 
 	//! does button::init() and also sets up the checked texture
-	void init(const string& image_name_in, const string& image_p_in/*,sdl_help* sdl_help_in*/);
+	void init(const string& image_name_in, const string& image_p_in);
 
 	//! force_corner_lock does normal stuff, and forces the active area to update as well
 	void force_corner_loc(int xloc_in, int yloc_in);
@@ -152,12 +155,16 @@ class graphing_button : public text_box_button{
 	bool handle_click(SDL_Event& mouse_event);
 
   private:
+	//! boolean used to decide whether we're drawing the check or not
+	bool show_check_version;
 
-	bool show_check_version;//!< boolean used to decide whether we're drawing the check or not
-	active_area check_box; //!< used to detect the check box being clicked
+	//! used to detect the check box being clicked
+	active_area check_box;
 
-	SDL_Surface* checked_surface; //!< save the surface for the checked version
-	SDL_Texture* checked_texture; //!< save the texture for the checked version
+	//! save the surface for the checked version
+	SDL_Surface* checked_surface;
+	//! save the texture for the checked version
+	SDL_Texture* checked_texture;
 
 };
 //##################################################################################################################
@@ -166,10 +173,9 @@ class fop_handler_button : public button{
 
 	//! overload handle_click, to open interactive FOP feature
 	void click_helper(SDL_Event& mouse_event);
-	void work();//! this function implementation opens a fop_handler object
 
-
-
+	//! this function implementation opens a fop_handler object
+	void work();
 
 };
 
