@@ -9,9 +9,9 @@
 #include<regex>
 #include<cstdlib>
 
-#include<map> //map is an associative array, like could be found in python or perl
-     	      //items are accessed by name (key)
-
+//map is an associative array, like could be found in python or perl
+//items are accessed by name (key)
+#include<map> 
 
 #include "ftran_structs.h"
 #include "string+.h"
@@ -43,16 +43,6 @@ class input_maker{
 	/*! It uses regular expressions, and the split functions in string+.h*/
 	void init();
 
-	//! this function takes a pointer to button_manager
-	/*! this is necessary so that the input_maker can tell the form_buttons when to make their output lines */
-	//void set_bmanager_ptr(button_manager* b_manager_in){ b_manager = b_manager_in;}
-
-	//! this function allows the input maker to access the button manager
-	/*! reason being is that the form buttons are necessary to creating some of the later lines in the
-	 *input manual */
-	//void get_bmanager_ptr(button_manager* b_manager_in) { b_manager = b_manager_in;}
-
-
 	//! output() prints out the information in the order and format needed to be used by HF
 	/*! for now it defaults to printing to ./output/output.txt, the output file can be specified
 	 *by the output_fname button in class button_manager*/
@@ -83,9 +73,11 @@ class input_maker{
 	map<string,param_r8_array>& get_r8_array_params(){ return r8_array_params;}
 	//##############################################################################
 
-	string output_file_name;//!< \brief name of the file in config_p's folder where output will be printed
+	//! name of the file in config_p's folder where output will be printed
+	string output_file_name;
 
-	string TC_input_file_name;//!< \brief name of the file from which the transmission coefficients should be read
+	//! name of the file from which the transmission coefficients should be read
+	string TC_input_file_name;
 
 	//! starts off false, then goes positive the user generates an input file
 	/*! this way, if an output file has not yet been made, we can make the user aware of that
@@ -94,13 +86,13 @@ class input_maker{
 
 
   private:
+ 	//! contains a string that provides the relative path to the config files
+	string config_p;
 
-	//button_manager* b_manager;//!< pointer allows access to the button manager, because form_buttons need to make output
-
-	string config_p; //!< \brief contains a string that provides the relative path to the config files
-
-	string output_p; //!< \brief path to the output folder
-	string file_name; //!< \brief set by the constructor to tell it which config file to use
+	//! path to the output folder
+	string output_p;
+	//! set by the constructor to tell it which config file to use
+	string file_name;
 
  	//! contains the names of parameters in the order in which they were read
 	/*! the corresponding tile should be associated to its info by the tile name and parameter
@@ -109,17 +101,14 @@ class input_maker{
 
 	//! contains a variable number of in4 fortran-style variables
 	/* its length and contents should be specified in the config file */
-	//vector<param_int4> int4_params; 
 	map<string,param_int4> int4_params;
 
 	//! contains a variable number of real8 fortran-style variables
 	/* its length and contents should be specified in the config file */
-	//vector<param_real8> real8_params;
 	map<string,param_real8> real8_params;
 
 	//! contains a variable number of c++ style strings, which should be fortran friendly with .c_str()
 	/* I think it'll play nicely with fortran just with .c_str() and .size() */
-	//vector<param_string> string_params;
 	map<string,param_string> string_params;	
 
 	//! this map contains the ftran_struct int4 array parameters
@@ -130,12 +119,14 @@ class input_maker{
 	//! this map contains the ftran_struct e_params
 	map<string, param_r8_array> r8_array_params;
 
-	vector<param_real8> ETAB;//!< store the ETAB numbers read in from the TC file
-	vector<param_real8> TTAB;//!< store the TTAB numbers read in from the TC file
+	//! store the ETAB numbers read in from the TC file
+	vector<param_real8> ETAB;
 
+	//! store the TTAB numbers read in from the TC file
+	vector<param_real8> TTAB;
 };
 
-//##################################  NON MEMBER HELPERS  #############################################################
+//##########################  NON MEMBER HELPERS  ##############################
 //! this is a helper function for input_maker::output(), it prints a string to the output file in the right format
 /*! \param outs is the fstream to print to (such as output/output.txt)
  *\param size is the size read in by input_maker from the configuration file
@@ -183,7 +174,7 @@ void do_line9(ofstream& outs,const map<string,param_int4>& int4_params,const map
 
 //! this helper outputs the variables in line 10
 void do_line10(ofstream&outs,const map<string,param_int4>& int4_params);
-//######################################################################################################################
+//##############################################################################
 
 
 

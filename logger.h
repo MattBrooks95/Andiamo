@@ -11,7 +11,8 @@
 #include<cstdlib> //for system calls
 #include<time.h>  //for time functions used to name files
 
-#include<dirent.h>//allows traversing a directory and getting its file names. ./error_logs in this case
+//allows traversing a directory and getting its file names. ./error_logs in this case
+#include<dirent.h>
 #include<algorithm>//std::sort, to sort a vector of file names
 
 using std::string;
@@ -61,20 +62,29 @@ class logger{
 	/*! it is called in this class's destructor, so that it doesn't have to be called in main */
 	void make_error_file();
 
+	//! controls how much output the error logger will make
 	bool verbose;
 
+	//! returns a reference to the stream that the log messages will go to
 	ofstream& get_stream(){ return errors_out;}
 
   private:
-	int error_msg_num;//!< keep track of the number of error messages pushed
-	string unique_file_name;//!< save the file name that is based on the time in which Andiamo was ran
+	//! keep track of the number of error messages pushed
+	int error_msg_num;
 
-	vector<string> message_vector;//!< keep track of process outputs
-	vector<string> errors_vector;//!< store up error messages, so they are all written at the end
-	ofstream errors_out;//!< the stream that the error files will eventually be pushed to
-	
+	//! save the file name that is based on the time in which Andiamo was ran
+	string unique_file_name;
 
+	//! keep track of process outputs
+	vector<string> message_vector;
+
+	//! store up error messages, so they are all written at the end
+	vector<string> errors_vector;
+
+	//! the stream that the error files will eventually be pushed to
+	ofstream errors_out;
 };
+
 //! this function is passed to std::sort, to allow it to sort file names by their recentness
 bool file_compare(std::string str_one, std::string str_two);
 //! this function is a helper for file_compare, which "tokenizes" the dates from the file name

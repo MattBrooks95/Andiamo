@@ -23,12 +23,12 @@ class scroll_bar{
 	/*! the scroll_bar() constructor sets all of it's fields to bad default values,
 	 * they must be init() 'd */
 	scroll_bar();
-	/*! Kills this object's SDL_Surface* and SDL_Texture */ 
-	~scroll_bar();
+
 	//! init_corner_texture sets up texture, and it's xloc and yloc
 	/* it bases it's logic off of the given image path's loaded texture. width > height = horizontal
 	 *  scroll bar, height < width = vertical scroll bar */
 	void init_corner_texture();
+
 	/*! \brief init takes in pointers to several fields of the sdl_help object and sets this object's 
          *fields to point to the fields in the sdl_help object. It also sets up the image path. */
 	/*! This function sets up the fields that point to the sdl_help object's fields, and calls its
@@ -91,6 +91,7 @@ class scroll_bar{
 	int height; //!> keep track of the scroll bar height
 	string image_p; //!> reference to image source
 	SDL_Texture* my_tex; //!> texture for the scroll bar
+
 	//! keeps track of whether or not we are in scroll mode
 	/*! where scroll mode refers to the point in time in which the user
          *has clicked and held down on the left mouse button, and may be

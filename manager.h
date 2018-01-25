@@ -47,14 +47,6 @@ class manager{
 	 *\param line_map is a map of the parameter's name, and their corresponding field*/
 	void new_line(const string& line_name,const map<string,field>& line_map);
 
-	//! this member is called by sdl_help's constructor, and sets up input_maker object pointer
-	//void set_input_maker_hook(input_maker* input_maker_hook_in);
-
-	//! this function traverses the tile bag and sets up each object with a reference to the main renderer
-	/*! it also allows fields to access sdl_help's scroll values and font pointer */
-	//void give_fields_renderer(SDL_Renderer* sdl_help_renderer_in,string image_p_in,
-	//			  int* xscroll_in, int* yscroll_in,TTF_Font* font_in);
-
 	//! this function walks the map, and returns the width of the widest tile
 	int get_widest_tile_width();
 
@@ -66,13 +58,14 @@ class manager{
 	void give_fields_defaults();
 
 	//! sets the graphics for the main parameter fields, besides the text box
-	void init_fields_graphics(/*string image_p_in*/);
+	void init_fields_graphics();
 
 	//! this function draws the tiles
 	void draw();
 
 	//############# GIVE_FIELDS_DEFAULTS() HELPERS ########################################################//
 	void give_int4_fields_defaults();
+
 	void give_int4_array_fields_defaults();
 
 	void give_real8_fields_defaults();
@@ -80,7 +73,6 @@ class manager{
 	void give_string_fields_defaults();
 
 	void give_r8_array_fields_defaults();
-
 	//####################################################################################################//
 
 	//! this function updates input_maker's vectors with the field's new values (from user)
@@ -106,54 +98,51 @@ class manager{
 
 	//simple cases for locking and unlocking
 
-		//! helper function for check_locks()
-		void iench_locking();
+	//! helper function for check_locks()
+	void iench_locking();
 
-		//! helper function for check_locks()
-		void ilv1_locking();
+	//! helper function for check_locks()
+	void ilv1_locking();
 	//#######################################
 
 	//###################################################
-		//! helper function for check_locks()
-		void icntrl4_locking();
-		//! helper function for icntrl4_locking(), it's unlocked parameters must also be filled in to unlock form button
-		void ich4_nch4_locking();
+	//! helper function for check_locks()
+	void icntrl4_locking();
+
+	//! helper function for icntrl4_locking(), it's unlocked parameters must also be filled in to unlock form button
+	void ich4_nch4_locking();
 	//###################################################
 
-	//Complex parameter entry cases###############################################
+	//Complex parameter entry cases############################################
 
-		//! helper function for check_locks()
-		void icntrl8_locking();
+	//! helper function for check_locks()
+	void icntrl8_locking();
 
-		//! helper function for check_locks()
-		void icntrl10_locking();
+	//! helper function for check_locks()
+	void icntrl10_locking();
 
-		//! helper function for check_locks()
-		void ilv3_ilv5_locking();
-		//! helper function for ilv3_ilv5_locking(), determines lock/unlock conditions of passed field
-		/*! the field passed MUST be "ILV3" or "ILV5"
-		 *\param target_param is the name of the field to check the locking status of, MUST be "ILV3" or "ILV5" */
-		void ilv3_ilv5_locking_helper(const string& target_param,const regex& unlock_condition);
+	//! helper function for check_locks()
+	void ilv3_ilv5_locking();
 
-		//##### ICNTRL6 locking + helpers ######################################
-			//! helper function for check_locks()
-			void icntrl6_locking();
+	//! helper function for ilv3_ilv5_locking(), determines lock/unlock conditions of passed field
+	/*! the field passed MUST be "ILV3" or "ILV5"
+	 *\param target_param is the name of the field to check the locking status of, MUST be "ILV3" or "ILV5" */
+	void ilv3_ilv5_locking_helper(const string& target_param,const regex& unlock_condition);
 
-			//! helper function for icntrl6_locking()
-			void inm1_locking();
+	//##### ICNTRL6 locking + helpers ######################################
 
-			//! helper function for icntrl6_locking()
-			void inm2_locking();
+	//! helper function for check_locks()
+	void icntrl6_locking();
 
-			//!helper function for icntrl6_locking()
-			void iter_locking();
-		//#######################################################################
-	//#############################################################################
+	//! helper function for icntrl6_locking()
+	void inm1_locking();
 
-	//! this function allows manager access to the button manager, for the purpose of unlocking the form buttons
-	/*! This will need to be called from main unfortunately. */
-	//void gain_bmanager_access(button_manager* b_manager_hook_in);
+	//! helper function for icntrl6_locking()
+	void inm2_locking();
 
+	//!helper function for icntrl6_locking()
+	void iter_locking();
+	//#######################################################################
 
 	//! This member updates the window's dimension values win_w and win_h
 	/*! This should usually only be called from a member of the sdl_help class,
@@ -162,16 +151,24 @@ class manager{
 	 *\param height_in is the desired new height */
 	void update_win(int width_in, int height_in);
 
-	vector<string> line_order;//!< save the order in which the lines occur, maps don't do it automatically
-	map<string,map<string,field>> fields;//!< trying something new, to keep relevant tiles together
+	//!< save the order in which the lines occur, maps don't do it automatically
+	vector<string> line_order;
+
+	//!< trying something new, to keep relevant tiles together
+	map<string,map<string,field>> fields;
 
   private:
-	//input_maker* input_maker_hook; //!< allows manager access to sdl_help's input_maker object
-	//button_manager* b_manager_hook; //!< allows tile manager to unlock form buttons
-	string image_p; //!< \brief path to the image directory for the tiles
-	string tile_input_p; //!< \brief a path string to the tile input file folder
-	int win_w;//!< \brief keeps track of sdl window width
-	int win_h;//!< \brief keeps track of sdl window height
+	//! path to the image directory for the tiles
+	string image_p;
+
+	//! a path string to the tile input file folder
+	string tile_input_p;
+
+	//! keeps track of sdl window width
+	int win_w;
+
+	// keeps track of sdl window height
+	int win_h;
 };
 
 

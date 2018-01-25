@@ -9,7 +9,8 @@ extern asset_manager* asset_access;
 
 //###################### CONSTRUCTORS/DESTRUCTORS #################################################
 scroll_bar::scroll_bar(){
-	xloc = -1;//dummy initial values to hint if things weren't initialized properly by init()
+	//dummy initial values to hint if things weren't initialized properly by init()
+	xloc = -1;
 	yloc = -1;
 	width = 0;
 	height = 0;
@@ -25,15 +26,12 @@ scroll_bar::scroll_bar(){
 	window_height = NULL;
 	renderer = NULL;
 }
-
-scroll_bar::~scroll_bar(){
-	SDL_DestroyTexture(my_tex);
-}
 //################################################################################################
 
 //######################### GETTERS AND SETTERS ##################################################
 bool scroll_bar::is_scrolling(){
-	return scrolling_mode; // return whether or not we are in scrolling mode
+	// return whether or not we are in scrolling mode
+	return scrolling_mode;
 }
 void scroll_bar::scroll_mode_change(bool bool_in){
 	scrolling_mode = bool_in;
@@ -47,10 +45,12 @@ void scroll_bar::init_corner_texture(){
 
 	my_tex = asset_access->get_texture(image_p);
 	if(my_tex == NULL){
-		error_logger.push_error(string(SDL_GetError())); //something went wrong, print error to the screen
+		//something went wrong, print error to the screen
+		error_logger.push_error(string(SDL_GetError()));
 		return;
 	}
-	SDL_QueryTexture(my_tex,NULL,NULL,&width,&height);//fills in width and height fields
+	//fills in width and height fields
+	SDL_QueryTexture(my_tex,NULL,NULL,&width,&height);
 	
 	if(width > height){ //we are dealing with a horizontal scroll bar
 		xloc = 0;//start off on the left of the screen 
@@ -58,24 +58,27 @@ void scroll_bar::init_corner_texture(){
 			error_logger.push_error("ERROR in init, null ptr window_height!");
 			return;
 		}
-		yloc = *window_height - height;//texture's bottom needs to be inline with window's bottom,
-					      //so its top right corner needs to be
-					      //window.height-texture.height 
+		//texture's bottom needs to be inline with window's bottom,
+		//so its top right corner needs to be
+		//window.height-texture.height 
+		yloc = *window_height - height;
 
 	} else { //we are dealing with a vertical scroll bar
 		if(window_width == NULL){
 			error_logger.push_error("ERROR in init, null ptr window_width!");
 			return;
 		}
-		xloc = *window_width - width; //similarly, texture's right side needs to be inline with the
-					     //window's right side, so top right corner's xval is
-					     //window.height - texture.height
+		//similarly, texture's right side needs to be inline with the
+		//window's right side, so top right corner's xval is
+		//window.height - texture.height
+		xloc = *window_width - width;
 		yloc = 0;//similarly start at the top of the screen
 	}
 }
 void scroll_bar::init(int* x_scroll_in, int* y_scroll_in, const int* window_width_in, const int* window_height_in,
 		      SDL_Renderer* renderer_in,string image_p_in){
-	x_scroll = x_scroll_in; //initialize members that point to sdl_help object's members
+	//initialize members that point to sdl_help object's members
+	x_scroll = x_scroll_in;
 	y_scroll = y_scroll_in;
 	window_width = window_width_in;
 	window_height = window_height_in;
@@ -111,7 +114,8 @@ void scroll_bar::update(){
 		yloc =  int( -(*y_scroll)); 
 		if(yloc < 0){
 			yloc = 0;//don't go above the top of the window
-		} else if(yloc + height > (*window_height)){ //don't go below bottom of the window
+		//don't go below bottom of the window
+		} else if(yloc + height > (*window_height)){
 			yloc = (*window_height) - height;
 		}
 	}

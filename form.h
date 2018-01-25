@@ -103,8 +103,11 @@ class form{
 
     //these two functions are used to know when a form needs smashed and recreated
     //because the user specified another size
-	bool prev_initialized;  //!< remember if this form has been initialized or not
-	int prev_init_value;  //!< keep track of the value this form was initialized with
+	//! remember if this form has been initialized or not
+	bool prev_initialized;
+
+ 	//! keep track of the value this form was initialized with
+	int prev_init_value;
 
     //! title of the form, which is displayed at the top of the form
 	string form_title;
@@ -261,7 +264,7 @@ class page{
 	//! store textures for the row labels
 	vector<SDL_Texture*> row_label_textures;
 
-	//!< store the location of the textures for the row labels
+	//! store the location of the textures for the row labels
 	vector<SDL_Rect> row_label_rects;
 };
 

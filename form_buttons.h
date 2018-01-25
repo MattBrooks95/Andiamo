@@ -178,19 +178,31 @@ class icntrl6_form_button : public form_button{
 
   private:
 
-	int INM1_val;//!< used to keep track of what conditions caused the current pages to be made
-	int INM2_val;//!< used to keep track of what conditions caused the current pages to be made
+	//!< used to keep track of what conditions caused the current pages to be made
+	int INM1_val;
+	//!< used to keep track of what conditions caused the current pages to be made
+	int INM2_val;
 
-	SDL_Texture* landing_texture;//!< saves texture for the form selection image
+	//!< saves texture for the form selection image
+	SDL_Texture* landing_texture;
 
-	SDL_Rect landing_rect;//!< saves the location info for the form selection feature
+	//!< saves the location info for the form selection feature
+	SDL_Rect landing_rect;
 
-	active_area parity_area;//!< controls clicking logics to open parity_area form
-	active_area spectra_area;//!< controls clicking logics to open spectra_area form
-	active_area xsections_area;//!< controls clicking logics to open xsections_area form
+	//!< controls clicking logics to open parity_area form
+	active_area parity_area;
 
-	form search_spectra;//!< extra form # 1, for making INM1 line in input manual
-	form cross_sections;//!< extra form # 2 for making INM2 line in input manual
+	//!< controls clicking logics to open spectra_area form
+	active_area spectra_area;
+
+	//!< controls clicking logics to open xsections_area form
+	active_area xsections_area;
+
+	//!< extra form # 1, for making INM1 line in input manual
+	form search_spectra;
+
+	//!< extra form # 2 for making INM2 line in input manual
+	form cross_sections;
 
 };
 
