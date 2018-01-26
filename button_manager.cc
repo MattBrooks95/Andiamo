@@ -11,8 +11,7 @@ using namespace std;
 extern asset_manager* asset_access;
 extern manager* tile_access;
 
-button_manager::button_manager(/*sdl_help* sdl_helper_in*/){
-	//sdl_helper = sdl_helper_in;
+button_manager::button_manager(){
 
 	button_image_p = "./Assets/Images/Buttons/";
 
@@ -52,7 +51,6 @@ void button_manager::init_tray(){
 	tray_rect.x = 5;//give it a little bit of distance from the right edge of the screen
 
 	//set it to be just above the bottom scroll bar
-	//tray_rect.y = sdl_helper->get_h_bar().get_top() - (tray_rect.h + 10);
 	tray_rect.y = sdl_access->get_h_bar().get_top() - (tray_rect.h + 10);
 }
 
@@ -63,8 +61,11 @@ void button_manager::init_form_tray(){
 
 	SDL_QueryTexture(form_tray_texture,NULL,NULL,&form_tray_rect.w,&form_tray_rect.h);
 
-	form_tray_rect.x = 5;//start on the left edge of the screen, with some space
-	form_tray_rect.y = tray_rect.y - form_tray_rect.h;//should be right on top of the button tray 
+	//start on the left edge of the screen, with some space
+	form_tray_rect.x = 5;
+
+	//should be right on top of the button tray 
+	form_tray_rect.y = tray_rect.y - form_tray_rect.h;
 
 	init_form_buttons();
 }
@@ -93,7 +94,6 @@ void button_manager::redo_locks(){
 //this follows the logic used in init_buttons
 //there is a lot of hard coded stuff, but I'm hoping the button manager won't need changed often
 void button_manager::location_update(){
-	//int new_y = sdl_helper->get_h_bar().get_top() - (tray_rect.h + 10);
 	int new_y = sdl_access->get_h_bar().get_top() - (tray_rect.h + 10);
 
 	//move buttons to fit the tray
@@ -118,15 +118,16 @@ void button_manager::location_update(){
 }
 
 void button_manager::init_buttons(){
+
 	//initialize the placeholder buttons
-	fop_button.init("fop_button.png",button_image_p/*,sdl_helper*/);
-	output_fname.init("output_name_button.png",button_image_p/*,sdl_helper*/);
-	t_coefficients.init("tc_file_button.png",button_image_p/*,sdl_helper*/);
-	//graphing_options.init("graphing_options.png",button_image_p/*,sdl_helper*/);
-	lets_go.init("lets_go.png",button_image_p/*,sdl_helper*/);
+	fop_button.init("fop_button.png",button_image_p);
+	output_fname.init("output_name_button.png",button_image_p);
+	t_coefficients.init("tc_file_button.png",button_image_p);
+	//graphing_options.init("graphing_options.png",button_image_p);
+	lets_go.init("lets_go.png",button_image_p);
 
 	//exit dialogue is a special snowflake, handles its own location
-	exit_dialogue.init("exit_button.png",button_image_p/*,sdl_helper*/);
+	exit_dialogue.init("exit_button.png",button_image_p);
 
 	int end_of_last_button = 0;//keep track of where the last button ended
 
@@ -144,7 +145,7 @@ void button_manager::init_buttons(){
 
 	//graphing_options.force_corner_loc(end_of_last_button+5,tray_rect.y + 7);
 
-		//end_of_last_button = end_of_last_button+5+graphing_options.get_width();
+	//end_of_last_button = end_of_last_button+5+graphing_options.get_width();
 
 	lets_go.force_corner_loc( end_of_last_button+5, tray_rect.y + 7 );
 
@@ -302,13 +303,11 @@ void button_manager::print_buttons(){
 
 void button_manager::draw_tray(){
 	if(tray_shown){
-		//SDL_RenderCopy(sdl_helper->renderer,button_tray_texture,NULL,&tray_rect);
 		SDL_RenderCopy(sdl_access->renderer,button_tray_texture,NULL,&tray_rect);
 	}
 }
 
 void button_manager::draw_form_tray(){
-	//SDL_RenderCopy(sdl_helper->renderer,form_tray_texture,NULL,&form_tray_rect);
 	SDL_RenderCopy(sdl_access->renderer,form_tray_texture,NULL,&form_tray_rect);
 	icntrl_8.draw_lock();
 	icntrl_6.draw_lock();
@@ -339,14 +338,16 @@ void button_manager::text_box_loop(text_box_button* current_button,SDL_Event& ev
 	//int c = 0;
 	bool text_was_changed = false;
 
-	string pass_me; //string container for event text info (which is normally a c-string)
+	//string container for event text info (which is normally a c-string)
+	string pass_me;
 	while(!done){
 		//if(c >= 10) return;
 		//do stuff
 
+		//dummy event to stop it from printing default message every frame
+		//where no event happens
 		if( !SDL_PollEvent(&event) ){
-			event.type = 1776; //dummy event to stop it from printing default message every frame
-					   //where no event happens
+			event.type = 1776;
 		}
 
 		switch(event.type){
@@ -354,13 +355,17 @@ void button_manager::text_box_loop(text_box_button* current_button,SDL_Event& ev
 			break;
 
 		  case SDL_MOUSEBUTTONDOWN:
+
 			//if the click was within the text box, move the cursor maybe
 		  	if( current_button->my_text_box.was_clicked(event) ){
 				error_logger.push_msg("Text box click at "+to_string(event.button.x)+":"+to_string(event.button.y));
-		  	} else { //elsewise exit text input mode, user clicked off the text box
+
+			//elsewise exit text input mode, user clicked off the text box
+		  	} else {
 		  		error_logger.push_msg("Clicked outside of the text box, exiting mini-loop");
-				SDL_PushEvent(&event);//doing this allows the user to 'hop' to another text box
-						      //directly from editing another box
+				//doing this allows the user to 'hop' to another text box
+				//directly from editing another box
+				SDL_PushEvent(&event);
 				done = true;
 			}
 		  	break;
@@ -369,7 +374,8 @@ void button_manager::text_box_loop(text_box_button* current_button,SDL_Event& ev
 			pass_me = event.text.text;
 			current_button->my_text_box.update_text(pass_me);
 			text_was_changed = true;
-		  	//here this actually causes a loss of letters, so the event flooding is necessary, don't flush
+		  	//here this actually causes a loss of letters, so the
+			//event flooding is necessary, don't flush
 			//SDL_FlushEvent(SDL_TEXTINPUT);
 			break;
 
@@ -380,32 +386,25 @@ void button_manager::text_box_loop(text_box_button* current_button,SDL_Event& ev
 				current_button->my_text_box.back_space();
 				text_was_changed = true;
 			} else if(event.key.keysym.sym == SDLK_LEFT){
+
                 current_button->my_text_box.dec_cursor(text_was_changed);
-                /*
-				if(current_button->my_text_box.editing_location > 0){
-					current_button->my_text_box.editing_location--;
-					text_was_changed = true;
-				}
-                */
+
 			} else if(event.key.keysym.sym == SDLK_RIGHT){
+
                 current_button->my_text_box.inc_cursor(text_was_changed);
-                /*
-				if(current_button->my_text_box.editing_location < current_button->my_text_box.text.size()){
-					current_button->my_text_box.editing_location++;
-					text_was_changed = true;
-				}
-                */
 			}
 				
 			SDL_FlushEvent(SDL_KEYDOWN); //prevent event flooding
 		  	break;
 		  case SDL_QUIT:
-			SDL_PushEvent(&event);//puts another sdl quit in the event queue, so program
-					      //can be terminated while in "text entry" mode
+			//puts another sdl quit in the event queue, so program
+			//can be terminated while in "text entry" mode
+			SDL_PushEvent(&event);
 			done = true;			
 			break;
 
-		  case 1776: //do nothing, event was not new
+		  //do nothing, event was not new
+		  case 1776:
 			break;
 
 		  default:
@@ -416,20 +415,21 @@ void button_manager::text_box_loop(text_box_button* current_button,SDL_Event& ev
 		//if something actually changed, re-draw
 		//elsewise don't do it to try and save time
 		if(text_was_changed){
+
 			//update picture
-			//sdl_helper->draw_tiles();
-			//sdl_helper->draw_sbars();
 			text_was_changed = false;
 			draw_buttons();
+
 			//show updated picture
-			//sdl_helper->present();
 			sdl_access->present();
 		}
 
 		//c++;
 		//SDL_Delay(50);
 	}//end of loop
-	SDL_StopTextInput();//stop text input functionality because it slows down the app
+
+	//stop text input functionality because it slows down the app
+	SDL_StopTextInput();
 
 }
 
@@ -446,7 +446,7 @@ bool button_manager::click_handling(SDL_Event& mouse_event){
 		}
 
 	}
-	if(!done_something && output_fname.shown){//needs text input handling
+	if(!done_something && output_fname.shown){
 
 		if(output_fname.my_text_box.was_clicked(mouse_event) ){
 			text_box_loop(&output_fname,mouse_event);
@@ -454,7 +454,7 @@ bool button_manager::click_handling(SDL_Event& mouse_event){
 		}
 
 	}
-	if(!done_something && t_coefficients.shown){//needs text input handling
+	if(!done_something && t_coefficients.shown){
 
 		if( t_coefficients.my_text_box.was_clicked(mouse_event) ){
 			text_box_loop(&t_coefficients,mouse_event);
@@ -464,6 +464,7 @@ bool button_manager::click_handling(SDL_Event& mouse_event){
 	}
 	if(!done_something && lets_go.shown){
 		if( lets_go.handle_click(mouse_event) ){
+
 			//filled up by update_io_maker if there are issues
 			//that way user can be given a list of errors
 			vector<string> bad_input_list;
@@ -472,7 +473,6 @@ bool button_manager::click_handling(SDL_Event& mouse_event){
 			if( clean_up() == 0){
 
 				//update input_maker's info from the tiles
-				//if( !sdl_helper->get_mgr().update_io_maker(bad_input_list) &&
 				if( !tile_access->update_io_maker(bad_input_list) &&
 					bad_input_list.size() != 0 ){
 					//if something went wrong, this code is executed
@@ -481,7 +481,7 @@ bool button_manager::click_handling(SDL_Event& mouse_event){
 					//if there were no errors, this is ran
 					//have input_maker output to the file
 					vector<string> form_bad_inputs;
-					//if(!sdl_helper->get_io_handler().output(form_bad_inputs)){
+
 					if(!io_access->output(form_bad_inputs)){
 						//set up the texture to draw the error message
 						SDL_Texture* error_message = NULL;
@@ -586,12 +586,8 @@ void button_manager::form_error_message_loop(SDL_Event& event,SDL_Texture* messa
 	bool changed = false;
 	bool leave   = false;
 
-	//SDL_RenderCopy(sdl_helper->renderer,message_texture,NULL,&destination);
-	//sdl_helper->present();
-
 	SDL_RenderCopy(sdl_access->renderer,message_texture,NULL,&destination);
 	sdl_access->present();
-
 
 	while(!leave){
 
@@ -653,9 +649,7 @@ void button_manager::form_error_message_loop(SDL_Event& event,SDL_Texture* messa
 
 		if(changed && !leave){
 			changed = false;
-			//SDL_RenderClear(sdl_helper->renderer);
-			//SDL_RenderCopy(sdl_helper->renderer,message_texture,NULL,&destination);
-			//sdl_helper->present();
+
 			SDL_RenderClear(sdl_access->renderer);
 			SDL_RenderCopy(sdl_access->renderer,message_texture,NULL,&destination);
 			sdl_access->present();
@@ -697,8 +691,6 @@ void button_manager::make_form_error_message(const vector<string>& form_bad_inpu
 	for(unsigned int c = 0; c < form_bad_inputs.size();c++){
 		int temp_width;
 		int temp_height;
-		//TTF_SizeText(sdl_helper->font,form_bad_inputs[c].c_str(),&temp_width,
-		//			 &temp_height);
 		TTF_SizeText(sdl_access->font,form_bad_inputs[c].c_str(),&temp_width,
 					 &temp_height);
 		if(temp_width > max_message_width){
@@ -709,8 +701,6 @@ void button_manager::make_form_error_message(const vector<string>& form_bad_inpu
 
 
 	//get window info to figure out what we're drawing to
-	//int window_h = sdl_helper->get_win_size()->height;
-	//int window_w = sdl_helper->get_win_size()->width;
 	int window_h = sdl_access->get_win_size()->height;
 	int window_w = sdl_access->get_win_size()->width;
 
@@ -739,9 +729,7 @@ void button_manager::make_form_error_message(const vector<string>& form_bad_inpu
 	//loop over lines that need rendered to the screen
 	for(unsigned int c = 0; c < form_bad_inputs.size();c++){
 		SDL_Surface* text_surface;
-		//text_surface = TTF_RenderUTF8_Blended(sdl_helper->font,form_bad_inputs[c].c_str(),text_color);
-		//TTF_SizeText(sdl_helper->font,form_bad_inputs[c].c_str(),&line_destination.w,
-		//			 &line_destination.h);
+
 		text_surface = TTF_RenderUTF8_Blended(sdl_access->font,form_bad_inputs[c].c_str(),text_color);
 		TTF_SizeText(sdl_access->font,form_bad_inputs[c].c_str(),&line_destination.w,
 					 &line_destination.h);
@@ -753,9 +741,6 @@ void button_manager::make_form_error_message(const vector<string>& form_bad_inpu
 	}
 
 	//turn the surface we've created and drawn to into a texture
-	//SDL_Texture* message_texture;
-	//message_texture = SDL_CreateTextureFromSurface(sdl_helper->renderer,message_surf);
-	//drawing_info = SDL_CreateTextureFromSurface(sdl_helper->renderer,message_surf);
 	drawing_info = SDL_CreateTextureFromSurface(sdl_access->renderer,message_surf);
 
 	//give back memory
@@ -766,7 +751,6 @@ void button_manager::make_form_error_message(const vector<string>& form_bad_inpu
 }
 
 int button_manager::clean_up(){
-	//input_maker& io_handler = sdl_helper->get_io_handler();
 
 	bool bad_output_fname = false;
 	bool bad_tc_input_fname = false;
@@ -778,7 +762,6 @@ int button_manager::clean_up(){
 	}
 
 	//set up input_makers transmission coefficients input file location variable
-	//if(t_coefficients.work(io_handler) != 0){
 	if(t_coefficients.work() != 0){
 		//exit if t_coefficients.work returns a bad number
 		//but it defaults to "output.txt", so it should just run 
@@ -804,11 +787,6 @@ void button_manager::bad_tile_input_warnings(vector<string>& bad_input_list){
 
 	SDL_Rect msg_dest;//calculate where to put the error message
 	SDL_QueryTexture(bad_input_msg_texture,NULL,NULL,&msg_dest.w,&msg_dest.h);
-	//msg_dest.x = (sdl_helper->get_win_size()->width / 2 ) - (.5 * msg_dest.w);
-	//msg_dest.y = (sdl_helper->get_win_size()->height / 2) - (.5 * msg_dest.h);
-	//SDL_RenderCopy(sdl_helper->renderer,bad_input_msg_texture,NULL,&msg_dest);
-	
-	//sdl_helper->present();//update the screen to show the message
 
 	msg_dest.x = (sdl_access->get_win_size()->width / 2 ) - (.5 * msg_dest.w);
 	msg_dest.y = (sdl_access->get_win_size()->height / 2) - (.5 * msg_dest.h);
@@ -818,7 +796,7 @@ void button_manager::bad_tile_input_warnings(vector<string>& bad_input_list){
 
 	SDL_Delay(5000);//delay for 3 seconds so they can read the message
 
-	SDL_DestroyTexture(bad_input_msg_texture);//free memory back up
+	SDL_DestroyTexture(bad_input_msg_texture);//free memory
 
 }
 void button_manager::clean_up_warnings(bool bad_output_fname,bool bad_tc_input_fname){
@@ -840,24 +818,20 @@ void button_manager::clean_up_warnings(bool bad_output_fname,bool bad_tc_input_f
 		SDL_QueryTexture(output_fname_error_texture,NULL,NULL,&dest.w,&dest.h);
 		
 		//yloc should stay the same
-		//dest.y = sdl_helper->get_win_size()->height/2 - dest.h/2;
 		dest.y = sdl_access->get_win_size()->height/2 - dest.h/2;
 
 		//if we are also going to make an error message box for the 
 		//transmission coefficient input file we will have to draw to the right
 		// of the center of the window
 		if(bad_tc_input_fname){
-			//dest.x = sdl_helper->get_win_size()->width/2 + 5;//constant 5 is padding
 			//constant 5 is padding
 			dest.x = sdl_access->get_win_size()->width/2 + 5;
 		} else {
 			//if this is the only error messaeg being printed, draw it
 			//dead center
-			//dest.x = sdl_helper->get_win_size()->width/2 - (dest.w/2);
 			dest.x = sdl_access->get_win_size()->width/2 - (dest.w/2);
 		}
 
-		//SDL_RenderCopy(sdl_helper->renderer,output_fname_error_texture,NULL,&dest);
 		SDL_RenderCopy(sdl_access->renderer,output_fname_error_texture,
 						NULL,&dest);
 	}
@@ -877,28 +851,23 @@ void button_manager::clean_up_warnings(bool bad_output_fname,bool bad_tc_input_f
 		SDL_QueryTexture(tc_input_error_texture,NULL,NULL,&dest.w,&dest.h);
 
 		//height should stay the same no matter how many error messages are made
-		//dest.y = sdl_helper->get_win_size()->height/2-dest.h/2;
 		dest.y = sdl_access->get_win_size()->height/2-dest.h/2;
 
 		//if both output messages have been made, this one will need to the left of the center
 		if(bad_output_fname){
-			//dest.x = sdl_helper->get_win_size()->width/2 - (dest.w + 5);//constant 5 is padding
 			//constant 5 is padding
 			dest.x = sdl_access->get_win_size()->width/2 - (dest.w + 5);
 
 		} else {
 			//if this is the only error message, then it can be exactly
 			//centered
-			//dest.x = sdl_helper->get_win_size()->width/2 - dest.w/2;
 			dest.x = sdl_access->get_win_size()->width/2 - dest.w/2;
 		}
 
-		//SDL_RenderCopy(sdl_helper->renderer,tc_input_error_texture,NULL,&dest);
 		SDL_RenderCopy(sdl_access->renderer,tc_input_error_texture,NULL,&dest);
 	}
 
 
-	//sdl_helper->present();//show the error messages to the screen
 	sdl_access->present();//show the error messages to the screen
 	SDL_Delay(5000);//delay for 5 seconds, so they can read the messages
 

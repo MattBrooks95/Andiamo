@@ -378,7 +378,6 @@ bool input_maker::output(vector<string>& form_bad_inputs){
 
     //do line 5D or 5E
 	std::vector<index_value> ilv3_ilv5_bad_inputs;
-    //if(!b_manager->get_ilv3_ilv5().make_output(outs,ilv3_ilv5_bad_inputs)){
 	if(//button_access->get_ilv3_ilv5().get_form().prev_initialized && 
 		!(int4_params.at("ILV3") == 0 && int4_params.at("ILV5") == 0) &&
 		!(int4_params.at("ILV3").value > 0 && int4_params.at("ILV5").value > 0)   &&
@@ -405,7 +404,6 @@ bool input_maker::output(vector<string>& form_bad_inputs){
 		//do line 8
 		//do the form's output
 		std::vector<index_value> icntrl4_bad_inputs;
-		//if(!b_manager->get_icntrl_4().make_output(outs,icntrl4_bad_inputs)){
 		if(!button_access->get_icntrl_4().make_output(outs,icntrl4_bad_inputs)){
 			form_bad_inputs.push_back("##############Icntrl4 error list##############\n");
 			form_bad_inputs.push_back("Resolved Level + Continuum form\n");
@@ -424,9 +422,9 @@ bool input_maker::output(vector<string>& form_bad_inputs){
 	}
 
 
-	//#########MAKE OUTPUTS FROM FORM_BUTTONS ##############################################################//
+	//#########MAKE OUTPUTS FROM FORM_BUTTONS ###########################################//
 	std::vector<index_value> icntrl6_bad_inputs;
-	//if(!b_manager->get_icntrl_6().make_output(outs,icntrl6_bad_inputs)){
+
 	if(//button_access->get_icntrl_6().get_form().prev_initialized &&
 		!(int4_params.at("ICNTRL6") == 0) &&
 		!button_access->get_icntrl_6().make_output(outs,icntrl6_bad_inputs)){
@@ -442,8 +440,6 @@ bool input_maker::output(vector<string>& form_bad_inputs){
 	}
 
 	std::vector<index_value> icntrl8_bad_inputs;
-//	if(!b_manager->get_icntrl_8().get_is_locked() && 
-//	   !b_manager->get_icntrl_8().make_output(outs,icntrl8_bad_inputs)){
 	if(!button_access->get_icntrl_8().get_is_locked() && 
 	   !button_access->get_icntrl_8().make_output(outs,icntrl8_bad_inputs)){
 
@@ -460,7 +456,6 @@ bool input_maker::output(vector<string>& form_bad_inputs){
 	}
 
 	std::vector<index_value> icntrl10_bad_inputs;
-//	if(!b_manager->get_icntrl_10().make_output(outs,icntrl10_bad_inputs)){
 	if(!button_access->get_icntrl_10().make_output(outs,icntrl10_bad_inputs)){
 		form_bad_inputs.push_back("##############Icntrl10 error list#############\n");
 		form_bad_inputs.push_back("Specify Spin Cutoff? form\n");
@@ -481,13 +476,15 @@ bool input_maker::output(vector<string>& form_bad_inputs){
 
 	} else {
 
-		outs.flush();//push changes to file, if this is not here C++ will wait
-					 // to do the writing until the program is ends
+		//push changes to file, if this is not here C++ will wait
+		 // to do the writing until the program is ends
+		outs.flush();
 		//close the output file stream
 		outs.close();
-		output_was_made = true;//make this boolean true, so that during the closing
-							   //process we know that we don't need to remind the user
-							   // to generate an input file first
+		//make this boolean true, so that during the closing
+		//process we know that we don't need to remind the user
+		// to generate an input file first
+		output_was_made = true;
 		check_map();
 		return true;
 	}
@@ -727,12 +724,16 @@ void do_line8(ofstream& outs,const map<string,param_int4>& int4_params){
 void do_line9(ofstream& outs,const map<string,param_int4>& int4_params,const map<string,param_real8>& real8_params){
   try{
 	outs << right;
-	outs << setprecision(2);                         //set precision to 2 points past decimal
-	outs F5 real8_params.at("ECH4").value << "     ";//5 literal spaces as described in input manual pg 8
-	outs << setprecision(1);                         //next few real8's need only 1 digit past decimal
+	//set precision to 2 points past decimal
+	outs << setprecision(2);
+	//5 literal spaces as described in input manual pg 8
+	outs F5 real8_params.at("ECH4").value << "     ";
+	outs << setprecision(1);
+	//next few real8's need only 1 digit past decimal
 	outs F5 real8_params.at("FJCH4").value << "     ";
 	outs I int4_params.at("IPAR4").value << "     ";
-	outs F5 real8_params.at("FIS4").value << endl;    //no spaces afterwards, end this line
+    //no spaces afterwards, end this line
+	outs F5 real8_params.at("FIS4").value << endl;
   } catch(out_of_range& not_found){
 	error_logger.push_error("Error! Parameter in do_line9 not found in the map!");
   }
@@ -741,7 +742,7 @@ void do_line9(ofstream& outs,const map<string,param_int4>& int4_params,const map
 void do_line10(ofstream& outs, const map<string,param_int4>& int4_params){
 	outs I int4_params.at("ITER").value I int4_params.at("INM1").value I int4_params.at("INM2").value << endl;
 }
-//#################################################################################################################
+//####################################################################################
 
 
 

@@ -168,8 +168,6 @@ class form{
      *input has been typed */
 	vector<regex> my_patterns;
 
-    //! pointer to the graphics class
-	sdl_help* sdl_helper;
     //! pointer to the font in use in the graphic's class
 	TTF_Font* sdl_font;
 

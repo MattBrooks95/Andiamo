@@ -15,29 +15,35 @@ using namespace std;
 
 //global object used for error message output
 logger          error_logger;
+
 //manages textures
 asset_manager*  asset_access;
+
 //graphics library wrapper
 sdl_help*       sdl_access;
+
 //handles HF parameter entry
 manager*        tile_access;
+
 //makes HF file
 input_maker*    io_access;
+
 //manages various buttons
 button_manager* button_access;
 
-//making this global and giving it a unique name, so the exit button can change it
+//making this global and giving it a unique name,
+//so the exit button can change it
 bool main_done = false;
 
-/*! in the event the user tries to quit andiamo without having first made an output file,
- *this function displays a message. It is passed a reference to the exit button,
- *that way the message can always be in the same location relative to the button */
-void no_work_done_message(/*sdl_help& sdl_helper,*/exit_button& exit_dialogue);
+/*! in the event the user tries to quit andiamo without having first
+ *made an output file, this function displays a message. It is passed
+ *a reference to the exit button, that way the message can always be
+ *in the same location relative to the button */
+void no_work_done_message(exit_button& exit_dialogue);
 
- /*! main() handles sdl events (keypress, mouse movements), instantiates an sdl_help object,
-  *and calls its drawing functions per run of the loop. It will eventually have options for resizing
-  *the window, and letting the user pick the frame rate.
-  */
+/*! main() handles sdl events (keypress, mouse movements), instantiates
+ *an sdl_help object, and calls its drawing functions per run
+ *of the loop. */
 int main(int argc, char *argv[]){
 
   if(argc == 2){
@@ -50,7 +56,8 @@ int main(int argc, char *argv[]){
 		error_logger.push_error("Supplied useless command line argument");
 	}
   }
-  error_logger.push_msg("And where does the newborn go from here? The net is vast and infinite.");
+  //error_logger.push_msg("And where does the newborn go from here?"
+  //					  " The net is vast and infinite.");
 
   //set up the sdl wrapper
   sdl_help sdl_helper("Andiamo!");
@@ -87,108 +94,120 @@ int main(int argc, char *argv[]){
   b_manager.init_form_tray();
   button_access = &b_manager;
 
+
+  //pre-loop drawing commands, so screen comes up near instantly
   sdl_access->draw();
-  //sdl_helper.present();
   sdl_access->present();
 
-  SDL_Event big_event; //pre-loop drawing commands, so screen comes up near instantly
+  SDL_Event big_event;
   SDL_SetEventFilter(filter_mouse_move,NULL);
 
   while(!main_done){
-	//apparently if there is no new event big_event keeps that last value, so it scrolls indefinitely for
-	//example, so for now I'm using 1776 as a "no operation" flag
+	//apparently if there is no new event big_event keeps that last
+	// value, so it scrolls indefinitely for example, so for now
+	//I'm using 1776 as a "no operation" flag
 	if(!SDL_PollEvent(&big_event)){
 		big_event.type = 1776;
 	}
 
-	if(sdl_access->get_v_bar().is_scrolling()){//if the vertical scroll bar is in "scroll mode"
-		   //do a mini loop until the left mouse button is released
-		scrolling_mini_loop(big_event,/*sdl_helper,*/b_manager,'v');
-		sdl_access->get_v_bar().scroll_mode_change(false);//stop v scroll bar mode
-		SDL_FlushEvents(0,1000); //is this necessary?
+	//if the vertical scroll bar is in "scroll mode"
+	if(sdl_access->get_v_bar().is_scrolling()){
+		//do a mini loop until the left mouse button is released
+		scrolling_mini_loop(big_event,'v');
+		//stop v scroll bar mode
+		sdl_access->get_v_bar().scroll_mode_change(false);
+		//is this necessary?
+		SDL_FlushEvents(0,1000);
 
 
-	} else if(sdl_access->get_h_bar().is_scrolling()){//if the horizontal scroll bar is in "scroll mode"
-		     //do a mini loop until the left mouse button is released
-		scrolling_mini_loop(big_event,/*sdl_helper,*/b_manager,'h');
-		sdl_access->get_h_bar().scroll_mode_change(false);//stop h scroll bar mode
-		SDL_FlushEvents(0,1000);//remove all events from event queue
+	//if the horizontal scroll bar is in "scroll mode"
+	//do a mini loop until the left mouse button is released
+	} else if(sdl_access->get_h_bar().is_scrolling()){
+
+		scrolling_mini_loop(big_event,'h');
+
+		//stop h scroll bar mode
+		sdl_access->get_h_bar().scroll_mode_change(false);
+
+		//remove all events from event queue
+		SDL_FlushEvents(0,1000);
 
 	} else
-	switch(big_event.type){ //switch controlled by the 'type' of input given, like the mouse moving
-				//or key presses
+
+	//switch controlled by the 'type' of input given, like the mouse moving
+	//or key presses
+	switch(big_event.type){
 
 
 		case SDL_QUIT:
 			//does a mini loop that implements exit_button's functionality
 			//where the user has to click yes or no for it to go away
-			//if(!sdl_helper.get_io_handler().output_was_made){
 			if(io_access->output_was_made){
-				no_work_done_message(/*sdl_helper,*/b_manager.get_exit_dialogue());
+				no_work_done_message(button_access->get_exit_dialogue());
 			}
-			b_manager.get_exit_dialogue().handle_click(big_event);
-			//main_done = true;
+			button_access->get_exit_dialogue().handle_click(big_event);
 			break;
 
 		case SDL_KEYDOWN:
-			handle_key_down(big_event/*,sdl_helper*/);
-			SDL_FlushEvent(SDL_KEYDOWN);//prevents queue flooding when key is held down
+
+			handle_key_down(big_event);
+
+			//prevents queue flooding when key is held down
+			SDL_FlushEvent(SDL_KEYDOWN);
 			break;
 
 		case SDL_KEYUP:
-			handle_key_up(big_event/*,sdl_helper*/);
+			handle_key_up(big_event);
 			SDL_FlushEvent(SDL_KEYUP);
 			break;
 
 		case SDL_MOUSEBUTTONDOWN:
-			//this function handles left/right mouse button down clicks, and mousewheel clicks
-			handle_mouseb_down(big_event/*,sdl_helper,b_manager*/);
+			//this function handles left/right mouse button down clicks,
+			//and mousewheel clicks
+			handle_mouseb_down(big_event);
 			break;
 
 		case SDL_MOUSEBUTTONUP:
-			handle_mouseb_up(big_event/*,sdl_helper*/);
+			handle_mouseb_up(big_event);
 			break;
 
 		case SDL_MOUSEWHEEL:
-			handle_mouse_wheel(big_event/*,sdl_helper*/);
-			SDL_FlushEvent(SDL_MOUSEWHEEL);//make it not get flooded with scroll commands
+			handle_mouse_wheel(big_event);
+			//make it not get flooded with scroll commands
+			SDL_FlushEvent(SDL_MOUSEWHEEL);
 			break;
 
 		case SDL_WINDOWEVENT:
-			//error_logger.push_msg("WINDOW EVENT ####################################################");
+			//error_logger.push_msg("WINDOW EVENT ##########################");
 			//error_logger.push_msg("EVENT Num:"+to_string(big_event.type));
 			if(big_event.window.event == SDL_WINDOWEVENT_SIZE_CHANGED){
 				error_logger.push_msg(to_string(big_event.window.data1)+":"+
 						       to_string(big_event.window.data2));
-				sdl_access->window_update(big_event.window.data1,big_event.window.data2);
-				b_manager.location_update();
+				sdl_access->window_update(big_event.window.data1,
+											big_event.window.data2);
+				button_access->location_update();
 			}
 
 			break;
 
-		case 1776: //no new event this time, don't just keep repeating the last event
+		//no new event this time, don't just keep repeating the last event
+		case 1776:
 			break;
 
 		default:
 			break;
+
 	}//event handling switch
 
-	//sdl_helper.draw_tiles(); //re-draw the screen once all events have been handled
-	//sdl_helper.draw_sbars(); //draw the scroll bars
-	//b_manager.draw_buttons(); //draw visible/on buttons
 	sdl_access->draw();
-	sdl_access->present();  //and all positions have been calculated
+	sdl_access->present();
 
-	SDL_Delay(50);//slow down loop speed if work was done
+	//slow down loop speed if work was done
+	SDL_Delay(50);
 
   }//end of while loop
-  //b_manager.clean_up();//have the button manager set up the necessary file paths in input_maker so
-		       //update_io_maker can output/input things properly
 
-  //b_manager.print_buttons();
-  //sdl_helper.get_mgr().update_io_maker();
   //sdl_access->print_size_info();
-
 
   //SDL_Delay(5000);
 
@@ -197,7 +216,7 @@ int main(int argc, char *argv[]){
 
 
 
-void no_work_done_message(/*sdl_help& sdl_helper,*/exit_button& exit_dialogue){
+void no_work_done_message(exit_button& exit_dialogue){
 
 	//SDL_Surface* no_work_surf = NULL;
 	SDL_Texture* no_work_texture = NULL;

@@ -38,12 +38,12 @@ class logger{
 	//! puts a new error message into the vector
 	/* these messages are accumulated and then printed to a file at the end of this object's life.
 	 *This function also does some book keeping, like the # of error messages pushed */
-	void push_error(string push_me);
+	void push_error(const string& push_me);
 
 	//! this is an overload of logger::push_error
 	/*! it taks two strings as arguments, to allow long messages to be split up into parts for readability
 	 * and brevity */
-	void push_error(string push_1,string push_2);
+	void push_error(const string& push_1,const string& push_2);
 
 	//! this function uses dirent functions to check the # of files, and then removes the oldest ones
 	/*! If the # of files in the /error_logs directory is greater than 30, it culls the 10 oldest
@@ -53,10 +53,10 @@ class logger{
 	//! This function accumulates messages about what happens during run time
 	/* if verbose mode is turned on by the -v argument, these are accumulated and printed.
 	 *if that argument is not present, this does nothing */
-	void push_msg(string push_me);
+	void push_msg(const string& push_me);
 
 	//! This functions pushes a message into the vector, but without a newline character
-	void push_msg_no_nl(string push_me);
+	void push_msg_no_nl(const string& push_me);
 
 	//! this function creates the error file from the errors_vector
 	/*! it is called in this class's destructor, so that it doesn't have to be called in main */

@@ -9,6 +9,7 @@ extern asset_manager* asset_access;
 
 //###################### CONSTRUCTORS/DESTRUCTORS #################################################
 scroll_bar::scroll_bar(){
+
 	//dummy initial values to hint if things weren't initialized properly by init()
 	xloc = -1;
 	yloc = -1;
@@ -17,7 +18,8 @@ scroll_bar::scroll_bar(){
 	image_p = "notset";
 	my_tex = NULL;
 
-	scrolling_mode = false;//do not start out in scrolling mode
+	//do not start out in scrolling mode
+	scrolling_mode = false;
 
 	//null out references to sdl_help members until the init function is ran
 	x_scroll = NULL;
@@ -26,19 +28,23 @@ scroll_bar::scroll_bar(){
 	window_height = NULL;
 	renderer = NULL;
 }
-//################################################################################################
+//#############################################################################
 
-//######################### GETTERS AND SETTERS ##################################################
+//############## GETTERS AND SETTERS ##########################################
 bool scroll_bar::is_scrolling(){
 	// return whether or not we are in scrolling mode
 	return scrolling_mode;
 }
+
 void scroll_bar::scroll_mode_change(bool bool_in){
 	scrolling_mode = bool_in;
-	if(scrolling_mode) error_logger.push_msg("Scrolling mode changed to: true");
-	else error_logger.push_msg("Scrolling mode changed to: false");
+	if(scrolling_mode){
+		error_logger.push_msg("Scrolling mode changed to: true");
+	} else {
+		error_logger.push_msg("Scrolling mode changed to: false");
+	}
 }
-//################################################################################################
+//#############################################################################
 
 ///helper for init(), calcs corner location and sets up texture 
 void scroll_bar::init_corner_texture(){
@@ -52,8 +58,10 @@ void scroll_bar::init_corner_texture(){
 	//fills in width and height fields
 	SDL_QueryTexture(my_tex,NULL,NULL,&width,&height);
 	
-	if(width > height){ //we are dealing with a horizontal scroll bar
-		xloc = 0;//start off on the left of the screen 
+	//we are dealing with a horizontal scroll bar
+	if(width > height){
+		//start off on the left of the screen 
+		xloc = 0;
 		if(window_height == NULL){
 			error_logger.push_error("ERROR in init, null ptr window_height!");
 			return;
@@ -63,20 +71,25 @@ void scroll_bar::init_corner_texture(){
 		//window.height-texture.height 
 		yloc = *window_height - height;
 
-	} else { //we are dealing with a vertical scroll bar
+	//we are dealing with a vertical scroll bar
+	} else {
 		if(window_width == NULL){
 			error_logger.push_error("ERROR in init, null ptr window_width!");
 			return;
 		}
+
 		//similarly, texture's right side needs to be inline with the
 		//window's right side, so top right corner's xval is
 		//window.height - texture.height
 		xloc = *window_width - width;
-		yloc = 0;//similarly start at the top of the screen
+		//similarly start at the top of the screen
+		yloc = 0;
 	}
 }
-void scroll_bar::init(int* x_scroll_in, int* y_scroll_in, const int* window_width_in, const int* window_height_in,
-		      SDL_Renderer* renderer_in,string image_p_in){
+void scroll_bar::init(int* x_scroll_in, int* y_scroll_in,
+				const int* window_width_in, const int* window_height_in,
+				SDL_Renderer* renderer_in,string image_p_in){
+
 	//initialize members that point to sdl_help object's members
 	x_scroll = x_scroll_in;
 	y_scroll = y_scroll_in;
@@ -95,7 +108,9 @@ void scroll_bar::draw_me(){
 }
 
 void scroll_bar::update(){
-	if(x_scroll == NULL || y_scroll == NULL || window_height == NULL || window_width == NULL){
+	if( x_scroll == NULL      || y_scroll == NULL || 
+		window_height == NULL || window_width == NULL){
+
 		error_logger.push_error("Error in scroll_bar::update(), x_scroll, y_scroll, window_width, or window_height pointers are null");
 		return;
 	}
@@ -103,17 +118,22 @@ void scroll_bar::update(){
 		xloc = int(-(*x_scroll));
 
 		if(xloc + width > *window_width){
-			xloc = *window_width - width;//don't go past right side of the screen
+			//don't go past right side of the screen
+			xloc = *window_width - width;
 		} else if(xloc < 0){
-			xloc = 0;//don't go past left side of the screen
+			//don't go past left side of the screen
+			xloc = 0;
 		}
-	} else {//logic for vertical bar
+
+	//logic for vertical bar
+	} else {
 
 		//move as a function of screen size vs scrollable size
-		//cout << (*y_scroll) << " " << (*window_height) << ":" << (*area_height) << endl;
 		yloc =  int( -(*y_scroll)); 
+		//don't go above the top of the window
 		if(yloc < 0){
-			yloc = 0;//don't go above the top of the window
+			yloc = 0;
+
 		//don't go below bottom of the window
 		} else if(yloc + height > (*window_height)){
 			yloc = (*window_height) - height;
@@ -134,16 +154,17 @@ bool scroll_bar::clicked(int click_x, int click_y) const{
 
 void scroll_bar::handle_resize(){
 
-	if(width > height){//dealing with horizontal scroll bar, because it is wider than it is tall
-		yloc = *window_height - height;//situate self at very bottom of the window
+	//dealing with horizontal scroll bar, because it is wider than it is tall
+	if(width > height){
+		//situate self at very bottom of the window
 		//xloc = 0;//start on the very leftmost edge
+		yloc = *window_height - height;
 
-
-	} else if(height > width) {//dealing with vertical scroll bar, because it is taller than it is wide
-		//yloc = 0;//situate self at top of screen
-		xloc = *window_width - width;//situate self at very right of window
-
-
+	//dealing with vertical scroll bar, because it is taller than it is wide
+	//yloc = 0;//situate self at top of screen
+	} else if(height > width) {
+		//situate self at very right of window
+		xloc = *window_width - width;
 	}
 
 }

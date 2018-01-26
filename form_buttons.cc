@@ -29,9 +29,7 @@ form_button::~form_button(){
 
 }
 
-void form_button::init(/*sdl_help* sdl_help_in*/){
-	//sdl_helper = sdl_help_in;
-	
+void form_button::init(){	
 
 	lock_texture = asset_access->get_texture("Assets/Images/lock.png");
 	if(lock_texture == NULL) error_logger.push_error(SDL_GetError());
@@ -46,13 +44,17 @@ void form_button::set_corner_loc(int x_in, int y_in){
 }
 
 void form_button::make_rect(int width_in,int height_in){
-	my_rect.x = xloc;//initialized by set_corner_loc
+
+	//initialized by set_corner_loc
+	my_rect.x = xloc;
 	my_rect.y = yloc;
 	my_rect.w = width_in;
-	width = width_in;//the width field is the one used to check clicks
+	//the width field is the one used to check clicks
+	width = width_in;
 
 	my_rect.h = height_in;
-	height = height_in;//the height field is the one used to check clicks
+	//the height field is the one used to check clicks
+	height = height_in;
 }
 void form_button::setup_lock(){
 	lock_rect.x = my_rect.x+my_rect.w-15;
@@ -70,14 +72,13 @@ void form_button::setup_help_msg(){
 
 }
 void form_button::init_form(const vector<regex>& pattern_tests){
-	my_form.init("no title","default_form_help.png",0,0,/*sdl_helper,sdl_helper->font,*/pattern_tests);
+	my_form.init("no title","default_form_help.png",0,0,pattern_tests);
 
 }
 
 void form_button::screen_size(){
 	bool update = false;
-	//int old_width = sdl_helper->get_win_size()->width;
-	//int old_height = sdl_helper->get_win_size()->height;
+
 	int old_width = sdl_access->get_win_size()->width;
 	int old_height = sdl_access->get_win_size()->height;
 	if(old_width < 800){
@@ -85,15 +86,13 @@ void form_button::screen_size(){
 		update = true;
 	}
 
-	//if(sdl_helper->get_win_size()->width < 800){
 	if(sdl_access->get_win_size()->width < 800){
 		old_height = 800;
 		update = true;
 	}
 
 	if(update){
-		//SDL_SetWindowSize(sdl_helper->get_window(),old_width,old_height);
-		//sdl_helper->window_update(old_width,old_height);
+
 		SDL_SetWindowSize(sdl_access->get_window(),old_width,old_height);
 		sdl_access->window_update(old_width,old_height);
 
@@ -102,8 +101,7 @@ void form_button::screen_size(){
 }
 
 void form_button::draw_help_msg(SDL_Event& big_event,SDL_Rect& destination){
-	//SDL_RenderCopy(sdl_helper->renderer,unlock_help_texture,NULL,&destination);
-	//sdl_helper->present();
+
 	SDL_RenderCopy(sdl_access->renderer,unlock_help_texture,NULL,&destination);
 	sdl_access->present();
 
@@ -118,7 +116,6 @@ void form_button::draw_help_msg(SDL_Event& big_event,SDL_Rect& destination){
 
 void form_button::draw_lock(){
 	if(is_locked){
-		//SDL_RenderCopy(sdl_helper->renderer,lock_texture,NULL,&lock_rect);
 		SDL_RenderCopy(sdl_access->renderer,lock_texture,NULL,&lock_rect);
 	}
 }
@@ -159,7 +156,6 @@ void icntrl8_form_button::setup_help_msg(){
 
 bool icntrl8_form_button::handle_click(SDL_Event& mouse_event){
 	if(button::was_clicked(mouse_event)){
-		//SDL_RenderClear(sdl_helper->renderer);
 		SDL_RenderClear(sdl_access->renderer);
 		click_helper(mouse_event);
 		return true;
@@ -182,25 +178,29 @@ void icntrl8_form_button::click_helper(SDL_Event& mouse_event){
 			page_creation_helper();
 
 			my_form.toggle_active();//let the form know that it is now active
-			my_form.form_event_loop(mouse_event);//enter the mini loop for form entry
+			//enter the mini loop for form entry
+			my_form.form_event_loop(mouse_event);
 
-		//in this case the form has been previously created, but the icntrl8 value has not changed, so nothing needs to be done
-		//} else if(my_form.prev_init_value == stoi(sdl_helper->get_mgr().fields.at("line_6").at("ICNTRL8").temp_input) ){
 		} else if(my_form.prev_init_value == stoi(tile_access->fields.at("line_6").at("ICNTRL8").temp_input) ){
-			my_form.toggle_active();//let the form know that it is now active
-			my_form.form_event_loop(mouse_event);//enter the mini loop for form entry
+
+			//let the form know that it is now active
+			my_form.toggle_active();
+
+			//enter the mini loop for form entry
+			my_form.form_event_loop(mouse_event);
 
 		//in this case, the form has been previously created, but the icntrl8 value has been changed, so it must be recreated
 		} else {
 			my_form.flush_pages();//clear out previous info
 
+			//most of this work is shared with the 1st time creation case
+			//so it has been put into a helper function
+			page_creation_helper();
 
-			page_creation_helper();//most of this work is shared with the 1st time creation case
-					       //so it has been put into a helper function
-
-
-			my_form.toggle_active();//let the form know that it is now active
-			my_form.form_event_loop(mouse_event);//enter the mini loop for form entry
+			//let the form know that it is now active
+			my_form.toggle_active();
+			//enter the mini loop for form entry
+			my_form.form_event_loop(mouse_event);
 
 
 		}
@@ -213,7 +213,6 @@ void icntrl8_form_button::page_creation_helper(){
 	//grab val from parameter field, so the pages can be set up
 	try{
 
-	  //icntrl8_val = stoi(sdl_helper->get_mgr().fields.at("line_6").at("ICNTRL8").temp_input);
 	  icntrl8_val = stoi(tile_access->fields.at("line_6").at("ICNTRL8").temp_input);
 
 	} catch (out_of_range& range_error){
@@ -241,10 +240,12 @@ void icntrl8_form_button::page_creation_helper(){
 
 	int rows_per_page = floor(725.0 / 35);
 	int rows_needed   = icntrl8_val;
-	unsigned int vector_size = ceil((icntrl8_val * 35) / 725.0);//calculate how many pages are needed
+	//calculate how many pages are needed
+	unsigned int vector_size = ceil((icntrl8_val * 35) / 725.0);
 	unsigned int pages_made = 0;
 
-	vector<page>& pages = my_form.get_pages();//saves space later
+	//saves space later
+	vector<page>& pages = my_form.get_pages();
 	pages.resize(vector_size);
 
 	vector<int> column_spaces;
@@ -257,15 +258,16 @@ void icntrl8_form_button::page_creation_helper(){
 
 		if(rows_per_page >= rows_needed){
 			pages[c].page_init(3,rows_needed,pass_column_titles,pass_row_titles,
-								      /*sdl_helper, sdl_helper->font,*/column_spaces);
+								      column_spaces);
 			rows_needed = 0;
 		} else {
 
 			pages[c].page_init(3,rows_per_page,pass_column_titles,pass_row_titles,
-								      /*sdl_helper, sdl_helper->font,*/column_spaces);
+								      column_spaces);
 			rows_needed = rows_needed - rows_per_page;
 		}
-		pages_made++;//we made a page, so increase the counter
+		//we made a page, so increase the counter
+		pages_made++;
 	}
 	if(pages_made != vector_size) {
 		error_logger.push_error("Error in icntrl8 page_creation_helper, # of created pages does not match",
@@ -274,21 +276,23 @@ void icntrl8_form_button::page_creation_helper(){
 
 	my_form.set_page_count(pages_made);
 
-	my_form.prev_initialized = true;//let the form class know that it's pages have been set up
-	my_form.prev_init_value = icntrl8_val;//and also what conditions caused such a creation
-
-
+	//let the form class know that it's pages have been set up
+	my_form.prev_initialized = true;
+	//and also what conditions caused such a creation
+	my_form.prev_init_value = icntrl8_val;
 }
 
 void icntrl8_form_button::init_form(const vector<regex>& pattern_tests){
-	my_form.init("Cutoff Nuclei (ICNTRL8)","icntrl8_form_help.png",0,0/*,sdl_helper,sdl_helper->font*/,
+	my_form.init("Cutoff Nuclei (ICNTRL8)","icntrl8_form_help.png",0,0,
                  pattern_tests);
 }
 
-bool icntrl8_form_button::make_output(ofstream& outs,vector<index_value>& bad_input_list){
+bool icntrl8_form_button::make_output(ofstream& outs,
+		vector<index_value>& bad_input_list){
+
 	if(outs.fail()){
-		error_logger.push_error("icntrl8_form_button::make_output was not given a valid output file stream.",
-					"exiting.");
+		error_logger.push_error("icntrl8_form_button::make_output was not given a ",
+					"valid output file stream. exiting.");
 		return false;
 	}
 
@@ -302,7 +306,8 @@ bool icntrl8_form_button::make_output(ofstream& outs,vector<index_value>& bad_in
     outs << "ICNTRL 8 OUTPUT" << endl;
 
 	//outs << "TESTING ICNTRL8'S OUTPUT" << endl;
-	vector<page>* pages_ptr = &my_form.get_pages(); //saves calls to the getter, and space in this function
+	//saves calls to the getter, and space in this function
+	vector<page>* pages_ptr = &my_form.get_pages();
 
 	//loop over each page
 	for(unsigned int c = 0; c < pages_ptr->size();c++){
@@ -317,8 +322,6 @@ bool icntrl8_form_button::make_output(ofstream& outs,vector<index_value>& bad_in
 			outs << setw(10);
 			outs << setprecision(3);
 			outs << pages_ptr->at(c).get_text_boxes()[d+2].text << endl;
-
-
 		}
 
 	}
@@ -351,7 +354,6 @@ void icntrl6_form_button::setup_lock(){
 
 bool icntrl6_form_button::handle_click(SDL_Event& mouse_event){
 	if(button::was_clicked(mouse_event)){
-		//SDL_RenderClear(sdl_helper->renderer);
 		SDL_RenderClear(sdl_access->renderer);
 		click_helper(mouse_event);
 		return true;
@@ -371,7 +373,6 @@ void icntrl6_form_button::click_helper(SDL_Event& mouse_event){
 		show_landing();
 
 		//have sdl_helper update the display
-		//sdl_helper->present();
 		sdl_access->present();
 
 		//if we enter a form loop, we should ignore whatever event is in the queue when
@@ -390,8 +391,9 @@ void icntrl6_form_button::click_helper(SDL_Event& mouse_event){
 				(mouse_event.type == SDL_MOUSEBUTTONDOWN || mouse_event.type == SDL_QUIT) ) );
 
 			if(mouse_event.type == SDL_QUIT){
-				SDL_PushEvent(&mouse_event);//putting the same event back in the queue
-							    //makes it possible to exit andiamo directly
+				//putting the same event back in the queue
+				//makes it possible to exit andiamo directly
+				SDL_PushEvent(&mouse_event);
 				return;
 			}
 
@@ -399,8 +401,12 @@ void icntrl6_form_button::click_helper(SDL_Event& mouse_event){
 			if( parity_area.clicked(mouse_event) ){
 
 				parity_page_creation();
-				my_form.toggle_active();//let the form know that it is now active
-				my_form.form_event_loop(mouse_event);//enter the mini loop for form entry
+
+				//let the form know that it is now active
+				my_form.toggle_active();
+
+				//enter the mini loop for form entry
+				my_form.form_event_loop(mouse_event);
 				did_something = true;
 
 			} else if( spectra_area.clicked(mouse_event) ){
@@ -436,8 +442,12 @@ void icntrl6_form_button::click_helper(SDL_Event& mouse_event){
 
 bool icntrl6_form_button::landing_was_clicked(SDL_Event& mouse_event){
 
-		if( (mouse_event.button.x > landing_rect.x && mouse_event.button.x < landing_rect.x + landing_rect.w) &&
-		    (mouse_event.button.y > landing_rect.y && mouse_event.button.y < landing_rect.y + landing_rect.h) ){
+		bool in_x = (mouse_event.button.x > landing_rect.x &&
+						 mouse_event.button.x < landing_rect.x + landing_rect.w);
+		bool in_y = (mouse_event.button.y > landing_rect.y &&
+						 mouse_event.button.y < landing_rect.y + landing_rect.h);
+
+		if( in_x && in_y ){
 			return true;
 		}
 		return false;
@@ -453,7 +463,8 @@ void icntrl6_form_button::init_form(const vector<regex>& pattern_tests){
 
     vector<regex> inm1_patterns;
     inm1_patterns.push_back(pattern_tests[0]);
-    //this line has many columns 9 floating point #'s with field width of 8 and precision of 4
+    //this line has many columns 9 floating point #'s with field width
+	// of 8 and precision of 4
     //for(int c = 0; c < 9; c++){
 	for(int c = 1; c < 10; c++){
         inm1_patterns.push_back(pattern_tests[c]);;
@@ -469,15 +480,15 @@ void icntrl6_form_button::init_form(const vector<regex>& pattern_tests){
     parity_patterns.push_back(pattern_tests[15]);
 
 	//my_form (from default form_button class) will be the parity info
-	my_form.init("Parameter Search (ICNTRL6)","icntrl6_parity_help.png",0,0,/*sdl_helper,sdl_helper->font,*/
+	my_form.init("Parameter Search (ICNTRL6)","icntrl6_parity_help.png",0,0,
                   parity_patterns);
 
 	//INM1 form
-	search_spectra.init("# of Search Spectra","icntrl6_spectra_help.png",0,0,/*sdl_helper,sdl_helper->font,*/
+	search_spectra.init("# of Search Spectra","icntrl6_spectra_help.png",0,0,
                         inm1_patterns);
 
 	//INM2 form
-	cross_sections.init("# of Search Cross Sections","icntrl6_xsections_help.png",0,0,/*sdl_helper,sdl_helper->font,*/
+	cross_sections.init("# of Search Cross Sections","icntrl6_xsections_help.png",0,0,
                         inm2_patterns);
 
 }
@@ -490,7 +501,8 @@ void icntrl6_form_button::parity_page_creation(){
 		my_form.prev_initialized = true;
 		my_form.prev_init_value = 18;
 
-		my_form.get_pages().resize(1);//make room for the first and only page
+		//make room for the first and only page
+		my_form.get_pages().resize(1);
 
 		vector<string> column_labels, row_labels;
 		fill_parity_labels(row_labels, column_labels);
@@ -500,7 +512,8 @@ void icntrl6_form_button::parity_page_creation(){
 		column_spaces.push_back(250);
 		column_spaces.push_back(100);
 
-		my_form.get_pages()[0].page_init( 3, 18, column_labels, row_labels,/*sdl_helper,sdl_helper->font,*/column_spaces);
+		my_form.get_pages()[0].page_init( 3, 18, column_labels,
+											row_labels,column_spaces);
 	}
 
 
@@ -527,21 +540,21 @@ void icntrl6_form_button::fill_parity_labels(vector<string>& row_labels,vector<s
 	row_labels.push_back("FF");  //16
 	row_labels.push_back("MU");  //17
 	row_labels.push_back("18");  //18
-	//#################################################################################
+	//#########################################################################
 
-	//################# COLUMN LABELS #################################################
+	//################# COLUMN LABELS #########################################
 	column_labels.push_back("Al-Quraishi Parameter");
 	column_labels.push_back("value");
 	column_labels.push_back("Vary?");
 
-	//#################################################################################
+	//#########################################################################
 }
 
 void icntrl6_form_button::search_spectra_page_creation(){
 
 	int current_INM1_val;
 	try{
- 		//current_INM1_val = stoi(sdl_helper->get_mgr().fields.at("line_10").at("INM1").temp_input); 
+
  		current_INM1_val = stoi(tile_access->fields.at("line_10").at("INM1").temp_input); 
 	} catch(invalid_argument& arg_error){
 		error_logger.push_error("Error reading current INM1/#Search Spectra value for page creation",
@@ -569,7 +582,6 @@ void icntrl6_form_button::search_spectra_page_creation(){
 void icntrl6_form_button::search_spectra_page_helper(){
 
 	try{
-	  //INM1_val = stoi(sdl_helper->get_mgr().fields.at("line_10").at("INM1").temp_input);
 	  INM1_val = stoi(tile_access->fields.at("line_10").at("INM1").temp_input);
 
 	} catch ( out_of_range& range_error ){
@@ -592,7 +604,8 @@ void icntrl6_form_button::search_spectra_page_helper(){
 
 	int rows_per_page = floor(725.0 / 35);
 	int rows_needed   = INM1_val;
-	unsigned int vector_size = ceil((INM1_val * 35) / 725.0);//calculate how many pages are needed
+	//calculate how many pages are needed
+	unsigned int vector_size = ceil((INM1_val * 35) / 725.0);
 	unsigned int pages_made = 0;
 
 	vector<page>& pages = search_spectra.get_pages();//saves space later
@@ -603,15 +616,16 @@ void icntrl6_form_button::search_spectra_page_helper(){
 
 		if(rows_per_page >= rows_needed){
 			pages[c].page_init(9,rows_needed,pass_column_labels,pass_row_labels,
-								      /*sdl_helper, sdl_helper->font,*/column_spaces);
+								      column_spaces);
 			rows_needed = 0;
 		} else {
 
 			pages[c].page_init(9,rows_per_page,pass_column_labels,pass_row_labels,
-								      /*sdl_helper, sdl_helper->font,*/column_spaces);
+								      column_spaces);
 			rows_needed = rows_needed - rows_per_page;
 		}
-		pages_made++;//we made a page, so increase the counter
+		//we made a page, so increase the counter
+		pages_made++;
 	}
 	if(pages_made != vector_size) {
 		error_logger.push_error("Error in icntrl6/search spectra page_creation_helper, # of created pages does not match",
@@ -620,8 +634,10 @@ void icntrl6_form_button::search_spectra_page_helper(){
 
 	search_spectra.set_page_count(pages_made);
 
-	search_spectra.prev_initialized = true;//let the form class know that it's pages have been set up
-	search_spectra.prev_init_value = INM1_val;//and also what conditions caused such a creation
+	//let the form class know that it's pages have been set up
+	search_spectra.prev_initialized = true;
+	//and also what conditions caused such a creation
+	search_spectra.prev_init_value = INM1_val;
 
 
 }
@@ -656,7 +672,6 @@ void icntrl6_form_button::cross_sections_page_creation(){
 
 	int current_INM2_val;
 	try{
- 		//current_INM2_val = stoi(sdl_helper->get_mgr().fields.at("line_10").at("INM2").temp_input); 
 		current_INM2_val = stoi(tile_access->fields.at("line_10").at("INM2").temp_input); 
 	} catch(invalid_argument& arg_error){
 		error_logger.push_error("Error reading current INM2/cross sections value for page creation",
@@ -683,7 +698,6 @@ void icntrl6_form_button::cross_sections_page_creation(){
 void icntrl6_form_button::cross_sections_helper(){
 
 	try{
-	  //INM2_val = stoi(sdl_helper->get_mgr().fields.at("line_10").at("INM2").temp_input);
 	  INM2_val = stoi(tile_access->fields.at("line_10").at("INM2").temp_input);
 
 	} catch ( out_of_range& range_error ){
@@ -722,23 +736,19 @@ void icntrl6_form_button::cross_sections_helper(){
 	for(unsigned int c = 0; c < pages.size();c++){
 
 		if(rows_per_page >= rows_needed){
-			//pages[c].page_init(4,rows_needed,pass_column_labels,pass_row_labels,
-								     // sdl_helper, sdl_helper->font,120);//prev 15
-
 			pages[c].page_init(4,rows_needed,pass_column_labels,pass_row_labels,
-								     /*sdl_helper, sdl_helper->font,*/column_spaces);
+								     column_spaces);
 			rows_needed = 0;
 		} else {
 
-			//pages[c].page_init(4,rows_per_page,pass_column_labels,pass_row_labels,
-								      //sdl_helper, sdl_helper->font,120);//prev 15
 			pages[c].page_init(4,rows_per_page,pass_column_labels,pass_row_labels,
-								     /*sdl_helper, sdl_helper->font,*/column_spaces);
+								     column_spaces);
 
 
 			rows_needed = rows_needed - rows_per_page;
 		}
-		pages_made++;//we made a page, so increase the counter
+		//we made a page, so increase the counter
+		pages_made++;
 	}
 	if(pages_made != vector_size) {
 		error_logger.push_error("Error in icntrl6/cross sections page creation_helper, # of created pages does not match",
@@ -747,8 +757,10 @@ void icntrl6_form_button::cross_sections_helper(){
 
 	cross_sections.set_page_count(pages_made);
 
-	search_spectra.prev_initialized = true;//let the form class know that it's pages have been set up
-	search_spectra.prev_init_value = INM2_val;//and also what conditions caused such a creation
+	//let the form class know that it's pages have been set up
+	search_spectra.prev_initialized = true;
+	//and also what conditions caused such a creation
+	search_spectra.prev_init_value = INM2_val;
 
 
 
@@ -801,7 +813,6 @@ void icntrl6_form_button::update_landing(){
 
 void icntrl6_form_button::show_landing(){
 
-	//SDL_RenderCopy(sdl_helper->renderer,landing_texture,NULL,&landing_rect);
 	SDL_RenderCopy(sdl_access->renderer,landing_texture,NULL,&landing_rect);
 
 }
@@ -820,9 +831,12 @@ bool icntrl6_form_button::make_output(ofstream& outs,vector<index_value>& bad_in
 
 
 	//outs << "TESTING ICNTRL6'S OUTPUT" << endl;
-	vector<page>& parity_ref = my_form.get_pages();         //handle for accessing parity form's data
-	vector<page>& search_ref = search_spectra.get_pages();  //handle for accessing search_spectra form's data
-	vector<page>& cross_ref  = cross_sections.get_pages();  //handle for accessing cross_section form's data 
+	//handle for accessing parity form's data
+	vector<page>& parity_ref = my_form.get_pages();
+	//handle for accessing search_spectra form's data
+	vector<page>& search_ref = search_spectra.get_pages();
+	//handle for accessing cross_section form's data   
+	vector<page>& cross_ref  = cross_sections.get_pages();
 
 	
 
@@ -913,7 +927,6 @@ bool icntrl6_form_button::check_values(vector<index_value>& error_details){
 
 bool icntrl10_form_button::handle_click(SDL_Event& mouse_event){
 	if(button::was_clicked(mouse_event)){
-		//SDL_RenderClear(sdl_helper->renderer);
 		SDL_RenderClear(sdl_access->renderer);
 		click_helper(mouse_event);
 		return true;
@@ -933,7 +946,7 @@ void icntrl10_form_button::click_helper(SDL_Event& mouse_event){
 
 void icntrl10_form_button::init_form(const vector<regex>& pattern_tests){
 
-	my_form.init("Spin Cutoff Information (ICNTRL10)","default_form_help.png",0,0,/*sdl_helper,sdl_helper->font,*/
+	my_form.init("Spin Cutoff Information (ICNTRL10)","default_form_help.png",0,0,
                  pattern_tests);
 
 }
@@ -962,14 +975,13 @@ void icntrl4_form_button::setup_lock(){
 
 void icntrl4_form_button::init_form(const vector<regex>& pattern_tests){
 
-	my_form.init("Resolved Levels (ICNTRL4)","icntrl4_form_help.png",0,0,/*sdl_helper,sdl_helper->font,*/
+	my_form.init("Resolved Levels (ICNTRL4)","icntrl4_form_help.png",0,0,
                  pattern_tests);
 
 }
 
 bool icntrl4_form_button::handle_click(SDL_Event& mouse_event){
 	if(button::was_clicked(mouse_event)){
-		//SDL_RenderClear(sdl_helper->renderer);
 		SDL_RenderClear(sdl_access->renderer);
 		click_helper(mouse_event);
 		return true;
@@ -989,31 +1001,34 @@ void icntrl4_form_button::click_helper(SDL_Event& mouse_event){
 		if(!my_form.prev_initialized){
 
 
-			page_creation_helper();//most of this work is shared with the recreation case
-					       //so it has been put into a helper function
+			//most of this work is shared with the recreation case
+			//so it has been put into a helper function
+			page_creation_helper();
 
 			my_form.toggle_active();//let the form know that it is now active
 			my_form.form_event_loop(mouse_event);//enter the mini loop for form entry
 
 		//in this case the form has been previously created, but the icntrl8 value has not changed, so nothing needs to be done
-		//} else if(my_form.prev_init_value == stoi(sdl_helper->get_mgr().fields.at("line_8").at("NCH4").temp_input) ){
 		} else if(my_form.prev_init_value == stoi(tile_access->fields.at("line_8").at("NCH4").temp_input) ){
-			my_form.toggle_active();//let the form know that it is now active
-			my_form.form_event_loop(mouse_event);//enter the mini loop for form entry
+		//let the form know that it is now active
+		my_form.toggle_active();
+		//enter the mini loop for form entry
+		my_form.form_event_loop(mouse_event);
 
 		//in this case, the form has been previously created, but the icntrl8 value has been changed, so it must be recreated
 		} else {
-			my_form.flush_pages();//clear out previous info
 
+			//clear out previous info
+			my_form.flush_pages();
 
-			page_creation_helper();//most of this work is shared with the 1st time creation case
-					       //so it has been put into a helper function
+			//most of this work is shared with the 1st time creation case
+			//so it has been put into a helper function
+			page_creation_helper();
 
-
-			my_form.toggle_active();//let the form know that it is now active
-			my_form.form_event_loop(mouse_event);//enter the mini loop for form entry
-
-
+			//let the form know that it is now active
+			my_form.toggle_active();
+			//enter the mini loop for form entry
+			my_form.form_event_loop(mouse_event);
 		}
 	}
 
@@ -1022,7 +1037,6 @@ void icntrl4_form_button::page_creation_helper(){
 
 	//grab val from parameter field, so the pages can be set up
 	try{
-	  //nch4_val = stoi(sdl_helper->get_mgr().fields.at("line_8").at("NCH4").temp_input);
 	  nch4_val = stoi(tile_access->fields.at("line_8").at("NCH4").temp_input);
 	} catch (out_of_range& range_error){
 	  error_logger.push_error("NCH4 could not be found in the field map",
@@ -1047,7 +1061,8 @@ void icntrl4_form_button::page_creation_helper(){
 
 	int rows_per_page = floor(725.0 / 35);
 	int rows_needed   = nch4_val;
-	unsigned int vector_size = ceil((nch4_val * 35) / 725.0);//calculate how many pages are needed
+	//calculate how many pages are needed
+	unsigned int vector_size = ceil((nch4_val * 35) / 725.0);
 	unsigned int pages_made = 0;
 
 	vector<page>& pages = my_form.get_pages();//saves space later
@@ -1064,15 +1079,16 @@ void icntrl4_form_button::page_creation_helper(){
 
 		if(rows_per_page >= rows_needed){
 			pages[c].page_init(4,rows_needed,pass_column_titles,pass_row_titles,
-								      /*sdl_helper, sdl_helper->font,*/column_spaces);
+								      column_spaces);
 			rows_needed = 0;
 		} else {
 
 			pages[c].page_init(4,rows_per_page,pass_column_titles,pass_row_titles,
-								      /*sdl_helper, sdl_helper->font,*/column_spaces);
+								      column_spaces);
 			rows_needed = rows_needed - rows_per_page;
 		}
-		pages_made++;//we made a page, so increase the counter
+		//we made a page, so increase the counter
+		pages_made++;
 	}
 	if(pages_made != vector_size) {
 		error_logger.push_error("Error in icntrl8 page_creation_helper, # of created pages does not match",
@@ -1081,8 +1097,10 @@ void icntrl4_form_button::page_creation_helper(){
 
 	my_form.set_page_count(pages_made);
 
-	my_form.prev_initialized = true;//let the form class know that it's pages have been set up
-	my_form.prev_init_value = nch4_val;//and also what conditions caused such a creation
+	//let the form class know that it's pages have been set up
+	my_form.prev_initialized = true;
+	//and also what conditions caused such a creation
+	my_form.prev_init_value = nch4_val;
 
 
 }
@@ -1102,8 +1120,8 @@ bool icntrl4_form_button::make_output(ostream& outs,vector<index_value>& bad_inp
     //we do 4 prints a loop, so c should go up by four each time
 	for(unsigned int c = 0; c < boxes->size();c += 4){
         //output the line as declared by the input manual and as expected by HF
-        //note here that I'm using the string 'spaces' to approximate the fortran 5x formatting
-        //tag
+        //note here that I'm using the string 'spaces' to
+		// approximate the fortran 5x formatting tag
         outs << setprecision(2) F5 boxes->at(c).text << spaces;
         outs << setprecision(1) F5 boxes->at(c+1).text << spaces I boxes->at(c+2).text F5 boxes->at(c+3).text << endl; 
 
@@ -1122,7 +1140,6 @@ bool icntrl4_form_button::check_values(vector<index_value>& error_details){
 
 bool ilv3_ilv5_form_button::handle_click(SDL_Event& mouse_event){
 	if(button::was_clicked(mouse_event)){
-		//SDL_RenderClear(sdl_helper->renderer);
 		SDL_RenderClear(sdl_access->renderer);
 		click_helper(mouse_event);
 		return true;
@@ -1133,8 +1150,6 @@ bool ilv3_ilv5_form_button::handle_click(SDL_Event& mouse_event){
 void ilv3_ilv5_form_button::click_helper(SDL_Event& mouse_event){
 	error_logger.push_msg("clicked the icntrl4/resolved levels info button ");
 
-        //int curr_ilv3 = stoi(sdl_helper->get_mgr().fields.at("line_5").at("ILV3").temp_input);
-        //int curr_ilv5 = stoi(sdl_helper->get_mgr().fields.at("line_5").at("ILV5").temp_input);
         int curr_ilv3 = stoi(tile_access->fields.at("line_5").at("ILV3").temp_input);
         int curr_ilv5 = stoi(tile_access->fields.at("line_5").at("ILV5").temp_input);
 
@@ -1146,14 +1161,17 @@ void ilv3_ilv5_form_button::click_helper(SDL_Event& mouse_event){
 		if(!my_form.prev_initialized){
 
 
-			page_creation_helper();//most of this work is shared with the recreation case
-					       //so it has been put into a helper function
+			//most of this work is shared with the recreation case
+			//so it has been put into a helper function
+			page_creation_helper();
 
-			my_form.toggle_active();//let the form know that it is now active
-			my_form.form_event_loop(mouse_event);//enter the mini loop for form entry
+			//let the form know that it is now active
+			my_form.toggle_active();
+			//enter the mini loop for form entry
+			my_form.form_event_loop(mouse_event);
 
-		//in this case the form has to be remade if the user has switched from ilv3 to ilv5 or vice
-                //versa
+		//in this case the form has to be remade if the user has
+		//switched from ilv3 to ilv5 or vice versa
 		} else if(my_form.prev_init_value == curr_ilv3 || my_form.prev_init_value == curr_ilv5 ){
 
 			if(my_form.form_title.compare("Distinct Residual Level Density") == 0 && curr_ilv5 > curr_ilv3 ){
@@ -1168,16 +1186,20 @@ void ilv3_ilv5_form_button::click_helper(SDL_Event& mouse_event){
 
 			}
 
-			my_form.toggle_active();//let the form know that it is now active
-			my_form.form_event_loop(mouse_event);//enter the mini loop for form entry
+			//let the form know that it is now active
+			my_form.toggle_active();
+			//enter the mini loop for form entry
+			my_form.form_event_loop(mouse_event);
 
 		//in this case, the form has been previously created, but the ilv3 or ilv5 value has been changed,
         //so it must be recreated
 		} else {
-			my_form.flush_pages();//clear out previous info
+			//clear out previous info
+			my_form.flush_pages();
 
-			page_creation_helper();//most of this work is shared with the 1st time creation case
-					       //so it has been put into a helper function
+			//most of this work is shared with the 1st time creation case
+			//so it has been put into a helper function
+			page_creation_helper();
 
 			my_form.toggle_active();//let the form know that it is now active
 			my_form.form_event_loop(mouse_event);//enter the mini loop for form entry
@@ -1188,9 +1210,7 @@ void ilv3_ilv5_form_button::click_helper(SDL_Event& mouse_event){
 
 void ilv3_ilv5_form_button::init_form(const vector<regex>& pattern_tests){
 
-	//my_form.init("set this when page is open","default_form_help.png",0,0,sdl_helper,sdl_helper->font,
-    //             pattern_tests);
-	my_form.init("Distinct Residual Level Density","ilv3_form_help.png",0,0,/*sdl_helper,sdl_helper->font,*/
+	my_form.init("Distinct Residual Level Density","ilv3_form_help.png",0,0,
 					pattern_tests);
 
 }
@@ -1198,19 +1218,24 @@ void ilv3_ilv5_form_button::page_creation_helper(){
 	int ilv3_val;
 	int ilv5_val;
 	try{
-		//ilv3_val = stoi(sdl_helper->get_mgr().fields.at("line_5").at("ILV3").temp_input);
-		//ilv5_val = stoi(sdl_helper->get_mgr().fields.at("line_5").at("ILV5").temp_input);
+
 		ilv3_val = stoi(tile_access->fields.at("line_5").at("ILV3").temp_input);
 		ilv5_val = stoi(tile_access->fields.at("line_5").at("ILV5").temp_input);
+
 	} catch(invalid_argument& bad_arg){
 		error_logger.push_error("Ilv3 or ilv5's value failed to conver to int in page_creation_helper.",
 	bad_arg.what());
 	}
+
 	//let the form know that it has been initiated
 	my_form.prev_initialized = true;
-	int rows_needed;//should be set to ilv3 or ilv5, whichever caused this form to be opened
+
+	//should be set to ilv3 or ilv5, whichever caused this form to be opened
+	int rows_needed;
 	vector<string> pass_column_titles;
-	vector<string> pass_row_titles;//this needs to exist, but does nothing here
+
+	//this needs to exist, but does nothing here
+	vector<string> pass_row_titles;
 
 	//column labels are the same for 3 of 4
 	pass_column_titles.push_back("A for custom LD");
@@ -1234,7 +1259,8 @@ void ilv3_ilv5_form_button::page_creation_helper(){
       
 	int rows_per_page = floor(725.0 / 35);
 
-	unsigned int vector_size = ceil((rows_needed * 35) / 725.0);//calculate how many pages are needed
+	//calculate how many pages are needed
+	unsigned int vector_size = ceil((rows_needed * 35) / 725.0);
 	unsigned int pages_made = 0;
 
 	vector<page>& pages = my_form.get_pages();//saves space later
@@ -1251,15 +1277,16 @@ void ilv3_ilv5_form_button::page_creation_helper(){
 
 		if(rows_per_page >= rows_needed){
 			pages[c].page_init(4,rows_needed,pass_column_titles,pass_row_titles,
-			/*sdl_helper, sdl_helper->font,*/column_spaces);
+			column_spaces);
 			rows_needed = 0;
 		} else {
 
 			pages[c].page_init(4,rows_per_page,pass_column_titles,pass_row_titles,
-						      /*sdl_helper, sdl_helper->font,*/column_spaces);
+						      column_spaces);
 			rows_needed = rows_needed - rows_per_page;
 		}
-		pages_made++;//we made a page, so increase the counter
+		//we made a page, so increase the counter
+		pages_made++;
 	}
 	if(pages_made != vector_size) {
 	error_logger.push_error("Error in icntrl8 page_creation_helper, # of created pages does not match",

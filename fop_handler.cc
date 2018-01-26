@@ -6,9 +6,7 @@
 #include "logger.h"
 using namespace std;
 
-fop_handler::fop_handler(/*sdl_help* sdl_helper_in, input_maker* io_manager_in*/){
-	//sdl_helper = sdl_helper_in;
-	//io_manager = io_manager_in;	
+fop_handler::fop_handler(){	
 }
 
 fop_handler::~fop_handler(){
@@ -30,7 +28,8 @@ void fop_handler::get_files_list(){
 	//fill the vectors for this class by reading the directories
 	for(unsigned int c = 0; c < 3; c++){
 		
-		DIR* dir_point; //this allows the opening of a directory as if it were a file
+		//this allows the opening of a directory as if it were a file
+		DIR* dir_point; 
 		struct dirent *file_in_dir;
 		dir_point = opendir(directories[c].c_str());
 		if(dir_point != NULL){
@@ -53,8 +52,6 @@ void fop_handler::get_files_list(){
 			error_logger.push_error("Failure to open the /error_logs file, for cleaning by cleaning_check()");
 		}
 	}
-
-
 
 }
 
