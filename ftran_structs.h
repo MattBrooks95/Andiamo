@@ -13,6 +13,7 @@ using std::vector;
 //! param_int4 is a default c++ integer "and more"
 /*! it allows storage of a name that serves a contextual purpose, and a value that is compatible with Fortran INT*4 */
 struct param_int4{
+
 	//! constructor with default values
 	param_int4(string name_in = "No name",int val_in = 0);
 
@@ -49,14 +50,16 @@ struct param_int4{
 	void operator =(int other);
 
 
-
-	string name;//!< contextual name for the parameter. This is how the output is associated with its tile
-	int value; //!< integer value to be output after some formatting
+	//! contextual name for the parameter. This is how the output is associated with its tile
+	string name;
+	//! integer value to be output after some formatting
+	int value;
 };
 
 //! param_real8 is a default c++ double "and more"
 /*! it allows storage of a name that serves a contextual purpose, and a value that is compatible with Fortran REAL*8 */
 struct param_real8{
+
 	//! constructor with default values
 	param_real8(string name_in = "No name",double val_in = 0.0);
 
@@ -93,10 +96,13 @@ struct param_real8{
 	void operator =(int other);
 
 
+	//! contextual name for the parameter. This is how the output is associated with its tile
+	string name;
 
-	string name;//!< contextual name for the parameter. This is how the output is associated with its tile
-	double value;//! double value to be output after some formatting
+	//! double value to be output after some formatting
+	double value;
 };
+
 //! this is a simple struct to keep track of a string parameter's "variable name" and string "value"
 struct param_string{
 	//! the constructor sets fields to a parameter, or a default value if () version is called
@@ -106,9 +112,14 @@ struct param_string{
 	param_string(string name_in = "No name",string value_in = NULL,
 		     unsigned int size_in = 0);
 
-	unsigned int size; //!< make sure that the c-style string's size matches fortran's
-	string name; //!< is the contextual name for the variable, like the label line in an HF input file
-	string value; //!< is the actual string that should be output and cared about
+	//! make sure that the c-style string's size matches fortran's
+	unsigned int size;
+
+	//! is the contextual name for the variable, like the label line in an HF input file
+	string name;
+
+	//! is the actual string that should be output and cared about
+	string value;
 };
 
 //! this struct contains the information about a fortran array given in HF_config
@@ -132,11 +143,17 @@ struct param_int4_array{
 
 	//! satisfied should start off false, then become true when size = values.size() (all values filled in)
 	bool satisfied;
-	unsigned int size;          //!< size of the array as specified by HF_config file - should never change
 
-	string name; //! contextual name for the array, like NENT or LMAX
-	vector<int> values;//!< is the array of integers 
+	//! size of the array as specified by HF_config file - should never change
+	unsigned int size;
+
+	//! contextual name for the array, like NENT or LMAX
+	string name;
+
+	//! is the array of integers 
+	vector<int> values;
 };
+
 //! this struct contains the information about a the fortran values in line 4-B in the input manual
 /*! these data types will function largely the same as param_int4_array, but will need different formating.
  *I'm not really sure what 8E10.3 means, so I'm going to operate under the assumption that it means
@@ -147,12 +164,19 @@ struct param_r8_array{
 	//! this member convers the vector of double values into a single, comma separated list contained in a string
 	string get_string();
 
-	bool satisfied; //!< should be true if array has the correct size and legal values, false elsewise
-	vector<double> values;//!< store an indefinite amount of numbers with decimal places
-	string name; //!< contextual name for the parameter, TIN in this case
-	unsigned int size;//! size of the arrayf
+	//! should be true if array has the correct size and legal values, false elsewise
+	bool satisfied;
 
+	//! store an indefinite amount of numbers with decimal places
+	vector<double> values;
+
+	//! contextual name for the parameter, TIN in this case
+	string name;
+
+	//! size of the array
+	unsigned int size;
 };
+
 /*
 struct param_int8{
 	param_int8(string name_in,long long int val_in){

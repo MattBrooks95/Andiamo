@@ -13,11 +13,15 @@ vector<string> split(string split_me, char delim){
 	char temp = split_me[index];
 
 	string push_me;
-	bool constant_string = false; //control logics in regards to ignoring delimiting characters within
-				      // a constant string, like label = "this shouldn't be split"	
-	while( index < split_me.size() ){ // go until end of string is reached
-		push_me = "";//reset new word container
+	//control logics in regards to ignoring delimiting characters within
+	// a constant string, like label = "this shouldn't be split"	
+	bool constant_string = false;
 
+	//go until end of string is reached
+	while( index < split_me.size() ){
+
+		//reset new word container
+		push_me = "";
 
 		while( temp == delim && index < split_me.size() ){
 			index++;
@@ -26,10 +30,13 @@ vector<string> split(string split_me, char delim){
 		}
 
 		while( (temp != delim || constant_string) && index < split_me.size() ){
-			if(temp == '\"' && !constant_string){//turn on literal meaning mode
+			//turn on literal meaning mode
+			if(temp == '\"' && !constant_string){
 				if(split_test) cout << "Toggling constant_string true, char: " << temp << endl;
 				constant_string = true;
-			} else if(temp == '\"' && constant_string){//turn off literal meaning mode
+
+			//turn off literal meaning mode
+			} else if(temp == '\"' && constant_string){
 				if(index == split_me.size() ){
 					if(split_test) cout << "Error in String+!, Failure to end a string literal "
 							   << "with \", returned vector may be bad." << endl;

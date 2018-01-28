@@ -9,7 +9,7 @@ using namespace std;
 
 extern asset_manager* asset_access;
 
-//######################## FORM CLASS #########################################################################
+//############### FORM CLASS ################################################
 form::form(){
 	form_title = "no title";
 
@@ -30,9 +30,6 @@ form::form(){
 
 	page_count = 0;
 	current_page = 0;
-
-	sdl_helper = NULL;
-	sdl_font = NULL;
 
 	form_texture = NULL;
 }
@@ -56,8 +53,8 @@ form::~form(){
 	} else error_logger.push_error(FORM_ERROR);
 }
 
-void form::init(string form_title_in,string help_msg_image_name,int xloc_in, int yloc_in,
-		     sdl_help* sdl_helper_in,TTF_Font* sdl_font_in,const vector<regex>& pattern_tests){
+void form::init(string form_title_in,string help_msg_image_name,int xloc_in,
+				 int yloc_in, const vector<regex>& pattern_tests){
 
 	//set up state variables
 	form_title = form_title_in;
@@ -65,12 +62,9 @@ void form::init(string form_title_in,string help_msg_image_name,int xloc_in, int
     //set up the patterns for user type checking
     my_patterns = pattern_tests;
 
-	//set up pointers to graphics class
-	sdl_helper = sdl_helper_in;
-	sdl_font = sdl_font_in;	
-
 	//initialize the page number spritesheet
-	//these numbers are blitted onto the form surface, to indicate which page the user is on
+	//these numbers are blitted onto the form surface,
+	//to indicate which page the user is on
 	string help_path = "Assets/Images/form_assets/" + help_msg_image_name;
 	number_sprites = IMG_Load("Assets/Images/form_assets/number_sprites.png");
 	if(number_sprites == NULL) error_logger.push_error(SDL_GetError());
@@ -88,11 +82,15 @@ void form::init(string form_title_in,string help_msg_image_name,int xloc_in, int
 		int offset = SPRITE_OFFSET;
 		SDL_Rect source = {offset+page_count*offset,0,offset,offset};
 		SDL_Rect destination = {750,26,20,20};
-		SDL_BlitSurface(number_sprites,&source,form_surface,&destination);//draw max page # in top right
+
+		//draw max page # in top right
+		SDL_BlitSurface(number_sprites,&source,form_surface,&destination);
 
 		source = {offset+current_page*offset,0,offset,offset};
 		destination = {725,0,20,20};
-		SDL_BlitSurface(number_sprites,&source,form_surface,&destination);//draw current page # (0) in rop right
+
+		//draw current page # (0) in rop right
+		SDL_BlitSurface(number_sprites,&source,form_surface,&destination);
 
 		//make the form title surface
 		SDL_Color black = {0,0,0,0};
@@ -115,15 +113,17 @@ void form::init(string form_title_in,string help_msg_image_name,int xloc_in, int
 		TTF_CloseFont(title_font);
 	}
 	
-	form_texture = SDL_CreateTextureFromSurface(sdl_helper->renderer,form_surface);
+	form_texture =
+		SDL_CreateTextureFromSurface(sdl_access->renderer,form_surface);
+
 	if(form_texture == NULL) error_logger.push_error(SDL_GetError());
-	//################################################################################################
+	//######################################################################
 
 	//initialize the help message that is shown upon the question mark being clicked
 	string help_target = "Assets/Images/form_assets/"+help_msg_image_name;
 	help_texture = asset_access->get_texture(help_target);
 	if(help_texture == NULL) error_logger.push_error(SDL_GetError());
-	//################################################################################################
+	//######################################################################
 
 
 	//query the texture to figure out its height and width dimensions
@@ -137,7 +137,8 @@ void form::init(string form_title_in,string help_msg_image_name,int xloc_in, int
 }
 
 void form::set_form_title(std::string new_title){
-	//the form title should have been set by the init function, if it wasn't, something is wrong
+	//the form title should have been set by the init function,
+	//if it wasn't, something is wrong
 	if(form_title_surface == NULL){
 		error_logger.push_error("Couldn't switch the form's title, it was previously null.");
 	}
@@ -149,14 +150,20 @@ void form::set_form_title(std::string new_title){
 
 	//make this font a little bit bigger than the others
 	TTF_Font* title_font = TTF_OpenFont( "./Assets/fonts/LiberationSerif-Regular.ttf", 28);
+
 	//render the text as a graphic
-	SDL_Color black = {0,0,0,0};//black text
+
+	//black text
+	SDL_Color black = {0,0,0,0};
 	form_title_surface = TTF_RenderUTF8_Blended(title_font,form_title.c_str(),black);
 
     //before we can draw the form title to the surface, 
-    //we must first fill over the old form title. Make sure the color is the same as the form's
+    //we must first fill over the old form title.
+	//Make sure the color is the same as the form's
     SDL_Rect source, destination;
-    destination = {30,0,650,50};//set destination to the region we have to draw over
+
+	//set destination to the region we have to draw over
+    destination = {30,0,650,50};
 
     //draw a rectangle over that area, with the gray color used in the form's asset
     //change the SDL_MapRGBA call to match the new color if the form is changed, thought it
@@ -181,18 +188,18 @@ void form::set_form_title(std::string new_title){
 	if(form_texture != NULL){
 		SDL_DestroyTexture(form_texture);
 	}
-	form_texture = SDL_CreateTextureFromSurface(sdl_helper->renderer,form_surface);
+	form_texture = SDL_CreateTextureFromSurface(sdl_access->renderer,form_surface);
 }
 
 void form::form_event_loop(SDL_Event& big_event){
 
 	SDL_StartTextInput();//turn on text input
-	//sdl_helper->toggle_resizable();//forbid resizing the window
 
 	//toggle to true to end the loop
 	bool done = false;
 
-	//used to prevent one click causing multiple things to happen, like repeatedly
+	//used to prevent one click causing multiple things to happen,
+	//like repeatedly
 	bool click_lock = false;
 
 	while(!done){
@@ -215,13 +222,16 @@ void form::form_event_loop(SDL_Event& big_event){
 			handle_click(big_event,done,click_lock);
 			break;
 		case SDL_MOUSEBUTTONUP:
-			click_lock = false;//reset click lock, they let go finally
+			//reset click lock, they let go finally
+			click_lock = false;
 			break;
 		case SDL_MOUSEWHEEL:
 			break;
 		case SDL_WINDOWEVENT:
 			break;
-		case 1776://nop
+		
+		//nop
+		case 1776:
 			break;
 
 		default:
@@ -229,13 +239,13 @@ void form::form_event_loop(SDL_Event& big_event){
 
 	}
 	draw_me();
-	sdl_helper->present();
+	sdl_access->present();
 	SDL_Delay(50);
 
  }
 
-	//sdl_helper->toggle_resizable();//allow resizing the window
-	SDL_StopTextInput();//turn off text input, it hurts performance to leave it on when it's not needed
+	//turn off text input, it hurts performance
+	SDL_StopTextInput();
 }
 
 
@@ -272,18 +282,26 @@ void form::handle_click(SDL_Event& mouse_event,bool& done,bool& click_lock){
 		//consider the text boxes on the currently displayed page, so long as it is not currently displaying the help message
 		} else if(!help_shown){
 
-			bool found = false;//used to kick out of the loop after the text box that was clicked has been found
+			//used to kick out of the loop after the text box that
+			//was clicked has been found
+			bool found = false;
 			if(!pages.size() == 0){
 
-				string command;//filled by text_box_loop to tell this loop to do things
+				//filled by text_box_loop to tell this loop to do things
+				string command;
 
-				for(unsigned int c = 0; c < pages[current_page].get_const_text_boxes().size() && !found ;c++){
+				for(unsigned int c = 0;
+					c < pages[current_page].get_const_text_boxes().size() &&
+					!found;
+					c++){
 
 					//enter text box loop for the matching text box, where the current text box was
 					//either clicked, or our index, 'c', was set for us by command being equal to "TAB"
 					if(pages[current_page].get_text_boxes()[c].was_clicked(mouse_event) ||
 					   command == "TAB" ){
-						if(command == "TAB") command = "";//reset command container if it was set
+
+						//reset command container if it was set
+						if(command == "TAB") command = "";
 
                         //the columns should line up with the supplied vector of regular expressions
                         int pattern_index = 0;
@@ -301,7 +319,8 @@ void form::handle_click(SDL_Event& mouse_event,bool& done,bool& click_lock){
                                       my_patterns[pattern_index]);
 
 						if(command == "TAB" &&  c < pages[current_page].get_text_boxes().size()){
-							continue;//redo this step, but act on the next text box
+							//redo this step, but act on the next text box
+							continue;
 						} else found = true;
 					}
 				}
@@ -315,16 +334,18 @@ void form::draw_me(){
 
 	if(active){
 		if(!help_shown){
-			SDL_RenderCopy(sdl_helper->renderer,form_texture,NULL,&form_area);
+			SDL_RenderCopy(sdl_access->renderer,form_texture,NULL,&form_area);
 			if(!pages.empty()){
 				pages[current_page].draw_me();
 			}
 		} else {
-			SDL_RenderCopy(sdl_helper->renderer,form_texture,NULL,&form_area);
+			SDL_RenderCopy(sdl_access->renderer,form_texture,NULL,&form_area);
 			SDL_Rect help_area = form_area;
 			help_area.y = 50;
-			help_area.h = 725;//the texture is actually shorter, it replaces the text box area
-			SDL_RenderCopy(sdl_helper->renderer,help_texture,NULL,&help_area);
+
+			//the texture is actually shorter, it replaces the text box area
+			help_area.h = 725;
+			SDL_RenderCopy(sdl_access->renderer,help_texture,NULL,&help_area);
 		}
 
 	} else return;
@@ -418,19 +439,26 @@ void form::set_page_count(int page_count_in){
 	}
 
 	SDL_Rect source = {20+page_count*20,0,20,20};
-	SDL_Rect destination = {751,27,20,20};//destination is shifted right and down a bit, so fill doesn't mess with "/" in page display
+
+	//destination is shifted right and down a bit, so fill doesn't
+	//mess with "/" in page display
+	SDL_Rect destination = {751,27,20,20};
 
 	//"erase" previous page # by filling with white
 	if(SDL_FillRect(form_surface,&destination,SDL_MapRGBA(form_surface->format,255,255,255,255)) != 0){
 		error_logger.push_error(SDL_GetError());
 	}
 
-	destination = {750,26,20,20};//put the destination back how it was, so numbers are drawn to the same location
-	SDL_BlitSurface(number_sprites,&source,form_surface,&destination);//"print" new max page # to surface
+	//put the destination back how it was, so numbers are drawn
+	//to the same location
+	destination = {750,26,20,20};
+
+	//"print" new max page # to surface
+	SDL_BlitSurface(number_sprites,&source,form_surface,&destination);
 
 	if(form_texture != NULL){
 		SDL_DestroyTexture(form_texture);	
-		form_texture = SDL_CreateTextureFromSurface(sdl_helper->renderer,form_surface);//update the texture
+		form_texture = SDL_CreateTextureFromSurface(sdl_access->renderer,form_surface);//update the texture
 	} else {
 		error_logger.push_error("Error in set_page_count, previous form texture was NULL");
 	}
@@ -446,11 +474,14 @@ void form::update_page_indicator(){
 		error_logger.push_error(SDL_GetError());
 	}
 
-	SDL_BlitSurface(number_sprites,&source,form_surface,&destination);//draw in new number
+	//draw in new number
+	SDL_BlitSurface(number_sprites,&source,form_surface,&destination);
 
 	if(form_texture != NULL){
+
 		SDL_DestroyTexture(form_texture);
-		form_texture = SDL_CreateTextureFromSurface(sdl_helper->renderer,form_surface);
+		form_texture = SDL_CreateTextureFromSurface(sdl_access->renderer,form_surface);
+
 	} else {
 		error_logger.push_error("Error in update_page_indicator, previous form texture was NULL");
 	}
@@ -459,7 +490,8 @@ void form::update_page_indicator(){
 }
 
 void form::flush_pages(){
-	pages.clear();//clear out the vector
+	//clear out the vector
+	pages.clear();
 	page_count = 0;
 	current_page = 0;
 	update_page_indicator();
@@ -468,21 +500,24 @@ void form::flush_pages(){
 void form::text_box_loop(text_box& current_box,SDL_Event& event,string& command,
                          const regex& pattern){
 
-	SDL_StartTextInput();//turn on the text input background functions
+	//turn on the text input background functions
+	SDL_StartTextInput();
 
 	//used to control text entry loop
 	bool done = false;
 	//int c = 0;
 	bool text_was_changed = false;
 
-	string pass_me; //string container for event text info (which is normally a c-string)
+	//string container for event text info (which is normally a c-string)
+	string pass_me;
 	while(!done){
 		//if(c >= 10) return;
 		//do stuff
 
 		if( !SDL_PollEvent(&event) ){
-			event.type = 1776; //dummy event to stop it from printing default message every frame
-					   //where no event happens
+			//dummy event to stop it from printing default message every frame
+			//where no event happens
+			event.type = 1776;
 		}
 		//if(event.type != 1776) cout << "Text box loop type:" << event.type << endl;
 		switch(event.type){
@@ -493,16 +528,20 @@ void form::text_box_loop(text_box& current_box,SDL_Event& event,string& command,
 			//if the click was within the text box, move the cursor maybe
 		  	if( current_box.was_clicked(event) ){
 				error_logger.push_msg("Text box click at "+to_string(event.button.x)+":"+to_string(event.button.y));
-		  	} else { //elsewise exit text input mode, user clicked off the text box
+
+			//elsewise exit text input mode, user clicked off the text box
+		  	} else {
 		  		error_logger.push_msg("Clicked outside of the text box, exiting mini-loop");
 
 				SDL_Event keyup_event;
-				keyup_event.type = SDL_MOUSEBUTTONUP;//putting in this key up removes the click locking
-				SDL_PushEvent(&keyup_event);	     //for the loop in form_event_loop
+				//putting in this key up removes the click locking
+				keyup_event.type = SDL_MOUSEBUTTONUP;
+				//for the loop in form_event_loop
+				SDL_PushEvent(&keyup_event);
 
-
-				SDL_PushEvent(&event);//doing this allows the user to 'hop' to another text box
-						      //directly from editing another box
+				//doing this allows the user to 'hop' to another text box
+				//directly from editing another box
+				SDL_PushEvent(&event);
 
 				done = true;
 			}
@@ -538,8 +577,9 @@ void form::text_box_loop(text_box& current_box,SDL_Event& event,string& command,
 			SDL_FlushEvent(SDL_KEYDOWN); //prevent event flooding
 		  	break;
 		  case SDL_QUIT:
-			SDL_PushEvent(&event);//puts another sdl quit in the event queue, so program
-					      //can be terminated while in "text entry" mode
+			//puts another sdl quit in the event queue, so program
+			//can be terminated while in "text entry" mode
+			SDL_PushEvent(&event);
 			done = true;			
 			break;
 
@@ -557,8 +597,9 @@ void form::text_box_loop(text_box& current_box,SDL_Event& event,string& command,
 			//update picture
 			draw_me();
 			text_was_changed = false;
+
 			//show updated picture
-			sdl_helper->present();
+			sdl_access->present();
 		}
 
 		//c++;
@@ -572,9 +613,6 @@ void form::text_box_loop(text_box& current_box,SDL_Event& event,string& command,
 page::page(){
 	num_columns = 0;
 	num_rows = 0;
-
-	sdl_helper = NULL;
-	sdl_font = NULL;
 }
 
 page::page(const page& other){
@@ -582,8 +620,6 @@ page::page(const page& other){
 	num_rows = other.num_rows;
 	column_labels = other.column_labels;
 	row_labels = other.row_labels;
-	sdl_helper = other.sdl_helper;
-	sdl_font = sdl_font;
 }
 
 
@@ -601,14 +637,17 @@ page::~page(){
 }
 
 void page::page_init(unsigned int num_columns_in, unsigned int rows_needed,
-		     const vector<string>& column_labels_in, vector<string>& row_labels_in,
-		     sdl_help* sdl_helper_in,TTF_Font* sdl_font_in,const vector<int>& column_spacings){
+						const vector<string>& column_labels_in, vector<string>& row_labels_in,
+						const vector<int>& column_spacings){
 
 	//abstracts some of the assignments to save space here
-	page_init_local_var(num_columns_in, rows_needed, column_labels_in, row_labels_in, sdl_helper_in, sdl_font_in);
+	page_init_local_var(num_columns_in, rows_needed, column_labels_in, row_labels_in);
 
-	bool row_labels_exist = false;//turn true to make room for row labels
-	int x_start_point = 0;//used to control where the text boxes start to be drawn
+	//turn true to make room for row labels
+	bool row_labels_exist = false;
+
+	//used to control where the text boxes start to be drawn
+	int x_start_point = 0;
 
 
 	if(num_columns_in != column_spacings.size()){
@@ -636,13 +675,11 @@ void page::page_init(unsigned int num_columns_in, unsigned int rows_needed,
 
 }
 void page::page_init_local_var(unsigned int num_columns_in, unsigned int rows_needed, const vector<string>& column_labels_in,
-			       vector<string>& row_labels_in, sdl_help* sdl_helper_in,TTF_Font* sdl_font_in){
+			       vector<string>& row_labels_in){
 	num_columns = num_columns_in;
 	num_rows = rows_needed;
 	column_labels = column_labels_in;
 	row_labels = row_labels_in;
-	sdl_helper = sdl_helper_in;
-	sdl_font = sdl_font_in;
 }
 
 void page::page_init_set_row_labels(const std::vector<std::string>& row_labels_in,int& x_start_point){
@@ -654,60 +691,60 @@ void page::page_init_set_row_labels(const std::vector<std::string>& row_labels_i
 
 
 		for(unsigned int c = 0; c < row_labels_in.size(); c++){
-			row_label_textures.push_back(temp_texture);//shove in null pointer
+
+			//shove in null pointer
+			row_label_textures.push_back(temp_texture);
 
 			//create surface from the text
-			temp_surface = TTF_RenderUTF8_Blended(sdl_font,row_labels[c].c_str(),black);
-
+			temp_surface = TTF_RenderUTF8_Blended(sdl_access->font,row_labels[c].c_str(),black);
 			int width;
 			int height;
 
 			
-			if(TTF_SizeText(sdl_font,row_labels[c].c_str(),&width,&height) != 0){
+			if(TTF_SizeText(sdl_access->font,row_labels[c].c_str(),&width,&height) != 0){
 				error_logger.push_error("Error while making row labels in page, TTF_SizeText failure.",
 							TTF_GetError());
 			}
 
 			
 			//make the previously shoved null pointer now point to a texture created from the surface
-			row_label_textures.back() = SDL_CreateTextureFromSurface(sdl_helper->renderer,temp_surface);
+			row_label_textures.back() = SDL_CreateTextureFromSurface(sdl_access->renderer,temp_surface);
 
 			//calc location & use the size
 			//explicit cast of c to int stops compiler warnings
 			SDL_Rect temp_rect = {TEXT_BOX_HORIZ_PADDING,80+25*int(c)+10*int(c), width, height};
 			if(width > x_start_point){
-				x_start_point = width;//update the starting point tracker
+				//update the starting point tracker
+				x_start_point = width;
 			}
 
-
-			row_label_rects.push_back(temp_rect); //push that info into the row label vector
+			//push that info into the row label vector
+			row_label_rects.push_back(temp_rect);
 		}
-
-
 }
 
 void page::page_init_set_text_boxes(int& x_start_point,const vector<int>& column_spacings,bool& row_labels_exist){
 	if(x_start_point != 0) x_start_point += 10;//give it some wiggle room
 
-	
-	unsigned int j = 0;  //this variable declared here, because if row labels exist, the inner loop
-			     //should start at 1 instead of at 0
+	//this variable declared here, because if row labels exist, the inner loop
+	//should start at 1 instead of at 0
+	unsigned int j = 0;
 	if(row_labels_exist){
 		j = 1;
 	}
 
 	//had a hard fight with the Rule of Three here.... 
-	//implementing a copy constructor stopped the double free() crash at the text_boxes.push_back
+	//implementing a copy constructor stopped the double free()
+	// crash at the text_boxes.push_back
 	int x_offset = 0;
 	for(unsigned int i = 0; i < num_rows; i++){
 		x_offset = 0;
 		for( ; j < num_columns; j++){
 			text_box new_text_box;
-			//int x_val = x_start_point+TEXT_BOX_W*i+TEXT_BOX_HORIZ_PADDING*i+column_spacings[i];
 			int x_val = x_start_point+x_offset+column_spacings[j];
 			x_offset += column_spacings[j];
 			int y_val = 80+25*i+10*i;
-			new_text_box.init(sdl_helper,sdl_font,"",x_val,y_val,60,25);
+			new_text_box.init(sdl_access->font,"",x_val,y_val,60,25);
 			text_boxes.push_back(new_text_box);
 		}
 		//reset the j variable, because the for loop will no longer do it
@@ -730,22 +767,28 @@ void page::page_init_column_labels(const vector<int>& column_spacings,int& x_sta
 	SDL_Surface* temp_surf = NULL;
 	SDL_Texture* temp_texture = NULL;
 	for(unsigned int c = 0; c < column_labels.size();c++){
-		column_label_textures.push_back(temp_texture);//shove in a null pointer
+		//shove in a null pointer
+		column_label_textures.push_back(temp_texture);
 
-		temp_surf = TTF_RenderUTF8_Blended(sdl_font,column_labels[c].c_str(),black);//render the text
+		temp_surf = TTF_RenderUTF8_Blended(sdl_access->font,column_labels[c].c_str(),black);//render the text
 
 		//make the pointer we shoved point at the desired texture
-		column_label_textures.back() = SDL_CreateTextureFromSurface(sdl_helper->renderer,temp_surf);
+		column_label_textures.back() = SDL_CreateTextureFromSurface(sdl_access->renderer,temp_surf);
 
 		//calculate drawing info for the column label
 		SDL_Rect temp_rect = {x_start_point+x_offset+column_spacings[c],50,0,0};
 		x_offset += column_spacings[c];
-		//size the text and shove it into the vector
-		TTF_SizeText(sdl_font,column_labels[c].c_str(),&temp_rect.w,&temp_rect.h);
-		column_label_rects.push_back(temp_rect);//shove it into the drawing info vector
 
-		SDL_FreeSurface(temp_surf);//give memory back
-		temp_surf = NULL;//reset surf pointer for next item
+		//size the text and shove it into the vector
+		TTF_SizeText(sdl_access->font,column_labels[c].c_str(),&temp_rect.w,&temp_rect.h);
+
+		//shove it into the drawing info vector
+		column_label_rects.push_back(temp_rect);
+
+		//give memory back
+		SDL_FreeSurface(temp_surf);
+		//reset surf pointer for next item
+		temp_surf = NULL;
 	}
 
 }
@@ -759,7 +802,8 @@ void page::draw_me(){
 	}
 
 	for(unsigned int c = 0; c < column_label_textures.size();c++){
-		if(SDL_RenderCopy(sdl_helper->renderer,column_label_textures[c],NULL,&column_label_rects[c]) != 0){
+
+		if(SDL_RenderCopy(sdl_access->renderer,column_label_textures[c],NULL,&column_label_rects[c]) != 0){
 			error_logger.push_error("Could not draw column title.");
 		}
 	}
@@ -771,13 +815,13 @@ void page::draw_me(){
 	}
 
 	for(unsigned int c = 0; c < row_label_textures.size();c++){
-		if( SDL_RenderCopy(sdl_helper->renderer,row_label_textures[c],NULL,&row_label_rects[c]) != 0 ){
+
+		if( SDL_RenderCopy(sdl_access->renderer,row_label_textures[c],NULL,&row_label_rects[c]) != 0 ){
 
 		}
 
 	}
 
-	//cout << "Text boxes:" << text_boxes.size() << endl;
 	for(unsigned int c = 0; c < text_boxes.size();c++){
 		text_boxes[c].draw_me();
 	}

@@ -14,13 +14,16 @@
 
 using namespace std;
 
+extern button_manager* button_access;
+
 input_maker::input_maker(string output_file_name_in,string config_file_name_in){
 	config_p = "./config/";
 	output_p = "./output/";
 	output_file_name = output_file_name_in;
 	file_name = config_file_name_in;
 
-	output_was_made = false;//start off false, become positive when output() is ran
+	//start off false, become positive when output() is ran
+	output_was_made = false;
 
 	//init();//parse config file
 }
@@ -114,7 +117,8 @@ void input_maker::init(){
 			error_logger.push_msg("Is a comment line!");
 			//comment line, don't do anything
 
-		} else if( regex_match(temp_string,re_real8) ){//logics for reading in fortran real 8's
+		//logics for reading in fortran real 8's
+		} else if( regex_match(temp_string,re_real8) ){
 			error_logger.push_msg("Is an R8 line!");
 
 			vector<string> tokens = split(temp_string,' ');
@@ -131,9 +135,8 @@ void input_maker::init(){
 				  value = -180.4;
 				}
 				param_real8 new_param(var_name,value);
-				//names_in_order.push_back(var_name);//update bookkeeping vector
 				real8_params.emplace(var_name,new_param);
-				//real8_params.push_back(new_param);//push into real 8 vector 
+
 			} else {
 				error_logger.push_msg("String:"+temp_string+" has no default set. This is likely intentional.");
 				param_real8 new_param(var_name,-180.4);
@@ -142,7 +145,8 @@ void input_maker::init(){
 
 			}
 
-		} else if( regex_match(temp_string,re_i4) ){//logics for reading in fortran integer 4's
+		//logics for reading in fortran integer 4's
+		} else if( regex_match(temp_string,re_i4) ){
 			error_logger.push_msg("Is an int4 line!");
 				
 			vector<string> tokens = split(temp_string,' ');			
@@ -155,14 +159,14 @@ void input_maker::init(){
 				  value = stoi(tokens[3]);
 				} catch(invalid_argument& error){
 				  error_logger.push_error("Error in input_maker::init()! Illegal value in int4 declaration!:"+tokens[3]);
-				  value = -1804;//give it a bad value as an indication that something went wrong				
+				  //give it a bad value as an indication that
+				  //something went wrong				
+				  value = -1804;
 				}
 
 
 				param_int4 new_param(var_name,value);
 				int4_params.emplace(var_name,new_param);
-				//names_in_order.push_back(var_name);//update bookkeeping vector
-				//int4_params.push_back(new_param);//push into the i4 vector
 
 			} else {
 				error_logger.push_error("String"+temp_string+" has no default set. This is likely intentional.");
@@ -171,8 +175,9 @@ void input_maker::init(){
 
 			}
 
-		} else if( regex_match(temp_string,re_string) ){//logics for reading in fortran strings
-						  //and their size
+		//logics for reading in fortran strings
+		//and their size
+		} else if( regex_match(temp_string,re_string) ){
 				error_logger.push_msg("Is a string line!");
 				error_logger.push_msg("This is that line split along spaces:");
 				//split across spaces, except for spaces within ""
@@ -185,13 +190,15 @@ void input_maker::init(){
 			if(tokens[2] != "="){
 				error_logger.push_error("Error! Missing '=' in string declaration!");
 			} else {
+
 				//will contain the number matched from the found label|SIZE| portion
 				smatch number_matches;
 				//match with SIZE number
 				regex_search(tokens[1],number_matches,string_array_size_pattern);
 
-				string temp_string = number_matches[0].str(); //put it into a string
+				//put it into a string
 				//convert the string to an integer
+				string temp_string = number_matches[0].str();
 				int size;
 				try {
 				  size = stoi( temp_string.substr(1,temp_string.length()-1));
@@ -210,7 +217,6 @@ void input_maker::init(){
 
 				param_string push_me(name,tokens[tokens.size()-1],size);
 				//save this new param value in its vector
-				//string_params.push_back(push_me);	
 				string_params.emplace(name,push_me);
 			}
 			
@@ -266,12 +272,17 @@ void input_maker::init(){
 				error_logger.push_msg("\t"+tokens[c]);
 
 			}
-			string name = tokens[1];//token 1 should be just the variable name 
-			int array_size = 0;//fill this value later
-			vector<double> values; //fill this with what's in the comma separated list
+			//token 1 should be just the variable name 
+			string name = tokens[1];
+
+			//fill this value later
+			int array_size = 0;
+			//fill this with what's in the comma separated list
+			vector<double> values;
 
 			//rip array size out of type declaration part E(size) "E(8) some array name = " " "
-			smatch size_match;//contain result of regex search for size
+			//contain result of regex search for size
+			smatch size_match;
 			regex_search(tokens[0],size_match,int_array_size_pattern);
 			if(size_match.ready()){
 				string temp_size_string = size_match[0].str().substr(1,size_match[0].str().size()-2);
@@ -284,7 +295,9 @@ void input_maker::init(){
 
 				error_logger.push_error("Error! Could not determine array size of R8 array (TIN?) declaration line.");
 			}
-			param_r8_array r8_array_push_me(name,array_size,false);//create object to be shoved into the map for E arrays
+
+			//create object to be shoved into the map for E arrays
+			param_r8_array r8_array_push_me(name,array_size,false);
 			handle_r8_array(tokens[3],r8_array_push_me.values);
 			error_logger.push_msg("Vector of R8 Doubles? As follows:");
 			for(unsigned int c = 0; c < r8_array_push_me.values.size();c++){
@@ -304,9 +317,9 @@ void input_maker::init(){
 }
 
 bool input_maker::output(vector<string>& form_bad_inputs){
+
 	//note that this will not yet be properly formatted for HF input, mostly here for testing field input
 	//and this class's output logic
-
 	ofstream outs;
 	outs.open( (output_p+output_file_name).c_str(),std::fstream::trunc );
 	if(outs.fail()) {
@@ -326,19 +339,19 @@ bool input_maker::output(vector<string>& form_bad_inputs){
 	//change the lines above them, though
 
 
-	//SET UP LINE 1##########################################################################################
+	//SET UP LINE 1################################################################
 	do_line1(outs,string_params);
-	//#######################################################################################################
+	//#############################################################################
 
-	//SET UP LINE 2##########################################################################################
+	//SET UP LINE 2################################################################
 	do_line2(outs,real8_params, int4_params);
-	//#######################################################################################################
+	//#############################################################################
 
-	//SET UP LINE 3##########################################################################################
+	//SET UP LINE 3################################################################
 	do_TC_coefficients(real8_params,int4_array_params,TC_input_file_name,outs);
-	//#######################################################################################################
+	//#############################################################################
 
-	//IF IENCH = 7 ##########################################################################################
+	//IF IENCH = 7 ################################################################
 	bool do_4a_4b = false;
 	/*for(unsigned int c = 0; c < int4_params.size();c++){
 		if(int4_params[c].name == "IENCH" && int4_params[c].value == 7){
@@ -355,15 +368,15 @@ bool input_maker::output(vector<string>& form_bad_inputs){
 
 	//only do the following lines if IENCH == 7, per the input manual
 	if(do_4a_4b){
-		//SET UP LINE 4##################################################################################
+		//SET UP LINE 4#############################################################
 		do_line4(outs,real8_params,int4_params);
 
 		do_line4A(outs,real8_params,int4_params);
 
 		do_line4B(outs,r8_array_params);
-		//###############################################################################################
+		//##########################################################################
 	}
-	//####################### IENCH = 7 LINES ###############################################################
+	//####################### IENCH = 7 LINES ######################################
 
     //do line 5
     do_line5(outs,int4_params);	
@@ -376,7 +389,10 @@ bool input_maker::output(vector<string>& form_bad_inputs){
 
     //do line 5D or 5E
 	std::vector<index_value> ilv3_ilv5_bad_inputs;
-    if(!b_manager->get_ilv3_ilv5().make_output(outs,ilv3_ilv5_bad_inputs)){
+	if(//button_access->get_ilv3_ilv5().get_form().prev_initialized && 
+		!(int4_params.at("ILV3") == 0 && int4_params.at("ILV5") == 0) &&
+		!(int4_params.at("ILV3").value > 0 && int4_params.at("ILV5").value > 0)   &&
+		!button_access->get_ilv3_ilv5().make_output(outs,ilv3_ilv5_bad_inputs)){
 		form_bad_inputs.push_back("##############Ilv3/ilv5 error list##############\n");
 		form_bad_inputs.push_back("Distinct Residual Level Density - Ilv3 OR Distinct Level Density Model form\n");
 			for(unsigned int c = 0; c < ilv3_ilv5_bad_inputs.size(); c++){
@@ -399,7 +415,7 @@ bool input_maker::output(vector<string>& form_bad_inputs){
 		//do line 8
 		//do the form's output
 		std::vector<index_value> icntrl4_bad_inputs;
-		if(!b_manager->get_icntrl_4().make_output(outs,icntrl4_bad_inputs)){
+		if(!button_access->get_icntrl_4().make_output(outs,icntrl4_bad_inputs)){
 			form_bad_inputs.push_back("##############Icntrl4 error list##############\n");
 			form_bad_inputs.push_back("Resolved Level + Continuum form\n");
 			for(unsigned int c = 0; c < icntrl4_bad_inputs.size(); c++){
@@ -417,9 +433,13 @@ bool input_maker::output(vector<string>& form_bad_inputs){
 	}
 
 
-	//#########MAKE OUTPUTS FROM FORM_BUTTONS ##############################################################//
+	//#########MAKE OUTPUTS FROM FORM_BUTTONS ###########################################//
 	std::vector<index_value> icntrl6_bad_inputs;
-	if(!b_manager->get_icntrl_6().make_output(outs,icntrl6_bad_inputs)){
+
+	if(//button_access->get_icntrl_6().get_form().prev_initialized &&
+		!(int4_params.at("ICNTRL6") == 0) &&
+		!button_access->get_icntrl_6().make_output(outs,icntrl6_bad_inputs)){
+
 		form_bad_inputs.push_back("##############Icntrl6 error list##############\n");
 		form_bad_inputs.push_back("Parameter Search form\n");
 		for(unsigned int c = 0; c < icntrl6_bad_inputs.size(); c++){
@@ -431,8 +451,8 @@ bool input_maker::output(vector<string>& form_bad_inputs){
 	}
 
 	std::vector<index_value> icntrl8_bad_inputs;
-	if(!b_manager->get_icntrl_8().get_is_locked() && 
-	   !b_manager->get_icntrl_8().make_output(outs,icntrl8_bad_inputs)){
+	if(!button_access->get_icntrl_8().get_is_locked() && 
+	   !button_access->get_icntrl_8().make_output(outs,icntrl8_bad_inputs)){
 
 		form_bad_inputs.push_back("##############Icntrl8 error list##############\n");
 		form_bad_inputs.push_back("Residual Level Threshold Count form\n");
@@ -442,12 +462,12 @@ bool input_maker::output(vector<string>& form_bad_inputs){
 						  		 + "\n";
 			form_bad_inputs.push_back(temp_error);
 			//cout << "Text: " << icntrl8_bad_inputs[c].value
-				 //<< " Index: " << icntrl8_bad_inputs[c].index << endl;
+			//<< " Index: " << icntrl8_bad_inputs[c].index << endl;
 		}
 	}
 
 	std::vector<index_value> icntrl10_bad_inputs;
-	if(!b_manager->get_icntrl_10().make_output(outs,icntrl10_bad_inputs)){
+	if(!button_access->get_icntrl_10().make_output(outs,icntrl10_bad_inputs)){
 		form_bad_inputs.push_back("##############Icntrl10 error list#############\n");
 		form_bad_inputs.push_back("Specify Spin Cutoff? form\n");
 		for(unsigned int c = 0; c < icntrl10_bad_inputs.size(); c++){
@@ -467,19 +487,21 @@ bool input_maker::output(vector<string>& form_bad_inputs){
 
 	} else {
 
-		outs.flush();//push changes to file, if this is not here C++ will wait
-					 // to do the writing until the program is ends
+		//push changes to file, if this is not here C++ will wait
+		 // to do the writing until the program is ends
+		outs.flush();
 		//close the output file stream
 		outs.close();
-		output_was_made = true;//make this boolean true, so that during the closing
-							   //process we know that we don't need to remind the user
-							   // to generate an input file first
+		//make this boolean true, so that during the closing
+		//process we know that we don't need to remind the user
+		// to generate an input file first
+		output_was_made = true;
 		check_map();
 		return true;
 	}
 }
 
-//########################## NON MEMBER HELPERS #################################################################
+//################# NON MEMBER HELPERS ############################################
 void output_string(ofstream& outs,const unsigned int& size,const string& string_in){
 	//set up output flags
 	outs << setw(size) << left;
@@ -713,12 +735,16 @@ void do_line8(ofstream& outs,const map<string,param_int4>& int4_params){
 void do_line9(ofstream& outs,const map<string,param_int4>& int4_params,const map<string,param_real8>& real8_params){
   try{
 	outs << right;
-	outs << setprecision(2);                         //set precision to 2 points past decimal
-	outs F5 real8_params.at("ECH4").value << "     ";//5 literal spaces as described in input manual pg 8
-	outs << setprecision(1);                         //next few real8's need only 1 digit past decimal
+	//set precision to 2 points past decimal
+	outs << setprecision(2);
+	//5 literal spaces as described in input manual pg 8
+	outs F5 real8_params.at("ECH4").value << "     ";
+	outs << setprecision(1);
+	//next few real8's need only 1 digit past decimal
 	outs F5 real8_params.at("FJCH4").value << "     ";
 	outs I int4_params.at("IPAR4").value << "     ";
-	outs F5 real8_params.at("FIS4").value << endl;    //no spaces afterwards, end this line
+    //no spaces afterwards, end this line
+	outs F5 real8_params.at("FIS4").value << endl;
   } catch(out_of_range& not_found){
 	error_logger.push_error("Error! Parameter in do_line9 not found in the map!");
   }
@@ -727,7 +753,7 @@ void do_line9(ofstream& outs,const map<string,param_int4>& int4_params,const map
 void do_line10(ofstream& outs, const map<string,param_int4>& int4_params){
 	outs I int4_params.at("ITER").value I int4_params.at("INM1").value I int4_params.at("INM2").value << endl;
 }
-//#################################################################################################################
+//####################################################################################
 
 
 

@@ -1,11 +1,12 @@
-//! \file c_tuples.h houses some structs that do little more than hold several values together
+/*! \file c_tuples.h houses some structs that do little more than hold
+ *several values together */
 
 
 #pragma once
 
 using std::string;
 
-//! \struct index_value is a tuple of sorts that stores a text boxes string and index
+//! \struct index_value is a tuple that stores a text box's string and index
 /*! this is useful for reporting errors found in user inputs */
 struct index_value{
 	//! this consctructor sets the fields
@@ -14,7 +15,8 @@ struct index_value{
 		index = index_in;
 	}
 
-
-	string value;     //!< string of the offending text_box
-	unsigned int index;    //!< index in the page in which this value was found
+	//!< string of the offending text_box
+	string value;
+	//!< index in the page in which this value was found
+	unsigned int index;
 };

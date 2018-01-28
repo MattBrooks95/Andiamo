@@ -12,7 +12,9 @@ logger::logger(){
 	string path = "./error_logs/";
 	string prefix = "andiamo_errors_";//constant first part
 	string suffix = ".txt";//constant file extension
-	string time_string;//store the date and time of day as a unique file name to minimize over writing
+	
+	//store the date and time of day as a unique file name to minimize over writing
+	string time_string;
 
 	//unique_file_name will be comprised of a message and the date
 
@@ -31,42 +33,49 @@ logger::logger(){
 	unique_file_name = path + prefix + time_string + suffix;
 
 	//cout << unique_file_name << endl;
-	//####################################################################################################
+	//#########################################################################
 
 	errors_out.open( unique_file_name.c_str() );
-	if(errors_out.fail()){ //it didn't work, make the dir and try again
+	//it didn't work, make the dir and try again
+	if(errors_out.fail()){
 		system("mkdir error_logs");
 		errors_out.open( unique_file_name.c_str() );
-	} else { //it worked
-		errors_out.close();//close the file for now
+	//it worked
+	} else {
+		//close the file for now
+		errors_out.close();
 	}
 	
 }
 
 logger::~logger(){
-	cleaning_check();//remove old files if there's too many files in the /error_logs directory
-	make_error_file();//output the error messages to the file
-
+	//remove old files if there's too many files in the /error_logs directory
+	cleaning_check();
+	//output the error messages to the file
+	make_error_file();
 }
 
 
-void logger::push_error(std::string push_me){
+void logger::push_error(const std::string& push_me){
 	errors_vector.push_back(push_me);//put message in the vector
 	error_msg_num++;//increment the error counter
 
 }
 
-void logger::push_error(string push_1,string push_2){
+void logger::push_error(const string& push_1,const string& push_2){
 	errors_vector.push_back(push_1);
 	errors_vector.push_back(push_2);
-	error_msg_num++;//the two strings are likely describing the same error, so only increment once
+	//the two strings are likely describing the same error,
+	//so only increment once
+	error_msg_num++;
 }
 
 void logger::cleaning_check(){
 
 	vector<string> file_names;
 
-	DIR* dir_point; //this allows the opening of a directory as if it were a file
+	//this allows the opening of a directory as if it were a file
+	DIR* dir_point;
 	struct dirent *file_in_dir;
 	dir_point = opendir("./error_logs");
 	if(dir_point != NULL){
@@ -100,8 +109,10 @@ void logger::cleaning_check(){
 		}*/
 
 		while(file_names.size() > 19){
-			string doomed_one = "./error_logs/" + file_names.back();//grab file name to complete path
-			string sys_command = "rm ";//bash arg goes here
+			//grab file name to complete path
+			string doomed_one = "./error_logs/" + file_names.back();
+			//bash arg goes here
+			string sys_command = "rm ";
 
 			//poor lad, so full of life
 			system((sys_command + doomed_one).c_str());
@@ -116,14 +127,17 @@ void logger::cleaning_check(){
 
 }
 
-void logger::push_msg(std::string push_me){
-	if(!verbose) return;//do nothing if we are not in verbose mode
-	message_vector.push_back(push_me);//if we are in verbose mode, accumulate this message
+void logger::push_msg(const std::string& push_me){
+	//do nothing if we are not in verbose mode
+	if(!verbose) return;
+	//if we are in verbose mode, accumulate this message
+	message_vector.push_back(push_me);
 
 }
 
-void logger::push_msg_no_nl(std::string push_me){
-	if(!verbose) return;//do nothing if we are not in verbose mode
+void logger::push_msg_no_nl(const std::string& push_me){
+	//do nothing if we are not in verbose mode
+	if(!verbose) return;
 	message_vector.back().append(push_me);
 }
 

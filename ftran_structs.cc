@@ -6,16 +6,16 @@ extern logger error_logger;
 
 using namespace std;
 
-//######################### FTRAN STRING ###############################################
+//######################### FTRAN STRING ##########################################
 param_string::param_string(string name_in,string value_in,unsigned int size_in){
 	name = name_in;
 	value = value_in;
 	size = size_in;
 }
 
-//######################################################################################
+//#################################################################################
 
-//######################### INT*4 VARIABLE #############################################
+//######################### INT*4 VARIABLE ########################################
 param_int4::param_int4(string name_in,int val_in){
 	name = name_in;
 	value = val_in;
@@ -65,10 +65,10 @@ bool param_int4::operator ==(int other){
 void param_int4::operator =(double other){
 	error_logger.push_msg("Error! Fortran struct: "+this->name+" can not have a float value assigned to it."); 
 }
-//########################################################################################
+//#############################################################################
 
 
-//######################### REAL*8 VARIABLE #############################################
+//######################### REAL*8 VARIABLE ###################################
 param_real8::param_real8(string name_in,double val_in){
 	name = name_in;
 	value = val_in;
@@ -116,11 +116,12 @@ bool param_real8::operator ==(double other){
 }
 
 void param_real8::operator =(int other){
-	error_logger.push_msg("Error! Fortran struct: "+this->name+" can not have an integer assigned to it."); 
+	error_logger.push_msg("Error! Fortran struct: "+ this->name +
+						" can not have an integer assigned to it."); 
 }
-//########################################################################################
+//############################################################################
 
-//###################### INT4 ARRAY ######################################################
+//###################### INT4 ARRAY ##########################################
 param_int4_array::param_int4_array(string name_in,unsigned int size_in,bool satisfied_in){
 	name = name_in;
 	size = size_in;
@@ -131,9 +132,12 @@ bool param_int4_array::is_satisfied(){
 	return satisfied;
 }
 string param_int4_array::get_string(){
-	string return_me; //declare a string
+	//declare a string
+	string return_me;
 	for(unsigned int c = 0; c < values.size();c++){
-		if(c != values.size()-1){//add a comma to the end of all values but the last
+
+		//add a comma to the end of all values but the last
+		if(c != values.size()-1){
 			return_me = return_me + to_string(values[c]) + ",";
 		} else {
 			return_me = return_me + to_string(values[c]);
@@ -141,9 +145,9 @@ string param_int4_array::get_string(){
 	}
 	return return_me;
 }
-//########################################################################################
+//############################################################################
 
-//################## R8 ARRAY ############################################################
+//################## R8 ARRAY ################################################
 param_r8_array::param_r8_array(string name_in, unsigned int size_in, bool satisfied_in){
 	name = name_in;
 	satisfied = satisfied_in;
@@ -157,16 +161,14 @@ string param_r8_array::get_string(){
 
 		//index for formatting loop
 		unsigned int rear_index = 1;
-		//for(;rear_index < number_bit.size();rear_index++){
 	
-			while( number_bit[number_bit.size()-rear_index]  == '0' && 
-			    number_bit[number_bit.size()-1-rear_index] != '.'
-			   ){
-				number_bit.pop_back();//remove extra zeros, but always leave one
-							     //after decimal
-			}
+		while( number_bit[number_bit.size()-rear_index]  == '0' && 
+			    number_bit[number_bit.size()-1-rear_index] != '.' ){
+			//remove extra zeros, but always leave one
+		    //after decimal
 
-		//}
+			number_bit.pop_back();		}
+
 		return_me = return_me + number_bit;
 
 		//add a comma to all values in the list but the last one
@@ -178,7 +180,7 @@ string param_r8_array::get_string(){
 	return return_me;
 
 }
-//########################################################################################
+//################################################################################
 
 
 

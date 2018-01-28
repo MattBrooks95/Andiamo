@@ -39,11 +39,9 @@ class form{
 	/*! \param form_title_in sets the title that is displayed at the top of the form
 	 *\param help_msg_image_name finishes the asset's path, by specifying the help message png to be used
 	 *\param xloc_in sets the horizontal coordinate of the corner of the form, likely should be 0
-	 *\param yloc_in sets the vertical coordinate of the corner of the form, likely should be 0
-	 *\param sdl_helper_in is a pointer reference to the sdl_help object, for drawing functionality
-	 *\param sdl_font_in is a pointer to the font contained within the sdl_help object, for shorthand access */
+	 *\param yloc_in sets the vertical coordinate of the corner of the form, likely should be 0 */
 	void init(string form_title_in,string help_msg_image_name, int xloc_in,int yloc_in,
-			  sdl_help* sdl_helper_in,TTF_Font* sdl_font_in, const vector<regex>& pattern_tests);
+				const vector<regex>& pattern_tests);
 
     //! this function changes the form's title
     /*! this is useful, for example, when a form can serve one or two logical functions
@@ -105,8 +103,11 @@ class form{
 
     //these two functions are used to know when a form needs smashed and recreated
     //because the user specified another size
-	bool prev_initialized;  //!< remember if this form has been initialized or not
-	int prev_init_value;  //!< keep track of the value this form was initialized with
+	//! remember if this form has been initialized or not
+	bool prev_initialized;
+
+ 	//! keep track of the value this form was initialized with
+	int prev_init_value;
 
     //! title of the form, which is displayed at the top of the form
 	string form_title;
@@ -120,9 +121,6 @@ class form{
 	SDL_Surface* form_surface;
     //! save the form's texture
 	SDL_Texture* form_texture;
-
-    //! save the help page's surface
-	//SDL_Surface* help_surface;
 
     //! save the help page's texture
 	SDL_Texture* help_texture;
@@ -170,8 +168,6 @@ class form{
      *input has been typed */
 	vector<regex> my_patterns;
 
-    //! pointer to the graphics class
-	sdl_help* sdl_helper;
     //! pointer to the font in use in the graphic's class
 	TTF_Font* sdl_font;
 
@@ -203,10 +199,10 @@ class page{
 	//###########################################################################################################
 	void page_init(unsigned int num_columns_in, unsigned int rows_needed,
 		       const vector<string>& column_labels_in,vector<string>& row_labels_in,
-		       sdl_help* sdl_helper_in,TTF_Font* sdl_font_in, const vector<int>& column_spacings);
+		       const vector<int>& column_spacings);
 	//! helper for page_init, does the mundane pass-through assignments
 	void page_init_local_var(unsigned int num_columns_in, unsigned int rows_needed, const vector<string>& column_labels_in,
-			         vector<string>& row_labels_in, sdl_help* sdl_helper_in,TTF_Font* sdl_font_in);
+			         vector<string>& row_labels_in);
 	//! helper for page_init that sets up the row labels, if they exist
 	void page_init_set_row_labels(const vector<string>& row_labels_in,int& x_start_point);
 
@@ -244,22 +240,34 @@ class page{
 	unsigned int get_rows(){ return num_rows;}
 
   private:
-	sdl_help* sdl_helper;//!< allows easy access to the graphics class
-	TTF_Font* sdl_font;//!< allows easy access to the text style used in other constructs
 
 	unsigned int num_columns;//!< number of columns that will be needed
 	unsigned int num_rows;//!< number of rows that will be needed
 
-	vector<string> column_labels;//!< column labels that populate the top of the page
-	vector<string> row_labels;//!< optional row labels, should be rarely used
-	
-	vector<text_box> text_boxes;//!< array that contains all of the necessary text boxes
-	vector<SDL_Texture*> column_label_textures;//!< stores the column label textures for the passed labels
-	vector<SDL_Rect> column_label_rects;//!< store the drawing location for the column labels
+	//! column labels that populate the top of the page
+	vector<string> column_labels;
 
-	vector<SDL_Texture*> row_label_textures;//!< store textures for the row labels
-	vector<SDL_Rect> row_label_rects;//!< store the location of the textures for the row labels
+	//! optional row labels, should be rarely used
+	vector<string> row_labels;
+	
+	//! array that contains all of the necessary text boxes
+	vector<text_box> text_boxes;
+
+	//! stores the column label textures for the passed labels
+	vector<SDL_Texture*> column_label_textures;
+
+	//! store the drawing location for the column labels
+	vector<SDL_Rect> column_label_rects;
+
+	//! store textures for the row labels
+	vector<SDL_Texture*> row_label_textures;
+
+	//! store the location of the textures for the row labels
+	vector<SDL_Rect> row_label_rects;
 };
+
+
+
 
 
 
