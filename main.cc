@@ -50,9 +50,11 @@ int main(int argc, char *argv[]){
   	string argument = argv[1];
 	if(argument.compare("-v") == 0){
 		//if -v is appended at the command line, have the error logger also print
-		error_logger.verbose = true; //runtime debugging messages
-				   
-	} else {//if some arg exists but is not -v, make an error message
+		//runtime debugging messages
+		error_logger.verbose = true;
+
+	//if some arg exists but is not -v, make an error message	   
+	} else {
 		error_logger.push_error("Supplied useless command line argument");
 	}
   }
@@ -218,7 +220,6 @@ int main(int argc, char *argv[]){
 
 void no_work_done_message(exit_button& exit_dialogue){
 
-	//SDL_Surface* no_work_surf = NULL;
 	SDL_Texture* no_work_texture = NULL;
 
 	no_work_texture = asset_access->get_texture("Assets/Images/no_work_done_msg.png");

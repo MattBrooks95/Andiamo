@@ -576,8 +576,8 @@ bool button_manager::click_handling(SDL_Event& mouse_event){
 	return done_something;//let main know if it should check tiles or not
 }
 
-void button_manager::form_error_message_loop(SDL_Event& event,SDL_Texture* message_texture,
-											 SDL_Rect& destination){
+void button_manager::form_error_message_loop(SDL_Event& event,
+		SDL_Texture* message_texture, SDL_Rect& destination){
 
 	//save the destination parameter so it can be reset
 	//by the user hitting space
@@ -586,12 +586,23 @@ void button_manager::form_error_message_loop(SDL_Event& event,SDL_Texture* messa
 	bool changed = false;
 	bool leave   = false;
 
+	bool scrolled = false;
+
 	SDL_RenderCopy(sdl_access->renderer,message_texture,NULL,&destination);
 	sdl_access->present();
 
 	while(!leave){
 
-		SDL_PollEvent(&event);
+		if( SDL_PollEvent(&event) == 0){
+			//if there was no event to pull, this code prevents
+			//the loop from continuing to use the old event
+			//this stops it from scrolling indefinitely if you only
+			//move the mouse wheel once
+			scrolled = false;
+			SDL_Event dummy;
+			dummy.type = 1776;
+			SDL_PushEvent(&dummy);
+		}
 
 		switch(event.type){
 
@@ -604,7 +615,7 @@ void button_manager::form_error_message_loop(SDL_Event& event,SDL_Texture* messa
 				return;
 
 			case SDL_KEYDOWN:
-
+				scrolled = false;
 				switch(event.key.keysym.sym){
 
 					//literal down arrow key
@@ -619,13 +630,13 @@ void button_manager::form_error_message_loop(SDL_Event& event,SDL_Texture* messa
 						changed = true;
 						break;
 
-					//scroll down
+					//scroll right
 					case SDLK_RIGHT:
 						destination.x -= 5;
 						changed = true;
 						break;
 
-					//scroll down
+					//scroll left
 					case SDLK_LEFT:
 						destination.x += 5;
 						changed = true;
@@ -644,6 +655,21 @@ void button_manager::form_error_message_loop(SDL_Event& event,SDL_Texture* messa
 						leave = true;
 						break;
 				}
+				break;
+
+			case SDL_MOUSEWHEEL:
+				if(!scrolled){
+					destination.x += event.wheel.x * 3;
+					destination.y += event.wheel.y * 5;
+					changed  = true;
+					scrolled = true;
+				}
+				//make it not get flooded with scroll commands
+				SDL_FlushEvent(SDL_MOUSEWHEEL);
+				break;
+
+			default:
+				scrolled = false;
 
 		}
 
@@ -651,7 +677,9 @@ void button_manager::form_error_message_loop(SDL_Event& event,SDL_Texture* messa
 			changed = false;
 
 			SDL_RenderClear(sdl_access->renderer);
-			SDL_RenderCopy(sdl_access->renderer,message_texture,NULL,&destination);
+			SDL_RenderCopy(sdl_access->renderer,message_texture,NULL,
+								&destination);
+
 			sdl_access->present();
 		}
 

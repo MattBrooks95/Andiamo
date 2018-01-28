@@ -25,15 +25,20 @@ class button_manager;
 //! this structure is used to store the dimensions of the window itself
 /*! eventually the user will be able to change this to a variety of sizes */
 struct win_size{
+
 	//! win_size()'s constructor takes no arguments
 	/*! it initializes the window width and height to -1, these must be set by sdl helper and later by
 	 *the user */
 	win_size();
+
 	//! print() prints this fields width and height fields
 	void print();
 
-	int width; //! < holds the width of the window, which is different than the screen info in display
-	int height; //! < holds the height of the window, which is different than the info in display
+	//! holds the width of the window, which is different than the screen info in display
+	int width;
+
+	//! holds the height of the window, which is different than the info in display
+	int height;
 };
 
 //! the following struct is used by calc_corners to remember the tiles it's currently considering
@@ -197,10 +202,6 @@ class sdl_help{
 	//! this member serves as a getter for the SDL window
 	SDL_Window* get_window(){ return window;}
 
-	//!this member returns a copy of the tile_bag
-	/*! this is useful when an algorithm would require removing objects from the vector as they are
-	 * processed  */
-	//manager get_mgr_copy(){ return tile_bag;}
 	/*****************************************************************/
 
 	//! contains a running total of how many times a frame has been drawn
@@ -236,6 +237,7 @@ class sdl_help{
 	/*! \brief contains functions to act on, and draw, the vertical
 	 *scroll bar */
 	scroll_bar vert_bar;
+
 	/*! \brief similarly contains functions act on, and draw, the
 	 *horizontal scrollbar */
 	scroll_bar horiz_bar;

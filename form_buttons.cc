@@ -939,8 +939,12 @@ void icntrl10_form_button::click_helper(SDL_Event& mouse_event){
 	error_logger.push_msg("clicked the icntrl10/sigma info button ");
 	if(!is_locked){
 		screen_size();
-		my_form.toggle_active();//let the form know that it is now active
-		my_form.form_event_loop(mouse_event);//enter the mini loop for form entry
+
+		//let the form know that it is now active
+		my_form.toggle_active();
+
+		//enter the mini loop for form entry
+		my_form.form_event_loop(mouse_event);
 	}
 }
 

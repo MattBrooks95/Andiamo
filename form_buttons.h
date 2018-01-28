@@ -1,5 +1,7 @@
-/*! \file form_buttons.h describes special buttons that are activated by parameters in the tile fields, and allows for
- * extensive text dynamic text entry, as required by some of the parameters specified in the input manual */
+/*! \file form_buttons.h describes special buttons that are activated by
+ *parameters in the tile fields, and allows for extensive text
+ *dynamic text entry, as required by some of the parameters
+ *specified in the input manual */
 
 #pragma once
 #include<fstream>
@@ -13,23 +15,27 @@ using std::vector;
 using std::regex;
 using std::ofstream;
 
-//! "base" class for form buttons, that provides their general form, and can be inherited from to make more specialized forms
+/*! "base" class for form buttons, that provides their general form,
+ *and can be inherited from to make more specialized forms */
 class form_button : public button{
 
   public:
 	//! the constructor NULLs all of the fields
 	 form_button();
-	//! the destructor returns memory back to the operating system when the object is killed
+	//! returns memory back to the operating system when the object is killed
 	~form_button();
 
 
-	//! this function is an overload of the virtual init function from the default button class
-	/*! these buttons are drawn right on the form tray, so they don't need to hold an image */
+	//! overload of the virtual init function from the default button class
+	/*! these buttons are drawn right on the form tray,
+	 *so they don't need to hold an image */
 	void init();
 
 
-	//! this function is used by the button manager to make sure this button lines up with its image in the form tray
+	/*! used by the button manager to make sure this button lines
+	 *up with its image in the form tray */
 	void set_corner_loc(int x_in, int y_in);
+
 	//! this function is used by the button manager to set width and height
 	/*! though 100x50 is the default dimensions of each of the form buttons */
 	void make_rect(int width_in = 100,int height_in = 70);
@@ -38,20 +44,22 @@ class form_button : public button{
 	virtual void setup_lock();
 
 	//! this function can be overloaded or used by derived classes
-	/*! overloading it allows a specific picture file to be used as the help dialogue when the user
-	 *clicks on the form while it is still locked, and explains its purpose and unlocking conditions */ 
+	/*! overloading it allows a specific picture file to be used as the
+	 *help dialogue when the user clicks on the form while it is
+	 *still locked, and explains its purpose and unlocking conditions */ 
 	virtual void setup_help_msg();
 
 	//! this function initializes this buttons form object
-	/*! It must be overloaded by the derived form_buttons to have any meaning */
+	/*! must be overloaded by the derived form_buttons to have any meaning */
 	virtual void init_form(const vector<regex>& pattern_tests);
 
-	//! this function resizes the window if it is too small when the user tries to open a form
+	/*! this function resizes the window if it is too small when
+	 *the user tries to open a form */
 	virtual void screen_size();
 
 	//! this function can be overloaded or used by derived classes
-	/*! if a special message box is made, it would be wise to overload this as well, so it can be placed
-	 * in a different location */
+	/*! if a special message box is made, it would be wise to overload
+	 *this as well, so it can be placed in a different location */
 	virtual void draw_help_msg(SDL_Event& big_event, SDL_Rect& destination);
 
 	//! This member draws the lock to the screen, if the button is in lock mode
@@ -65,7 +73,8 @@ class form_button : public button{
 
 	//! this member has the form objects contained herein send their information to the input_maker
 	/*! this is currently a stub */
-	virtual bool make_output(ofstream& outs,vector<index_value>& bad_input_list);
+	virtual bool make_output(ofstream& outs,
+								vector<index_value>& bad_input_list);
 
 	//! check to make sure the inputs are properly formed
 	virtual bool check_values(vector<index_value>& error_details);
@@ -74,12 +83,17 @@ class form_button : public button{
 	const form& get_form(){ return my_form;}
 
   protected:
-	SDL_Texture* lock_texture;//!< save the texture for the lock, when this button is not in use
-	SDL_Rect lock_rect;//!< save location & size of the lock
+	//! save the texture for the lock, when this button is not in use
+	SDL_Texture* lock_texture;
 
-	bool is_locked;//!< control whether or not to show the lock, and prevent the button from being used
+	//! save location & size of the lock
+	SDL_Rect lock_rect;
 
-	form my_form;//!< object which allows for dynamic parameter entry
+	//! control whether or not to show the lock, and prevent the button from being used
+	bool is_locked;
+
+	//! object which allows for dynamic parameter entry
+	form my_form;
 
 	SDL_Texture* unlock_help_texture;
 };
@@ -88,22 +102,26 @@ class icntrl8_form_button : public form_button{
 
   public:
 
-	//! this function changes the default help message to one that explains icntrl8's conditions
+	/*! this function changes the default help message to one that
+	 *explains icntrl8's conditions */
 	void setup_help_msg();
 
 	//! implements the special logic for this class
 	bool handle_click(SDL_Event& mouse_event);
 
-	//! sets up a form that suits the needs of icntrl8's logics per the input manual
+	/*! sets up a form that suits the needs of icntrl8's logics
+	 *per the input manual */
 	void init_form(const vector<regex>& pattern_tests);
 
 	//! this function opens the icntrl8 form on click
 	void click_helper(SDL_Event& mouse_event);
 
-	//! this function is a helper that compacts the code found in click_helper that creates or recreates pages
+	/*! this function is a helper that compacts the code found
+	 *in click_helper that creates or recreates pages */
 	void page_creation_helper();
 
-	//! this function outputs the form's info to the input_maker's file stream when called
+	/*! this function outputs the form's info to the input_maker's
+	 *file stream when called */
 	bool make_output(ofstream& outs,vector<index_value>& bad_input_list);
 
 	//! check to make sure the inputs are properly formed
@@ -122,34 +140,37 @@ class icntrl6_form_button : public form_button{
 	/*! the language calls ~form_button() automatically */
 	~icntrl6_form_button();
 
-	//! setup_lock is overloaded here, because it looks better in the lower right corner
+	//! setup_lock is overloaded here, it looks better in the lower right corner
 	void setup_lock();
 
-	//! sets up a form that suits the needs of icntrl6's logics per the input manual
+	//! sets up a form for icntrl6's logics per the input manual
 	void init_form(const vector<regex>& pattern_tests);
 
-	//################ PAGE CREATION HELPERS ##################################################
+	//############## PAGE CREATION HELPERS ###################################
 	//! this member sets up the parity form's pages
 	void parity_page_creation();
 
 	//! this fills up the row labels for the parity form
-	void fill_parity_labels(vector<string>& row_labels,vector<string>& column_labels);
+	void fill_parity_labels(vector<string>& row_labels,
+							vector<string>& column_labels);
 
 	//! this member sets up the search spectra form's pages
 	void search_spectra_page_creation();
 
-	//! this helper member fills in the column labels for the search spectra form
+	//! this helper fills in the column labels for the search spectra form
 	void fill_spectra_vectors(vector<string>& pass_column_labels,vector<int>& column_spaces);
 
-	//! This helper abstracts some code to make search_spectra_page_creation more readable
+	/*! This helper abstracts some code to make search_spectra_page_creation
+	 * more readable */
 	void search_spectra_page_helper();
 
 	//! this member sets up the xsection form's pages
 	void cross_sections_page_creation();
 
-	//! this helper abstracts some code to make cross_sections_page_creation more readable
+	/*! this helper abstracts some code to make cross_sections_page_creation
+	 *more readable */
 	void cross_sections_helper();
-	//#########################################################################################
+	//########################################################################
 
 
 	//! implements the special logic for this class
@@ -164,10 +185,11 @@ class icntrl6_form_button : public form_button{
     //! this function updates the loading screen in response to a screen resize
     void update_landing();
 
-	//! this function shows the image that allows the user to switch between icntrl6's forms
+	//! shows the image that allows the user to switch between icntrl6's forms
 	void show_landing();
 
-	//! does the logic for figuring out if a mousebutton down event clicked somewhere within form selection
+	/*! figures out if a mousebutton down event clicked somewhere
+	 *within form selection */
 	bool landing_was_clicked(SDL_Event& mouse_event);
 
 	//! this sends this object's info the input_manager's file stream
@@ -178,30 +200,31 @@ class icntrl6_form_button : public form_button{
 
   private:
 
-	//!< used to keep track of what conditions caused the current pages to be made
+	//! used to keep track of what conditions caused the current pages to be made
 	int INM1_val;
-	//!< used to keep track of what conditions caused the current pages to be made
+
+	//! used to keep track of what conditions caused the current pages to be made
 	int INM2_val;
 
-	//!< saves texture for the form selection image
+	//! saves texture for the form selection image
 	SDL_Texture* landing_texture;
 
-	//!< saves the location info for the form selection feature
+	//! saves the location info for the form selection feature
 	SDL_Rect landing_rect;
 
-	//!< controls clicking logics to open parity_area form
+	//! controls clicking logics to open parity_area form
 	active_area parity_area;
 
-	//!< controls clicking logics to open spectra_area form
+	//! controls clicking logics to open spectra_area form
 	active_area spectra_area;
 
-	//!< controls clicking logics to open xsections_area form
+	//! controls clicking logics to open xsections_area form
 	active_area xsections_area;
 
-	//!< extra form # 1, for making INM1 line in input manual
+	//! extra form # 1, for making INM1 line in input manual
 	form search_spectra;
 
-	//!< extra form # 2 for making INM2 line in input manual
+	//! extra form # 2 for making INM2 line in input manual
 	form cross_sections;
 
 };

@@ -23,8 +23,9 @@ int filter_mini(void* userdata, SDL_Event* big_event){
 void scrolling_mini_loop(SDL_Event& big_event,char which_bar){
 	bool exit = false;//change to true to end the mini loop
 	SDL_SetEventFilter(filter_mini,NULL);
-		//change the filter to disallow MOUSEBUTTONDOWN events and allow
-		//MOUSEMOTION events that we need to know in order to scroll 
+
+	//change the filter to disallow MOUSEBUTTONDOWN events and allow
+	//MOUSEMOTION events that we need to know in order to scroll 
 	SDL_FlushEvents(0,1000);//this this necessary
 	while(!exit){
 		SDL_PollEvent(&big_event);
@@ -44,23 +45,21 @@ void scrolling_mini_loop(SDL_Event& big_event,char which_bar){
 				break;
 			case SDL_MOUSEMOTION:
 				if(which_bar == 'v'){ //do stuff for the vertical scroll bar
-						   //only care about y scrolling
+				   //only care about y scrolling
 
 					//if(big_event.motion.y > sdl_help.get_v_bar().get_bottom()){
 					if(big_event.motion.y > sdl_access->get_v_bar().get_bottom()){
 						//if user has drug above the top of this bar, scroll up
-						//sdl_help.update_scroll(0,-45);
 						sdl_access->update_scroll(0,-45);
-					//} else if(big_event.motion.y < sdl_help.get_v_bar().get_top()){
+
 					} else if(big_event.motion.y < sdl_access->get_v_bar().get_top()){
+
 						//if user has drug below the bottom of this bar, scroll down
-						//sdl_help.update_scroll(0,45);
 						sdl_access->update_scroll(0,45);
 					}
-					//sdl_help.draw_tiles();
-					sdl_access->draw_sbars();
-
+					sdl_access->draw();
 					sdl_access->present();
+
 					//prevent queue from getting flooded
 					SDL_FlushEvent(SDL_MOUSEMOTION);
 
@@ -109,22 +108,25 @@ void handle_mouseb_down( SDL_Event& big_event){
 
 		case SDL_BUTTON_LEFT:
 
-			//note that scroll bar has click priority over the tiles. Clicking a scroll bar
-			//with a tile under it won't do anything to that tile
+			//note that scroll bar has click priority over the tiles.
+			//Clicking a scroll bar with a tile under it won't do
+			//anything to that tile
 
-			//result of scroll_clicked 'boolean' function stored here, so function is only
-			//called once
+			//result of scroll_clicked 'boolean' function stored here,
+			//so function is only called once
 			which_bar = sdl_access->scroll_clicked(big_event.button.x,big_event.button.y);
 
 			if( which_bar == 1){
 
 				//a return value of 1 means that the vertical scroll bar was clicked
-				error_logger.push_msg("Clicked on the vertical bar!"); //make sure vals line up
+				//make sure vals line up
+				error_logger.push_msg("Clicked on the vertical bar!");
 
 				if(sdl_access->get_v_bar().is_scrolling() == false){
 
 					sdl_access->get_v_bar().scroll_mode_change(true);
-					SDL_FlushEvents(0,1000);//is this necessary?
+					//is this necessary?
+					SDL_FlushEvents(0,1000);
 
 				//should never hit this branch
 				} else {

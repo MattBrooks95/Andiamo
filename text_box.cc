@@ -66,8 +66,8 @@ text_box::text_box(const text_box& other){
 	string text_b_target = "./Assets/Images/text_box.png";
 	text_box_texture = asset_access->get_texture(text_b_target);
 
-	string bad_target = "./Assets/Images/text_box.png";
-	bad_texture = asset_access->get_texture(text_b_target);
+	string bad_target = "./Assets/Images/bad_tile.png";
+	bad_texture = asset_access->get_texture(bad_target);
 
 	text_surface = TTF_RenderUTF8_Blended(font,text.c_str(),text_color);
 
