@@ -34,19 +34,32 @@ void fop_handler::get_files_list(){
 		dir_point = opendir(directories[c].c_str());
 		if(dir_point != NULL){
 
-			//readdir is kind of like a getline statement, read in info then act on it
+			//readdir is kind of like a getline statement,
+			//read in info then act on it
 			while( (file_in_dir = readdir(dir_point)) ){
 
-				//this ensures that only regular files are considered, and not the . and .. directories
+				//this ensures that only regular files are considered,
+				//and not the . and .. directories
 				//that exist in nearly every linux directory (but hidden)
 				if( file_in_dir->d_type == DT_REG){
-					if     (c == 0) optical_model_files.push_back(file_in_dir->d_name);
-					else if(c == 1) transmission_coefficients_files.push_back(file_in_dir->d_name);
-					else if(c == 2) scratch_files.push_back(file_in_dir->d_name);
+
+					if(c == 0){
+
+						optical_model_files.push_back(file_in_dir->d_name);
+
+					} else if(c == 1){ 
+
+						tc_files.push_back(file_in_dir->d_name);
+
+					} else if(c == 2){
+
+						scratch_files.push_back(file_in_dir->d_name);
+					}
 				}
 			}
 
-			closedir(dir_point);//close the directory
+			//close the directory
+			closedir(dir_point);
 
 		} else {
 			error_logger.push_error("Failure to open the /error_logs file, for cleaning by cleaning_check()");
@@ -62,26 +75,76 @@ void fop_handler::run_fop(){
 }
 
 void fop_handler::print_file_lists(){
-	cout << "############## FOLDER: " << OMP_PATH << " ###############" << endl;
+	cout << "######## FOLDER: " << OMP_PATH << " #############" << endl;
 	for(unsigned int c = 0; c < optical_model_files.size(); c++){
 		cout << optical_model_files[c] << endl;
 	}
-	cout << "########################################################" << endl;
+	cout << "#################################################" << endl;
 
 	cout << "############## FOLDER: " << TRANSMISSION_PATH
 		 << " ##################" << endl;
-	for(unsigned int c = 0; c < transmission_coefficients_files.size(); c++){
-		cout << transmission_coefficients_files[c] << endl;
+	for(unsigned int c = 0; c < tc_files.size(); c++){
+		cout << tc_files[c] << endl;
 	}
-	cout << "########################################################" << endl;
+	cout << "#################################################" << endl;
 
 	cout << "############## FOLDER: " << SCRATCH_PATH
 		 << " ##################" << endl;
 	for(unsigned int c = 0; c < scratch_files.size(); c++){
 		cout << scratch_files[c] << endl;
 	}
-	cout << "########################################################" << endl;
+	cout << "#################################################" << endl;
 }
+//#############################################################################
+
+
+//######### CARDS #############################################################
+
+card::card(string info_in, unsigned int num_params_in){
+
+	info       = info_in;
+	num_params = num_params_in;
+
+}
+
+bool card::check(){
+	
+
+	//make sure that the line is formatted properly
+	//#############################################
+	regex match_pattern("[A-Z] [0-9]+?.[0-9]*?,");
+
+	//check the integrety pattern against the line stored in this object
+	//storing each number's match in results
+	regex_match(info,match_pattern,results);
+
+	//makes sure that the values themselves are of proper form
+	//########################################################
+
+	//store the numbers themselves, as ripped from the line
+	smatch results;
+
+	//pattern to make sure they're floats
+	regex numbers_pattern()
+
+	
+	regex_search(info,numbers_pattern,results);
+
+	//make sure there's the correct number of matches
+
+
+	return true;
+}
+
+
+
+
+
+
+
+
+
+
 
 
 

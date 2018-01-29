@@ -4,6 +4,8 @@
 #include <string>
 #include <vector>
 #include <fstream>
+#include <regex>
+
 
 #include "sdl_help.h"
 #include "input_maker.h"
@@ -50,12 +52,38 @@ class fop_handler{
 
 	//! list of all files in the transmission coefficients files
 	/*! these are files previously made by FOP */
-	vector<string> transmission_coefficients_files;
+	vector<string> tc_files;
 
 	/*! list of all files that aren't yet ready for use by HF,
 	 * but fop_handler may need */
 	vector<string> scratch_files;
 };
+
+//! data structure to store lines (cards) for the FOP input
+class card{
+
+  public:
+
+	//! constructor saves a string, and the number of params the card needs
+	card(string info_in = "",unsigned int num_params_in = 7);
+
+	//! makes sure that the line is formatted properly
+	/*! the default version of this function checks for
+	 *num_params double values in the list. If they aren't all there
+	 *something is wrong */ 
+	virtual bool check();
+
+
+  private:
+
+	//! comma-separated list of expected parameters
+	string info;
+
+	//! stores the number of parameters the line expects
+	unsigned int num_params;
+
+};
+
 
 
 
