@@ -4,9 +4,8 @@
 #include <string>
 #include <vector>
 #include <fstream>
-#include <regex>
 
-
+#include "deck.h"
 #include "sdl_help.h"
 #include "input_maker.h"
 
@@ -28,6 +27,7 @@ extern input_maker* io_access;
 
 class fop_handler{
   public:
+
 	//! constructor for the fop_handler class
 	fop_handler();
 
@@ -59,30 +59,7 @@ class fop_handler{
 	vector<string> scratch_files;
 };
 
-//! data structure to store lines (cards) for the FOP input
-class card{
 
-  public:
-
-	//! constructor saves a string, and the number of params the card needs
-	card(string info_in = "",unsigned int num_params_in = 7);
-
-	//! makes sure that the line is formatted properly
-	/*! the default version of this function checks for
-	 *num_params double values in the list. If they aren't all there
-	 *something is wrong */ 
-	virtual bool check();
-
-
-  private:
-
-	//! comma-separated list of expected parameters
-	string info;
-
-	//! stores the number of parameters the line expects
-	unsigned int num_params;
-
-};
 
 
 

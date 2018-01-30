@@ -7,8 +7,8 @@ vtool = --tool=memcheck
 vopt = --log-file="memory_check.txt" --leak-check=full
 
 #object files
-objects = main.o handlers.o manager.o ftran_structs.o field.o sdl_help.o scroll_bar.o input_maker.o string+.o button_manager.o button.o form_buttons.o form.o derived_buttons.o fop_handler.o text_box.o cursor.o logger.o asset_manager.o
-main_objects = handlers.o manager.o ftran_structs.o field.o sdl_help.o scroll_bar.o input_maker.o string+.o button_manager.o button.o form_buttons.o form.o derived_buttons.o text_box.o cursor.o logger.o asset_manager.o
+objects = main.o handlers.o manager.o ftran_structs.o field.o sdl_help.o scroll_bar.o input_maker.o string+.o button_manager.o button.o form_buttons.o form.o derived_buttons.o fop_handler.o deck.o text_box.o cursor.o logger.o asset_manager.o
+main_objects = handlers.o manager.o ftran_structs.o field.o sdl_help.o scroll_bar.o input_maker.o string+.o button_manager.o button.o form_buttons.o form.o derived_buttons.o fop_handler.o deck.o text_box.o cursor.o logger.o asset_manager.o
 
 #header files
 headers = button.h field.h ftran_structs.h logger.h sdl_help.h button_manager.h form_buttons.h handlers.h manager.h string+.h derived_buttons.h form.h input_maker.h scroll_bar.h text_box.h
@@ -64,8 +64,11 @@ ftran_structs.o: ftran_structs.cc ftran_structs.h
 input_maker.o: input_maker.cc input_maker.h string+.o ftran_structs.o string+.o button_manager.o
 	g++ $(c_flg) -c input_maker.cc
 
-fop_handler.o: fop_handler.cc fop_handler.h
+fop_handler.o: fop_handler.cc fop_handler.h deck.o
 	g++ $(c_flg) -c fop_handler.cc
+
+deck.o: deck.h deck.cc
+	g++ $(c_flg) -c deck.cc
 
 text_box.o: text_box.cc text_box.h sdl_help.h
 	g++ $(c_flg) -c text_box.cc

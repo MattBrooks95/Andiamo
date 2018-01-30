@@ -98,47 +98,6 @@ void fop_handler::print_file_lists(){
 //#############################################################################
 
 
-//######### CARDS #############################################################
-
-card::card(string info_in, unsigned int num_params_in){
-
-	info       = info_in;
-	num_params = num_params_in;
-
-}
-
-bool card::check(){
-	
-
-	//make sure that the line is formatted properly
-	//#############################################
-	regex match_pattern("[A-Z] [0-9]+?.[0-9]*?,");
-
-	//check the integrety pattern against the line stored in this object
-	//storing each number's match in results
-	regex_match(info,match_pattern,results);
-
-	//makes sure that the values themselves are of proper form
-	//########################################################
-
-	//store the numbers themselves, as ripped from the line
-	smatch results;
-
-	//pattern to make sure they're floats
-	regex numbers_pattern()
-
-	
-	regex_search(info,numbers_pattern,results);
-
-	//make sure there's the correct number of matches
-
-
-	return true;
-}
-
-
-
-
 
 
 
