@@ -7,6 +7,15 @@
 using namespace std;
 
 fop_handler::fop_handler(){	
+
+	//start off assuming all channels are inactive
+	open_channels[0] = false;
+	open_channels[1] = false;
+	open_channels[2] = false;
+	open_channels[3] = false;
+	open_channels[4] = false;
+	open_channels[5] = false;
+	open_channels[6] = false;
 }
 
 fop_handler::~fop_handler(){
@@ -68,32 +77,85 @@ void fop_handler::get_files_list(){
 
 }
 
+void fop_handler::calc_open_channels(){
+	//subroutine desep(iz1,ia1,iz2,ia2, nr,jflag,kflag,value,error)
+	//           desep(int,int,int,int,int,  int,  int,real8,real8)
+
+	//array structure of q values lines up with booleans for channels
+	//in open_channels 
+	//double q_values[7];
+	//double* value = new double;
+
+	//Tom will give me a new tool, dqv, to give back an array of doubles
+	//for the q values for neutron proton deuteron triton 3He alpha
+
+	//passed to dqv, gets filled in with q_values
+	double q_values[6];
+
+	/* calculated from inputs to Andiamo with the following formula
+	 *
+	 *	Ecm =            Atarget		
+	 *			Elab *  ---------
+	 *                  Abeam + Atarget 
+     *
+	 * Where: Ecm  = "Center of Mass Energy"
+     *        Elab = "Lab Energy" (an Andiamo input from user)
+	 *        Atarget = "Mass of Target"
+	 *        Abeam   = "Mass of Beam/Projectile"
+	 *********************************************************** */
+	double ecm_values[6];
+
+	//if Q + Ecm for a channel is > 0, we need to run FOP for that channel
+
+	for(unsigned int c = 0; c < 6; c++){
+
+		double total = q_values[c] + ecm_values[c];
+
+		//if Q + Ecm > 0, store the fact that we need to run FOP
+		//for that particle. Elsewise, just leave it false.
+		//(values in open_channels default to false in constructor
+		if(total > 0){
+
+			//store the fact that this channel needs to run FOP
+			open_channels[c] = true;
+		}
+
+	}
+
+}
+
+void fop_handler::prepare_decks(){
+
+
+
+}
+
 void fop_handler::run_fop(){
 
 
 
 }
 
-void fop_handler::print_file_lists(){
-	cout << "######## FOLDER: " << OMP_PATH << " #############" << endl;
+void fop_handler::print_file_list(){
+	cout << "#### FOLDER: " << OMP_PATH << " ####" << endl;
 	for(unsigned int c = 0; c < optical_model_files.size(); c++){
 		cout << optical_model_files[c] << endl;
 	}
-	cout << "#################################################" << endl;
+	cout << "######################################" << endl;
 
-	cout << "############## FOLDER: " << TRANSMISSION_PATH
-		 << " ##################" << endl;
+	cout << "#### FOLDER: " << TRANSMISSION_PATH
+		 << " ####" << endl;
 	for(unsigned int c = 0; c < tc_files.size(); c++){
 		cout << tc_files[c] << endl;
 	}
 	cout << "#################################################" << endl;
 
-	cout << "############## FOLDER: " << SCRATCH_PATH
-		 << " ##################" << endl;
+	cout << "#### FOLDER: " << SCRATCH_PATH << " ####" << endl;
+
 	for(unsigned int c = 0; c < scratch_files.size(); c++){
 		cout << scratch_files[c] << endl;
 	}
-	cout << "#################################################" << endl;
+	cout << "###################################" << endl;
 }
 //#############################################################################
 

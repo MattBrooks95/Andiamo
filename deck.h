@@ -40,7 +40,8 @@ class card{
   public:
 
 	//! constructor saves a string, and the number of params the card needs
-	card(string info_in = "",unsigned int num_params_in = 7);
+	card(const string& letter_in,const string& info_in = "",
+							unsigned int num_params_in = 7);
 
 	//! makes sure that the line is formatted properly
 	/*! the default version of this function checks for
@@ -48,7 +49,10 @@ class card{
 	 *something is wrong */ 
 	virtual bool check();
 
-  private:
+  protected:
+
+	//! character that tells what type of card this is
+	string letter;
 
 	//! comma-separated list of expected parameters
 	string info;
@@ -57,3 +61,20 @@ class card{
 	unsigned int num_params;
 
 };
+
+class title_card : public card{
+
+  public:
+	//!make sure that the title card is formatted correctly
+	/*! the only restrictions here are that the card is less
+	 *than 80 columns, and does NOT start with a blank. A blank title
+	 *card tells FOP to terminate */
+	bool check();
+
+
+  private:
+
+};
+
+
+

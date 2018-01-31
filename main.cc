@@ -9,8 +9,11 @@
 #include "asset_manager.h"
 #include "handlers.h"
 #include "input_maker.h"
+#include "fop_handler.h"
 #include "button_manager.h"
 #include "logger.h"
+
+
 using namespace std;
 
 //global object used for error message output
@@ -30,6 +33,9 @@ input_maker*    io_access;
 
 //manages various buttons
 button_manager* button_access;
+
+//handles everything to do with transmission coefficients
+fop_handler* FOP_access;
 
 //making this global and giving it a unique name,
 //so the exit button can change it
@@ -95,6 +101,12 @@ int main(int argc, char *argv[]){
   b_manager.init_buttons();
   b_manager.init_form_tray();
   button_access = &b_manager;
+
+  //set up the FOP handling object
+  fop_handler FOP;
+  FOP.get_files_list();
+  FOP.print_file_list();
+  FOP_access = &FOP;
 
 
   //pre-loop drawing commands, so screen comes up near instantly

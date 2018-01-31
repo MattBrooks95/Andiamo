@@ -1,35 +1,46 @@
-	Welcome to Andiamo's Manual! Andiamo is the graphical front end to Ohio University's Hauser-
-Feshbach fomula implementing HF???? fortran code.
+	Welcome to Andiamo's Manual! Andiamo is the graphical front end to Ohio
+University's Hauser-Feshbach fomula implementing fortran code.
 
 
-ANDIAMO IS VERY EARLY IN DEVELOPMENT. I wouldn't suggest building it or using it as a coding example, I'm
-learning graphics programming as I go. The code also has many 'cout' statements that are there for my debugging
-and will eventually be removed. Also some implementations are likely inefficient and will be optimized later.
+	I have beenlearning graphics programming as I go. The code also has many
+printing functions that aren't meant for final product use, but rather
+for my own debugging purposes.
+
+	Andiamo allows for users to graphically enter inputs to be used in the
+Fortran code, as opposed to preparing an input file in a text editor.
+
+	A detailed class diagram explaining how the different objects in this
+program work together, and what they do, will be created very shortly. I've
+recently re-structured the software to separate the parameter entry and
+graphics as much as possible, so each module is specialized and easy
+to understand.
+
+	The Hauser-Feshbach (HF) code is ran using system calls. Andiamo
+uses user input and a tool called Frank's Optical Potentials to create
+the input file for the HF tool.
+
+	Compatability wise, c++11 and gcc 4.9 or greater is required to build
+Andiamo. I made this decision because <regex> is very handy for processing
+text files, and doing integrity checks on values inputted by the user.
+
+	We are currently only targeting a Linux environment for Andiamo,
+as directory parsing under Windows is something I haven't learned yet.
+Hopefully, I can look into Windows once we get Andiamo running and tested.
+
+############################################################################
 
 
+The tools in use thus far are:
+	1)SDL2 https://www.libsdl.org/
+		a) SDL_Image https://www.libsdl.org/projects/SDL_image/
+		b) SDL_TTF https://www.libsdl.org/projects/SDL_ttf/docs/SDL_ttf.html
+	2) Doxygen http://www.stack.nl/~dimitri/doxygen/
+	3) Valgrind http://valgrind.org/
 
-Andiamo allows for users to graphically enter inputs to be used in the HF???? fortran code, as 
-opposed to preparing an input file beforehand.
-
-The graphics component is a vector that can hold various customizable field objects that act like 
-'cards' or 'tiles' whose variable storage and look is detailed by the tiles.txt input file. This input file 
-has a particular format that matches the format in the file "example.txt." If the project directory hasn't 
-been changed at all, this file can be found at "proj_dir/tile_Input/example.txt"
-
-We're not yet sure what version of the HF fortran code we're going to use yet. We are also not sure if
-andiamo will run that code "in place" using c++ -> fortran bindings, or if it will generate and input file
-and then run HF???? on that generated file using system calls.
-
-Compatability wise, c++11 and gcc 4.9 or greater is required to build this source. I made this decision
-because <regex> is very handy for processing the text files. I'm not yet quite sure how developing for 
-Windows and Linux simultaneously is done, but I'd eventually like it to be able to run
-on both. We are developing for Linux for now.
-
-The tools in use thus far are Doxygen http://www.stack.nl/~dimitri/doxygen/
-, SDL2 https://www.libsdl.org/ , SDL_Image https://www.libsdl.org/projects/SDL_image/ and Valgrind http://valgrind.org/
-If these tributes are not to the liking of these tool's respective creators please email me about how I can go 
-about fixing it. I believe people deserve credit when it is do, but I'm not sure how copyrights and licenses 
-work.
+	If these tributes are not to the liking of these tool's respective
+creators please email me about how I can go about fixing it.
 
 Matt Brooks
 mb577513@ohio.edu
+
+

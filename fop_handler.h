@@ -40,10 +40,20 @@ class fop_handler{
 	/*!  from subdirectories OMP_PATH, TRANSMISSION_PATH, and SCRATCH_PATH */ 
 	void get_files_list();
 
-	void run_fop();//!< run FOP on a file
+	void calc_open_channels();
+
+	//! sets up the decks that will be FOP inputs
+	/* only does so for each of the possible channels
+	 *as determined by calc_open_channels() */
+	void prepare_decks();
+
+	//! run FOP once the cards are in place
+	/*! ensure that calc_open_channels(), prepare_decks(), and
+	 *run_fop() are called in that order */
+	void run_fop();
 
 	//! this is mostly for testing
-	void print_file_lists();
+	void print_file_list();
 
   private:
 
@@ -57,9 +67,30 @@ class fop_handler{
 	/*! list of all files that aren't yet ready for use by HF,
 	 * but fop_handler may need */
 	vector<string> scratch_files;
+
+	//! keeps track of which input channels are open for this calculation
+	/*! filled in by calc_open_channels, using David Resler's mass excess tool.
+	 *Values set to TRUE mean "this matters, run fop for this channel"
+	 *values set to FALSE mean "not physically possible, so
+	 *don't run FOP for this channel.
+	 *[0] = neutron
+	 *[1] = alpha
+	 *[2] = proton
+	 *[3] = deuteron
+	 *[4] = triton
+	 *[5] = 3He */
+	bool open_channels[7];
 };
 
+//! this function calls the cross-compiled tool for finding Q values
+/*! the tool will be in fortran, so the function definition must
+ *be done in this way to allow it to be called directly from
+ * a c function */
+extern "C" {
 
+	void dqv(int* A,int* Z, double return_values[6]);
+
+}
 
 
 
