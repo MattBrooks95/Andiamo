@@ -60,7 +60,6 @@ struct tile_size{
 	void print(){
 		error_logger.push_msg("Tile width: "+std::to_string(width)+
 								" Tile height: "+std::to_string(height));
-
 	}
 	/*! \brief The width will be the width of an input section in the program
 	 *It should be a fraction of the window size, so multiple input
@@ -195,7 +194,8 @@ class field{
 	//! name that takes the place of the variable's acronym in the graphics
 	string display_name;
 
-	vector<string> descriptions; //!< input description lines
+	//! input description lines
+	vector<string> descriptions;
 
 	//! access to this tile's fortran struct in input_maker vector.
 	/*! Set up by manager::give_fields_defaults */
@@ -254,7 +254,8 @@ class field{
 	//! this pointer allows field objects access to the font setting file
 	TTF_Font* font;
 
-	SDL_Texture* lock_texture;//!< save the sdl texture for the lock icon
+	//! save the sdl texture for the lock icon
+	SDL_Texture* lock_texture;
 
 	//!< saves the surface for the tile name text
 	SDL_Surface* my_text_surf;

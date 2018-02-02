@@ -1,10 +1,10 @@
-line_1#############################################################################################
+line_1#########################################################################
 label
 c label that will be echoed on output
 andy_tile.png
 550x50
 andy
-line_2#############################################################################################
+line_2#########################################################################
 ELAB:Projectile Energy
 c Variable name in HF: ELAB
 c energy of projectile in MeV in the lab
@@ -86,7 +86,7 @@ c Thus, LMAX = 2 if all three are read in.
 andy_tile.png
 150x50
 andy
-line_3A###########################################################################################
+line_3A#######################################################################
 NENT
 c NENT needs a comma-separated list of integer
 c energies in table for each kind of particle
@@ -116,7 +116,7 @@ c while Andiamo is running
 andy_tile.png
 300x50
 andy
-line_4##############################################################################################################
+line_4########################################################################
 FJTAR:Target Spin
 c Variable name in HF: FJTAR
 c FJTAR is the spin of the target
@@ -157,7 +157,7 @@ c greater than 10MeV
 andy_tile.png
 160x50
 andy
-line_4A#################################################################################################
+line_4A########################################################################
 APAR
 c only needed if IENCH = 7
 c A of incident particle
@@ -199,7 +199,7 @@ c maximum l of transmission coefficients
 andy_tile.png
 150x50
 andy
-line_4B############################################################################################################
+line_4B########################################################################
 TIN:Entrance Transmission Coefficients
 c Variable name in HF: TIN
 c comma-separated list of transmission coefficients
@@ -208,7 +208,7 @@ c at the incident energy
 800x50
 andy_tile.png
 andy
-line_5#############################################################################################################
+line_5#########################################################################
 ILV1:Level Density Options
 c Variable name in HF: ILV1
 c 1 = used ROHR parameters
@@ -249,7 +249,7 @@ c talk to Tom about this one, isn't present in example input
 andy_tile.png
 265x50
 andy
-line_5A############################################################################################################
+line_5A########################################################################
 ACON:Level Density a/A
 c small a = ACON x A
 andy_tile.png
@@ -379,7 +379,7 @@ c 0 = don't read individual sigma information
 andy_tile.png
 210x50
 andy
-line_7###############################################################################
+line_7#########################################################################
 FMU:Isospin Mixing Fraction
 c 0 <= FMU <= 1.0
 c FMU is the fraction of strength in the upper
@@ -413,7 +413,7 @@ c NCH4 = number of separate levels
 andy_tile.png
 225x50
 andy
-line_10########################################################################################
+line_10#######################################################################
 ITER:# of Search Iterations
 c HF variable name:ITER
 c number of iterations in search

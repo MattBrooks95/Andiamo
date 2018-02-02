@@ -126,7 +126,7 @@ class input_maker{
 	vector<param_real8> TTAB;
 };
 
-//##########################  NON MEMBER HELPERS  ##############################
+//#########################  NON MEMBER HELPERS  ##############################
 //! this is a helper function for input_maker::output(), it prints a string to the output file in the right format
 /*! \param outs is the fstream to print to (such as output/output.txt)
  *\param size is the size read in by input_maker from the configuration file
@@ -174,7 +174,7 @@ void do_line9(ofstream& outs,const map<string,param_int4>& int4_params,const map
 
 //! this helper outputs the variables in line 10
 void do_line10(ofstream&outs,const map<string,param_int4>& int4_params);
-//##############################################################################
+//############################################################################
 
 
 

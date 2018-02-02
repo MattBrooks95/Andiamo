@@ -7,6 +7,7 @@
 
 #include "deck.h"
 #include "sdl_help.h"
+#include "manager.h"
 #include "input_maker.h"
 
 
@@ -23,6 +24,7 @@ using std::string;
 using std::vector;
 
 extern sdl_help* sdl_access;
+extern manager* tile_access;
 extern input_maker* io_access;
 
 class fop_handler{
@@ -40,7 +42,29 @@ class fop_handler{
 	/*!  from subdirectories OMP_PATH, TRANSMISSION_PATH, and SCRATCH_PATH */ 
 	void get_files_list();
 
+	//! figure out how many times to run FOP
+	/*! Big thanks to Tom & Zach
+	 *for helping me with this */
 	void calc_open_channels();
+
+
+	//! helper for calc_open_channels
+	/*! goes from beam energy to center of mass energy
+	 * \param ecm_value is filled with the center of mass energy */
+	void lab_to_ecm(double& ecm_value);
+
+	//##### HELPERS FOR LAB_TO_ECM ############################################
+	//! grabs compound A and Z values from Andiamo inputs
+	void find_compound_A_Z(unsigned int& compound_A,unsigned int& compound_Z);
+
+	//! grabs IENCH value from Andiamo inputs
+	int find_IENCH();
+
+	//! calcs target A and sets projectile A based on IENCH
+	void calc_Atarget_Abeam(int IENCH,
+							int compound_A, int compound_Z,
+							int& A_target, int& A_beam);
+	//#########################################################################
 
 	//! sets up the decks that will be FOP inputs
 	/* only does so for each of the possible channels

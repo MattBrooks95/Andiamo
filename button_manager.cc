@@ -48,7 +48,8 @@ void button_manager::init_tray(){
 	//use query texture to get the texture's height and width
 	SDL_QueryTexture(button_tray_texture,NULL,NULL,&tray_rect.w,&tray_rect.h);
 
-	tray_rect.x = 5;//give it a little bit of distance from the right edge of the screen
+	//give it a little bit of distance from the right edge of the screen
+	tray_rect.x = 5;
 
 	//set it to be just above the bottom scroll bar
 	tray_rect.y = sdl_access->get_h_bar().get_top() - (tray_rect.h + 10);
