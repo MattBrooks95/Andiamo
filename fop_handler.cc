@@ -80,13 +80,6 @@ void fop_handler::get_files_list(){
 }
 
 void fop_handler::calc_open_channels(){
-	//subroutine desep(iz1,ia1,iz2,ia2, nr,jflag,kflag,value,error)
-	//           desep(int,int,int,int,int,  int,  int,real8,real8)
-
-	//array structure of q values lines up with booleans for channels
-	//in open_channels 
-	//double q_values[7];
-	//double* value = new double;
 
 	//Tom will give me a new tool, dqv, to give back an array of doubles
 	//for the q values for neutron proton deuteron triton 3He alpha
@@ -103,41 +96,11 @@ void fop_handler::calc_open_channels(){
 	//we need this value for FOP
 	double ecm_value = 0;
 
-	//we'll assume it's given as center of mass energy
-	try{
+	//first, we'll assume it's given as center of mass energy
+	ecm_value = find_elab();
 
-		//get ELAB string value from field, then convert to int
-		string elab;
-		elab = tile_access->fields.at("line_2").at("ELAB").temp_input;
-		ecm_value = stoi(elab);
-
-	} catch(out_of_range& map_error){
-
-		error_logger.push_error("Couldn't find ELAB in fields map.");
-
-	} catch(invalid_argument& stoi_error){
-
-		error_logger.push_error("Couldn't convert ELAB string to int.");
-
-	}
-
-	//figure out if ELABS value is in lab energy or center of mass energy
-	int ref_frame = -1;
-	try{
-
-		//get icm string value, convert to int
-		string icm_val;
-		icm_val   = tile_access->fields.at("line_2").at("ICM").temp_input;
-		ref_frame = stoi(icm_val);
-
-	} catch(out_of_range& map_error){
-
-		error_logger.push_error("Couldn't find ICM in the fields map.");
-
-	} catch(invalid_argument& stoi_error){
-
-		error_logger.push_error("Couldn't convert ICM string value to int.");
-	}
+	//figure out if ELAB's value is in lab energy or center of mass energy
+	int ref_frame = find_icm();
 
 	//icm_val == 0 means that we were given lab energy
 	//so convert the current value in ecm_value
@@ -167,13 +130,61 @@ void fop_handler::calc_open_channels(){
 
 }
 
+double fop_handler::find_elab(){
+
+	double elab_val = 0;
+
+	try{
+
+		//get ELAB string value from field, then convert to int
+		string elab_str;
+		elab_str = tile_access->fields.at("line_2").at("ELAB").temp_input;
+		elab_val = stod(elab_str);
+
+	} catch(out_of_range& map_error){
+
+		error_logger.push_error("Couldn't find ELAB in fields map.");
+
+	} catch(invalid_argument& stoi_error){
+
+		error_logger.push_error("Couldn't convert ELAB string to double.");
+
+	}
+
+	return elab_val;
+
+}
+
+int fop_handler::find_icm(){
+
+	int icm_val = -1;
+
+	try{
+
+		//get icm string value, convert to int
+		string icm_str;
+		icm_str   = tile_access->fields.at("line_2").at("ICM").temp_input;
+		icm_val = stoi(icm_str);
+
+	} catch(out_of_range& map_error){
+
+		error_logger.push_error("Couldn't find ICM in the fields map.");
+
+	} catch(invalid_argument& stoi_error){
+
+		error_logger.push_error("Couldn't convert ICM string value to int.");
+	}
+
+	return icm_val;
+
+}
+
 void fop_handler::lab_to_ecm(double& ecm_value){
 
 	//note that when this function is called,
-	//ecm value contains the value provided from the user,
-	//which is the lab energy. We need to conver to
+	//ecm value contains the value provided from the user (ELAB),
+	//which is the lab energy. We need to convert to
 	//center of mass energy
-	double elab = ecm_value;
 
 	/*********************************************************
 	*	Ecm =            Atarget		
@@ -182,12 +193,12 @@ void fop_handler::lab_to_ecm(double& ecm_value){
     *
 	* Where: Ecm  = "Center of Mass Energy"
     *        Elab = "Lab Energy" (an Andiamo input from user)
-	*        Atarget = "Mass of Target"
-	*        Abeam   = "Mass of Beam/Projectile"
+	*     Atarget = "Mass of Target"
+	*     Abeam   = "Mass of Beam/Projectile"
 	*********************************************************/
 
-	//temporarily store the result of the calculation
-	double converted_ecm = 0;
+	//temporarily store ELABS value
+	double converted_ecm = ecm_value;
 
 	unsigned int compound_A = 0, compound_Z = 0;
 
@@ -205,13 +216,15 @@ void fop_handler::lab_to_ecm(double& ecm_value){
 	//to calculate A of target and A of projectile/beam
 	calc_Atarget_Abeam(IENCH,compound_A,compound_Z,A_target,A_beam);
 
+	converted_ecm = converted_ecm * (A_target / (A_beam + A_target));	
+
 	//fill the passed energy parameter with the calculated answer
 	ecm_value = converted_ecm;
 
 }
 
 void fop_handler::find_compound_A_Z(unsigned int& compound_A,
-									unsigned int& compound_Z){
+										unsigned int& compound_Z){
 
 	try{
 
@@ -231,9 +244,9 @@ int fop_handler::find_IENCH(){
 
 	//store IENCH's value to be returned from this function
 	int return_me;
-
+	string iench_str = tile_access->fields.at("line_1").at("IENCH").temp_input;
 	try{
-		return_me = stoi(tile_access->fields.at("line_1").at("IENCH").temp_input);
+		return_me = stoi(iench_str);
 	} catch(out_of_range& map_error){
 		error_logger.push_error("Couldn't find IENCH in field map.");
 	} catch(invalid_argument& stoi_error){

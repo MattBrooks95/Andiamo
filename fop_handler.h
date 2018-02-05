@@ -1,4 +1,4 @@
-//! \file fop_handler.h is a class that manages the Andiamo->FOP->HF2002 workflow
+//! \file fop_handler.h describes a class that uses FOP to get TCs
 #pragma once
 
 #include <string>
@@ -13,7 +13,8 @@
 
 //define the path to the read-only optical model potentials folder
 #define OMP_PATH "./FOP/OpticalModels/"
-//define the path to the folder where already calculated transmission coefficients are stored
+//define the path to the folder where already calculated
+//transmission coefficients are stored
 #define TRANSMISSION_PATH "./FOP/TransmissionCoefficients/"
 /* define the path to where files are stored while they are being
   'worked on' by Andiamo and FOP so these may be FOP outputs
@@ -47,6 +48,14 @@ class fop_handler{
 	 *for helping me with this */
 	void calc_open_channels();
 
+	//! helper for calc_open_channels grabs ELAB parameter from Andiamo
+	/*! this variable may need converted to center of mass energy */
+	double find_elab();
+
+	//! helper for calc_open_channels, gets ICM flag
+	/*! this tells us if value ELAB in Andiamo input is in lab energy
+	 * or in center of mass energy */
+	int find_icm();
 
 	//! helper for calc_open_channels
 	/*! goes from beam energy to center of mass energy
@@ -56,6 +65,7 @@ class fop_handler{
 	//##### HELPERS FOR LAB_TO_ECM ############################################
 	//! grabs compound A and Z values from Andiamo inputs
 	void find_compound_A_Z(unsigned int& compound_A,unsigned int& compound_Z);
+
 
 	//! grabs IENCH value from Andiamo inputs
 	int find_IENCH();

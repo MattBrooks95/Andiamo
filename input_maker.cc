@@ -345,20 +345,16 @@ bool input_maker::output(vector<string>& form_bad_inputs){
 
 	//SET UP LINE 2################################################################
 	do_line2(outs,real8_params, int4_params);
-	//#############################################################################
+	//##########################################################################
 
-	//SET UP LINE 3################################################################
+	//SET UP LINE 3#############################################################
 	do_TC_coefficients(real8_params,int4_array_params,TC_input_file_name,outs);
-	//#############################################################################
+	//##########################################################################
 
-	//IF IENCH = 7 ################################################################
-	bool do_4a_4b = false;
-	/*for(unsigned int c = 0; c < int4_params.size();c++){
-		if(int4_params[c].name == "IENCH" && int4_params[c].value == 7){
-			do_4_5 = true;
-			break;
-		}
-	}*/
+
+	/* we can't handle IENCH = 7, this is disabled
+	//IF IENCH = 7 #############################################################
+	//bool do_4a_4b = false;
 
 	if(int4_params.at("IENCH").value == 7){
 		do_4a_4b = true;
@@ -368,15 +364,17 @@ bool input_maker::output(vector<string>& form_bad_inputs){
 
 	//only do the following lines if IENCH == 7, per the input manual
 	if(do_4a_4b){
-		//SET UP LINE 4#############################################################
+		//SET UP LINE 4#########################################################
 		do_line4(outs,real8_params,int4_params);
 
 		do_line4A(outs,real8_params,int4_params);
 
 		do_line4B(outs,r8_array_params);
-		//##########################################################################
+		//######################################################################
 	}
-	//####################### IENCH = 7 LINES ######################################
+	//################### IENCH = 7 LINES ######################################
+	*/
+
 
     //do line 5
     do_line5(outs,int4_params);	
@@ -389,18 +387,30 @@ bool input_maker::output(vector<string>& form_bad_inputs){
 
     //do line 5D or 5E
 	std::vector<index_value> ilv3_ilv5_bad_inputs;
-	if(//button_access->get_ilv3_ilv5().get_form().prev_initialized && 
-		!(int4_params.at("ILV3") == 0 && int4_params.at("ILV5") == 0) &&
-		!(int4_params.at("ILV3").value > 0 && int4_params.at("ILV5").value > 0)   &&
-		!button_access->get_ilv3_ilv5().make_output(outs,ilv3_ilv5_bad_inputs)){
-		form_bad_inputs.push_back("##############Ilv3/ilv5 error list##############\n");
-		form_bad_inputs.push_back("Distinct Residual Level Density - Ilv3 OR Distinct Level Density Model form\n");
+	int ilv3_val = int4_params.at("ILV3").value;
+	int ilv5_val = int4_params.at("ILV5").value;
+
+	if( !( ilv3_val == 0 && ilv5_val == 0) && !(ilv3_val > 0 && ilv5_val > 0)){
+
+
+		ilv3_ilv5_form_button& ilv3_ilv5 = button_access->get_ilv3_ilv5();		
+
+		if( !ilv3_ilv5.make_output(outs,ilv3_ilv5_bad_inputs) ){
+
+		string header = "##############Ilv3/ilv5 error list##############\n";
+		string msg    = "Distinct Residual Level Density - Ilv3 OR";
+		msg          += " Distinct Level Density Model form\n";
+ 
+		form_bad_inputs.push_back(header);
+		form_bad_inputs.push_back(msg);
 			for(unsigned int c = 0; c < ilv3_ilv5_bad_inputs.size(); c++){
-				string temp_error =  "Index: " +to_string(ilv3_ilv5_bad_inputs[c].index)
-								     + "  Argument: " + ilv3_ilv5_bad_inputs[c].value
-							  		 + "\n";
+				string temp_error;
+				temp_error = "Index: " +to_string(ilv3_ilv5_bad_inputs[c].index)
+								+ "  Argument: " + ilv3_ilv5_bad_inputs[c].value
+							    + "\n";
 				form_bad_inputs.push_back(temp_error);
 			}
+		}
 	}
 
 	//do line 6
@@ -570,29 +580,37 @@ void do_line2(ofstream& outs,const map<string,param_real8>& real8_params,const m
 
 }
 
-void do_TC_coefficients(const map<string,param_real8>& real8_params, const map<string,param_int4_array>& array_map,
-			string TC_input_file_name,ofstream& outs){
+void do_TC_coefficients(const map<string,param_real8>& real8_params,
+						const map<string,param_int4_array>& array_map,
+						string TC_input_file_name,ofstream& outs){
 	ifstream ins;
 	ins.open("./TC_files/"+TC_input_file_name);
 	if(ins.fail()){
-		error_logger.push_error("Error! File:./TC_files/"+TC_input_file_name+" could not be found.");
+		error_logger.push_error("Error! File:./TC_files/"+TC_input_file_name+
+								" could not be found.");
 	}
 
 	vector<string> lines_in;
-	string temp_string;//handy temporary string
+
+	//handy temporary string
+	string temp_string;
 
 	
 	while(!ins.eof()){
 		if(ins.fail()){
-			break;//leave loop, file is tapped out
+			//leave loop, file is tapped out
+			break;
 		}
 
-		getline(ins,temp_string);//yank line from file
-		lines_in.push_back(temp_string);//shove it into the array
+		//yank line from file
+		getline(ins,temp_string);
+
+		//shove it into the array
+		lines_in.push_back(temp_string);
 	}
 	
 	//this will be the case where the exact TC file was given, just mirror it
-	error_logger.push_msg("#################### PRINTING TC ##################################");
+	error_logger.push_msg("############# PRINTING TC ########################");
 	outs << right;
 	for(unsigned int c = 0; c < lines_in.size();c++){
 		error_logger.push_msg(lines_in[c]);
@@ -603,7 +621,7 @@ void do_TC_coefficients(const map<string,param_real8>& real8_params, const map<s
 		}
 
 	}
-	error_logger.push_msg("#################### DONE PRINTING TC #############################");
+	error_logger.push_msg("############ DONE PRINTING TC ####################");
 
 
 
