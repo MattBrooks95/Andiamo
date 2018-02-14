@@ -39,9 +39,14 @@ andy
 IENCH:Entrance Channel
 c Variable name in HF: IENCH
 c entrance channel:
-c 1 = neutron, 2 = proton, 3 = deuteron
-c 4 = triton, 5 = helium-3, 6 = alpha 
-c 7 = incident particle with A > 4
+c 1 = neutron
+c 2 = proton
+c 3 = deuteron
+c 4 = triton
+c 5 = helium-3
+c 6 = alpha 
+c 7 = Andiamo does not support incident
+c particles with A > 4
 andy_tile.png
 160x50
 andy

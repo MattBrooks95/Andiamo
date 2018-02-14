@@ -1,4 +1,4 @@
-//! \file button_manager.cc this file implements the class described in button_manager.h
+//! \file button_manager.cc implements the class described in button_manager.h
 
 #include "button_manager.h"
 #include "asset_manager.h"
@@ -41,9 +41,12 @@ button_manager::~button_manager(){
 
 void button_manager::init_tray(){
 
-	button_tray_texture = asset_access->get_texture(button_image_p+tray_image_name);	
+	button_tray_texture = asset_access->get_texture(button_image_p+
+													tray_image_name);	
 
-	if(button_tray_texture == NULL) error_logger.push_error(string(SDL_GetError()));
+	if(button_tray_texture == NULL){
+		error_logger.push_error(string(SDL_GetError()));
+	}
 
 	//use query texture to get the texture's height and width
 	SDL_QueryTexture(button_tray_texture,NULL,NULL,&tray_rect.w,&tray_rect.h);
@@ -57,10 +60,13 @@ void button_manager::init_tray(){
 
 void button_manager::init_form_tray(){
 
-	form_tray_texture = asset_access->get_texture(button_image_p+form_tray_image_name.c_str());
+	string form_tray_arg;
+	form_tray_arg = button_image_p+form_tray_image_name;
+	form_tray_texture = asset_access->get_texture(form_tray_arg);
 	if(form_tray_texture == NULL) error_logger.push_error(SDL_GetError());
 
-	SDL_QueryTexture(form_tray_texture,NULL,NULL,&form_tray_rect.w,&form_tray_rect.h);
+	SDL_QueryTexture(form_tray_texture,NULL,NULL,
+					 &form_tray_rect.w,&form_tray_rect.h);
 
 	//start on the left edge of the screen, with some space
 	form_tray_rect.x = 5;
@@ -93,7 +99,9 @@ void button_manager::redo_locks(){
 }
 
 //this follows the logic used in init_buttons
-//there is a lot of hard coded stuff, but I'm hoping the button manager won't need changed often
+//there is a lot of hard coded stuff, but I'm hoping the
+//button manager won't need changed often
+
 void button_manager::location_update(){
 	int new_y = sdl_access->get_h_bar().get_top() - (tray_rect.h + 10);
 
@@ -136,11 +144,14 @@ void button_manager::init_buttons(){
 	fop_button.force_corner_loc( tray_rect.x+5,tray_rect.y+7 );
 
 	//keep track of where the next button placement should start
-	end_of_last_button = end_of_last_button + tray_rect.x+5 + fop_button.get_width();
+	end_of_last_button = end_of_last_button + tray_rect.x + 5 + 
+						 fop_button.get_width();
 	
-	//these two are thin enough to occupy the same horizontal space, with one above and one below
+	//these two are thin enough to occupy the same horizontal space,
+	//with one above and one below
 	output_fname.force_corner_loc( end_of_last_button+5, tray_rect.y + 7);
-	t_coefficients.force_corner_loc( end_of_last_button+5, tray_rect.y+7 + output_fname.get_height()+10);
+	t_coefficients.force_corner_loc( end_of_last_button+5,
+								tray_rect.y+7 + output_fname.get_height()+10);
 
 	end_of_last_button = end_of_last_button+5+output_fname.get_width();
 
@@ -286,7 +297,10 @@ void button_manager::fill_regex_vectors(vector<regex>& icntrl_6_patterns,
 }
 
 void button_manager::print_buttons(){
-	error_logger.push_msg("####################### PRINTING BUTTONS ############################");
+
+	string print_msg;
+	print_msg = "#################### PRINTING BUTTONS #####################";
+	error_logger.push_msg(print_msg);
 	fop_button.print_me();
 
 	exit_dialogue.print_me();
@@ -298,13 +312,15 @@ void button_manager::print_buttons(){
 	lets_go.print_me();
 
 	//graphing_options.print_me();
-
-	error_logger.push_msg("####################### DONE PRINTING BUTTONS #######################");
+	string done_print_msg;
+	done_print_msg = "############# DONE PRINTING BUTTONS ####################";
+	error_logger.push_msg(done_print_msg);
 }
 
 void button_manager::draw_tray(){
 	if(tray_shown){
-		SDL_RenderCopy(sdl_access->renderer,button_tray_texture,NULL,&tray_rect);
+		SDL_RenderCopy(sdl_access->renderer,button_tray_texture,
+							NULL,&tray_rect);
 	}
 }
 
@@ -329,10 +345,12 @@ void button_manager::draw_buttons(){
 
 }
 
-void button_manager::text_box_loop(text_box_button* current_button,SDL_Event& event){
+void button_manager::text_box_loop(text_box_button* current_button,
+									SDL_Event& event){
 
 
-	SDL_StartTextInput();//turn on the text input background functions
+	//turn on the text input background functions
+	SDL_StartTextInput();
 
 	//used to control text entry loop
 	bool done = false;
@@ -383,7 +401,8 @@ void button_manager::text_box_loop(text_box_button* current_button,SDL_Event& ev
 		  case SDL_KEYDOWN:
 			
 			if(event.key.keysym.sym == SDLK_BACKSPACE){
-				//they hit backspace, so delete the end character if it is non-empty
+				//they hit backspace, so delete the end character
+				//if it is non-empty
 				current_button->my_text_box.back_space();
 				text_was_changed = true;
 			} else if(event.key.keysym.sym == SDLK_LEFT){
@@ -394,8 +413,9 @@ void button_manager::text_box_loop(text_box_button* current_button,SDL_Event& ev
 
                 current_button->my_text_box.inc_cursor(text_was_changed);
 			}
-				
-			SDL_FlushEvent(SDL_KEYDOWN); //prevent event flooding
+
+			//prevent event flooding
+			SDL_FlushEvent(SDL_KEYDOWN); 
 		  	break;
 		  case SDL_QUIT:
 			//puts another sdl quit in the event queue, so program
@@ -497,7 +517,9 @@ bool button_manager::click_handling(SDL_Event& mouse_event){
 					}
 				}
 			}
-			done_something = true; //don't consider the other cases, this one has been hit
+
+			//don't consider the other cases, this one has been hit
+			done_something = true;
 		}
 	}
 	/*if(!done_something && graphing_options.shown){
@@ -510,7 +532,7 @@ bool button_manager::click_handling(SDL_Event& mouse_event){
 	}*/
 
 
-	//############### FORM BUTTON CHECKS #########################################
+	//############### FORM BUTTON CHECKS ######################################
 	if(!done_something){
 		SDL_Rect msg_dest = {250,form_tray_rect.y-500,500,500};
 		if( icntrl_8.handle_click(mouse_event) ){
@@ -570,7 +592,7 @@ bool button_manager::click_handling(SDL_Event& mouse_event){
 	}
 
 
-	//#############################################################################
+	//########################################################################
 
 
 	error_logger.push_msg("DONE HANDLING BUTTON CLICKS");

@@ -318,8 +318,8 @@ void input_maker::init(){
 
 bool input_maker::output(vector<string>& form_bad_inputs){
 
-	//note that this will not yet be properly formatted for HF input, mostly here for testing field input
-	//and this class's output logic
+	//note that this will not yet be properly formatted for HF input,
+	//mostly here for testing field input and this class's output logic
 	ofstream outs;
 	outs.open( (output_p+output_file_name).c_str(),std::fstream::trunc );
 	if(outs.fail()) {
@@ -329,21 +329,22 @@ bool input_maker::output(vector<string>& form_bad_inputs){
 		if(outs.fail()){
 			error_logger.push_error("Opening output stream failed again.");
 			return false;
-		} 
+		}
 
 	}
 
-	//note that in these functions, the variables that are being printed are found in the order they are
-	//found in the HF_config/config.txt file, based off of the input manual that I was given
-	//so if a new line is inserted, care to adjust the indices. Adding new lines to the end shouldn't
-	//change the lines above them, though
+	//note that in these functions, the variables that are being printed are
+	//found in the order they are found in the HF_config/config.txt
+	//file, based off of the input manual that I was given
+	//so if a new line is inserted, care to adjust the indices.
+	//Adding new lines to the end shouldn't change the lines above them, though
 
 
-	//SET UP LINE 1################################################################
+	//SET UP LINE 1#############################################################
 	do_line1(outs,string_params);
-	//#############################################################################
+	//##########################################################################
 
-	//SET UP LINE 2################################################################
+	//SET UP LINE 2#############################################################
 	do_line2(outs,real8_params, int4_params);
 	//##########################################################################
 
@@ -443,7 +444,7 @@ bool input_maker::output(vector<string>& form_bad_inputs){
 	}
 
 
-	//#########MAKE OUTPUTS FROM FORM_BUTTONS ###########################################//
+	//#########MAKE OUTPUTS FROM FORM_BUTTONS ################################//
 	std::vector<index_value> icntrl6_bad_inputs;
 
 	if(//button_access->get_icntrl_6().get_form().prev_initialized &&
@@ -487,7 +488,7 @@ bool input_maker::output(vector<string>& form_bad_inputs){
 			form_bad_inputs.push_back(temp_error);
 		}
 	}
-	//######################################################################################################//
+	//########################################################################//
 
 	//if the vector of error message's size is not 0, don't make the output file
 	//and present a message to the user
@@ -511,7 +512,7 @@ bool input_maker::output(vector<string>& form_bad_inputs){
 	}
 }
 
-//################# NON MEMBER HELPERS ############################################
+//################# NON MEMBER HELPERS #########################################
 void output_string(ofstream& outs,const unsigned int& size,const string& string_in){
 	//set up output flags
 	outs << setw(size) << left;
