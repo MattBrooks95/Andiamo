@@ -51,7 +51,7 @@ class input_maker{
 	/* needs to be ran with the -v option */
 	void check_map();
 
-	//################ GETTERS AND SETTERS #########################################
+	//################ GETTERS AND SETTERS #####################################
 
 	//! return int4_params BY REFERENCE
 	map<string,param_int4>& get_int4_params(){ return int4_params;}

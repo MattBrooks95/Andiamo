@@ -58,9 +58,9 @@ class fop_handler{
 	int find_icm();
 
 	//! helper for calc_open_channels
-	/*! goes from beam energy to center of mass energy
-	 * \param ecm_value is filled with the center of mass energy */
-	void lab_to_ecm(double& ecm_value);
+	/*! goes from beam energy to center of mass energy */
+	void lab_to_ecm(double& ecm_value, const unsigned int& A_targ,
+					const unsigned int& A_proj);
 
 	//##### HELPERS FOR LAB_TO_ECM ############################################
 	//! grabs compound A and Z values from Andiamo inputs
@@ -70,10 +70,9 @@ class fop_handler{
 	//! grabs IENCH value from Andiamo inputs
 	int find_IENCH();
 
-	//! calcs target A and sets projectile A based on IENCH
-	void calc_Atarget_Abeam(int IENCH,
-							int compound_A, int compound_Z,
-							int& A_target, int& A_beam);
+
+	void calc_Ap_Zp_At_Zt(int IENCH, const int compound_A, const int compound_Z,
+							int& A_proj, int& Z_proj, int& A_targ, int& Z_targ);
 	//#########################################################################
 
 	//! sets up the decks that will be FOP inputs
@@ -113,7 +112,7 @@ class fop_handler{
 	 *[3] = deuteron
 	 *[4] = triton
 	 *[5] = 3He */
-	bool open_channels[7];
+	bool open_channels[6];
 };
 
 //! this function calls the cross-compiled tool for finding Q values
@@ -122,7 +121,9 @@ class fop_handler{
  * a c function */
 extern "C" {
 
-	void dqv(int* A,int* Z, double return_values[6]);
+	void cqvalue_(int* Z_proj, int* A_proj, int* Z_targ, int* A_targ,
+				  double* qn, double* qp, double* qd, double* qt,
+				  double* q3He, double* qalpha,int* tflag);
 
 }
 

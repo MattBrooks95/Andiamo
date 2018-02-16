@@ -1,0 +1,48 @@
+**    ==================================================================
+**
+**    @(#)physical_constants	1.1 90/01/31 12:44:25  --  D. A. Resler
+**
+**    This FORTRAN include file contains physical constants and
+**    conversion factors for use in my application codes...
+
+
+**    ------------------------------------------------------------------
+**    P H Y S I C A L   C O N S T A N T S
+**    ------------------------------------------------------------------
+
+**    electron rest mass...
+**
+**    units:  MeV
+**
+**    references:  A. H. Wapstra and G. Audi,
+**                 Nucl. Phys. A432, 1 (1985)
+**
+**                 E. R. Cohen and B. N. Taylor,
+**                 J. Phys. Chem. Ref. Data 22, 663 (1973)
+**
+**                 At. Nucl. Data Tables 18, 587 (1976)
+
+      real*8 pc_em,pe_em
+
+      parameter (pc_em=0.5110034d0)
+      parameter (pe_em=0.0000014d0)
+
+
+**    ------------------------------------------------------------------
+**    C O N V E R S I O N   F A C T O R S
+**    ------------------------------------------------------------------
+
+**    1 u = ??? MeV...
+**
+**    references:  A. H. Wapstra and G. Audi,
+**                 Nucl. Phys. A432, 1 (1985)
+**
+**                 E. R. Cohen and A. H. Wapstra,
+**                 Nucl. Instr. Meth. 211, 153 (1983)
+
+      real*8 cf_u,ce_u
+
+      parameter (cf_u=931.5012d0)
+      parameter (ce_u=  0.0003d0)
+
+**    ==================================================================

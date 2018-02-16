@@ -473,8 +473,7 @@ bool input_maker::output(vector<string>& form_bad_inputs){
 	//#########MAKE OUTPUTS FROM FORM_BUTTONS ################################//
 	std::vector<index_value> icntrl6_bad_inputs;
 
-	if(//button_access->get_icntrl_6().get_form().prev_initialized &&
-		!(int4_params.at("ICNTRL6") == 0) &&
+	if( int4_params.at("ICNTRL6").value > 0 &&
 		!button_access->get_icntrl_6().make_output(outs,icntrl6_bad_inputs)){
 
 		form_bad_inputs.push_back("##############Icntrl6 error list##############\n");

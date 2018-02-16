@@ -81,17 +81,67 @@ void fop_handler::get_files_list(){
 
 void fop_handler::calc_open_channels(){
 
-	//Tom will give me a new tool, dqv, to give back an array of doubles
-	//for the q values for neutron proton deuteron triton 3He alpha
 
-	//passed to dqv, gets filled in with q_values
+	//########### PART ONE ##################################################//
+	//use hfqvalue to acqure q values for the different exit channels
+
+	//Find A for beam and target
+	//from the compound A and Z
+
+	//need to get compound A and Z from Andiamo inputs
+	unsigned int compound_A, compound_Z;
+
+	//read in these values from standard input, in Andiamo
+	//these will be found in parameter maps
+	find_compound_A_Z(compound_A,compound_Z);
+
+	//now we need to grab IENCH, will be read in from console
+	//in Andiamo, will come from parameter map
+	int IENCH = find_IENCH();
+
+	//used to do the calculation, needs to be calculated from
+	//IENCH and A and Z of compound nucleus from Andiamo inputs
+	int A_proj = 0, Z_proj = 0;	
+	int A_targ = 0, Z_targ = 0;
+
+	//use IENCH mode and the given compound information
+	//to calculate A & Z of target and A & Z of projectile/beam
+	calc_Ap_Zp_At_Zt(IENCH,compound_A,compound_Z,A_proj,Z_proj,A_targ,Z_targ);
+
+	//use Tom's tool, cqvalue.f, to calculate q for each channel
+
+	//container for q values, with
+	/*  0 = neutron
+		1 = proton
+		2 = deuteron
+		4 = triton
+		5 = helium-3
+		6 = alpha
+	*/
 	double q_values[6];
 
-	/* calculated from inputs to Andiamo with the following formula
-	 * HF parameter :ICM (TC Reference Frame)
-	 *	= 0 given energies are in lab, convert to ecm
-	 *  = 1 given energies are in ecm, no need to convert
-	 *********************************************************** */
+	int ftran_flag = 0;
+
+	//use Tom's fortran tool to calculate the Q values for each channel
+	cqvalue_(&Z_proj,&A_proj,&Z_targ,&A_targ,&q_values[0],
+			 &q_values[1],&q_values[2],&q_values[3],&q_values[4],
+			 &q_values[5],&ftran_flag);
+	cout << "Results from Q value calculation: " << endl;
+	for(unsigned int c = 0; c < 6; c++){
+		cout << "Value " << c << ": " << q_values[c] << endl;
+	}
+	//####### END PART 1 ######################################################
+
+
+	//####### PART 2 ##########################################################
+	//make sure that we have access to the center of mass energy
+
+
+	// calculated from inputs to Andiamo with the following formula
+	// HF parameter :ICM (TC Reference Frame)
+	//	= 0 given energies are in lab, convert to ecm
+	//  = 1 given energies are in ecm, no need to convert
+	//*************************************************************
 
 	//we need this value for FOP
 	double ecm_value = 0;
@@ -99,7 +149,8 @@ void fop_handler::calc_open_channels(){
 	//first, we'll assume it's given as center of mass energy
 	ecm_value = find_elab();
 
-	//figure out if ELAB's value is in lab energy or center of mass energy
+	//this value will tell us if ELAB's value is in
+	//lab energy or center of mass energy
 	int ref_frame = find_icm();
 
 	//icm_val == 0 means that we were given lab energy
@@ -107,26 +158,46 @@ void fop_handler::calc_open_channels(){
 	//to center of mass energy
 	if(ref_frame == 0){
 
+		cout << "Converting Elab value." << endl;
+		cout << "Given value: " << ecm_value << endl; 
 		//function converts lab energy to center of mass energy
-		lab_to_ecm(ecm_value);
-
+		lab_to_ecm(ecm_value,A_targ,A_proj);
+		cout << "Value after Elab -> Ecm conversion: " << ecm_value << endl;
 	}
+	//#######END PART 2 #######################################################
+
+	//###### FINALLY ##########################################################
+	//use Qvalue and center of mass energy to figure out which channels
+	//are open
 
 	//if Q + Ecm for a channel is > 0, we need to run FOP for that channel
 	for(unsigned int c = 0; c < 6; c++){
+
+		cout << "Q_value: " << q_values[c] << " Ecm value: "
+			 << ecm_value << endl;
 
 		double total = q_values[c] + ecm_value;
 
 		//if Q + Ecm > 0, store the fact that we need to run FOP
 		//for that particle. Elsewise, just leave it false.
-		//(values in open_channels default to false in constructor
+		//(values in open_channels default to false in constructor)
 		if(total > 0){
 
 			//store the fact that this channel needs to run FOP
 			open_channels[c] = true;
-		}
+			cout << "Channel: " << c << " is open. ";
+			cout << "Q + Ecm value: ";
+			cout.precision(15);
+			cout << total << "\n"  << endl;
+		} else {
 
+			cout << "Channel: "  << c << " is not open.";
+			cout << "Q + Ecm value: ";
+			cout.precision(15);
+			cout << total << "\n" << endl;
+		}
 	}
+
 
 }
 
@@ -179,44 +250,13 @@ int fop_handler::find_icm(){
 
 }
 
-void fop_handler::lab_to_ecm(double& ecm_value){
+void fop_handler::lab_to_ecm(double& ecm_value, const unsigned int& A_targ,
+							 const unsigned int& A_proj){
 
-	//note that when this function is called,
-	//ecm value contains the value provided from the user (ELAB),
-	//which is the lab energy. We need to convert to
-	//center of mass energy
 
-	/*********************************************************
-	*	Ecm =            Atarget		
-	*			Elab *  ---------
-	*                  Abeam + Atarget 
-    *
-	* Where: Ecm  = "Center of Mass Energy"
-    *        Elab = "Lab Energy" (an Andiamo input from user)
-	*     Atarget = "Mass of Target"
-	*     Abeam   = "Mass of Beam/Projectile"
-	*********************************************************/
-
-	//temporarily store ELABS value
 	double converted_ecm = ecm_value;
 
-	unsigned int compound_A = 0, compound_Z = 0;
-
-	//get compound values from Andiamo inputs
-	find_compound_A_Z(compound_A,compound_Z);
-
-	//now we need to grab IENCH from Andiamo input
-	int IENCH = find_IENCH();
-
-	//used to do the calculation, needs to be calculated from
-	//IENCH and A and Z of compound nucleus from Andiamo inputs
-	int A_target = 0, A_beam = 0;
-
-	//use IENCH mode and the given compound information
-	//to calculate A of target and A of projectile/beam
-	calc_Atarget_Abeam(IENCH,compound_A,compound_Z,A_target,A_beam);
-
-	converted_ecm = converted_ecm * (A_target / (A_beam + A_target));	
+	converted_ecm = converted_ecm * (A_targ / (double) (A_proj + A_targ));
 
 	//fill the passed energy parameter with the calculated answer
 	ecm_value = converted_ecm;
@@ -256,56 +296,76 @@ int fop_handler::find_IENCH(){
 	return return_me;
 }
 
-void fop_handler::calc_Atarget_Abeam(int IENCH,
-										int compound_A,int compound_Z,
-										int& A_target, int& A_beam){
+void fop_handler::calc_Ap_Zp_At_Zt(int IENCH,
+								const int compound_A, const int compound_Z,
+								int& A_proj, int& Z_proj,
+								int& A_targ, int& Z_targ){
 
 
 	switch(IENCH){
 
 		case 1: //neutron
 
-			A_beam   = 1;
-			A_target = compound_A - A_beam;
+			A_proj   = 1;
+			Z_proj   = 0;
+
+			A_targ = compound_A - A_proj;
+			Z_targ = compound_Z;
 			break;
 
 		case 2: //proton
 
-			A_beam   = 1;
-			A_target = compound_A - A_beam;
+			A_proj = 1;
+			Z_proj = 1;
+
+			A_targ = compound_A - A_proj;
+			Z_targ = compound_Z - Z_proj;
 			break;
 
 		case 3: //deuteron
 
-			A_beam   = 2;
-			A_target = compound_A - A_beam;
+			A_proj = 2;
+			Z_proj = 1;
+
+			A_targ = compound_A - A_proj;
+			Z_targ = compound_Z - Z_proj;
 			break;
 
 		case 4: //triton
 
-			A_beam   = 3;
-			A_target = compound_A - A_beam;
+			A_proj = 3;
+			Z_proj = 1;
+
+			A_targ = compound_A - A_proj;
+			Z_targ = compound_Z - Z_proj;
 			break;
 
 		case 5: //3He
 
-			A_beam   = 3;
-			A_target = compound_A - A_beam;
+			A_proj = 3;
+			Z_proj = 2;
+
+			A_targ = compound_A - A_proj;
+			Z_targ = compound_Z - Z_proj;
 			break;
 
 		case 6: //alpha
 
-			A_beam   = 4;
-			A_target = compound_A - A_beam;
+			A_proj = 4;
+			Z_proj = 2;
+
+			A_targ = compound_A - A_proj;
+			Z_targ = compound_Z - Z_proj;
 			break;
 
 		case 7:
-			error_logger.push_error("FOP can't handle IENCH = 7 feature.");
+			cout << "FOP can't handle IENCH = 7 feature." << endl;
 			break;
 
 		default:
-			error_logger.push_error("Invalid IENCH value.");
+			cout << "Invalid IENCH value." << endl;
 	}
+
 }
 
 void fop_handler::prepare_decks(){

@@ -7,10 +7,10 @@ vtool = --tool=memcheck
 vopt = --log-file="memory_check.txt" --leak-check=full
 
 #object files
-#objects = main.o handlers.o manager.o ftran_structs.o field.o sdl_help.o scroll_bar.o input_maker.o string+.o button_manager.o button.o form_buttons.o form.o derived_buttons.o fop_handler.o dqv.o deck.o text_box.o cursor.o logger.o asset_manager.o
-#main_objects = handlers.o manager.o ftran_structs.o field.o sdl_help.o scroll_bar.o input_maker.o string+.o button_manager.o button.o form_buttons.o form.o derived_buttons.o fop_handler.o dqv.o deck.o text_box.o cursor.o logger.o asset_manager.o
-objects = main.o handlers.o manager.o ftran_structs.o field.o sdl_help.o scroll_bar.o input_maker.o string+.o button_manager.o button.o form_buttons.o form.o derived_buttons.o fop_handler.o deck.o text_box.o cursor.o logger.o asset_manager.o
-main_objects = handlers.o manager.o ftran_structs.o field.o sdl_help.o scroll_bar.o input_maker.o string+.o button_manager.o button.o form_buttons.o form.o derived_buttons.o fop_handler.o deck.o text_box.o cursor.o logger.o asset_manager.o
+
+F_OBJS = ./q_val/cqvalue.o ./q_val/dqvalu.o ./q_val/dmass.o ./q_val/bamt16.o
+OBJECTS = main.o handlers.o manager.o ftran_structs.o field.o sdl_help.o scroll_bar.o input_maker.o string+.o button_manager.o button.o form_buttons.o form.o derived_buttons.o fop_handler.o deck.o text_box.o cursor.o logger.o asset_manager.o
+MAIN_OBJECTS = handlers.o manager.o ftran_structs.o field.o sdl_help.o scroll_bar.o input_maker.o string+.o button_manager.o button.o form_buttons.o form.o derived_buttons.o fop_handler.o deck.o text_box.o cursor.o logger.o asset_manager.o
 
 
 
@@ -23,10 +23,10 @@ name = andiamo
 #controls which browser the makefile opens to view doxygen html manual
 browser = firefox
 
-andiamo: $(objects)
-	g++  -o $(name) $(objects) $(SDL_INC)
+andiamo: $(OBJECTS)
+	g++  -o $(name) $(OBJECTS) $(F_OBJS) $(SDL_INC)
 
-main.o: main.cc $(main_objects)
+main.o: main.cc $(MAIN_OBJECTS)
 	g++ $(C_FLG) -c main.cc
 
 handlers.o: handlers.cc handlers.h sdl_help.h button_manager.h
@@ -68,11 +68,11 @@ ftran_structs.o: ftran_structs.cc ftran_structs.h
 input_maker.o: input_maker.cc input_maker.h string+.o ftran_structs.o string+.o button_manager.o
 	g++ $(C_FLG) -c input_maker.cc
 
-fop_handler.o: fop_handler.cc fop_handler.h deck.o
+fop_handler.o: fop_handler.cc fop_handler.h hf_qvalue deck.o
 	g++ $(C_FLG) -c fop_handler.cc
 
-#dqv.o: dqv.f
-#	gfortran -c -o dqv.o -ffree-form dqv.f
+hf_qvalue:
+	make -C ./q_val/
 
 deck.o: deck.h deck.cc
 	g++ $(C_FLG) -c deck.cc
@@ -103,8 +103,7 @@ doxy: doxyfile
 	$(browser) ./doxyout/html/index.html
 #remove compiled things, text editor saves, memory check output
 clean:
-	rm *~ *.o andiamo debug memory_check.txt
-
+	make clean -C ./q_val/ && rm *~ *.o andiamo debug memory_check.txt
 
 
 
