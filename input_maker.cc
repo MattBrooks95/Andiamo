@@ -203,11 +203,15 @@ void input_maker::init(){
 				try {
 				  size = stoi( temp_string.substr(1,temp_string.length()-1));
 				} catch(invalid_argument& error){
-				  error_logger.push_error("Error! Illegal string size value in input_maker::init() :"+temp_string.substr(1,temp_string.length()-1));
+				  string bad_size_msg = "Error! Illegal string size value in";
+				  bad_size_msg += " input_maker::init() :";
+				  bad_size_msg += temp_string.substr(1,temp_string.length()-1);
+				  error_logger.push_error(bad_size_msg);
 				  size = 0;
 				}
 
-				//name can be found by token label|some-number| minus the |some-number| part
+				//name can be found by token label|some-number| minus
+				//the |some-number| part
 				string name = tokens[1].substr(0,tokens[1].size()- temp_string.size());
 
 				//make sure bookkeeping vector knows what is going on
@@ -221,14 +225,17 @@ void input_maker::init(){
 			}
 			
 		} else if( regex_match(temp_string,re_i4_array) ){
-			error_logger.push_msg("Is an array of integers! This is that line split along spaces:");
+			string int_arr_msg = "Is an array of integers! This is that";
+			int_arr_msg += " line split along spaces:";
+			error_logger.push_msg(int_arr_msg);
 			
 			vector<string> tokens = split(temp_string,' ');
 			
 			for(unsigned int c = 0; c < tokens.size() ;c++){
 				error_logger.push_msg("\t"+tokens[c]);
 			}
-			smatch size_match;//store numerical result of grabbing the array's size
+			//store numerical result of grabbing the array's size
+			smatch size_match;
 
 			//have regex search out the integer size value
 			regex_search(tokens[0],size_match,int_array_size_pattern);
@@ -237,18 +244,26 @@ void input_maker::init(){
 			if( size_match.ready() ){
 				
 				//create a string that contains just the size of the array
-				string temp_size_string = size_match[0].str().substr(1,size_match[0].str().size()-2);
+				string temp_size_string;
+				temp_size_string = size_match[0].str().substr(1,
+												size_match[0].str().size()-2);
 				int array_size;
 				try {
 				  array_size = stoi(temp_size_string);
 				} catch(invalid_argument& error){
-				  error_logger.push_error("Error in input_maker::init(), i4 array size given illegal value:"+temp_size_string);
+
+				  string i4_err = "Error in input_maker::init(), i4 array";
+				  i4_err += " size given illegal value:";
+				  i4_err += temp_size_string;
+				  error_logger.push_error(i4_err);
 				  array_size = 0;
 				}
 				
-				//create the int4 array that will be pushed into input_maker's containing vector
-				//tokens[1] should be the string name given, array_size was determined by the size_match regex
-				//should not be satisfied from the start, although it would appear that it is OK for NENT
+				//create the int4 array that will be pushed into input_maker's
+				// containing vector tokens[1] should be the string name given,
+				//array_size was determined by the size_match regex should
+				//not be satisfied from the start, although it would appear
+				// that it is OK for NENT
 				//to not have 7 values depending on some other variable.....
 				param_int4_array i4_array_push_me(tokens[1],array_size,false);
 				
@@ -280,20 +295,27 @@ void input_maker::init(){
 			//fill this with what's in the comma separated list
 			vector<double> values;
 
-			//rip array size out of type declaration part E(size) "E(8) some array name = " " "
+			//rip array size out of type declaration part E(size)
+			//"E(8) some array name = " " "
 			//contain result of regex search for size
 			smatch size_match;
 			regex_search(tokens[0],size_match,int_array_size_pattern);
 			if(size_match.ready()){
-				string temp_size_string = size_match[0].str().substr(1,size_match[0].str().size()-2);
+				string temp_size_string;
+				temp_size_string = 
+					size_match[0].str().substr(1,size_match[0].str().size()-2);
+
 				try {
 				  array_size = stoi(temp_size_string);
 				} catch (invalid_argument& error){
-				  error_logger.push_error("Error in input_maker::init, real 8 array given illegal size:"+temp_size_string);
+				  error_logger.push_error("Error in input_maker::init, real 8",
+								" array given illegal size:"+temp_size_string);
 				}
 			} else {	
 
-				error_logger.push_error("Error! Could not determine array size of R8 array (TIN?) declaration line.");
+				string bad_size_msg = "Error! Could not determine array size";
+				bad_size_msg += "of R8 array (TIN?) declaration line.";
+				error_logger.push_error(bad_size_msg);
 			}
 
 			//create object to be shoved into the map for E arrays
@@ -304,15 +326,17 @@ void input_maker::init(){
 				error_logger.push_msg(to_string(r8_array_push_me.values[c]));
 			}
 
-			r8_array_params.insert(std::pair<string,param_r8_array>(name,r8_array_push_me));//shove object into the map for E arrays
+			//shove object into the map for E arrays
+			r8_array_params.insert(
+					   std::pair<string,param_r8_array>(name,r8_array_push_me));
 		} else {
 			error_logger.push_error("Error! Line type wasn't determined.");
 		}
 
 		getline(ins,temp_string);
 	}
-
-	error_logger.push_error("##################### END INPUT MAKER INIT() ###############################");
+	string im_end_msg = "########## END INPUT MAKER INIT() ##################";
+	error_logger.push_error(im_end_msg);
 	ins.close();
 }
 
@@ -323,7 +347,9 @@ bool input_maker::output(vector<string>& form_bad_inputs){
 	ofstream outs;
 	outs.open( (output_p+output_file_name).c_str(),std::fstream::trunc );
 	if(outs.fail()) {
-		error_logger.push_error("Error! Can not open/create output file: |"+output_p+output_file_name+"| Attempting output directory creation.");
+		error_logger.push_error("Error! Can not open/create output file: |"+
+								output_p+output_file_name+
+								"| Attempting output directory creation.");
 		system("mkdir output");
 		outs.open( (output_p+output_file_name).c_str(),std::fstream::trunc);
 		if(outs.fail()){
@@ -427,7 +453,7 @@ bool input_maker::output(vector<string>& form_bad_inputs){
 		//do the form's output
 		std::vector<index_value> icntrl4_bad_inputs;
 		if(!button_access->get_icntrl_4().make_output(outs,icntrl4_bad_inputs)){
-			form_bad_inputs.push_back("##############Icntrl4 error list##############\n");
+			form_bad_inputs.push_back("###########Icntrl4 error list#######\n");
 			form_bad_inputs.push_back("Resolved Level + Continuum form\n");
 			for(unsigned int c = 0; c < icntrl4_bad_inputs.size(); c++){
 				string temp_error =  "Index: " +to_string(icntrl4_bad_inputs[c].index)
@@ -479,7 +505,7 @@ bool input_maker::output(vector<string>& form_bad_inputs){
 
 	std::vector<index_value> icntrl10_bad_inputs;
 	if(!button_access->get_icntrl_10().make_output(outs,icntrl10_bad_inputs)){
-		form_bad_inputs.push_back("##############Icntrl10 error list#############\n");
+		form_bad_inputs.push_back("#########Icntrl10 error list############\n");
 		form_bad_inputs.push_back("Specify Spin Cutoff? form\n");
 		for(unsigned int c = 0; c < icntrl10_bad_inputs.size(); c++){
 			string temp_error =  "Index: " +to_string(icntrl10_bad_inputs[c].index)
@@ -513,7 +539,9 @@ bool input_maker::output(vector<string>& form_bad_inputs){
 }
 
 //################# NON MEMBER HELPERS #########################################
-void output_string(ofstream& outs,const unsigned int& size,const string& string_in){
+void output_string(ofstream& outs,const unsigned int& size,
+					const string& string_in){
+
 	//set up output flags
 	outs << setw(size) << left;
 	//if string is in quotation marks, don't print them
@@ -639,20 +667,26 @@ void do_TC_coefficients(const map<string,param_real8>& real8_params,
 
 }
 
-void do_line4(ofstream& outs,const map<string,param_real8>& real8_params,const map<string,param_int4>& int4_params){
+void do_line4(ofstream& outs,const map<string,param_real8>& real8_params,
+				const map<string,param_int4>& int4_params){
   try{
 	outs << right;
 	//     FJTAR               FCMJMAX          FRESIDEMAX         ITARPR               NG             
-	outs F10 real8_params.at("FJTAR").value F10 real8_params.at("FCMJMAX").value F10 real8_params.at("FRESIDMAX").value
-	     I int4_params.at("ITARPR").value I int4_params.at("NG").value << endl;
+	outs F10 real8_params.at("FJTAR").value F10 real8_params.at("FCMJMAX").value
+	// NG
+	F10 real8_params.at("FRESIDMAX").value
+	I int4_params.at("ITARPR").value I int4_params.at("NG").value << endl;
+
   } catch (out_of_range& not_found){
-	error_logger.push_error("Error in do_line4: parameter not found in the map!");
+	string err_msg = "Error in do_line4: parameter not found in the map!";
+	error_logger.push_error(err_msg);
   }
 
 
 }
 
-void do_line4A(ofstream& outs,const map<string,param_real8>& real8_params,const map<string,param_int4>& int4_params){
+void do_line4A(ofstream& outs,const map<string,param_real8>& real8_params,
+				const map<string,param_int4>& int4_params){
   try{
 	outs << fixed << setprecision(2);
 	outs F5 real8_params.at("APAR").value F5 real8_params.at("ZPAR").value F5 real8_params.at("QIN").value 
