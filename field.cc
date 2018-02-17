@@ -157,11 +157,6 @@ SDL_Rect field::get_rect() const{
 	return return_me;
 }
 
-void field::force_size(int width_in,int height_in){
-	size.width = width_in;
-	size.height = height_in;
-}
-
 void field::graphics_init(string image_p_in){
 	image_p = image_p_in;
 
@@ -185,27 +180,44 @@ void field::graphics_init(string image_p_in){
 
 }
 void field::text_init(){
+
 	//thanks to 
 	//http://headerphile.blogspot.com/2014/07/sdl2-part-10-text-rendering.html
 	//for the tutorial I used. Also thanks to
 	//http://gigi.nullneuron.net/gigilabs/displaying-text-in-sdl2-with-sdl_ttf/
 
-	//this part sets up the tile title surface
-	SDL_Color color= {0,0,0,0}; //black text
-	my_text_surf = TTF_RenderUTF8_Blended(sdl_access->font,(display_name).c_str(),color);
+	//get a more shorthand reference to the SDL class's font pointer
+	TTF_Font* font = sdl_access->font;
+	if(font == NULL){
+		error_logger.push_msg("NULL font in text init()!");
+	}
+
+	SDL_Renderer* renderer = sdl_access->renderer;
+	if(renderer == NULL){
+		error_logger.push_msg("NULL renderer in text init()!");
+	}
+
+	//this part sets up the tile title surface #################################
+	//black text
+	SDL_Color color= {BLACK};
+	my_text_surf = TTF_RenderUTF8_Blended(font,(display_name).c_str(),color);
 	if(my_text_surf == NULL){
 		string error = "Error in field.cc's graphics init() function: ";
 		error       += SDL_GetError();
 		error_logger.push_error(error);
 	}
 
-	my_text_tex = SDL_CreateTextureFromSurface(sdl_access->renderer,my_text_surf);
+	my_text_tex = SDL_CreateTextureFromSurface(renderer,my_text_surf);
+
 	if(my_text_tex == NULL){
-		string error = SDL_GetError();
-		error_logger.push_error("Error in field.cc's graphics init() function: "+error);	
+		string error = "Error in field.cc's graphics init() function: ";
+		error += SDL_GetError();
+		error_logger.push_error(error);	
 	}
+	//##########################################################################
+
+	//this part sets up this tile's help box####################################
 	if(descriptions.size() > 0){
-	//this part sets up this tile's help box
 
 		//find widest description line
 		unsigned int max_width = 0;
@@ -223,7 +235,7 @@ void field::text_init(){
 				max_w_index = c; //save a reference to the winning string
 			}
 		}
-		TTF_SizeText(sdl_access->font,descriptions[max_w_index].c_str(),&word_w,&word_h);
+		TTF_SizeText(font,descriptions[max_w_index].c_str(),&word_w,&word_h);
 
 		//now have help box's width
 		max_width = word_w;
@@ -247,7 +259,9 @@ void field::text_init(){
 			alpha = 0xff000000;
 		#endif
 
-		my_help_surf = SDL_CreateRGBSurface(0,max_width,total_h,32,red,green,blue,alpha);
+		my_help_surf = 
+			SDL_CreateRGBSurface(0,max_width,total_h,32,red,green,blue,alpha);
+
 		if(my_help_surf == NULL){
 			string error = "Error making ";
 			error       += tile_name + "'s help box.";
@@ -256,109 +270,145 @@ void field::text_init(){
 
 		}
 		//color in the help background
-		SDL_FillRect(my_help_surf,NULL,SDL_MapRGBA(my_help_surf->format,0,105,78,255));//OU green
+		//OU green from colors.h
+		SDL_FillRect(my_help_surf,NULL,
+									SDL_MapRGBA(my_help_surf->format,OU_GREEN));
 
 
 		int new_row_height = 0;
 		for(unsigned int c = 0; c < descriptions.size();c++){
-			SDL_Rect word_dest = {0,0,0,0}; //used to tell it where to draw each line
 
-			SDL_Surface* temp_line = TTF_RenderUTF8_Blended(sdl_access->font,descriptions[c].c_str(),color);
-			word_dest.y = new_row_height + vert_offset;//account for height of previous lines
+			//used to tell it where to draw each line
+			SDL_Rect word_dest = {0,0,0,0};
+
+			SDL_Surface* temp_line =
+					TTF_RenderUTF8_Blended(font,descriptions[c].c_str(),color);
+
+			//account for height of previous lines
+			word_dest.y = new_row_height + vert_offset;
 			new_row_height = word_dest.y + word_h;
 
+			//draw words atop the help surface
 			if(SDL_BlitSurface(temp_line,NULL,my_help_surf,&word_dest) != 0){
 				string error = SDL_GetError();
 				error_logger.push_error("Error in help blit."+error);
-			} //draw words atop the help surface
+			} 
+
 			//free memory, this pointer will be used again
 			SDL_FreeSurface(temp_line);
 		}
 
-		my_help_tex = SDL_CreateTextureFromSurface(sdl_access->renderer,my_help_surf);
+		my_help_tex = SDL_CreateTextureFromSurface(renderer,my_help_surf);
 		if(my_help_tex == NULL){
-			string error = SDL_GetError();
-			error_logger.push_error("Error in creating help box texture. "+error);
+			string error = "Error in creating help box texture. ";
+			error += SDL_GetError();
+			error_logger.push_error(error);
 		}
 	}
 }
 void field::draw_me(){
 
+	//get a space saving reference to the sdl renderer
+	SDL_Renderer* renderer = sdl_access->renderer;
+
+	//space saving reference to x and y scroll from sdl class
+	int x_scroll = sdl_access->get_xscroll();
+	int y_scroll = sdl_access->get_yscroll();
+
+	//space saving reference to tile dimensions
+	int width = size.width;
+	int height = size.height;
+
+
 	//this part draws the "normal box"
 	if(!help_mode || my_help_surf == NULL || my_help_tex == NULL){
-		//####################### Draw name and tile background #####################################
-		SDL_Rect dest_temp = {xloc+sdl_access->get_xscroll(),yloc+sdl_access->get_yscroll(),size.width,size.height};
-		SDL_RenderCopy(sdl_access->renderer,my_tex,NULL,&dest_temp);
+
+		//############## Draw name and tile background #########################
+		SDL_Rect dest_temp = {xloc+x_scroll,yloc+y_scroll,width,height};
+		SDL_RenderCopy(renderer,my_tex,NULL,&dest_temp);
 
 		//this part draws the text in the box
-		SDL_Rect text_dest_temp = {xloc+sdl_access->get_xscroll(),yloc+sdl_access->get_yscroll(),0,0};
-		SDL_QueryTexture(my_text_tex,NULL,NULL,&text_dest_temp.w,&text_dest_temp.h); //get text surface info
-		SDL_RenderCopy(sdl_access->renderer,my_text_tex,NULL,&text_dest_temp);
-		//###########################################################################################
+		SDL_Rect text_dest_temp = {xloc+x_scroll,yloc+y_scroll,0,0};
 
-		//####################### Do the drawing for the text box ###################################
+		//get text surface info
+		SDL_QueryTexture(my_text_tex,NULL,NULL,&text_dest_temp.w,&text_dest_temp.h);
+		SDL_RenderCopy(renderer,my_text_tex,NULL,&text_dest_temp);
+		//######################################################################
+
+		//################ Do the drawing for the text box #####################
 		//text box xcoord will line up with tile's x coord
 		//y corner will be tile ycorner + scroll + calculated offset (by text_box_init(), same width
 		//height of 15 is line with the constant value in text_box_init()
-		SDL_Rect text_box_dest = {xloc+sdl_access->get_xscroll(), yloc + text_box.y_offset +sdl_access->get_yscroll(),size.width,25};
+		SDL_Rect text_box_dest = {xloc+x_scroll, yloc + text_box.y_offset +y_scroll,width,25};
 
-		SDL_Rect text_box_src = {0,0,size.width,25};
+		SDL_Rect text_box_src = {0,0,width,25};
 
-		SDL_RenderCopy(sdl_access->renderer,text_box.box_tex,&text_box_src,&text_box_dest);
+		SDL_RenderCopy(renderer,text_box.box_tex,&text_box_src,&text_box_dest);
 
-		SDL_Rect text_box_text_dest = {xloc+sdl_access->get_xscroll(), yloc + text_box.y_offset +sdl_access->get_yscroll(),0,0};
+		SDL_Rect text_box_text_dest = {xloc+x_scroll, yloc + text_box.y_offset +y_scroll,0,0};
 
-		//I had a "funny" bug here where I was drawing the text box's text using the dimensions of the 
-		//TILE NAME'S TEXTURE INSTEAD OF THE TEXT BOX'S
-		//causing blurry text and such...changing it to text_box.text_text fixed it. Unfortunate naming scheme
-		SDL_QueryTexture(text_box.text_tex,NULL,NULL,&text_box_text_dest.w,&text_box_text_dest.h);
-		SDL_RenderCopy(sdl_access->renderer,text_box.text_tex,&text_dims,&text_box_text_dest);
-		//###########################################################################################
+		/*I had a "funny" bug here where I was drawing the text box's text using
+		 *the dimensions of the TILE NAME'S TEXTURE INSTEAD OF THE TEXT BOX'S
+		 *causing blurry text and such...changing it to text_box.text_text
+		 *fixed it. Unfortunate naming scheme */
+		 SDL_QueryTexture(text_box.text_tex,NULL,NULL,&text_box_text_dest.w,&text_box_text_dest.h);
+		 SDL_RenderCopy(renderer,text_box.text_tex,&text_dims,&text_box_text_dest);
+		//######################################################################
 
 
 	}
 
 	//handle the lock
 	if(is_locked){
-		SDL_Rect lock_dest = {xloc+sdl_access->get_xscroll()+size.width-15,yloc+sdl_access->get_yscroll()+text_box.y_offset,15,25};
-		SDL_RenderCopy(sdl_access->renderer,lock_texture,NULL,&lock_dest);
+		SDL_Rect lock_dest = {xloc+x_scroll+size.width-15,
+									yloc+y_scroll+text_box.y_offset,15,25};
+		SDL_RenderCopy(renderer,lock_texture,NULL,&lock_dest);
 	}
 
 
-	if( help_mode && my_help_surf != NULL && my_help_tex != NULL){ //this part draws the "help box" in its place
+	//this part draws the "help box" in its place
+	if( help_mode && my_help_surf != NULL && my_help_tex != NULL){
 
-		//draw normal box boundaries - note that this is implemented in both if cases here, because
-		//later we may want the help box to have a different background color or image
-		SDL_Rect dest_temp = {xloc+sdl_access->get_xscroll(),yloc+sdl_access->get_yscroll(),size.width,size.height};
-		SDL_RenderCopy(sdl_access->renderer,my_tex,NULL,&dest_temp);
+		/*draw normal box boundaries - note that this is implemented
+		 *in both if cases here, because later we may want the help box to
+		 *have a different background color or image*/
+		SDL_Rect dest_temp = {xloc+x_scroll,yloc+y_scroll,width,height};
+		SDL_RenderCopy(renderer,my_tex,NULL,&dest_temp);
 
 		//draw help text instead
-		SDL_Rect help_dest_temp = {xloc+sdl_access->get_xscroll(),yloc+sdl_access->get_yscroll(),0,0};
-		SDL_QueryTexture(my_help_tex,NULL,NULL,&help_dest_temp.w,&help_dest_temp.h);
-		SDL_RenderCopy(sdl_access->renderer,my_help_tex,NULL,&help_dest_temp);
+		SDL_Rect help_dest_temp = {xloc+x_scroll,yloc+y_scroll,0,0};
+		SDL_QueryTexture(my_help_tex,NULL,NULL,&help_dest_temp.w,
+						 &help_dest_temp.h);
+		SDL_RenderCopy(renderer,my_help_tex,NULL,&help_dest_temp);
 	}
 
 }
 
 void field::help_toggle(){
+
 	//don't do anything if this tile doesn't have a help box
 	if(descriptions.size() == 0) return;
+
 	//if it's true, make it false
 	if(help_mode){
 		help_mode = false;
 		return;
-	} //elsewise, it is false and needs to be made true
+	}
+
+	//elsewise, it is false and needs to be made true
 	help_mode = true;
 
 }
 void field::print(){
-	error_logger.push_msg("Tile name: "+tile_name+" Tile Image Name: "+image_name);
 
+	error_logger.push_msg("Tile name: "+tile_name+
+						  " Tile Image Name: "+image_name);
 	error_logger.push_msg("CORNER x:y = "+to_string(xloc)+":"+to_string(yloc));
 
 	if(sdl_access != NULL){
-		error_logger.push_msg("SDL pointers texture:renderer = "+to_string(size_t(&my_tex))+":"+
-							to_string(size_t(sdl_access->renderer)) );
+		error_logger.push_msg("SDL pointers texture:renderer = "+
+								to_string(size_t(&my_tex))+":"+
+								to_string(size_t(sdl_access->renderer)));
 	} else {
 		string msg = "Couldn't print texture or renderer pointers,";
 		msg += " sdl_access is NULL."; 
@@ -383,13 +433,25 @@ void field::clicked(SDL_Event& event, const int& click_x,const int& click_y){
 
 bool field::text_box_clicked(const int& click_x, const int& click_y){
 
-	if( int4_hook == NULL && real8_hook == NULL && string_hook == NULL && int4_array_hook == NULL &&
+	//space saving references to scroll values
+	int x_scroll = sdl_access->get_xscroll();
+	int y_scroll = sdl_access->get_yscroll();
+
+	if( int4_hook == NULL && real8_hook == NULL && 
+		string_hook == NULL && int4_array_hook == NULL &&
 	    r8_array_hook == NULL){
-		//return false because there is no field to input_manager connection for the user to modify
+		//return false because there is no field to input_manager
+		//connection for the user to modify
 		return false;
 	}
-	if( (click_y >  yloc +sdl_access->get_yscroll() + size.height - 25  && click_y < yloc + sdl_access->get_yscroll() + size.height ) &&
-	    (click_x > xloc + sdl_access->get_xscroll() && click_x < xloc +sdl_access->get_xscroll() + size.width ) ){
+
+
+	//checking if a point is within a rectangle
+	bool below_top     = click_y >  yloc +y_scroll + size.height - 25;
+	bool above_bottom  = click_y < yloc + y_scroll + size.height;
+	bool right_of_left = click_x > xloc + x_scroll;
+	bool left_of_right = click_x < xloc +x_scroll + size.width; 
+	if( (below_top && above_bottom) && (right_of_left && left_of_right) ){
 		return true;
 	}
 	return false;
@@ -398,8 +460,12 @@ bool field::text_box_clicked(const int& click_x, const int& click_y){
 
 void field::back_space(){
 	if(editing_location > 0){
-		temp_input.erase(editing_location-1,1);//erase from current editing location
-		editing_location--;//decrement editing location
+
+		//erase from current editing location
+		temp_input.erase(editing_location-1,1);
+
+		//decrement editing location
+		editing_location--;
 	}
 
 	//update the cursor's size information
@@ -407,14 +473,19 @@ void field::back_space(){
 
 	update_texture();
 }
-//this is pretty much update_temp_input, but modified to be a helper function for manager::give_defaults
-//that way it can set up the text and update the text's size saving variable
+/* this is pretty much update_temp_input, but modified to be a helper function
+ *for manager::give_defaults that way it can set up the text and update
+ *the text's size saving variable */
 void field::init_temp_input(string data){
+
 	temp_input = data;
 	TTF_SizeText(sdl_access->font,temp_input.c_str(),&text_dims.w,&text_dims.h);
+
 	//start editing at end of the string by default
 	editing_location = temp_input.size()-1;
-	update_texture(); // update the texture
+
+	//update the texture
+	update_texture();
 }
 
 
@@ -430,6 +501,9 @@ void field::change_tile_background(string image_name){
 
 
 void field::update_temp_input(SDL_Event& event){
+
+	//space saving reference to sdl class's font
+	TTF_Font* font = sdl_access->font;
 	
 	error_logger.push_msg("OLD LINE: "+temp_input);
 
@@ -437,11 +511,13 @@ void field::update_temp_input(SDL_Event& event){
 		temp_input.insert(editing_location,event.text.text);
 		editing_location += strlen(event.text.text);
 
-		TTF_SizeText(sdl_access->font,temp_input.c_str(),&text_dims.w,&text_dims.h);
+		TTF_SizeText(font,temp_input.c_str(),&text_dims.w,&text_dims.h);
 		error_logger.push_msg("AFTER APPEND:"+temp_input);
 		update_texture();
 	} else {
-		error_logger.push_msg("Could not edit field's text, as it would go out of bounds");
+		string err_msg = "Could not edit field's text,";
+		err_msg       += " as it would go out of bounds";
+		error_logger.push_msg(err_msg);
 	}
 }
 
@@ -458,56 +534,85 @@ bool field::check_text_box_bounds(SDL_Event& event) const{
 void field::draw_cursor(){
 
 
+	//space saving references
+	TTF_Font* font = sdl_access->font;
+	SDL_Renderer* renderer = sdl_access->renderer;
+	int x_scroll = sdl_access->get_xscroll();
+	int y_scroll = sdl_access->get_yscroll();
+
+
 	//do the math to figure out where the cursor should be placed
 
 	//start_to_edit is the width of temp_input's text -1 character,
 	//and no_point is a dummy, because SizeText expects 2 ints
 	int start_to_edit, no_point; 
 
-	TTF_SizeText(sdl_access->font, (temp_input.substr(0,editing_location)).c_str(),
+
+	TTF_SizeText(font, (temp_input.substr(0,editing_location)).c_str(),
 					&start_to_edit,&no_point);
 
 	//grab the cursor's width
 	int char_width;
-	TTF_SizeText(sdl_access->font, (temp_input.substr(editing_location,1)).c_str(),&char_width,&no_point);
+	TTF_SizeText(font, (temp_input.substr(editing_location,1)).c_str(),
+				 &char_width,&no_point);
 
 	//save the coordinates and dimensions for the cursor
 	SDL_Rect cursor_dest;
 	if(editing_location != temp_input.size()){
-		cursor_dest = {xloc +sdl_access->get_xscroll()+ start_to_edit, yloc + text_box.y_offset + sdl_access->get_yscroll(),
-				char_width,text_dims.h};
+
+		cursor_dest = {xloc +x_scroll+ start_to_edit,
+						yloc + text_box.y_offset +y_scroll,
+						char_width,text_dims.h};
 	} else {
-		//when the cursor is at the very end of the string, render a square of arbitrary size
-		cursor_dest = {xloc+sdl_access->get_xscroll() + text_dims.w, yloc + text_box.y_offset + sdl_access->get_yscroll(),
-				6,text_dims.h};
+
+		//when the cursor is at the very end of the string,
+		//render a square of arbitrary size
+		cursor_dest = {xloc+x_scroll + text_dims.w,
+						yloc + text_box.y_offset +y_scroll, 6,text_dims.h};
 	}
 
-	if( SDL_RenderCopy(sdl_access->renderer,text_box.cursor_texture,NULL,&cursor_dest) ){
+	if( SDL_RenderCopy(renderer,text_box.cursor_texture,NULL,&cursor_dest) ){
 		error_logger.push_error(SDL_GetError());
 	}
 
 }
 
 void field::update_texture(){
+
+	//space saving references
+	SDL_Renderer* renderer = sdl_access->renderer;
+	TTF_Font* font         = sdl_access->font;
+
+
 	//########################################################################
 	if(text_box.text_surf != NULL ){
 		//prevent memory loss
 		SDL_FreeSurface(text_box.text_surf);
 		text_box.text_surf = NULL;
-	} else error_logger.push_msg("field::update_texture has an unexpected NULL text_surf pointer");
-
+	} else {
+		string err_msg;
+		err_msg = "field::update_texture has an unexpected NULL text_surf ptr";
+		error_logger.push_msg(err_msg);
+	}
 	if(text_box.text_tex != NULL ){
 		//prevent memory loss
 		SDL_DestroyTexture(text_box.text_tex);
 		text_box.text_tex = NULL;
-	} else error_logger.push_msg("field::update_texture has an unexpected NULL text_text pointer");
+	} else {
+		string err_msg;
+		err_msg = "field::update_texture has an unexpected NULL text_text ptr";
+		error_logger.push_msg(err_msg);
+	}
 	//########################################################################
 
-	text_box.text_surf = TTF_RenderUTF8_Blended(sdl_access->font,temp_input.c_str(),text_box.text_color);
+	text_box.text_surf = TTF_RenderUTF8_Blended(font,temp_input.c_str(),
+												text_box.text_color);
 	if(text_box.text_surf == NULL) error_logger.push_error(SDL_GetError());
-	text_box.text_tex = SDL_CreateTextureFromSurface(sdl_access->renderer,text_box.text_surf);
+	text_box.text_tex = SDL_CreateTextureFromSurface(renderer,
+													 text_box.text_surf);
 	if(text_box.text_tex == NULL) error_logger.push_error(SDL_GetError());
 }
+
 //this function updates this fields ftran_struct in the input_maker vectors
 bool field::update_my_value(){
 
@@ -520,10 +625,13 @@ bool field::update_my_value(){
 	bool success = true;
 
 
-	if(int4_hook == NULL && real8_hook == NULL && string_hook == NULL && int4_array_hook == NULL &&
+	if(int4_hook == NULL && real8_hook == NULL &&
+	   string_hook == NULL && int4_array_hook == NULL &&
 	   r8_array_hook == NULL){
-		error_logger.push_error("ERROR! Tile "+tile_name+" has no association with a fortran struct"
-		     +" in input_maker's vectors. Please check that the tile's name in the tiles.txt"
+		error_logger.push_error("ERROR! Tile "+tile_name
+			 +" has no association with a fortran struct"
+		     +" in input_maker's vectors. Please check"
+			 +" that the tile's name in the tiles.txt"
 		     +" and HF_config.txt match each other.\n\n");
 		return false;
 	}
@@ -538,8 +646,9 @@ bool field::update_my_value(){
 				success = false;
 			}
 		  } catch( invalid_argument& error ){
-			error_logger.push_error("Error! int4 parameter provided with an illegal string. Tile name:"
-						+tile_name); 
+			string err_msg = "Error! int4 parameter provided with";
+			err_msg += " an illegal string. Tile name:";
+			error_logger.push_error(err_msg+tile_name); 
 			int4_hook->value = -1804;
 			success = false;
 		  }
@@ -577,13 +686,18 @@ bool field::update_my_value(){
 		//split the user's string across commas
 		vector<string> user_entered_values = split(temp_input,',');
 
-		//replace the default numbers in input_maker with the ones entered by the user
-		for(unsigned int c = 0; c < user_entered_values.size() && c < int4_array_hook->values.size();c++){
+		//replace the default numbers in input_maker with the
+		//ones entered by the user
+		for(unsigned int c = 0;
+			c < user_entered_values.size() && c < int4_array_hook->values.size();c++){
+
 			try{
 			  int4_array_hook->values[c] = stoi(user_entered_values[c]);
 		  	} catch (invalid_argument& error){
-			  error_logger.push_error("Error! Int4 array value is an illegal string. Tile name:"+tile_name
-						  +" Array index:"+to_string(c));
+
+			  string err_msg = "Error! Int4 array value is an illegal string.";
+			  err_msg = "Tile name:"+tile_name + " Array index:";
+			  error_logger.push_error( err_msg+to_string(c));
 			  success = false;
 			}
 		}
@@ -600,7 +714,9 @@ bool field::update_my_value(){
 			}
 		}
 	}
-	return success;//let manager know if it worked or not
+
+	//let manager know if it worked or not
+	return success;
 }
 
 void field::go_red(){
@@ -609,7 +725,8 @@ void field::go_red(){
 	my_tex = asset_access->get_texture(image_p+"bad_tile.png");
 	if(my_tex == NULL){
 		string error = SDL_GetError();
-		error_logger.push_error("Error changing tile:"+display_name+" to red."+error);
+		error_logger.push_error("Error changing tile:"+display_name\
+								+" to red."+error);
 	}
 	is_red = true;
 }
@@ -627,31 +744,45 @@ void field::go_back(){
 
 
 void field::text_box_init(){
-	//      v distance below tile =     v tile height - v constant pixel height
-	text_box.y_offset =                 size.height   - 25;
+
+	//space saving references
+	SDL_Renderer* renderer = sdl_access->renderer;
+	TTF_Font* font = sdl_access->font;
 
 
-	SDL_Color color = {0,0,0,0};//text black as davy jones's heart
+	// v distance below tile = v tile height - v constant pixel height
+	text_box.y_offset        = size.height   -   25;
 
-	//set up text box background
+	SDL_Color color = {BLACK};
+
+
+	//set up the text box background
 	text_box.box_tex = asset_access->get_texture(image_p+"text_box.png");
 	if(text_box.box_tex == NULL){
 		string error = SDL_GetError();
 		error_logger.push_error("Error in text_box_init! "+error);
+
 	}
 
-	text_box.cursor_texture = asset_access->get_texture("Assets/Images/cursor.png");
+
+
+
+	text_box.cursor_texture =
+						asset_access->get_texture("Assets/Images/cursor.png");
+
 	if(text_box.cursor_texture == NULL) error_logger.push_error(SDL_GetError());
 
 	//set up text box text
-	text_box.text_surf = TTF_RenderUTF8_Blended(sdl_access->font,temp_input.c_str(),color);
+	text_box.text_surf = TTF_RenderUTF8_Blended(font,temp_input.c_str(),color);
 
 	if(text_box.text_surf == NULL){
 		string error = SDL_GetError();
 		error_logger.push_error("Error in text_box_init! "+error);
 	}
 
-	text_box.text_tex = SDL_CreateTextureFromSurface(sdl_access->renderer,text_box.text_surf);
+	text_box.text_tex =
+					SDL_CreateTextureFromSurface(renderer,text_box.text_surf);
+
 	if(text_box.text_tex == NULL){
 		string error = SDL_GetError();
 		error_logger.push_error("Error in text_box_init! "+error);

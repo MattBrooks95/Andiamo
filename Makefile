@@ -93,7 +93,7 @@ valgrind:
 	valgrind $(vtool) $(vopt) ./debug
 #compile for debugging, or when includes have gotten messed up
 gdb:
-	g++ -g -o debug $(C_FLG) *.cc $(SDL_INC)
+	g++ -g -o debug $(C_FLG) *.cc $(SDL_INC) $(F_OBJS)
 #pack useful files up for an email or storage
 tar:
 	tar -czvf andiamo.tar.gz *.cc *.h Makefile doxyfile readme.md tile_Input Assets sandbox config sandbox output

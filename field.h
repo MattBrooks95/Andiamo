@@ -1,4 +1,5 @@
-//! \file field.h declares the field class, which is like a tile where users can enter parameters or use defaults
+/*! \file field.h declares the field class, which is like a
+	tile where users can enter parameters or use defaults */
 
 #pragma once
 #include<string>
@@ -8,6 +9,8 @@
 #include<SDL2/SDL.h>
 #include<SDL2/SDL_image.h>
 #include<SDL2/SDL_ttf.h>
+
+#include "colors.h"
 
 #include "ftran_structs.h"
 #include "string+.h"
@@ -19,15 +22,16 @@ using std::string;
 using std::vector;
 
 
-//! this is a handy bag for the textures and surfaces necessary for text box creation. To be used in a field object
+/*! this is a handy bag for the textures and surfaces necessary
+	for text box creation. To be used in a field object */
 struct sdl_text_box{
-	//! the constructor sets all pointers to NULL, it seems like it's the safe thing to do
+	//! the constructor sets all pointers to NULL
 	sdl_text_box();
 
 	//! the destructor frees all of the memory
 	~sdl_text_box();
 
-	//! stores the tile_box's y offset from the top left corner of the tile on which it resides
+	//! stores the tile_box's y offset from the top left corner of the tile
 	int y_offset; 
 
 	//! keep track of the text color
@@ -47,10 +51,10 @@ struct sdl_text_box{
 
 };
 
-//! tile_size is a struct that contains height and width parameters for the main window
-/*! These should be a fraction of the size of the window, to allow for many input cards on one screen */
+//! tile_size is a struct that contains height and width for this parameter
 struct tile_size{
-	//! initialize tile size struct to -1x-1, if it isn't set this indicates bad input
+	/*! initialize tile size struct to -1x-1,
+		if it isn't set this indicates bad input */
 	tile_size(){
 		width = -1;
 		height = -1;
@@ -74,17 +78,18 @@ struct tile_size{
 
 };
 
-//!the field class allows implementation of boxes/tiles/cards that are shown on the screen
+//! allows implementation of boxes/tiles/cards that are shown on the screen
 class field{
   public:
 
 	//! this the constructor that needs to be used
 	/*! all of these fields should be filled by manager's init() function
 	 *\param tile_name is a contextual title that will be displayed on the tile
-	 *\param image_name_in is the name of the actual image used. This must be correct.
-	 *\param width is the width of the image supplied for the tile (and the tile width)
-	 *\param height is the height of the image supplied for the title (and the tile height) */
-	field(string tile_name_in,string display_name_in,string image_name_in, int width, int height);
+	 *\param image_name_in is the name of the actual image used.
+	 *\param width is the width of the tile
+	 *\param height is the height of the tile */
+	field(string tile_name_in,string display_name_in,string image_name_in,
+			int width, int height);
 
 	//! copy constructor ensures that memory is not lost or double free'd
 	field(const field& other);
@@ -98,16 +103,8 @@ class field{
 	//! called from graphics_init(), this sets up the text's surface
 	void text_init();
 
-	//! this function sets up the text box, which will be situated in the bottom of the tile card
-	/*! it should have as much width as allowed by reason, and the height will likely be consant or based on the
-	 *size of the sdl_font in use */
+	//! sets up the text box
 	void text_box_init();
-
-	//! this function is used to change this tile object's size when normal logic can't be followed
-	/*! right now I believe the only case is when setting the background tile's size, because calc_corners()
-	 * doesn't processes the 0th (background) tile*/
-	void force_size(int width_in,int height_in);
-
 
 	//! this will draw this field object's texture to the screen
 	/*! this works using its known corner values offset by the current scrolling

@@ -5,8 +5,6 @@
 
 using namespace std;
 
-#define OU_GREEN 105,78,255
-#define BLACK {0,0,0}
 
 extern asset_manager* asset_access;
 extern manager* tile_access;
@@ -769,10 +767,10 @@ void button_manager::make_form_error_message(const vector<string>& form_bad_inpu
 	SDL_Surface* message_surf = SDL_CreateRGBSurface(0,max_message_width,message_height,32,red,green,blue,alpha);
 
 	//draw in the created surface with the background color
-	SDL_FillRect(message_surf,NULL,SDL_MapRGBA(message_surf->format,0,OU_GREEN));
+	SDL_FillRect(message_surf,NULL,SDL_MapRGBA(message_surf->format,OU_GREEN));
 
 	//define the color for the text to be plastered onto the error message
-	SDL_Color text_color = BLACK;
+	SDL_Color text_color = {BLACK};
 
 	//keep track of where to draw the next line
 	SDL_Rect line_destination = {0,0,0,0};
