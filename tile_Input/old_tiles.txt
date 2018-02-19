@@ -162,6 +162,57 @@ c greater than 10MeV
 andy_tile.png
 160x50
 andy
+line_4A########################################################################
+APAR
+c only needed if IENCH = 7
+c A of incident particle
+andy_tile.png
+150x50
+andy
+ZPAR
+c only needed if IENCH = 7
+c Z of incident particle
+andy_tile.png
+150x50
+andy
+QIN:Binding Energy
+c Variable in HF: QIN
+c only needed if IENCH = 7
+c binding energy of incident particle
+c in compound nucleus
+andy_tile.png
+150x50
+andy
+FJPAR:Projectile Spin
+c Variable in HF: FJPAR
+c only needed if IENCH = 7
+c spin of the projectile
+andy_tile.png
+150x50
+andy
+FPRPAR:Target GS Parity
+c Variable in HF: FPRPAR
+c parity of (+1 or -1) of projectile
+c only needed if IENCH = 7
+c in ground state
+andy_tile.png
+150x50
+andy
+NLIN
+c only needed if IENCH = 7
+c maximum l of transmission coefficients
+andy_tile.png
+150x50
+andy
+line_4B########################################################################
+TIN:Entrance Transmission Coefficients
+c Variable name in HF: TIN
+c comma-separated list of transmission coefficients
+c ordered in l of the incident particle
+c at the incident energy
+800x50
+andy_tile.png
+andy
 line_5#########################################################################
 ILV1:Level Density Options
 c Variable name in HF: ILV1

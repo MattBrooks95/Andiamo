@@ -602,7 +602,7 @@ void manager::print_all(){
 void manager::check_locks(){
 
 	//simple cases
-	iench_locking();
+	//iench_locking();//can't handle iench = 7
 	ilv1_locking();
 
 	//complex cases/form button cases
@@ -615,6 +615,7 @@ void manager::check_locks(){
 	//###############################################
 }
 
+/* we can't do iench = 7
 void manager::iench_locking(){
   try{
 	//do locking that pertains to IENCH
@@ -650,7 +651,8 @@ void manager::iench_locking(){
   }
 
 
-}
+}*/
+
 
 void manager::ilv1_locking(){
   try{

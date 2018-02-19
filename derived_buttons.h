@@ -5,8 +5,10 @@
 #include "button.h"
 #include "text_box.h"
 #include "input_maker.h"
+#include "fop_handler.h"
 
 extern input_maker* io_access;
+extern fop_handler* FOP_access;
 
 //########################## EXIT BUTTON ###########################################################################
 

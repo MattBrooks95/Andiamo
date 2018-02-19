@@ -98,9 +98,10 @@ class manager{
 
 	//simple cases for locking and unlocking
 
-	//! helper function for check_locks()
+	/* we can't do iench = 7 stuff
+	// helper function for check_locks()
 	void iench_locking();
-
+	*/
 	//! helper function for check_locks()
 	void ilv1_locking();
 	//#######################################

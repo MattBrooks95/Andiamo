@@ -79,7 +79,58 @@ void fop_handler::get_files_list(){
 
 }
 
-void fop_handler::calc_open_channels(){
+void fop_handler::fop_main(){
+
+	int A_proj = 0, Z_proj = 0;
+	int A_targ = 0, Z_targ = 0;
+
+	//figure out which channels are possible
+	calc_open_channels(A_proj,Z_proj,A_targ,Z_targ);
+
+	cout << "A Projectile: " << A_proj << " Z Projectile: " << Z_proj << endl;
+	cout << "A Target: " << A_targ << " Z Target: " << Z_targ << endl;
+
+
+	//prepare the "decks" of "cards" necessary to run FOP per channel
+	for(unsigned int c = 0; c < 6; c++){
+
+		if(open_channels[c]){
+
+			prepare_deck();
+
+		}
+
+	}
+
+	//set a path to an automated FOP output file,
+	//OR allow the user to enter a custom one
+	most_recent_FOP_out = make_FOP_output_name(A_proj,Z_proj,A_targ,Z_targ);
+
+	ofstream FOP_input_file;
+	FOP_input_file.open(SCRATCH_PATH + most_recent_FOP_out);
+	if(FOP_input_file.fail()){
+		cout << "Couldn't make output stream to: "
+			 << SCRATCH_PATH + most_recent_FOP_out << endl;
+	}
+
+
+	//run FOP per open channel
+	for(unsigned int c = 0; c < 6; c++){
+
+		if(open_channels[c]){
+			run_fop(FOP_input_file);
+		}
+	}
+
+	FOP_input_file.close();
+
+}
+
+
+
+
+void fop_handler::calc_open_channels(int& A_proj, int& Z_proj,
+									 int& A_targ, int& Z_targ){
 
 
 	//########### PART ONE ##################################################//
@@ -101,8 +152,8 @@ void fop_handler::calc_open_channels(){
 
 	//used to do the calculation, needs to be calculated from
 	//IENCH and A and Z of compound nucleus from Andiamo inputs
-	int A_proj = 0, Z_proj = 0;	
-	int A_targ = 0, Z_targ = 0;
+	//int A_proj = 0, Z_proj = 0;	
+	//int A_targ = 0, Z_targ = 0;
 
 	//use IENCH mode and the given compound information
 	//to calculate A & Z of target and A & Z of projectile/beam
@@ -201,6 +252,25 @@ void fop_handler::calc_open_channels(){
 
 }
 
+
+string fop_handler::make_FOP_output_name(const int& A_proj, const int& Z_proj,
+									     const int& A_targ, const int& Z_targ)
+{
+
+	string temp_file_name;
+
+	temp_file_name = to_string(A_proj)   + "_" + to_string(Z_proj)
+					 + "_" + to_string(A_targ) + "_" + to_string(Z_targ)
+					 + "_fop_out" + ".txt";
+
+	cout << "Temp FOP file output: " << temp_file_name << endl;
+
+	return temp_file_name;
+}
+
+
+
+
 double fop_handler::find_elab(){
 
 	double elab_val = 0;
@@ -216,7 +286,7 @@ double fop_handler::find_elab(){
 
 		error_logger.push_error("Couldn't find ELAB in fields map.");
 
-	} catch(invalid_argument& stoi_error){
+	} catch(invalid_argument& stod_error){
 
 		error_logger.push_error("Couldn't convert ELAB string to double.");
 
@@ -277,6 +347,8 @@ void fop_handler::find_compound_A_Z(unsigned int& compound_A,
 		error_logger.push_error("Couldn't convert A or Z from string to int.");
 	}
 
+	cout << "Compound A from user: " << compound_A << endl;
+	cout << "Compound Z from user: " << compound_Z << endl;
 
 }
 
@@ -284,8 +356,10 @@ int fop_handler::find_IENCH(){
 
 	//store IENCH's value to be returned from this function
 	int return_me;
-	string iench_str = tile_access->fields.at("line_1").at("IENCH").temp_input;
+	string iench_str;
+
 	try{
+		iench_str = tile_access->fields.at("line_2").at("IENCH").temp_input;
 		return_me = stoi(iench_str);
 	} catch(out_of_range& map_error){
 		error_logger.push_error("Couldn't find IENCH in field map.");
@@ -293,6 +367,7 @@ int fop_handler::find_IENCH(){
 		error_logger.push_error("Couldn't convert IENCH from string to int.");
 	}
 
+	cout << "IENCH value: " << return_me << endl;
 	return return_me;
 }
 
@@ -368,19 +443,20 @@ void fop_handler::calc_Ap_Zp_At_Zt(int IENCH,
 
 }
 
-void fop_handler::prepare_decks(){
+void fop_handler::prepare_deck(){
 
-
+	cout << "Stand in for prepare_decks() work." << endl;
 
 }
 
-void fop_handler::run_fop(){
+void fop_handler::run_fop(ofstream& outs){
 
-
+	outs << "Stand in for run_fop() work." << endl;
 
 }
 
 void fop_handler::print_file_list(){
+
 	cout << "#### FOLDER: " << OMP_PATH << " ####" << endl;
 	for(unsigned int c = 0; c < optical_model_files.size(); c++){
 		cout << optical_model_files[c] << endl;

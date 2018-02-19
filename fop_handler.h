@@ -9,7 +9,7 @@
 #include "sdl_help.h"
 #include "manager.h"
 #include "input_maker.h"
-
+#include "text_box.h"
 
 //define the path to the read-only optical model potentials folder
 #define OMP_PATH "./FOP/OpticalModels/"
@@ -43,10 +43,25 @@ class fop_handler{
 	/*!  from subdirectories OMP_PATH, TRANSMISSION_PATH, and SCRATCH_PATH */ 
 	void get_files_list();
 
+
+	//! do the work to get the transmission coefficients
+	/*! the data directory, user input, and a Q-value calculating
+	 *tool are used to do this. This function mostly just calls
+	 *other functions */
+	void fop_main();
+
+
+
+
+	string make_FOP_output_name(const int& A_proj, const int& Z_proj,
+							   const int& A_targ, const int& Z_targ);
+
+
 	//! figure out how many times to run FOP
 	/*! Big thanks to Tom & Zach
 	 *for helping me with this */
-	void calc_open_channels();
+	void calc_open_channels(int& A_proj, int& Z_proj,
+							int& A_targ, int& Z_targ);
 
 	//! helper for calc_open_channels grabs ELAB parameter from Andiamo
 	/*! this variable may need converted to center of mass energy */
@@ -78,12 +93,14 @@ class fop_handler{
 	//! sets up the decks that will be FOP inputs
 	/* only does so for each of the possible channels
 	 *as determined by calc_open_channels() */
-	void prepare_decks();
+	void prepare_deck();
 
 	//! run FOP once the cards are in place
 	/*! ensure that calc_open_channels(), prepare_decks(), and
-	 *run_fop() are called in that order */
-	void run_fop();
+	 *run_fop() are called in that order
+	 * \param outs is the output stream to the FOP output file*/
+	void run_fop(std::ofstream& outs);
+
 
 	//! this is mostly for testing
 	void print_file_list();
@@ -113,6 +130,13 @@ class fop_handler{
 	 *[4] = triton
 	 *[5] = 3He */
 	bool open_channels[6];
+
+	//! store the decks of cards to run FOP with
+	vector<deck> fop_decks;
+
+	//! store the name of the most recent FOP output file 
+	string most_recent_FOP_out;
+
 };
 
 //! this function calls the cross-compiled tool for finding Q values

@@ -20,40 +20,43 @@ extern sdl_help* sdl_access;
 
 struct text_box{
 
-	//! this constructor can initialize the location of the text box, runs without params
-	/*! it does so because I believe the default constructor can get called before the containing class
-	 *has been properly set up, causing issues. So I've been writing init functions to fix that data
+	//! constructor initializes the location of the text box
+	/*! it does so because I believe the default constructor can get called
+	 *before the containing class has been properly set up, causing issues.
+	 *So I've been writing init functions to fix that data
 	 *once the containing class is set up */
 	text_box(TTF_Font* font_in=NULL, string text_in = "",int xloc_in = 0,
 				int yloc_in = 0,int width_in = 0, int height_in = 0);
 
-	//! copy constructor prevents double free() crashes when temporary text_boxes are pushed into vectors
+	//! prevents double free crashes when text_boxes are pushed into vectors
 	text_box(const text_box& other);
 
 	//! the destructor frees the memory for the sdl surfaces and textures
 	~text_box();
 
-	//! this function sets up the location of the text box on the screen and the renderer
-	/* this information should be passed in from whatever tile or button is instantiating the text box */
+	//! sets up the location of the text box on the screen and the renderer
+	/* this information should be passed in from whatever tile or button
+	 *is instantiating the text box */
 	void init(TTF_Font* font_in,string text_in,int xloc_in,
-		  int yloc_in,int width_in, int height_in);
+			  int yloc_in,int width_in, int height_in);
 
-	//##################### CLICK FUNCTIONS ############################################################
+	//############## CLICK FUNCTIONS ###########################################
 	bool was_clicked(SDL_Event& mouse_event);
-	//##################################################################################################
+	//##########################################################################
 
 
-	//! this function prints all of this structs information, usually for debugging
+	//! prints all of this structs information, usually for debugging
 	void print_me();
 
 	//! this function draws the text box to the screen
 	void draw_me();
 
-	//! this function updates the SDL_Rect storage of the text boxes location, for rendering
+	//! updates the SDL_Rect storage of the text boxes location, for rendering
 	void make_rect();
 
 	//! this function updates the text that is rendererd to the screen
-	/*! it uses update_text_bounds_check to make sure that text can't go off the edge */
+	/*! it uses update_text_bounds_check to make sure that text can't
+	 *go off the edge */
 	void update_text(string& new_text);
 
 	//! update the texture when the text is changed
@@ -64,7 +67,8 @@ struct text_box{
 	 *\param test is the pattern which indicates good input */ 
 	void update_text(string& new_text,const regex& test);
 
-	//! this function decides whether or not the input is bad, and changes the color of the text box accordingly
+	/*! decides whether or not the input is bad,
+	 *and changes the color of the text box accordingly */
 	void check_text(const regex& test);
 
 	//! this function turns the textbox red
@@ -83,7 +87,7 @@ struct text_box{
 	 *is not at the very beginning of the string */
 	void back_space();
 
-	//! this version of back space tests the text string against the regular expression
+	//! this version of back space tests the text string
 	/*! \param the regular expression which indicates good input */
 	void back_space(const regex& test);
 

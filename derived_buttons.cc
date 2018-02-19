@@ -297,10 +297,8 @@ void fop_handler_button::click_helper(SDL_Event& mouse_event){
 
 void fop_handler_button::work(){
 	cout << "Message from the fop_button." << endl;
-
+	FOP_access->fop_main();
 }
-
-
 //#################################################################################################
 
 
