@@ -11,6 +11,8 @@
 //more pre-project planning on my part would have avoided such a misfortune
 #include "button_manager.h"
 
+#include "define.h"
+
 #define SDL_HELP_ERROR "Attempted double free in ~sdl_help"
 using namespace std;
 
@@ -459,12 +461,13 @@ bool sdl_help::in(int click_x, int click_y,const SDL_Rect& rect) const{
 
 
 void sdl_help::calc_corners(){
-	error_logger.push_msg("################# IN CALC CORNERS ############################");
-	//this variable keeps track of where the next line should start being placed. The helper function
-	//should set it to be just below the newly created section of tiles, and some padding value
+	error_logger.push_msg("######### IN CALC CORNERS ########################");
+	//this variable keeps track of where the next line should
+	//start being placed. The helper function should set it to be just
+	//below the newly created section of tiles, and some padding value
 
 	//5 pixel buffer from top of window
-	unsigned int row_height = 5;
+	uint row_height = 5;
 
 	//this variable limits the width of the rows
 	int row_limit;
@@ -474,18 +477,28 @@ void sdl_help::calc_corners(){
 	if(widest_tile > window_s.width){
 		error_logger.push_msg("USING WIDEST TILE TO LIMIT ROWS");
 		//if a single tile is bigger than the window, use it for logic
-		//because the window is likely so small the normal row placement logic won't work				
+		//because the window is likely so small that the normal
+		//row placement logic won't work				
 		row_limit = widest_tile;
+
 	} else {
+
 		error_logger.push_msg("USING WINDOW SIZE TO LIMIT ROWS");
 		//else wise, fill up the window as best it can
 		row_limit = window_s.width; 
 	}
 
+
+	for(uint c = 0; c < tile_access->fields_order.size();c++){
+		calc_corners_helper(tile_access->fields_order[c],
+							row_height,row_limit);
+
+	}
+/*
 	//but, I saved the line names as they were read in my manager::init(),
 	//so we can just walk that vector and ensure that lines are placed
 	//in the same order in which they were read
-	for(unsigned int c = 0; c < tile_access->line_order.size();c++){
+	for(uint c = 0; c < tile_access->line_order.size();c++){
 		if(tile_access->line_order[c] == "line_6"){
 			//create a vector with the row parameter names in the order in which they should appear
 			vector<string> line_6_order = {"ICNTRL1","ICNTRL2","ICNTRL4","ICNTRL5","ICNTRL6","ICNTRL7",
@@ -503,14 +516,91 @@ void sdl_help::calc_corners(){
 				            row_height, row_limit);
 		}
 	}
-
+*/
 
 
 	error_logger.push_msg("################# END CALC CORNERS ###########################");
 
 }
-void sdl_help::calc_corners_helper(const string line_in, map<std::string,field>& map_in, unsigned int& start_height,
-				   int row_limit){
+
+void sdl_help::calc_corners_helper(vector<field>& line_in,
+								   uint& start_height,
+								   int row_limit){
+
+	//distance between the left edge and the tiles, and the
+	//distance between two tiles horizontally
+	int x_buffer = 5;
+
+	int x_corner = x_buffer;
+
+	//save the starting position to be used to set the corner
+	//coordinates for fields but this variable can be changed if the current
+	//line map takes up more than one row in the window
+	int y_corner = start_height;
+	
+
+	//save the lowest ylocation + height value there is, so we can update
+	//start_height when this function is done, to allow other rows
+	//to know where to begin placing fields
+	int lowest_point = start_height;
+
+	for(uint c = 0; c < line_in.size();c++){
+
+		//this is the case where the tile can stay in the current row 
+		if(x_corner + line_in[c].get_size().width < row_limit){
+
+			line_in[c].xloc = x_corner;
+			line_in[c].yloc = y_corner;
+
+
+			//literal 5 for 5 pixel offset
+			x_corner = line_in[c].xloc + line_in[c].get_size().width + x_buffer;
+
+			
+			if(line_in[c].yloc + line_in[c].get_size().height + 5 > lowest_point){
+				error_logger.push_msg("OLD lowest_point:"+to_string(lowest_point));
+				lowest_point = line_in[c].yloc + line_in[c].get_size().height + 5;
+				error_logger.push_msg(" NEW lowest_point:"+to_string(lowest_point));
+			}
+		//this is the case where the tile needs to be placed into
+		//a new row (because there's not enough width left)
+		} else {
+			//place it on the left edge
+			line_in[c].xloc = x_buffer;
+
+			//save it's leftmost edge + padding
+			//to be used to place the next tile
+			x_corner = line_in[c].xloc + 
+						line_in[c].get_size().width + x_buffer;
+
+			//place it just below the previous row
+			line_in[c].yloc = lowest_point;
+
+			//set that lowest point as the new y coordinate for the
+			//fields in this row
+			y_corner = lowest_point;
+
+			//save new lowest point
+			lowest_point = line_in[c].yloc +
+							line_in[c].get_size().height + 5;
+
+		}		
+
+		cout << "Paramter placement####################" << endl;
+		cout << line_in[c].xloc << ":" << line_in[c].yloc << endl;
+	}
+
+	//save the the start location for the next row
+	start_height = lowest_point + 5;
+
+}
+
+
+/*
+void sdl_help::calc_corners_helper(const string line_in, 
+									map<std::string,field>& map_in,
+									uint& start_height,
+									int row_limit){
 	error_logger.push_msg("In calc_corners_helper()! Line in progress is:" + line_in);
 
 	//distance between the left edge and the tiles, and the distance between two tiles 
@@ -577,11 +667,13 @@ void sdl_help::calc_corners_helper(const string line_in, map<std::string,field>&
 	//save the the start location for the next row
 	start_height = lowest_point + 5;
 }
+*/
 
 //unfortunately, the map places "ICNTRL10" just after ICNTRL1, because they are stored in alphabetical order and not
 //the order in which they were pushed into the map. So this function is used instead of the normal calc corners helper,
 //to make sure that they are in logical order
-void sdl_help::calc_corners_ordered(const string line_in,map<string,field>& map_in, unsigned int& start_height,int row_limit,
+/*
+void sdl_help::calc_corners_ordered(const string line_in,map<string,field>& map_in, uint& start_height,int row_limit,
 				    vector<string>& order){
 
 	//temp copy of the starting height
@@ -640,7 +732,7 @@ void sdl_help::calc_corners_ordered(const string line_in,map<string,field>& map_
 
 	//save the start location for the next row
 	start_height = lowest_point + 5;
-}
+}*/
 
 
 

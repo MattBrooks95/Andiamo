@@ -20,7 +20,7 @@
 
 using std::string;
 using std::regex;
-
+using std::map;
 
 extern logger error_logger;
 extern button_manager* button_access;
@@ -45,7 +45,8 @@ class manager{
 	 *like "IENCH".
 	 *\param line_name is the name of the map that will be put into the map of lines
 	 *\param line_map is a map of the parameter's name, and their corresponding field*/
-	void new_line(const string& line_name,const map<string,field>& line_map);
+	void new_line(const string& line_name,
+				  const map<string,field>& line_map);
 
 	//! this function walks the map, and returns the width of the widest tile
 	int get_widest_tile_width();
@@ -152,11 +153,17 @@ class manager{
 	 *\param height_in is the desired new height */
 	void update_win(int width_in, int height_in);
 
-	//!< save the order in which the lines occur, maps don't do it automatically
-	vector<string> line_order;
+	// save the order in which the lines occur, maps don't do it automatically
+	//vector<string> line_order;
+
+	//! save the string names of lines & parameters in a vector
+	/*! this is to be used for iterating over the parameters,
+	 *so lines and their parameters can be processed in order.
+	 *The fields map should be used for individual item lookup */
+	vector<vector<field*>> fields_order;
 
 	//!< trying something new, to keep relevant tiles together
-	map<string,map<string,field>> fields;
+	map<string,map<string,field*>> fields;
 
   private:
 	//! path to the image directory for the tiles

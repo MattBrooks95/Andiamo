@@ -94,19 +94,26 @@ class sdl_help{
 	//! calc_corners implements a guessing algorithm that tries to place tiles in a space-efficient way
 	void calc_corners();
 
-	//! this function is a helper function for calc_corners(). It places the tiles for one line
-	/*\param line_in is the name of the line that the function is doing
-	 *\param map_in is the name of the map of the line it is making, that contains the fields
-	 *\param start_height is the height at which the tile should start placing fields.
-	 *This is what will allow the lines to not overlap each other. Before this function exits,
-	 *it should update the start_height value to account for the then completed field placement. */
+
+	void calc_corners_helper(vector<field>& line_in,unsigned int& start_height,
+							 int row_limit);
+
+/*
+	// this function is a helper function for calc_corners(). It places the tiles for one line
+	/param line_in is the name of the line that the function is doing
+	 param map_in is the name of the map of the line it is making, that contains the fields
+	 param start_height is the height at which the tile should start placing fields.
+	 This is what will allow the lines to not overlap each other. Before this function exits,
+	 it should update the start_height value to account for the then completed field placement.
 	void calc_corners_helper(const string line_in, map<string,field>& map_in,
 				 unsigned int& start_height,int row_limit);
+*/
 
-	//! this is an alternative helper that prints line 6 in the order they appear in the manual, instead of alphabetical
+/*
+	// this is an alternative helper that prints line 6 in the order they appear in the manual, instead of alphabetical
 	void calc_corners_ordered(const string line_in,std::map<string,field>& map_in,
 					 unsigned int& start_height,int row_limit,vector<string>& ordered);
-
+*/
 
 	//! This member changes this class's x_scroll and y_scroll values to the given parameters
 	/*! This is being called from the handlers.cc implementations most of the time.

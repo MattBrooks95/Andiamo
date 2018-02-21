@@ -10,7 +10,8 @@ using namespace std;
 extern sdl_help* sdl_access;
 extern asset_manager* asset_access;
 
-field::field(string tile_name_in,string display_name_in,string image_name_in, int width, int height){
+field::field(string tile_name_in,string display_name_in,string image_name_in,
+			 int width, int height){
 	tile_name = tile_name_in;
 	display_name = display_name_in;
 
@@ -659,11 +660,16 @@ bool field::update_my_value(){
 				if( !regex_search(temp_input,bad_real8) ){
 					real8_hook->value = stod(temp_input);
 				} else {
-					error_logger.push_error(display_name+" has an illegal string:"+temp_input);
+					string err;
+					err = display_name + " has an illegal string:" + temp_input;
+					error_logger.push_error(err);
 					success = false;
 				}
 			} catch(invalid_argument& error){
-			  error_logger.push_error("Error in field::update_my_value(), illegal value entered:" + temp_input);
+			  string err;
+			  err = "Error in field::update_my_value(), illegal value entered:"
+					+ temp_input;
+			  error_logger.push_error(err);
 			  real8_hook->value = -180.4;
 			  success = false;
 			}
@@ -672,12 +678,18 @@ bool field::update_my_value(){
 
 		if( regex_match(temp_input,good_string) ){
 			string temp_string = temp_input;
-			unsigned int balance_factor = temp_string.length() - string_hook->value.length();
+			unsigned int balance_factor;
+			balance_factor = temp_string.length() - string_hook->value.length();
 			trim(temp_string,balance_factor);
 			string_hook->value = temp_string;
-			error_logger.push_msg("Ftran String value after: "+string_hook->value);
+			string msg;
+			msg = "Ftran String value after: "+string_hook->value;
+			error_logger.push_msg(msg);
 		} else {
-			error_logger.push_error("Error! String "+display_name+" is likely missing quotation marks.");
+			string err;
+			err = "Error! String " + display_name
+				  +" is likely missing quotation marks.";
+			error_logger.push_error(err);
 			success = false;
 
 		}
@@ -688,8 +700,11 @@ bool field::update_my_value(){
 
 		//replace the default numbers in input_maker with the
 		//ones entered by the user
+
+		int num_values = user_entered_values.size();
+
 		for(unsigned int c = 0;
-			c < user_entered_values.size() && c < int4_array_hook->values.size();c++){
+			c < num_values && c < int4_array_hook->values.size();c++){
 
 			try{
 			  int4_array_hook->values[c] = stoi(user_entered_values[c]);
@@ -703,13 +718,25 @@ bool field::update_my_value(){
 		}
 
 	} else if(r8_array_hook != NULL){
+
 		vector<string> user_entered_values = split(temp_input,',');
-		for(unsigned int c = 0; c < user_entered_values.size() && c < r8_array_hook->values.size();c++){
+
+		int num_values = user_entered_values.size();
+
+		for(unsigned int c = 0;
+			c < num_values && c < r8_array_hook->values.size();
+			c++){
 			try {
 			  r8_array_hook->values[c] = stod(user_entered_values[c]);
 			} catch(invalid_argument& error){
-			  error_logger.push_error("Error! real 8 array given illegal value:"+user_entered_values[c]
-			  			  +" at index:"+to_string(c));
+			  string err;	
+
+			  err = "Error! real 8 array given illegal value:"
+					+ user_entered_values[c]
+			  	    +" at index:"+to_string(c);
+
+			  error_logger.push_error(err);
+
 			  success = false;
 			}
 		}

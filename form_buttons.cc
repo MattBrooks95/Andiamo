@@ -4,6 +4,7 @@
 #include<iomanip>//for setting precision and field width
 #include "form_buttons.h"
 #include "button_manager.h"
+#include "define.h"
 using namespace std;
 
 //copied over from input_maker
@@ -181,7 +182,7 @@ void icntrl8_form_button::click_helper(SDL_Event& mouse_event){
 			//enter the mini loop for form entry
 			my_form.form_event_loop(mouse_event);
 
-		} else if(my_form.prev_init_value == stoi(tile_access->fields.at("line_6").at("ICNTRL8").temp_input) ){
+		} else if(my_form.prev_init_value == stoi(tile_access->fields.at("line_6").at("ICNTRL8")->temp_input) ){
 
 			//let the form know that it is now active
 			my_form.toggle_active();
@@ -213,7 +214,7 @@ void icntrl8_form_button::page_creation_helper(){
 	//grab val from parameter field, so the pages can be set up
 	try{
 
-	  icntrl8_val = stoi(tile_access->fields.at("line_6").at("ICNTRL8").temp_input);
+	  icntrl8_val = stoi(tile_access->fields.at("line_6").at("ICNTRL8")->temp_input);
 
 	} catch (out_of_range& range_error){
 
@@ -241,8 +242,8 @@ void icntrl8_form_button::page_creation_helper(){
 	int rows_per_page = floor(725.0 / 35);
 	int rows_needed   = icntrl8_val;
 	//calculate how many pages are needed
-	unsigned int vector_size = ceil((icntrl8_val * 35) / 725.0);
-	unsigned int pages_made = 0;
+	uint vector_size = ceil((icntrl8_val * 35) / 725.0);
+	uint pages_made = 0;
 
 	//saves space later
 	vector<page>& pages = my_form.get_pages();
@@ -254,7 +255,7 @@ void icntrl8_form_button::page_creation_helper(){
 	column_spaces.push_back(150);
 
 
-	for(unsigned int c = 0; c < pages.size();c++){
+	for(uint c = 0; c < pages.size();c++){
 
 		if(rows_per_page >= rows_needed){
 			pages[c].page_init(3,rows_needed,pass_column_titles,pass_row_titles,
@@ -310,12 +311,12 @@ bool icntrl8_form_button::make_output(ofstream& outs,
 	vector<page>* pages_ptr = &my_form.get_pages();
 
 	//loop over each page
-	for(unsigned int c = 0; c < pages_ptr->size();c++){
+	for(uint c = 0; c < pages_ptr->size();c++){
 
-		unsigned int columns = pages_ptr->at(c).get_columns();
+		uint columns = pages_ptr->at(c).get_columns();
 
 		//loop over each row
-		for(unsigned int d = 0; d < pages_ptr->at(c).get_text_boxes().size() ;d += columns){
+		for(uint d = 0; d < pages_ptr->at(c).get_text_boxes().size() ;d += columns){
 
 			outs I pages_ptr->at(c).get_text_boxes().at(d).text
 			     I pages_ptr->at(c).get_text_boxes().at(d+1).text;
@@ -555,7 +556,7 @@ void icntrl6_form_button::search_spectra_page_creation(){
 	int current_INM1_val;
 	try{
 
- 		current_INM1_val = stoi(tile_access->fields.at("line_10").at("INM1").temp_input); 
+ 		current_INM1_val = stoi(tile_access->fields.at("line_10").at("INM1")->temp_input); 
 	} catch(invalid_argument& arg_error){
 		error_logger.push_error("Error reading current INM1/#Search Spectra value for page creation",
 					" logics.");
@@ -582,7 +583,7 @@ void icntrl6_form_button::search_spectra_page_creation(){
 void icntrl6_form_button::search_spectra_page_helper(){
 
 	try{
-	  INM1_val = stoi(tile_access->fields.at("line_10").at("INM1").temp_input);
+	  INM1_val = stoi(tile_access->fields.at("line_10").at("INM1")->temp_input);
 
 	} catch ( out_of_range& range_error ){
 	  error_logger.push_error("ICNTRL6-INM1 could not be found in the field map.",
@@ -605,14 +606,14 @@ void icntrl6_form_button::search_spectra_page_helper(){
 	int rows_per_page = floor(725.0 / 35);
 	int rows_needed   = INM1_val;
 	//calculate how many pages are needed
-	unsigned int vector_size = ceil((INM1_val * 35) / 725.0);
-	unsigned int pages_made = 0;
+	uint vector_size = ceil((INM1_val * 35) / 725.0);
+	uint pages_made = 0;
 
 	vector<page>& pages = search_spectra.get_pages();//saves space later
 	pages.resize(vector_size);
 
 
-	for(unsigned int c = 0; c < pages.size();c++){
+	for(uint c = 0; c < pages.size();c++){
 
 		if(rows_per_page >= rows_needed){
 			pages[c].page_init(9,rows_needed,pass_column_labels,pass_row_labels,
@@ -672,7 +673,7 @@ void icntrl6_form_button::cross_sections_page_creation(){
 
 	int current_INM2_val;
 	try{
-		current_INM2_val = stoi(tile_access->fields.at("line_10").at("INM2").temp_input); 
+		current_INM2_val = stoi(tile_access->fields.at("line_10").at("INM2")->temp_input); 
 	} catch(invalid_argument& arg_error){
 		error_logger.push_error("Error reading current INM2/cross sections value for page creation",
 					" logics.");
@@ -698,7 +699,7 @@ void icntrl6_form_button::cross_sections_page_creation(){
 void icntrl6_form_button::cross_sections_helper(){
 
 	try{
-	  INM2_val = stoi(tile_access->fields.at("line_10").at("INM2").temp_input);
+	  INM2_val = stoi(tile_access->fields.at("line_10").at("INM2")->temp_input);
 
 	} catch ( out_of_range& range_error ){
 	  error_logger.push_error("ICNTRL6-INM2 could not be found in the field map.",
@@ -727,13 +728,13 @@ void icntrl6_form_button::cross_sections_helper(){
 
 	int rows_per_page = floor(725.0 / 35);
 	int rows_needed   = INM2_val;
-	unsigned int vector_size = ceil((INM2_val * 35) / 725.0);//calculate how many pages are needed
-	unsigned int pages_made = 0;
+	uint vector_size = ceil((INM2_val * 35) / 725.0);//calculate how many pages are needed
+	uint pages_made = 0;
 
 	vector<page>& pages = cross_sections.get_pages();//saves space later
 	pages.resize(vector_size);
 
-	for(unsigned int c = 0; c < pages.size();c++){
+	for(uint c = 0; c < pages.size();c++){
 
 		if(rows_per_page >= rows_needed){
 			pages[c].page_init(4,rows_needed,pass_column_labels,pass_row_labels,
@@ -843,11 +844,11 @@ bool icntrl6_form_button::make_output(ofstream& outs,vector<index_value>& bad_in
 	//INM1 is up first
 	if(search_ref.size() != 0){
 		//loop over search spectra's pages
-		for(unsigned int c = 0; c < search_ref.size();c++){
-			unsigned int columns = search_ref[c].get_columns();
+		for(uint c = 0; c < search_ref.size();c++){
+			uint columns = search_ref[c].get_columns();
 			outs << "PAGE " << c << endl;
 			//loop over each row
-			for(unsigned int d = 0; d < search_ref.at(c).get_text_boxes().size(); d += columns){
+			for(uint d = 0; d < search_ref.at(c).get_text_boxes().size(); d += columns){
 				outs I search_ref[c].get_text_boxes()[d].text;
 				outs << setprecision(4);  //set precision for float numbers
 				outs F search_ref[c].get_text_boxes()[d+1].text F search_ref[c].get_text_boxes()[d+2].text;
@@ -862,10 +863,10 @@ bool icntrl6_form_button::make_output(ofstream& outs,vector<index_value>& bad_in
 	//INM2 is up next
 	if(cross_ref.size() != 0){
 		//loop over search spectra's pages
-		for(unsigned int c = 0;c < cross_ref.size();c++){
+		for(uint c = 0;c < cross_ref.size();c++){
 			outs << "PAGE " << c << endl;
 			//loop over each row
-			for(unsigned int d = 0; c < cross_ref.size();c++){
+			for(uint d = 0; c < cross_ref.size();c++){
 				outs I cross_ref[c].get_text_boxes()[d].text I cross_ref[c].get_text_boxes()[d+1].text;
 				outs << setprecision(4);
 				outs F10 cross_ref[c].get_text_boxes()[d+2].text F10 cross_ref[c].get_text_boxes()[d+3].text << endl;
@@ -876,7 +877,7 @@ bool icntrl6_form_button::make_output(ofstream& outs,vector<index_value>& bad_in
 
 	//and finally, parity
 	if(parity_ref.size() != 0){
-    	for(unsigned int c = 0; c < parity_ref[0].get_text_boxes().size();c += 2){
+    	for(uint c = 0; c < parity_ref[0].get_text_boxes().size();c += 2){
         	outs << setprecision(4);
         	outs F8 parity_ref[0].get_text_boxes()[c].text
 				 I parity_ref[0].get_text_boxes()[c+1].text << endl;
@@ -906,15 +907,15 @@ bool icntrl6_form_button::check_values(vector<index_value>& error_details){
 		return_me = false;
 	}
 
-	for(unsigned int c = 0; c < parity_errors.size(); c++){
+	for(uint c = 0; c < parity_errors.size(); c++){
 		error_details.push_back(parity_errors[c]);
 	}
 
-	for(unsigned int c = 0; c < search_errors.size(); c++){
+	for(uint c = 0; c < search_errors.size(); c++){
 		error_details.push_back(search_errors[c]);
 	}
 
-	for(unsigned int c = 0; c < cross_errors.size(); c++){
+	for(uint c = 0; c < cross_errors.size(); c++){
 		error_details.push_back(cross_errors[c]);
 	}
 
@@ -1013,7 +1014,7 @@ void icntrl4_form_button::click_helper(SDL_Event& mouse_event){
 			my_form.form_event_loop(mouse_event);//enter the mini loop for form entry
 
 		//in this case the form has been previously created, but the icntrl8 value has not changed, so nothing needs to be done
-		} else if(my_form.prev_init_value == stoi(tile_access->fields.at("line_8").at("NCH4").temp_input) ){
+		} else if(my_form.prev_init_value == stoi(tile_access->fields.at("line_8").at("NCH4")->temp_input) ){
 		//let the form know that it is now active
 		my_form.toggle_active();
 		//enter the mini loop for form entry
@@ -1041,7 +1042,7 @@ void icntrl4_form_button::page_creation_helper(){
 
 	//grab val from parameter field, so the pages can be set up
 	try{
-	  nch4_val = stoi(tile_access->fields.at("line_8").at("NCH4").temp_input);
+	  nch4_val = stoi(tile_access->fields.at("line_8").at("NCH4")->temp_input);
 	} catch (out_of_range& range_error){
 	  error_logger.push_error("NCH4 could not be found in the field map",
 				  range_error.what());
@@ -1066,8 +1067,8 @@ void icntrl4_form_button::page_creation_helper(){
 	int rows_per_page = floor(725.0 / 35);
 	int rows_needed   = nch4_val;
 	//calculate how many pages are needed
-	unsigned int vector_size = ceil((nch4_val * 35) / 725.0);
-	unsigned int pages_made = 0;
+	uint vector_size = ceil((nch4_val * 35) / 725.0);
+	uint pages_made = 0;
 
 	vector<page>& pages = my_form.get_pages();//saves space later
 	pages.resize(vector_size);
@@ -1079,7 +1080,7 @@ void icntrl4_form_button::page_creation_helper(){
     column_spaces.push_back(201);
 
 
-	for(unsigned int c = 0; c < pages.size();c++){
+	for(uint c = 0; c < pages.size();c++){
 
 		if(rows_per_page >= rows_needed){
 			pages[c].page_init(4,rows_needed,pass_column_titles,pass_row_titles,
@@ -1122,7 +1123,7 @@ bool icntrl4_form_button::make_output(ostream& outs,vector<index_value>& bad_inp
     string spaces = "     ";
     outs << "ICNTRL4 OUTPUT" << endl;
     //we do 4 prints a loop, so c should go up by four each time
-	for(unsigned int c = 0; c < boxes->size();c += 4){
+	for(uint c = 0; c < boxes->size();c += 4){
         //output the line as declared by the input manual and as expected by HF
         //note here that I'm using the string 'spaces' to
 		// approximate the fortran 5x formatting tag
@@ -1154,8 +1155,8 @@ bool ilv3_ilv5_form_button::handle_click(SDL_Event& mouse_event){
 void ilv3_ilv5_form_button::click_helper(SDL_Event& mouse_event){
 	error_logger.push_msg("clicked the icntrl4/resolved levels info button ");
 
-        int curr_ilv3 = stoi(tile_access->fields.at("line_5").at("ILV3").temp_input);
-        int curr_ilv5 = stoi(tile_access->fields.at("line_5").at("ILV5").temp_input);
+        int curr_ilv3 = stoi(tile_access->fields.at("line_5").at("ILV3")->temp_input);
+        int curr_ilv5 = stoi(tile_access->fields.at("line_5").at("ILV5")->temp_input);
 
 	//don't consider doing anything if the form is locked
 	if(!is_locked){
@@ -1223,8 +1224,8 @@ void ilv3_ilv5_form_button::page_creation_helper(){
 	int ilv5_val;
 	try{
 
-		ilv3_val = stoi(tile_access->fields.at("line_5").at("ILV3").temp_input);
-		ilv5_val = stoi(tile_access->fields.at("line_5").at("ILV5").temp_input);
+		ilv3_val = stoi(tile_access->fields.at("line_5").at("ILV3")->temp_input);
+		ilv5_val = stoi(tile_access->fields.at("line_5").at("ILV5")->temp_input);
 
 	} catch(invalid_argument& bad_arg){
 		error_logger.push_error("Ilv3 or ilv5's value failed to conver to int in page_creation_helper.",
@@ -1264,8 +1265,8 @@ void ilv3_ilv5_form_button::page_creation_helper(){
 	int rows_per_page = floor(725.0 / 35);
 
 	//calculate how many pages are needed
-	unsigned int vector_size = ceil((rows_needed * 35) / 725.0);
-	unsigned int pages_made = 0;
+	uint vector_size = ceil((rows_needed * 35) / 725.0);
+	uint pages_made = 0;
 
 	vector<page>& pages = my_form.get_pages();//saves space later
 	pages.resize(vector_size);
@@ -1277,7 +1278,7 @@ void ilv3_ilv5_form_button::page_creation_helper(){
 	column_spaces.push_back(180);
 
 
-	for(unsigned int c = 0; c < pages.size();c++){
+	for(uint c = 0; c < pages.size();c++){
 
 		if(rows_per_page >= rows_needed){
 			pages[c].page_init(4,rows_needed,pass_column_titles,pass_row_titles,
@@ -1315,8 +1316,8 @@ bool ilv3_ilv5_form_button::make_output(ofstream& outs,vector<index_value>& bad_
 
     vector<page>& pages = my_form.get_pages();
 
-    for(unsigned int c = 0; c < pages.size(); c++){
-        for(unsigned int d = 0; d < pages[c].get_text_boxes().size(); d += 4){
+    for(uint c = 0; c < pages.size(); c++){
+        for(uint d = 0; d < pages[c].get_text_boxes().size(); d += 4){
             outs I pages[c].get_text_boxes()[d].text I pages[c].get_text_boxes()[d+1].text;
             outs F7 pages[c].get_text_boxes()[d+2].text F7 pages[c].get_text_boxes()[d+3].text;
             outs << endl;
