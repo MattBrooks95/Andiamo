@@ -194,27 +194,27 @@ void sdl_help::toggle_resizable(){
 void sdl_help::most(int& rightmost,int& leftmost,int& upmost,int& downmost){
 	//note that we are starting at 1 to avoid the massive background tile messing up this calculation
 
-	for(map<string,map<string,field>>::iterator lines_it = tile_access->fields.begin();
+	for(map<string,map<string,field*>>::iterator lines_it = tile_access->fields.begin();
 	    lines_it != tile_access->fields.end();
 	    lines_it++){
-		for(map<string,field>::iterator params_it = lines_it->second.begin();
+		for(map<string,field*>::iterator params_it = lines_it->second.begin();
 		    params_it != lines_it->second.end();
 		    params_it++){
-			if(params_it->second.yloc + y_scroll < upmost){ //least y value means it is the highest corner
-				upmost = params_it->second.yloc + y_scroll;	
+			if(params_it->second->yloc + y_scroll < upmost){ //least y value means it is the highest corner
+				upmost = params_it->second->yloc + y_scroll;	
 			}
 
-			if(params_it->second.yloc + y_scroll + params_it->second.get_size().height > downmost ){
+			if(params_it->second->yloc + y_scroll + params_it->second->get_size().height > downmost ){
 				//the lowest point will be the lowest corner + that texture's height
-				downmost = params_it->second.yloc + y_scroll + params_it->second.get_size().height;
+				downmost = params_it->second->yloc + y_scroll + params_it->second->get_size().height;
 			}
 
-			if(params_it->second.xloc + x_scroll < leftmost){
-				leftmost = params_it->second.xloc + x_scroll;
+			if(params_it->second->xloc + x_scroll < leftmost){
+				leftmost = params_it->second->xloc + x_scroll;
 			}
 
-			if(params_it->second.xloc + x_scroll + params_it->second.get_size().width > rightmost){
-				rightmost = params_it->second.xloc + x_scroll + params_it->second.get_size().width;
+			if(params_it->second->xloc + x_scroll + params_it->second->get_size().width > rightmost){
+				rightmost = params_it->second->xloc + x_scroll + params_it->second->get_size().width;
 			}
 
 		}
@@ -289,13 +289,13 @@ int sdl_help::scroll_clicked(int click_x, int click_y) const{
 
 void sdl_help::print_tile_locs(ostream& outs){
 
-	for(map<string,map<string,field>>::iterator lines_it = tile_access->fields.begin();
+	for(map<string,map<string,field*>>::iterator lines_it = tile_access->fields.begin();
 	    lines_it != tile_access->fields.end();
 	    lines_it++){
-		for(map<string,field>::iterator params_it = lines_it->second.begin();
+		for(map<string,field*>::iterator params_it = lines_it->second.begin();
 		    params_it != lines_it->second.end();
 		    params_it++){
-			params_it->second.print();
+			params_it->second->print();
 		}
 	}
 
@@ -303,25 +303,25 @@ void sdl_help::print_tile_locs(ostream& outs){
 
 void sdl_help::click_detection(ostream& outs,SDL_Event& event,int click_x, int click_y){
 
-	for(map<string,map<string,field>>::iterator lines_it = tile_access->fields.begin();
+	for(map<string,map<string,field*>>::iterator lines_it = tile_access->fields.begin();
 	    lines_it != tile_access->fields.end();
 	    lines_it++){
-		for(map<string,field>::iterator params_it = lines_it->second.begin();
+		for(map<string,field*>::iterator params_it = lines_it->second.begin();
 		    params_it != lines_it->second.end();
 		    params_it++){
 
 			//if the mouse click coordinates fall within a tile
-			if( in( click_x,click_y, params_it->second.get_rect() ) ){
-				if(params_it->second.text_box_clicked(click_x,click_y) ){
+			if( in( click_x,click_y, params_it->second->get_rect() ) ){
+				if(params_it->second->text_box_clicked(click_x,click_y) ){
 					//if the click fell within the text box
 					//go into text entry loop
-					if(!params_it->second.is_locked){
+					if(!params_it->second->is_locked){
 						text_box_mini_loop(outs,event,params_it->second);
 					}
 				} else {
 					cout << "Decided that the help section was clicked." << endl;
 					//if the click was not on the text box, enact clicked()
-				 	params_it->second.clicked(event,click_x,click_y);
+				 	params_it->second->clicked(event,click_x,click_y);
 				}
 
 			}
@@ -331,7 +331,7 @@ void sdl_help::click_detection(ostream& outs,SDL_Event& event,int click_x, int c
 
 //thanks to http://lazyfoo.net/tutorials/SDL/32_text_input_and_clipboard_handling/index.php
 //which was used as a reference 
-void sdl_help::text_box_mini_loop(ostream& outs, SDL_Event& event,field& current_tile){
+void sdl_help::text_box_mini_loop(ostream& outs, SDL_Event& event,field* current_tile){
 
 	//turn on the text input background functions
 	SDL_StartTextInput();
@@ -357,7 +357,7 @@ void sdl_help::text_box_mini_loop(ostream& outs, SDL_Event& event,field& current
 
 		  case SDL_MOUSEBUTTONDOWN:
 			//if the click was within the text box, move the cursor maybe
-		  	if( current_tile.text_box_clicked(event.button.x,event.button.y) ){
+		  	if( current_tile->text_box_clicked(event.button.x,event.button.y) ){
 				error_logger.push_msg("Text box click at " + to_string(event.button.x) + ":"
 						       + to_string(event.button.y) );
 			//elsewise exit text input mode, user clicked off the text box
@@ -370,7 +370,7 @@ void sdl_help::text_box_mini_loop(ostream& outs, SDL_Event& event,field& current
 		  	break;
 
 		  case SDL_TEXTINPUT:
-			current_tile.update_temp_input(event);
+			current_tile->update_temp_input(event);
 			text_was_changed = true;
 		  	//here this actually causes a loss of letters, so the event flooding is necessary, don't flush
 			//SDL_FlushEvent(SDL_TEXTINPUT);
@@ -402,7 +402,7 @@ void sdl_help::text_box_mini_loop(ostream& outs, SDL_Event& event,field& current
 
 			//update picture
 			sdl_access->draw();
-			current_tile.draw_cursor();
+			current_tile->draw_cursor();
 			text_was_changed = false;
 			present();
 
@@ -411,13 +411,13 @@ void sdl_help::text_box_mini_loop(ostream& outs, SDL_Event& event,field& current
 	SDL_StopTextInput();
 }
 
-void sdl_help::text_box_mini_loop_helper(SDL_Keysym& key,field& current_tile,bool& text_was_changed){
+void sdl_help::text_box_mini_loop_helper(SDL_Keysym& key,field* current_tile,bool& text_was_changed){
 	switch( key.sym ){
 		case SDLK_BACKSPACE:
 			//delete last character, unless it's empty already than do nothing
-			if( current_tile.temp_input.size() > 0 ){
+			if( current_tile->temp_input.size() > 0 ){
 				//delete a character, update text's graphics
-				current_tile.back_space();
+				current_tile->back_space();
 				text_was_changed = true;
 			}
 			break;
@@ -425,16 +425,16 @@ void sdl_help::text_box_mini_loop_helper(SDL_Keysym& key,field& current_tile,boo
 		case SDLK_LEFT:
 			//if we are not already at the very left of the text, move the editing position
 			//one to the left
-			if(current_tile.editing_location > 0){
-				current_tile.editing_location--;
+			if(current_tile->editing_location > 0){
+				current_tile->editing_location--;
 				text_was_changed = true;
 			}
 			break;
 		case SDLK_RIGHT:
 			//if we are not already at the very end of the text, move the editing position
 			//one to the right
-			if(current_tile.editing_location < current_tile.temp_input.size()){
-				current_tile.editing_location++;
+			if(current_tile->editing_location < current_tile->temp_input.size()){
+				current_tile->editing_location++;
 				text_was_changed = true;
 			}
 			break;
@@ -523,7 +523,7 @@ void sdl_help::calc_corners(){
 
 }
 
-void sdl_help::calc_corners_helper(vector<field>& line_in,
+void sdl_help::calc_corners_helper(vector<field*>& line_in,
 								   uint& start_height,
 								   int row_limit){
 
@@ -547,47 +547,47 @@ void sdl_help::calc_corners_helper(vector<field>& line_in,
 	for(uint c = 0; c < line_in.size();c++){
 
 		//this is the case where the tile can stay in the current row 
-		if(x_corner + line_in[c].get_size().width < row_limit){
+		if(x_corner + line_in[c]->get_size().width < row_limit){
 
-			line_in[c].xloc = x_corner;
-			line_in[c].yloc = y_corner;
+			line_in[c]->xloc = x_corner;
+			line_in[c]->yloc = y_corner;
 
 
 			//literal 5 for 5 pixel offset
-			x_corner = line_in[c].xloc + line_in[c].get_size().width + x_buffer;
+			x_corner = line_in[c]->xloc + line_in[c]->get_size().width + x_buffer;
 
 			
-			if(line_in[c].yloc + line_in[c].get_size().height + 5 > lowest_point){
+			if(line_in[c]->yloc + line_in[c]->get_size().height + 5 > lowest_point){
 				error_logger.push_msg("OLD lowest_point:"+to_string(lowest_point));
-				lowest_point = line_in[c].yloc + line_in[c].get_size().height + 5;
+				lowest_point = line_in[c]->yloc + line_in[c]->get_size().height + 5;
 				error_logger.push_msg(" NEW lowest_point:"+to_string(lowest_point));
 			}
 		//this is the case where the tile needs to be placed into
 		//a new row (because there's not enough width left)
 		} else {
 			//place it on the left edge
-			line_in[c].xloc = x_buffer;
+			line_in[c]->xloc = x_buffer;
 
 			//save it's leftmost edge + padding
 			//to be used to place the next tile
-			x_corner = line_in[c].xloc + 
-						line_in[c].get_size().width + x_buffer;
+			x_corner = line_in[c]->xloc + 
+						line_in[c]->get_size().width + x_buffer;
 
 			//place it just below the previous row
-			line_in[c].yloc = lowest_point;
+			line_in[c]->yloc = lowest_point;
 
 			//set that lowest point as the new y coordinate for the
 			//fields in this row
 			y_corner = lowest_point;
 
 			//save new lowest point
-			lowest_point = line_in[c].yloc +
-							line_in[c].get_size().height + 5;
+			lowest_point = line_in[c]->yloc +
+							line_in[c]->get_size().height + 5;
 
 		}		
 
 		cout << "Paramter placement####################" << endl;
-		cout << line_in[c].xloc << ":" << line_in[c].yloc << endl;
+		cout << line_in[c]->xloc << ":" << line_in[c]->yloc << endl;
 	}
 
 	//save the the start location for the next row

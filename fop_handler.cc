@@ -279,7 +279,7 @@ double fop_handler::find_elab(){
 
 		//get ELAB string value from field, then convert to int
 		string elab_str;
-		elab_str = tile_access->fields.at("line_2").at("ELAB").temp_input;
+		elab_str = tile_access->fields.at("line_2").at("ELAB")->temp_input;
 		elab_val = stod(elab_str);
 
 	} catch(out_of_range& map_error){
@@ -304,7 +304,7 @@ int fop_handler::find_icm(){
 
 		//get icm string value, convert to int
 		string icm_str;
-		icm_str   = tile_access->fields.at("line_2").at("ICM").temp_input;
+		icm_str   = tile_access->fields.at("line_2").at("ICM")->temp_input;
 		icm_val = stoi(icm_str);
 
 	} catch(out_of_range& map_error){
@@ -338,8 +338,8 @@ void fop_handler::find_compound_A_Z(unsigned int& compound_A,
 
 	try{
 
-		compound_A = stoi(tile_access->fields.at("line_2").at("A").temp_input);
-		compound_Z = stoi(tile_access->fields.at("line_2").at("Z").temp_input);
+		compound_A = stoi(tile_access->fields.at("line_2").at("A")->temp_input);
+		compound_Z = stoi(tile_access->fields.at("line_2").at("Z")->temp_input);
 
 	} catch(out_of_range& map_error){
 		error_logger.push_error("Couldn't find A or Z in field map.");
@@ -359,7 +359,7 @@ int fop_handler::find_IENCH(){
 	string iench_str;
 
 	try{
-		iench_str = tile_access->fields.at("line_2").at("IENCH").temp_input;
+		iench_str = tile_access->fields.at("line_2").at("IENCH")->temp_input;
 		return_me = stoi(iench_str);
 	} catch(out_of_range& map_error){
 		error_logger.push_error("Couldn't find IENCH in field map.");

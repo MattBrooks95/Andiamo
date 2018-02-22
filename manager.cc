@@ -182,7 +182,7 @@ void manager::init(){
 					//read in again to update loop
 					getline(ins,temp_string);
 				} else {
-					break;
+					return;
 				}
 			}
 			field* temp_field = NULL;
@@ -196,6 +196,7 @@ void manager::init(){
 
 			error_logger.push_msg("##########PUSHING FIELD###################");
 			temp_field->print();
+			cout << temp_field->tile_name << endl;
 			error_logger.push_msg("##########################################");
 
 			//push the field into the lookup map for that parameter's line
@@ -208,6 +209,8 @@ void manager::init(){
 				//"andy" is the current line, so go ahead and read the next one
 				getline(ins,temp_string);
 			}
+
+			temp_field = NULL;
 		}
 
 		//at this point, we have hit the separator for another group of parameters
@@ -232,12 +235,23 @@ void manager::init(){
 
 }
 
-/*
+
 manager::~manager(){
 
+	//clear out the objects that the vector points to
+	for(uint line = 0; line < fields_order.size();line++){
+
+		for(uint param = 0; param < fields_order[line].size();param++){
+			delete(fields_order[line][param]);
+		}
+
+	}
+
+	//because the map & the vector have pointers to the same objects,
+	//calling delete on the pointers in the map can cause issues
 
 }
-*/
+
 
 int manager::get_widest_tile_width(){
 	int max_width = 0;
@@ -285,10 +299,14 @@ void manager::init_fields_graphics(){
 
 	for(uint line = 0; line < fields_order.size();line++){
 
-		for(uint param = 0; param < fields_order.size();param++){
+		for(uint param = 0; param < fields_order[line].size();param++){
 
-			fields_order[line][param]->graphics_init(image_p);
-
+			if(fields_order[line][param] == NULL){
+				cout << "NULL POINTER IN TILE VECTOR."
+					 << "Line: " << line << " Param: " << param << endl;
+			} else {
+				fields_order[line][param]->graphics_init(image_p);
+			}
 		}
 
 	}
@@ -316,8 +334,12 @@ void manager::draw(){
 
 	for(uint line = 0; line < fields_order.size();line++){
 
-		for(uint param = 0; param < fields_order[line].size();line++){
+		for(uint param = 0; param < fields_order[line].size();param++){
 
+			if(fields_order[line][param] == NULL){
+				cout << "NULL pointer in manager::draw()" << endl;
+				continue;
+			}
 			if(!fields_order[line][param]->is_help_mode()){
 				fields_order[line][param]->draw_me();
 			} else {
@@ -612,9 +634,6 @@ bool manager::update_io_maker(vector<string>& bad_input_list){
 	return success;
 }
 
-void manager::new_line(const string& line_name,const map<string,field>& line_map){
-		fields.emplace(line_name,line_map);
-}
 
 void manager::update_win(int width_in,int height_in){
 	win_w = width_in;

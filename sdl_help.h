@@ -95,7 +95,7 @@ class sdl_help{
 	void calc_corners();
 
 
-	void calc_corners_helper(vector<field>& line_in,unsigned int& start_height,
+	void calc_corners_helper(vector<field*>& line_in,unsigned int& start_height,
 							 int row_limit);
 
 /*
@@ -174,10 +174,10 @@ class sdl_help{
 	/*! should turn off keybindings so keystrokes are interpreted as input to the respective fields
 	 *temporary storage string. This member started off being in class field, but I've since moved it to
 	 *sdl_help, because sdl_help needs to be able to draw in this loop */
-	void text_box_mini_loop(ostream& outs, SDL_Event& event, field& current_tile);
+	void text_box_mini_loop(ostream& outs, SDL_Event& event, field* current_tile);
 
 	//! this function helps text_box_mini_loop by doing the functions related to the text input event
-	void text_box_mini_loop_helper(SDL_Keysym& key,field& current_tile,bool& text_was_changed);
+	void text_box_mini_loop_helper(SDL_Keysym& key,field* current_tile,bool& text_was_changed);
 
 	//! this is a boolean helper for click_detection()
 	/* this member just takes in a mouse click's x or y values, and calculates whether or not

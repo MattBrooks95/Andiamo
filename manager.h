@@ -36,17 +36,8 @@ class manager{
 	 *constructor */
 	manager(string image_p_in);
 
-	//! destructor is left empty for now.
-	//~manager();
-
-	//! This member loads a map of parameters into the map of lines
-	/*! this way, when the parameters are output to the HF file,
-	 *the desired line can be referenced by its name, like "5A", and then the parameter can be referenced by its name
-	 *like "IENCH".
-	 *\param line_name is the name of the map that will be put into the map of lines
-	 *\param line_map is a map of the parameter's name, and their corresponding field*/
-	void new_line(const string& line_name,
-				  const map<string,field>& line_map);
+	//! destructor deletes the objects that the map & vector of tiles point to
+	~manager();
 
 	//! this function walks the map, and returns the width of the widest tile
 	int get_widest_tile_width();
