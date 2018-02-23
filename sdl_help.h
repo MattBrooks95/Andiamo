@@ -6,6 +6,12 @@
 #include<SDL2/SDL_image.h>
 #include<SDL2/SDL_ttf.h>
 
+//provides constants for the maximum and minimum values
+//c++ primitive data types for the current system & compiler
+#include<limits.h>
+
+
+
 #include "scroll_bar.h"
 #include "manager.h"
 #include "input_maker.h"
@@ -17,8 +23,14 @@ using std::vector;
 
 extern logger error_logger;
 
- //forward declaration,so sdl can be passed a button_manager pointer without needing
-//to #include "button_manager.h", because doing so is a circular dependency
+//the distance between two adjacent tiles
+#define HORIZ_TILE_PADDING 5
+
+
+
+//forward declaration,so sdl can be passed a button_manager pointer
+//without needing to #include "button_manager.h",
+//because doing so is a circular dependency
 class button_manager;
 
 
@@ -27,21 +39,21 @@ class button_manager;
 struct win_size{
 
 	//! win_size()'s constructor takes no arguments
-	/*! it initializes the window width and height to -1, these must be set by sdl helper and later by
-	 *the user */
+	/*! it initializes the window width and height to -1, these must be set by
+	 *sdl helper and later by the user */
 	win_size();
 
 	//! print() prints this fields width and height fields
 	void print();
 
-	//! holds the width of the window, which is different than the screen info in display
+	//! holds the width of the window
 	int width;
 
-	//! holds the height of the window, which is different than the info in display
+	//! holds the height of the window
 	int height;
 };
 
-//! the following struct is used by calc_corners to remember the tiles it's currently considering
+//! is used by calc_corners to remember the tiles it's currently considering
 struct names_and_width{
 	string line_name;
 	string param_name;
@@ -50,16 +62,17 @@ struct names_and_width{
 bool compare_width(names_and_width& left, names_and_width& right);
 
 //! Contains sdl objects and members to act on them.
-/*! sdl_help objects are mostly a container for sdl renderers and the window. Functionality that requires 
- *SDL should go here, as the manager and field classes do not have access to them as of right now
- */
+/*! sdl_help objects are mostly a container for sdl renderers and the window.
+ *Functionality that requires SDL should go here, as the manager and field */
 class sdl_help{
   public:
 	//! This is a constructor member for the sdl_help class.
 	/*! It initializes SDL and SDL image. Window size is based on a
 	 *SDL_GetCurrentDisplayMode call. \param name_in is the desired name of
          * the window.*/
-	sdl_help(string name_in = "Andiamo!",string HF_input_file_in = "HF_config.txt",string bg_image_name_in = "hubble_deep_field.png");
+	sdl_help(string name_in = "Andiamo!",
+					string HF_input_file_in = "HF_config.txt",
+					string bg_image_name_in = "hubble_deep_field.png");
 
 	//! This is a destructor member for the sdl_help class.
 	/*! It enacts SDL_Quit() and IMG_Quit(). */
@@ -71,7 +84,7 @@ class sdl_help{
 	void init();
 
 	
-	//! This member updates the window dimension variables in sdl_help.h and manager.h
+	//! updates the window dimension variables in sdl_help.h and manager.h
 	/* \param width_in is the desired new window width
      * \param height_in is the desired new window height */
 	void window_update(int width_in, int height_in);
@@ -84,107 +97,96 @@ class sdl_help{
 	void draw_sbars();
 
 
-	//! This member presents the renderer and all of it's current textures to the screen
+	//! presents the renderer and all of it's current textures to the screen
 	void present();
 
-	////! This function uses 	SDL_SetWindowResizeable to prevent or allow window resizing
+	////! uses SDL_SetWindowResizeable to prevent or allow window resizing
 	//void toggle_resizable();
 
-	/**************************SCROLLING FUNCTIONS ************************************************/
-	//! calc_corners implements a guessing algorithm that tries to place tiles in a space-efficient way
+	/**************SCROLLING FUNCTIONS ****************************************/
+	//! implements an algorithm that places tiles in a space-efficient way
+	/*! parameter order is preserved, and is in line with the input manual */
 	void calc_corners();
 
 
 	void calc_corners_helper(vector<field*>& line_in,unsigned int& start_height,
 							 int row_limit);
 
-/*
-	// this function is a helper function for calc_corners(). It places the tiles for one line
-	/param line_in is the name of the line that the function is doing
-	 param map_in is the name of the map of the line it is making, that contains the fields
-	 param start_height is the height at which the tile should start placing fields.
-	 This is what will allow the lines to not overlap each other. Before this function exits,
-	 it should update the start_height value to account for the then completed field placement.
-	void calc_corners_helper(const string line_in, map<string,field>& map_in,
-				 unsigned int& start_height,int row_limit);
-*/
-
-/*
-	// this is an alternative helper that prints line 6 in the order they appear in the manual, instead of alphabetical
-	void calc_corners_ordered(const string line_in,std::map<string,field>& map_in,
-					 unsigned int& start_height,int row_limit,vector<string>& ordered);
-*/
-
-	//! This member changes this class's x_scroll and y_scroll values to the given parameters
-	/*! This is being called from the handlers.cc implementations most of the time.
-     * \param x_scroll_in amount to increase(positive) or decrease(negative) horizontal
-     *scroll value by. \param y_scroll_in amount to increase or decrease vertical scroll value by*/
+	//! changes this class's x_scroll and y_scroll values
+	/*! This is being called from handlers.cc most of the time.
+     *\param x_scroll_in amount to increase or decrease horizontal
+     *scroll value by.
+	 *\param y_scroll_in amount to increase or decrease
+	 *vertical scroll value by */
 	void update_scroll(int x_scroll_in,int y_scroll_in);
 
 	//! This member changes this class's x_scroll and y_scroll values back to 0
-	/*!This pretty much returns the user back to the top of the page. I think I'll make this
-	 *a spacebar action */
+	/*!This pretty much returns the user back to the top of the page.
+	 *I think I'll make this a spacebar action */
 	void reset_scroll();
 
-	//! this member traverses the tile_loc vector and returns the greatest and least values for x and y
-	/*! it requires four integers by reference, which will be filled with the mininum and maximum
-	 *tile location for each cardinal direction. For now, it is just a helper for update_scroll()
-     *\param rightmost when given -2048, will be filled with
-     *the rightmost edge of the tile furthest to the right. \param leftmost when given 0, will 
-     *similarly be filled with the leftmost edge of the tile that is furthest to the left.
-     *\param upmost when given -2048, is filled with the top edge of the highest tile.
-     *\param downmost when given 0, is similarly filled with the the most bottom edge of 
+	//! returns the greatest and least values for x and y
+	/*! it requires four integers by reference,
+	 *which will be filled with the mininum and maximum tile location for
+	 *each direction. helper for update_scroll().
+     *\param rightmost will be filled with the rightmost edge of the tile
+	 *furthest to the right.
+	 *\param leftmost when given 0, will be filled with the leftmost edge
+	 *of the tile that is furthest to the left.
+     *\param upmost when given -2048, is filled with the top edge
+	 *of the highest tile.
+     *\param downmost when given 0, is filled with the the most bottom edge of 
      *the lowest tile */
 	void most(int& rightmost,int& leftmost,int& upmost,int& downmost);
 
-	//! this member calls the scroll bars's scroll_bar::clicked() function (click detection)
-	/*! this doesn't do any logic besides return boolean values from the scroll bars's clicked member
+	//! calls the scroll bars's scroll_bar::clicked() function (click detection)
+	/*! this doesn't do any logic besides return boolean values from the
+	 *scroll bars's clicked member
 	 *\param click_x is the xcoord of the mouse click
 	 *\param click_y is the ycoord of the mouse click
 	 *\return returns true if a scroll bar was clicked, and false elsewise */
 	int scroll_clicked(int click_x, int click_y) const;
-	/**********************************************************************************************/
 
-	//! This member prints the sizes of the three important size variables: area, window, and display
-	/*! Where display is the dimensions of the physical monitor the user has. window_s keeps track of
-	 *the size of the window in which things can be seen - this is usually less than the actual area.
-	 *area is the total size needed to render all objects - this is usually bigger than the actual area.
-	 *Scrolling will be implemented to allow the user to see different sections of whole area using the
-	 *limited window. */
+	/**************************************************************************/
+
+	//! prints the three important size variables: area, window, and display
+	/*! Where display is the dimensions of the physical monitor the user has.
+	 *window_s keeps track of the size of the window in which things
+	 *can be seen - this is usually less than the actual area.
+	 *area is the total size needed to render all objects - this is usually
+	 *bigger than the actual area. */
 	void print_size_info();
 
-
-	//! This member traverses the tile_locations vector and prints all of their SDL_Rect fields
-	/*! sdl_help has this functionality right now because it's using SDL_Rect structures. I may
-	 *make the manager do this book keeping, but I'd have to make my own struct  \param outs is the 
-     *desired output stream. Likely to be cout in development, but may later be a file to support error 
-     *logging features*/
-	void print_tile_locs(ostream& outs);
-
-	//! This member traverses the tile location vector and sees if the user clicked on a tile or not
-	/*! it walks linearly through the tile_locations vector and enacts the clicked() member
-	 *of the tile that the user clicked on. For non-background tiles, this toggles their normal appearance
-	 *with their help_mode appearance
+	//! sees if the user clicked on a tile or not
+	/*! it walks linearly through the tile vector and enacts the clicked() member
+	 *of the tile that the user clicked.
+	 *this toggles their normal appearance with their help_mode appearance
 	 *\param outs output stream to send messages to
-	 *\param click_x mouse click's x value (distance horizontaly from left side of window)
-	 *\param click_y mouse click's y value (distance vertically from top of window) */
-	void click_detection(ostream& outs, SDL_Event& event, int click_x, int click_y);
+	 *\param click_x mouse click's x value (distance from left side of window)
+	 *\param click_y mouse click's y value (distance from top of window) */
+	void click_detection(ostream& outs, SDL_Event& event, int click_x,
+						 int click_y);
 
-	//! this function handles the mini-loop where the user can edit the text box
-	/*! should turn off keybindings so keystrokes are interpreted as input to the respective fields
-	 *temporary storage string. This member started off being in class field, but I've since moved it to
+	//! handles the mini-loop where the user can edit the text box
+	/*! should turn off keybindings so keystrokes are interpreted as input
+	 *to the respective field's temporary storage string.
+	 *This member started off being in class field, but I've since moved it to
 	 *sdl_help, because sdl_help needs to be able to draw in this loop */
-	void text_box_mini_loop(ostream& outs, SDL_Event& event, field* current_tile);
+	void text_box_mini_loop(ostream& outs, SDL_Event& event,
+							field* current_tile);
 
-	//! this function helps text_box_mini_loop by doing the functions related to the text input event
-	void text_box_mini_loop_helper(SDL_Keysym& key,field* current_tile,bool& text_was_changed);
+	//! helps text_box_mini_loop by doing the text input handling
+	void text_box_mini_loop_helper(SDL_Keysym& key,field* current_tile,
+									bool& text_was_changed);
 
 	//! this is a boolean helper for click_detection()
-	/* this member just takes in a mouse click's x or y values, and calculates whether or not
-         *the click falls within the given SDL_Rect (a square)
+	/* this member just takes in a mouse click's x or y values,
+	 *and calculates whether or not the click falls within the given
+	 *SDL_Rect (a square)
 	 *\param click_x the mouse click's x position
 	 *\param click_y the mouse click's y position
-	 *\param rect is an SDL_Rect that contains the box to be checked, usually a tile's location*/
+	 *\param rect is an SDL_Rect that contains the box to be checked,
+	 *usually a tile's location */
 	bool in(int click_x, int click_y,const SDL_Rect& rect) const;
 
 
@@ -212,8 +214,8 @@ class sdl_help{
 	/*****************************************************************/
 
 	//! contains a running total of how many times a frame has been drawn
-	/*! as of right now this is just paying lip service to worrying about framerate
-	 *a bunch of decisions still have to be made in that regard. */
+	/*! as of right now this is just paying lip service to worrying about
+	 *framerate a bunch of decisions still have to be made in that regard. */
 	unsigned long int frame_count;
 
 	//! pointer to the renderer object
@@ -221,11 +223,8 @@ class sdl_help{
 	//! pointer to the font created from the font.ttf file in /config
 	TTF_Font* font;
 
-	/********* FRIENDS *******************************************/
-	//I have no friends
-
   private:
-	//!  \brief A string that contains the window name, usually Andiamo."
+	//! A string that contains the window name, usually Andiamo."
 	string window_name;
 
 	//! a path string to the algorithm's input file folder 
@@ -240,7 +239,7 @@ class sdl_help{
 	//! stores the background image
 	SDL_Texture* bg_texture;
 
-	/***************** FIELDS THAT PERTAIN TO SCROLLING ********************************/
+	/************* FIELDS THAT PERTAIN TO SCROLLING ***************************/
 	/*! \brief contains functions to act on, and draw, the vertical
 	 *scroll bar */
 	scroll_bar vert_bar;
@@ -255,16 +254,20 @@ class sdl_help{
 	//! \brief this integer controls how far right or left we've scrolled
 	int x_scroll;
 
-	/************************************************************************************/
+	/**************************************************************************/
 
 	/*! a win_size struct that contains the window's current width and 
 	 *height, this window limits what the user can see */
 	win_size window_s;
 
-	SDL_DisplayMode display; //!< contains screen information
-	SDL_Event big_event; //!< queue that updates with user input
+	//! contains screen information
+	SDL_DisplayMode display;
 
-	SDL_Window* window; //!< pointer to the window object
+	//! queue that updates with user input
+	SDL_Event big_event;
+
+	//! pointer to the window object
+	SDL_Window* window;
 };
 
 //################### non member helpers ########################################//

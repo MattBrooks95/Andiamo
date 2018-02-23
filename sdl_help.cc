@@ -177,57 +177,69 @@ void sdl_help::draw_sbars(){
 /*
 void sdl_help::toggle_resizable(){
 	if(resizable){
-		SDL_SetWindowResizable(&window,SDL_FALSE);//forbid resizing of the window while in form loop
+		//forbid resizing of the window while in form loop
+		SDL_SetWindowResizable(&window,SDL_FALSE);
 		resizable = false;
 	} else {
-		SDL_SetWindowResizable(&window,SDL_TRUE);//allow the window to be resized
+		//allow the window to be resized
+		SDL_SetWindowResizable(&window,SDL_TRUE);
 		resizable = true;
 
 	}
 }*/
 //**********************SCROLLING FUNCTIONS ***************************************************/
 
-// walk the tile locations vector, and keep track of the rightmost, leftmost, bottommost, and upmost
-// edges of all the tiles. This is used to make sure the user can't scroll in any direction past the point
-// where no objects are visible, or are just barely visible - might fiddle with constants to make it stop
-// scrolling a bit sooner or later
+/* walk the tile locations vector, and keep track of the rightmost, leftmost,
+* bottommost, and upmost edges of all the tiles. This is used to make sure that
+*the user can't scroll in any direction past the point where no objects are
+*visible, or are just barely visible - can fiddle with constants to make
+*it stop scrolling a bit sooner or later */
 void sdl_help::most(int& rightmost,int& leftmost,int& upmost,int& downmost){
-	//note that we are starting at 1 to avoid the massive background tile messing up this calculation
 
-	for(map<string,map<string,field*>>::iterator lines_it = tile_access->fields.begin();
-	    lines_it != tile_access->fields.end();
-	    lines_it++){
-		for(map<string,field*>::iterator params_it = lines_it->second.begin();
-		    params_it != lines_it->second.end();
-		    params_it++){
-			if(params_it->second->yloc + y_scroll < upmost){ //least y value means it is the highest corner
-				upmost = params_it->second->yloc + y_scroll;	
+	//shorthand reference to the tile vector in
+	//the manager object
+	vector<vector<field*>>& fields_order = tile_access->fields_order;
+
+	for(uint line = 0; line < fields_order.size();line++){
+
+		for(uint param = 0; param < fields_order[line].size();param++){
+
+
+			int yloc   = fields_order[line][param]->yloc;
+			int height = fields_order[line][param]->get_size().height;
+			
+			int xloc  = fields_order[line][param]->xloc;
+			int width = fields_order[line][param]->get_size().width;
+
+
+			//least Y value means it is the highest corner
+			if(fields_order[line][param]->yloc + y_scroll < upmost){
+				upmost = yloc + y_scroll;
 			}
 
-			if(params_it->second->yloc + y_scroll + params_it->second->get_size().height > downmost ){
-				//the lowest point will be the lowest corner + that texture's height
-				downmost = params_it->second->yloc + y_scroll + params_it->second->get_size().height;
+			//highest Y value means it is the lowest corner
+			if(yloc + y_scroll + height > downmost){
+				downmost = yloc + y_scroll + height; 
 			}
 
-			if(params_it->second->xloc + x_scroll < leftmost){
-				leftmost = params_it->second->xloc + x_scroll;
+			//lowest X value means that it is the left most corner
+			if(xloc + x_scroll < leftmost){
+				leftmost = xloc + x_scroll;
 			}
 
-			if(params_it->second->xloc + x_scroll + params_it->second->get_size().width > rightmost){
-				rightmost = params_it->second->xloc + x_scroll + params_it->second->get_size().width;
+			//highest X value means that it is the right most corner
+			if(xloc + x_scroll + width > rightmost){
+				rightmost = xloc + x_scroll + width;
 			}
 
-		}
-
-	}
-
+		}//parameters for loop
+	}//lines for loop
 }
 
-//can detect when we should stop scrolling, but allows no scrolling afterwards, not even in the opposite
-//direction - fixed, but is there a better way?
 void sdl_help::update_scroll(int x_scroll_in, int y_scroll_in){
 
-	int rightmost = -2048, leftmost = 2048, upmost = 2048, downmost = -2048;
+	int rightmost = INT_MIN, leftmost = INT_MAX;
+	int upmost = INT_MAX, downmost = INT_MIN;
 	most(rightmost,leftmost,upmost,downmost);
 
 	if( (rightmost + x_scroll_in) <= 0){
@@ -250,11 +262,16 @@ void sdl_help::update_scroll(int x_scroll_in, int y_scroll_in){
 		error_logger.push_msg("Hit down scrolling barrier.");
 	}
 
-	//it would make sense to be able to scroll like this 
-	error_logger.push_msg("x_scroll increased by " + to_string(x_scroll_in) + "| " + to_string(x_scroll)
-				       + "-> " + to_string(x_scroll + x_scroll_in));
-	error_logger.push_msg("y_scroll increased by " + to_string(y_scroll_in) + "| " + to_string(y_scroll)
-				      + "-> " + to_string(y_scroll+y_scroll_in));
+	//it would make sense to be able to scroll like this
+	string msg = "x_scroll increased by " + to_string(x_scroll_in);
+	msg       += "| " + to_string(x_scroll) + "-> ";
+	msg       += to_string(x_scroll + x_scroll_in);
+	error_logger.push_msg(msg);
+
+	msg  = "y_scroll increased by " + to_string(y_scroll_in);
+	msg += "| " + to_string(y_scroll) + "-> " +to_string(y_scroll+y_scroll_in);
+
+	error_logger.push_msg(msg);
 	x_scroll = x_scroll + x_scroll_in;
 	y_scroll = y_scroll + y_scroll_in;
 
@@ -263,7 +280,7 @@ void sdl_help::update_scroll(int x_scroll_in, int y_scroll_in){
 	horiz_bar.update();
 	
 }
-//return user to the top of the page -currently called from a spacebar press
+//return user to the top of the page - currently called from a spacebar press
 void sdl_help::reset_scroll(){
 	x_scroll = 0; y_scroll = 0;
 
@@ -285,53 +302,51 @@ int sdl_help::scroll_clicked(int click_x, int click_y) const{
 	//this returning false allows handle_mouseb_down to check the tiles
 	return 0;
 }
-//********************************************************************************************/
-
-void sdl_help::print_tile_locs(ostream& outs){
-
-	for(map<string,map<string,field*>>::iterator lines_it = tile_access->fields.begin();
-	    lines_it != tile_access->fields.end();
-	    lines_it++){
-		for(map<string,field*>::iterator params_it = lines_it->second.begin();
-		    params_it != lines_it->second.end();
-		    params_it++){
-			params_it->second->print();
-		}
-	}
-
-}
+//*****************************************************************************/
 
 void sdl_help::click_detection(ostream& outs,SDL_Event& event,int click_x, int click_y){
 
-	for(map<string,map<string,field*>>::iterator lines_it = tile_access->fields.begin();
-	    lines_it != tile_access->fields.end();
-	    lines_it++){
-		for(map<string,field*>::iterator params_it = lines_it->second.begin();
-		    params_it != lines_it->second.end();
-		    params_it++){
+	vector<vector<field*>>& fields_order = tile_access->fields_order;
 
-			//if the mouse click coordinates fall within a tile
-			if( in( click_x,click_y, params_it->second->get_rect() ) ){
-				if(params_it->second->text_box_clicked(click_x,click_y) ){
-					//if the click fell within the text box
-					//go into text entry loop
-					if(!params_it->second->is_locked){
-						text_box_mini_loop(outs,event,params_it->second);
+	for(uint line = 0; line < fields_order.size();line++){
+
+		for(uint param = 0; param < fields_order[line].size();param++){
+			
+			field* field_ptr = fields_order[line][param];
+
+			if( in(click_x, click_y,field_ptr->get_rect()) ){
+
+				//if they clicked the text box, allow them to
+				//edit the parameter
+				if(field_ptr->text_box_clicked(click_x,click_y)){
+
+					if(!field_ptr->is_locked){
+						text_box_mini_loop(outs,event,field_ptr);
 					}
+
+				//if they clicked the parameter name, give them
+				//a brief explanation
 				} else {
-					cout << "Decided that the help section was clicked." << endl;
-					//if the click was not on the text box, enact clicked()
-				 	params_it->second->clicked(event,click_x,click_y);
-				}
 
-			}
-		}
-	}
-}
+					field_ptr->clicked(event,click_x,click_y);
 
-//thanks to http://lazyfoo.net/tutorials/SDL/32_text_input_and_clipboard_handling/index.php
-//which was used as a reference 
-void sdl_help::text_box_mini_loop(ostream& outs, SDL_Event& event,field* current_tile){
+				}//end help dialogue click case
+				
+			
+			}//end general click case
+
+		}//end parameter for
+
+	}//end line for 
+
+}//end function
+
+/*thanks to 
+*http://lazyfoo.net/tutorials/SDL/32_text_input_and_clipboard_handling/index.php
+which was used as a reference */
+ 
+void sdl_help::text_box_mini_loop(ostream& outs, SDL_Event& event,
+													field* current_tile){
 
 	//turn on the text input background functions
 	SDL_StartTextInput();
@@ -358,8 +373,11 @@ void sdl_help::text_box_mini_loop(ostream& outs, SDL_Event& event,field* current
 		  case SDL_MOUSEBUTTONDOWN:
 			//if the click was within the text box, move the cursor maybe
 		  	if( current_tile->text_box_clicked(event.button.x,event.button.y) ){
-				error_logger.push_msg("Text box click at " + to_string(event.button.x) + ":"
-						       + to_string(event.button.y) );
+
+				string msg = "Text box click at " + to_string(event.button.x);
+				msg       += ":" + to_string(event.button.y);
+				error_logger.push_msg(msg);
+
 			//elsewise exit text input mode, user clicked off the text box
 		  	} else {
 				//doing this allows the user to 'hop' to another text box
@@ -372,12 +390,13 @@ void sdl_help::text_box_mini_loop(ostream& outs, SDL_Event& event,field* current
 		  case SDL_TEXTINPUT:
 			current_tile->update_temp_input(event);
 			text_was_changed = true;
-		  	//here this actually causes a loss of letters, so the event flooding is necessary, don't flush
-			//SDL_FlushEvent(SDL_TEXTINPUT);
+		  	//here this actually causes a loss of letters, so the event
+			//flooding is necessary, don't flush SDL_FlushEvent(SDL_TEXTINPUT);
 			break;
 
 		  case SDL_KEYDOWN:
-			text_box_mini_loop_helper(event.key.keysym,current_tile,text_was_changed);
+			text_box_mini_loop_helper(event.key.keysym,current_tile,
+													text_was_changed);
 
 			//prevent event flooding
 			SDL_FlushEvent(SDL_KEYDOWN);
@@ -411,7 +430,9 @@ void sdl_help::text_box_mini_loop(ostream& outs, SDL_Event& event,field* current
 	SDL_StopTextInput();
 }
 
-void sdl_help::text_box_mini_loop_helper(SDL_Keysym& key,field* current_tile,bool& text_was_changed){
+void sdl_help::text_box_mini_loop_helper(SDL_Keysym& key,field* current_tile,
+											bool& text_was_changed){
+
 	switch( key.sym ){
 		case SDLK_BACKSPACE:
 			//delete last character, unless it's empty already than do nothing
@@ -423,16 +444,16 @@ void sdl_help::text_box_mini_loop_helper(SDL_Keysym& key,field* current_tile,boo
 			break;
 	
 		case SDLK_LEFT:
-			//if we are not already at the very left of the text, move the editing position
-			//one to the left
+			//if we are not already at the very left of the text,
+			//move the editing position one to the left
 			if(current_tile->editing_location > 0){
 				current_tile->editing_location--;
 				text_was_changed = true;
 			}
 			break;
 		case SDLK_RIGHT:
-			//if we are not already at the very end of the text, move the editing position
-			//one to the right
+			//if we are not already at the very end of the text,
+			//move the editing position one to the right
 			if(current_tile->editing_location < current_tile->temp_input.size()){
 				current_tile->editing_location++;
 				text_was_changed = true;
@@ -494,32 +515,8 @@ void sdl_help::calc_corners(){
 							row_height,row_limit);
 
 	}
-/*
-	//but, I saved the line names as they were read in my manager::init(),
-	//so we can just walk that vector and ensure that lines are placed
-	//in the same order in which they were read
-	for(uint c = 0; c < tile_access->line_order.size();c++){
-		if(tile_access->line_order[c] == "line_6"){
-			//create a vector with the row parameter names in the order in which they should appear
-			vector<string> line_6_order = {"ICNTRL1","ICNTRL2","ICNTRL4","ICNTRL5","ICNTRL6","ICNTRL7",
-						       "ICNTRL8","ICNTRL9","ICNTRL10"};
-			try{
-				//and pass it into the alternative calc_corners helper function
-				calc_corners_ordered(tile_access->line_order[c],tile_access->fields.at(tile_access->line_order[c]),
-							    row_height, row_limit,line_6_order);
-			} catch(out_of_range& fail){
-				error_logger.push_error("Error in calc_corners, couldn't find a parameter in line 6.");
-			}
-		} else {
-			//this is the standard calc_corners helper function
-			calc_corners_helper(tile_access->line_order[c],tile_access->fields.at(tile_access->line_order[c]),
-				            row_height, row_limit);
-		}
-	}
-*/
 
-
-	error_logger.push_msg("################# END CALC CORNERS ###########################");
+	error_logger.push_msg("############# END CALC CORNERS #################");
 
 }
 
@@ -527,9 +524,8 @@ void sdl_help::calc_corners_helper(vector<field*>& line_in,
 								   uint& start_height,
 								   int row_limit){
 
-	//distance between the left edge and the tiles, and the
 	//distance between two tiles horizontally
-	int x_buffer = 5;
+	int x_buffer = HORIZ_TILE_PADDING;
 
 	int x_corner = x_buffer;
 
@@ -553,7 +549,6 @@ void sdl_help::calc_corners_helper(vector<field*>& line_in,
 			line_in[c]->yloc = y_corner;
 
 
-			//literal 5 for 5 pixel offset
 			x_corner = line_in[c]->xloc + line_in[c]->get_size().width + x_buffer;
 
 			
@@ -591,152 +586,11 @@ void sdl_help::calc_corners_helper(vector<field*>& line_in,
 	}
 
 	//save the the start location for the next row
-	start_height = lowest_point + 5;
-
+	//start_height = lowest_point + 5;
+	start_height = lowest_point + 15;
 }
 
-
-/*
-void sdl_help::calc_corners_helper(const string line_in, 
-									map<std::string,field>& map_in,
-									uint& start_height,
-									int row_limit){
-	error_logger.push_msg("In calc_corners_helper()! Line in progress is:" + line_in);
-
-	//distance between the left edge and the tiles, and the distance between two tiles 
-	//horizontally
-	int x_buffer = 5;
-
-	int x_corner = x_buffer;
-
-	//save the starting position to be used to set the corner coordinates for fields
-	//but this variable can be changed if the current line map takes up more than
-	// one row in the window
-	int y_corner = start_height;
-	
-
-	//save the lowest ylocation + height value there is, so we can update
-	//start_height when this function is done, to allow other rows
-	//to know where to begin placing fields
-	int lowest_point = start_height;
-
-	for(map<string,field>::iterator param_it = map_in.begin(); param_it != map_in.end();param_it++){
-		error_logger.push_msg("PARAM:"+param_it->first);
-
-		//this is the case where the tile can stay in the current row 
-		if(x_corner + param_it->second.get_size().width < row_limit){
-
-			param_it->second.xloc = x_corner;
-			param_it->second.yloc = y_corner;
-
-
-			x_corner = param_it->second.xloc + param_it->second.get_size().width + x_buffer;//literal 5 for 5 pixel offset
-
-			
-
-			if(param_it->second.yloc + param_it->second.get_size().height + 5 > lowest_point){
-				error_logger.push_msg("OLD lowest_point:"+to_string(lowest_point));
-				lowest_point = param_it->second.yloc + param_it->second.get_size().height + 5;
-				error_logger.push_msg(" NEW lowest_point:"+to_string(lowest_point));
-			}
-		//this is the case where the tile needs to be placed into a new row (because there's not enough width left)
-		} else {
-			//place it on the left edge
-			param_it->second.xloc = x_buffer;
-
-			//save it's leftmost edge + padding
-			//to be used to place the next tile
-			x_corner = param_it->second.xloc + 
-						param_it->second.get_size().width + x_buffer;
-
-			//place it just below the previous row
-			param_it->second.yloc = lowest_point;
-
-			//set that lowest point as the new y coordinate for the
-			//fields in this row
-			y_corner = lowest_point;
-
-			//save new lowest point
-			lowest_point = param_it->second.yloc +
-							 param_it->second.get_size().height + 5;
-
-		}		
-
-	}
-
-	//save the the start location for the next row
-	start_height = lowest_point + 5;
-}
-*/
-
-//unfortunately, the map places "ICNTRL10" just after ICNTRL1, because they are stored in alphabetical order and not
-//the order in which they were pushed into the map. So this function is used instead of the normal calc corners helper,
-//to make sure that they are in logical order
-/*
-void sdl_help::calc_corners_ordered(const string line_in,map<string,field>& map_in, uint& start_height,int row_limit,
-				    vector<string>& order){
-
-	//temp copy of the starting height
-	int lowest_point = start_height;
-	//distance between tiles and the left edge
-	int x_buffer = 5;
-	//keep track of where the next tile should begin
-	int x_corner = x_buffer;
-	//keep track of there the tile's corner should be vertically
-	int y_corner = start_height;
-
-
-	for(vector<string>::iterator it = order.begin(); it != order.end();it++){
-
-		//this is the case where the tile can stay in the current row 
-		if(x_corner + map_in.at(*it).get_size().width < row_limit){
-
-			map_in.at(*it).xloc = x_corner;
-			map_in.at(*it).yloc = y_corner;
-
-			//literal 5 for 5 pixel offset
-			x_corner = map_in.at(*it).xloc + map_in.at(*it).get_size().width
-							 + x_buffer;
-			
-
-			if(map_in.at(*it).yloc + map_in.at(*it).get_size().height + 5 > lowest_point){
-				error_logger.push_msg("OLD lowest_point:"+to_string(lowest_point));
-				lowest_point = map_in.at(*it).yloc + map_in.at(*it).get_size().height + 5;
-				error_logger.push_msg(" NEW lowest_point:"+to_string(lowest_point));
-			}
-
-		//this is the case where the tile needs to be placed into a new row (because there's not enough width left)
-		} else {
-
-			//place it on the left edge
-			map_in.at(*it).xloc = x_buffer;
-
-			//save it's leftmost edge + padding
-			//to be used to place the next tile
-			x_corner = map_in.at(*it).xloc + map_in.at(*it).get_size().width + x_buffer;
-										      
-
-			//place it just below the previous row
-			map_in.at(*it).yloc = lowest_point;
-
-			//set that lowest point as the new y coordinate for the
-			//fields in this row
-			y_corner = lowest_point;
-
-			lowest_point = map_in.at(*it).yloc + map_in.at(*it).get_size().height + 5;//save new lowest point
-
-		}
-
-
-	}
-
-	//save the start location for the next row
-	start_height = lowest_point + 5;
-}*/
-
-
-
-//##################### NON-MEMBER HELPERS #######################################
+//##################### NON-MEMBER HELPERS #####################################
 
 bool compare_width(names_and_width& left, names_and_width& right){
 	if(left.width < right.width) return true;

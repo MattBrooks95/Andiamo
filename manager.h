@@ -7,7 +7,9 @@
 #include<fstream>
 #include<iostream>
 #include<regex>
-#include<algorithm> //for sorting the tiles based on width
+
+//for sorting the tiles based on width
+#include<algorithm> 
 
 
 #include "field.h"

@@ -27,7 +27,9 @@ void manager::init(){
 
 	//if something went wrong, print an error message to console
 	if(ins.fail()){
- 		error_logger.push_error("Fatal error: Failed to open tile input file: "+tile_input_p+"tiles.txt");
+		string err = "Fatal error: Failed to open tile input file: ";
+		err		  += tile_input_p+"tiles.txt";
+ 		error_logger.push_error(err);
 	}
 
 	//used to store unidentified line
@@ -62,7 +64,8 @@ void manager::init(){
 	//loop over the entire tile_Input/tiles.txt configuration file
 	while(!ins.eof() ){
 
-		if(ins.fail()) break;//get out on potentially erroneous last run
+		//get out on potentially erroneous last run
+		if(ins.fail()) break;
 
 		//reset new line container each run of loop
 		map<string,field*> new_line;
@@ -134,7 +137,8 @@ void manager::init(){
 
 				} else if( regex_match(temp_string,desc_pattern)){
 
-					error_logger.push_msg("Found a description line.: "+temp_string);
+					error_logger.push_msg("Found a description line.: "+
+										  temp_string);
 
 					//remove 'c ' at start of desc lines
 					description = temp_string.erase(0,2);
@@ -143,7 +147,8 @@ void manager::init(){
 
 				} else if( regex_match(temp_string,field_size_pattern) ){
 
-					error_logger.push_msg("Found field size specification!: "+temp_string);
+					error_logger.push_msg("Found field size specification!: "+
+										  temp_string);
 
 					//remove spaces
 					strip_char(temp_string,' ');
@@ -157,8 +162,10 @@ void manager::init(){
 					  //second number in the line is the width
 					  tile_h = stoi(dimensions[1]);
 					} catch (invalid_argument& error){
-						error_logger.push_error("Error in manager::init(), tile given illegal size parameters: "
-									+dimensions[0]+"x"+dimensions[1]);
+						string err = "Error in manager::init(), tile given:";
+						err       +=	"illegal size parameters: ";
+						err       += dimensions[0]+"x"+dimensions[1];
+						error_logger.push_error(err);
 					}
 				}  else if( regex_match(temp_string,name_pattern) ){
 					 error_logger.push_msg("Found a tile name!: "+temp_string);
@@ -172,8 +179,12 @@ void manager::init(){
 						display_name = temp_string;
 					}
 				} else {
-					error_logger.push_error("Error! This line failed to hit a case in the regex checks:"
-								+temp_string+"\nIt may be a missing 'Andy' separator in the tiles.txt config file.");
+
+					string err = "Error! This line failed to hit a case in the";
+					err       += " regex checks:"+temp_string;
+					err       += "\nIt may be a missing 'Andy' separator";
+					err       += " in the tiles.txt config file.";
+					error_logger.push_error(err);
 				
 				}
 
@@ -213,10 +224,11 @@ void manager::init(){
 			temp_field = NULL;
 		}
 
-		//at this point, we have hit the separator for another group of parameters
+		//at this point, we have hit the separator for another
+		//group of parameters
 
-		//save the order of the lines, so they can be drawn in order to the screen
-		//line_order.push_back(line_name);
+		//save the order of the lines, so they can be drawn in order to
+		//the screen line_order.push_back(line_name);
 
 		//store the map of parameters in the map of lines, and
 		//give it the name we found earlier
@@ -248,12 +260,13 @@ manager::~manager(){
 	}
 
 	//because the map & the vector have pointers to the same objects,
-	//calling delete on the pointers in the map can cause issues
+	//calling delete on the pointers in the map will cause issues
 
 }
 
 
 int manager::get_widest_tile_width(){
+
 	int max_width = 0;
 
 	for(uint line = 0; line < fields_order.size();line++){
@@ -311,18 +324,6 @@ void manager::init_fields_graphics(){
 
 	}
 
-	/*
-	for(map<string,map<string,field*>>::iterator big_it = fields.begin();
-	    big_it != fields.end();
-	    big_it++){
-	    for(map<string,field*>::iterator small_it = big_it->second.begin();
-			small_it != big_it->second.end();
-			small_it++){
-			small_it->second->graphics_init(image_p);
-	    }
-
-	}*/
-
 }
 
 void manager::draw(){
@@ -349,30 +350,6 @@ void manager::draw(){
 		}
 	}
 
-/*
-	for(map<string,map<string,field>>::iterator lines_it = fields.begin();
-	    lines_it != fields.end();
-	    lines_it++){
-		for(map<string,field>::iterator fields_it = lines_it->second.begin();
-		    fields_it != lines_it->second.end();	
-		    fields_it++){
-
-			//don't draw it if it's in help mode, help mode tiles
-			//need to be drawn second, so they aren't overdrawn
-			//by other tiles not in help mode
-			if( !fields_it->second.is_help_mode() ){
-
-				//have the field draw itself to the screen
-				fields_it->second.draw_me();
-
-			} else {
-				drawn_second.push_back(&fields_it->second);
-
-			}
-		}
-	}
-*/
-
 	for(uint c = 0; c < drawn_second.size();c++){
 
 		//now the help mode tiles can be drawn
@@ -383,21 +360,18 @@ void manager::draw(){
 
 //############# GIVE_FIELDS_DEFAULTS() HELPERS ###############################//
 void manager::give_int4_fields_defaults(){
-	//this looks dense, but is simple
-	//the outer loop just runs over every integer in the integer map that needs output to the HF file,
-	//and then runs through each line's map in the manager::fields map looking for the correct parameter name for that int4
-	//param. It's better to go through input_maker's parameters and find them in the fields map than it is to loop through
-	//the fields map and find the parameters. This is because the second way would involve checking each map in input_maker,
-	//when the first way just checks the 2d map in the manager object - these may actually be the same thing now that I think about it
-	//for(map<string,param_int4>::iterator big_it = input_maker_hook->get_int4_params().begin();
-	//	big_it != input_maker_hook->get_int4_params().end();
-	for(map<string,param_int4>::iterator big_it = io_access->get_int4_params().begin();
+
+	//the outer loop just runs over every integer in the integer map
+	//that needs output to the HF file, and then runs through each line's
+	//map in the manager::fields map looking for the correct parameter
+	//name for that int4 param.
+	for(int4_map::iterator big_it = io_access->get_int4_params().begin();
 		big_it != io_access->get_int4_params().end();
 		big_it++){
 
 		//start off false, turn to true if the desired parameter is found
 		bool found = false;
-		for(map<string,map<string,field*>>::iterator line_it = fields.begin();
+		for(fields_map::iterator line_it = fields.begin();
 			line_it != fields.end();
 			line_it++){
 		  //try to find the desired parameter in this line
@@ -413,7 +387,16 @@ void manager::give_int4_fields_defaults(){
 			if(big_it->second.value == -1804) {
 				line_it->second.at(big_it->first)->init_temp_input("no default");
 			} else {
-				line_it->second.at(big_it->first)->init_temp_input(to_string(big_it->second.value));
+
+				//field's parameter name
+				string field_str;
+				field_str = to_string(big_it->second.value);
+
+				//parameter name from the input maker
+				string io_str;
+				io_str = big_it->first;
+
+				line_it->second.at(io_str)->init_temp_input(field_str);
 			}
 
 
@@ -438,9 +421,12 @@ void manager::give_int4_fields_defaults(){
 
 		}
 		if(!found){
-			error_logger.push_error("Error! Failed to find parameter:"+big_it->first+"'s tile in the fields map."
-			     		      +"\nPlease make sure that its entries in tile_Input/tiles.txt and HF_Config/config.txt"
-			     		      +"\n have matching names.");
+			string err;
+			err  = "Error! Failed to find parameter:"+big_it->first;
+			err += "'s tile in the fields map.\nPlease make sure that";
+			err += " its entries in tile_Input/tiles.txt";
+			err += "and HF_Config/config.txt \n have matching names.";
+			error_logger.push_error(err);
 
 		}
 
@@ -449,16 +435,20 @@ void manager::give_int4_fields_defaults(){
 
 void manager::give_int4_array_fields_defaults(){
 
-	for(map<string,param_int4_array>::iterator big_it = io_access->get_i4_array_params().begin();
+	for(int4arr_map::iterator big_it = io_access->get_i4_array_params().begin();
 	    big_it != io_access->get_i4_array_params().end();
 	    big_it++){
 		bool found = false;
-		for(map<string,map<string,field*>>::iterator line_it = fields.begin();
+		for(fields_map::iterator line_it = fields.begin();
 		    line_it != fields.end();
 		    line_it++){
 		  try{
+
+			string default_val;
+			default_val = big_it->second.get_string();
+
 			line_it->second.at(big_it->first)->int4_array_hook = &big_it->second;
-			line_it->second.at(big_it->first)->init_temp_input(big_it->second.get_string());
+			line_it->second.at(big_it->first)->init_temp_input(default_val);
 
 			//run the text box's init function
 			line_it->second.at(big_it->first)->text_box_init();
@@ -472,9 +462,14 @@ void manager::give_int4_array_fields_defaults(){
 
 		}
 		if(!found){
-			error_logger.push_error("Error! Failed to find parameter:"+big_it->first+"'s tile in the fields map."
-			     		      +"\nPlease make sure that its entries in tile_Input/tiles.txt and HF_Config/config.txt"
-			     		      +"\n have matching names.");
+
+			string err = "Error! Failed to find parameter:";
+			err += big_it->first +"'s tile in the fields map.";
+			err += "\nPlease make sure that its entries in";
+			err += "tile_Input/tiles.txt and HF_Config/config.txt";
+			err += "\n have matching names.";
+
+			error_logger.push_error(err);
 		}
 	}
 
@@ -482,12 +477,12 @@ void manager::give_int4_array_fields_defaults(){
 
 void manager::give_real8_fields_defaults(){
 
-	for(map<string,param_real8>::iterator big_it = io_access->get_real8_params().begin();
+	for(real8_map::iterator big_it = io_access->get_real8_params().begin();
 	    big_it != io_access->get_real8_params().end();
 	    big_it++){
 
 		bool found = false;
-		for(map<string,map<string,field*>>::iterator line_it = fields.begin();
+		for(fields_map::iterator line_it = fields.begin();
 		    line_it != fields.end();
 		    line_it++){
 		  try{
@@ -500,13 +495,17 @@ void manager::give_real8_fields_defaults(){
 			if(big_it->second.value == -180.4){
 				line_it->second.at(big_it->first)->init_temp_input("no default");
 			} else {
-				line_it->second.at(big_it->first)->init_temp_input(to_string(big_it->second.value));
+
+				string temp_val;
+				temp_val = to_string(big_it->second.value);
+				line_it->second.at(big_it->first)->init_temp_input(temp_val);
 			}
 
 			//set up the text box
 			line_it->second.at(big_it->first)->text_box_init();
 
-			//set the flag to true, because we found the param we were looking for
+			//set the flag to true, because we found
+			//the param we were looking for
 			found = true;
 			break;
 		  } catch (out_of_range& not_found){
@@ -516,9 +515,12 @@ void manager::give_real8_fields_defaults(){
 
 		  }
 	  	  if(!found){
-			error_logger.push_error("Error! Failed to find parameter:"+big_it->first+"'s tile in the fields map."
-			     		      +"\nPlease make sure that its entries in tile_Input/tiles.txt and HF_Config/config.txt"
-			     		      +"\n have matching names.");
+
+			string err = "Error! Failed to find parameter:"+big_it->first;
+			err += "'s tile in the fields map.\nPlease make sure that its";
+			err += " entries in tile_Input/tiles.txt and HF_Config/config.txt";
+			err += "\n have matching names.";
+			error_logger.push_error(err);
 
 		  }
 
@@ -529,17 +531,22 @@ void manager::give_real8_fields_defaults(){
 
 void manager::give_string_fields_defaults(){
 
-	for(map<string,param_string>::iterator big_it = io_access->get_string_params().begin();
+	for(str_map::iterator big_it = io_access->get_string_params().begin();
 	    big_it != io_access->get_string_params().end();
 	    big_it++){
 		bool found = false;
-		for(map<string,map<string,field*>>::iterator line_it = fields.begin();
+		for(fields_map::iterator line_it = fields.begin();
 		    line_it != fields.end();
 		    line_it++){
 		  try{
+
+
+			string temp_str = big_it->second.value;
+			string par_name = big_it->first;
+
 			//set up the pointer to the parameter in input_maker
-			line_it->second.at(big_it->first)->string_hook = &big_it->second;
-			line_it->second.at(big_it->first)->init_temp_input(big_it->second.value);
+			line_it->second.at(par_name)->string_hook = &big_it->second;
+			line_it->second.at(par_name)->init_temp_input(temp_str);
 
 			//set up the text box
 			line_it->second.at(big_it->first)->text_box_init();
@@ -551,9 +558,12 @@ void manager::give_string_fields_defaults(){
 		  }
 		}
 		if(!found){
-			error_logger.push_error("Error! Failed to find parameter:"+big_it->first+"'s tile in the fields map."
-			     		      +"\nPlease make sure that its entries in tile_Input/tiles.txt and HF_Config/config.txt"
-			     		      +"\n have matching names.");
+
+			string err = "Error! Failed to find parameter:"+big_it->first;
+			err += "'s tile in the fields map.\nPlease make sure that";
+			err += " its entries in tile_Input/tiles.txt and";
+			err += " HF_Config/config.txt have matching names.";
+			error_logger.push_error(err);
 
 		}
 
@@ -563,17 +573,22 @@ void manager::give_string_fields_defaults(){
 
 void manager::give_r8_array_fields_defaults(){
 
-	for(map<string,param_r8_array>::iterator big_it = io_access->get_r8_array_params().begin();
+	for(r8arr_map::iterator big_it = io_access->get_r8_array_params().begin();
 	big_it != io_access->get_r8_array_params().end();
 	    big_it++){
 		bool found = false;
-		for(map<string,map<string,field*>>::iterator lines_it = fields.begin();
+		for(fields_map::iterator lines_it = fields.begin();
 		    lines_it != fields.end();
 		    lines_it++){
 		  try{
+
+			string temp_str;
+			temp_str = big_it->second.get_string();
+			
 			//set pointer to parameter in input maker
 			lines_it->second.at(big_it->first)->r8_array_hook = &big_it->second;
-			lines_it->second.at(big_it->first)->init_temp_input(big_it->second.get_string());
+			lines_it->second.at(big_it->first)->init_temp_input(temp_str);
+
 			 //set up text box
 			lines_it->second.at(big_it->first)->text_box_init();
 			found = true;
@@ -587,9 +602,12 @@ void manager::give_r8_array_fields_defaults(){
 
 		}
 		if(!found){
-			error_logger.push_error("Error! Failed to find parameter:"+big_it->first+"'s tile in the fields map."
-			     		      +"\nPlease make sure that its entries in tile_Input/tiles.txt and HF_Config/config.txt"
-			     		      +"\n have matching names.");
+			string err = "Error! Failed to find parameter:";
+			err += big_it->first + "'s tile in the fields map.";
+			err += "\nPlease make sure that its entries in";
+			err += " tile_Input/tiles.txt and HF_Config/config.txt";
+			err += "\n have matching names.";
+			error_logger.push_error(err);
 		}
 
 	}
@@ -606,29 +624,50 @@ bool manager::update_io_maker(vector<string>& bad_input_list){
 
 	bool success = true;
 
-	for(map<string,map<string,field*>>::iterator big_it = fields.begin();
-	    big_it != fields.end();
-	    big_it++){
-		for(map<string,field*>::iterator small_it = big_it->second.begin();
-		    small_it != big_it->second.end();
-		    small_it++){
 
-			//update the input_maker class with the user's entered values
-			//if an error occurs, update_my_value() returns false,
-			//and the body is executed
-			if(!small_it->second->update_my_value()){
 
-				//put tile name that caused error in list
-				bad_input_list.push_back(small_it->first);
-				small_it->second->go_red();
+	//for every line of parameters
+	for(uint line = 0; line < fields_order.size();line++){
+
+		//for each parameter in each line
+		for(uint param = 0; param < fields_order[line].size();param++){
+
+			//cast user entered string to concrete value
+			//in input_maker. On success, the body of this if
+			//statement does not happen
+			if(!fields_order[line][param]->update_my_value()){
+
+				//if the casting failed, these statements are
+				//executed
+
+				//record the name of the parameter that failed
+				//type casting
+				string param_name;
+				param_name = fields_order[line][param]->tile_name;
+				bad_input_list.push_back(param_name);
+
+				//color the tile in red, so that the user
+				//can easily identify the parameter that had
+				//an invalid input
+				fields_order[line][param]->go_red();
+
+				//a param failed to be cast, so set bool return value
+				//to false
 				success = false;
-			} else if(small_it->second->is_red){
-				//if it worked and the tile was previously red,
-				//put it back to normal
-				small_it->second->go_back();
+
+			} else if(fields_order[line][param]->is_red){
+
+				//also, if this tile was previously in error
+				//hitting this case means that it has been corrected
+				//and should no longer be colored in red
+				fields_order[line][param]->go_back();
 			}
+			
+
 		}
+
 	}
+
 
 	//let button manager know that errors occured
 	return success;
@@ -747,8 +786,10 @@ void manager::ilv1_locking(){
 	}
 
   } catch (out_of_range& map_error){
-	error_logger.push_error("From: manager::iench_locking| One of the critical tiles associated with ILV1 were not found,",
-				"please check the tile and HF config files.");
+	string err = "From: manager::iench_locking| One of the critical";
+	err       += " tiles associated with ILV1 were not found,";
+	err       += " please check the tile and HF config files.";
+	error_logger.push_error(err);
 
   }
 
@@ -764,8 +805,6 @@ void manager::icntrl4_locking(){
 
 		fields.at("line_8").at("ICH4")->is_locked  = true;
 		fields.at("line_8").at("NCH4")->is_locked  = true;
-		//if( !(b_manager_hook->get_icntrl_4().get_is_locked()) ){
-		//	b_manager_hook->get_icntrl_4().toggle_lock();
 		if( !(button_access->get_icntrl_4().get_is_locked()) ){
 			button_access->get_icntrl_4().toggle_lock();
 		} 
@@ -785,8 +824,10 @@ void manager::icntrl4_locking(){
 	}
 
   } catch( out_of_range& map_error){
-	error_logger.push_error("From: manager::icntrl4_locking| One of the critical tiles associated with ICNTRL4",
-				" were not found, please check that the tile and HF config files match."); 
+	string err = "From: manager::icntrl4_locking| One of the critical";
+	err       += " tiles associated with ICNTRL4, were not found";
+	err       += ", please check that the tile and HF config files match.";
+	error_logger.push_error(err); 
 
   }
 
@@ -838,12 +879,19 @@ void manager::ich4_nch4_locking(){
 
 
   } catch( out_of_range& map_error){
-	error_logger.push_error("From: manager::ich4_nch4_locking| One of the critical tiles associated with ICH4/NCH4",
-				" were not found, please check that the tile and HF config files match.");
+	string msg = "From: manager::ich4_nch4_locking| One of the critical tiles";
+	msg       += "associated with ICH4/NCH4, were not found,";
+	msg       +=  " please check that the tile and HF config files match.";
+	error_logger.push_msg(msg);
 
   } catch( invalid_argument& bad_arg){
-	error_logger.push_msg("From manager::ich4_nch4_locking| NCH4 or ICH4 has a number in an illegal range");
-	error_logger.push_msg(". The acceptable range for NCH4 is 0<=x<=100. The acceptable range for ICH4 is 0 <= ICH4 <= 6");
+	string msg = "From manager::ich4_nch4_locking| NCH4 or ICH4 has a number";
+	msg       += " in an illegal range";
+	error_logger.push_msg(msg);
+
+	msg = ". The acceptable range for NCH4 is 0<=x<=100. The acceptable";
+	msg = " range for ICH4 is 0 <= ICH4 <= 6.";
+	error_logger.push_msg(msg);
   }
 
 }
@@ -872,8 +920,10 @@ void manager::icntrl8_locking(){
 
 
   } catch (out_of_range& map_error){
-	error_logger.push_error("From: manager::icntrl8_locking()| ICNTRL8 was not found in the map of parameter tiles",
-				", please check that the tile and HF config files match.");
+	string err = "From: manager::icntrl8_locking()| ICNTRL8 was not found";
+	err       += " in the map of parameter tiles, please check that";
+	err       += "the tile and HF config files match.";
+	error_logger.push_error(err);
 
   } catch (invalid_argument& stoi_error){
 	error_logger.push_msg("ICNTRL8 has an illegal string argument, it must be an integer in the range");
