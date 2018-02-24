@@ -1,4 +1,5 @@
-//! \file logger.h this file describes the logger class, which is used for creating error & verbose messages during runtime
+/*! \file logger.h describes the logger class, which is used for
+ *creating error & verbose messages during runtime */
 
 #pragma once
 
@@ -6,30 +7,38 @@
 #include<iostream>
 #include<vector>
 #include<string>
-#include<regex>//for breaking file names up into integers
 
-#include<cstdlib> //for system calls
-#include<time.h>  //for time functions used to name files
+//for breaking file names up into integers
+#include<regex>
+
+//for system calls
+#include<cstdlib>
+
+//for time functions used to name files
+#include<time.h>
 
 //allows traversing a directory and getting its file names. ./error_logs in this case
 #include<dirent.h>
-#include<algorithm>//std::sort, to sort a vector of file names
+
+//std::sort, to sort a vector of file names
+#include<algorithm>
 
 using std::string;
 using std::vector;
 using std::ofstream;
 
-//! the logger is a class that provides a means by which error messages can be printed to a file
-/*! I made this to reduce the terminal clutter involved with the many cout statements that I use(d) for debugging.
- *It has two primary functionalities: extensive debugging output and error message output. Caught exceptions or
- *shaky occurences within the logics of if-else statements are the kind of messages that wind up here. The output
- *from SDL_GetError() also winds up here often. It currently does not clean out the folder in which it stores the reports
- *, which is a feature I'd like to add sometime. It also only outputs debugging messages if -v is appended to its
- *terminal command, like ./andiamo -v */
+//! class that provides a means by which error messages can be printed to a file
+/*! It has two primary functionalities: extensive debugging output
+ *and error message output. Caught exceptions or shaky occurences within
+ *the logics of if-else statements are the kind of messages that wind up here.
+ *The output from SDL_GetError() also winds up here often.
+ *Only outputs debugging messages if -v is appended to its terminal command,
+ *like ./andiamo -v */
 class logger{
   public:
 	//! constructor creates the error output stream (errors_out)
-	/*! it checks to see if it actually opens or not. Also, if the 'logs' directory
+	/*! it checks to see if it actually opens or not.
+	 *Also, if the 'logs' directory
 	 *does not exist, it creates it with system calls */
 	logger();
 	//! the destructor calls make_error_file()

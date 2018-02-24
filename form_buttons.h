@@ -65,14 +65,14 @@ class form_button : public button{
 	//! This member draws the lock to the screen, if the button is in lock mode
 	void draw_lock();
 
-	//! this member changes it's modes from locked to unlocked, and the reverse
+	//! changes it's modes from locked to unlocked, and the reverse
 	void toggle_lock();
 
-	//! this member is a getter for the is_locked boolean
+	//! is a getter for the is_locked boolean
 	const bool& get_is_locked(){ return is_locked;}
 
-	//! this member has the form objects contained herein send their information to the input_maker
-	/*! this is currently a stub */
+	/*! has the form objects contained herein send their information
+	 *to the input_maker */
 	virtual bool make_output(ofstream& outs,
 								vector<index_value>& bad_input_list);
 
@@ -89,7 +89,8 @@ class form_button : public button{
 	//! save location & size of the lock
 	SDL_Rect lock_rect;
 
-	//! control whether or not to show the lock, and prevent the button from being used
+	/*! control whether or not to show the lock,
+	 *and prevent the button from being used */
 	bool is_locked;
 
 	//! object which allows for dynamic parameter entry
@@ -158,7 +159,8 @@ class icntrl6_form_button : public form_button{
 	void search_spectra_page_creation();
 
 	//! this helper fills in the column labels for the search spectra form
-	void fill_spectra_vectors(vector<string>& pass_column_labels,vector<int>& column_spaces);
+	void fill_spectra_vectors(vector<string>& pass_column_labels,
+								vector<int>& column_spaces);
 
 	/*! This helper abstracts some code to make search_spectra_page_creation
 	 * more readable */
@@ -200,10 +202,10 @@ class icntrl6_form_button : public form_button{
 
   private:
 
-	//! used to keep track of what conditions caused the current pages to be made
+	//! track of what conditions caused the current pages to be made
 	int INM1_val;
 
-	//! used to keep track of what conditions caused the current pages to be made
+	//! track of what conditions caused the current pages to be made
 	int INM2_val;
 
 	//! saves texture for the form selection image
@@ -236,7 +238,7 @@ class icntrl10_form_button : public form_button{
 	//! impelements the special logic for this class
 	bool handle_click(SDL_Event& mouse_event);
 
-	//! sets up a form that suits the needs of icntrl10's logics per the input manual
+	//! sets up a form that suits the needs of icntrl10's logics 
 	void init_form(const vector<regex>& pattern_tests);
 
 
@@ -252,10 +254,11 @@ class icntrl10_form_button : public form_button{
 class icntrl4_form_button : public form_button{
 
   public:
-	//! setup_lock is overloaded here, because it looks better on this form button in the lower right corner
+	/*! setup_lock is overloaded here, because it looks better on this
+	 *form button in the lower right corner */
 	void setup_lock();
 
-	//! sets up a form that suits the needs of icntrl4's logics per the input manual
+	//! sets up a form that suits the needs of icntrl4's logics
 	void init_form(const vector<regex>& pattern_tests);
 
     //! helper function for form creation
@@ -275,7 +278,8 @@ class icntrl4_form_button : public form_button{
 
   private:
 
-    //! not called icntrl4_val because derivative parameter nch4 controls # of text boxes needed
+    /*! not called icntrl4_val because derivative parameter
+	 *nch4 controls # of text boxes needed */
     unsigned int nch4_val;
 };
 
@@ -283,7 +287,7 @@ class ilv3_ilv5_form_button : public form_button{
 
   public:
 
-	//! sets up a form that suits the needs of icntrl4's logics per the input manual
+	//! sets up a form that suits the needs of icntrl4's logics
 	void init_form(const vector<regex>& pattern_tests);
 
 	//! implements the special logic for this class
@@ -295,7 +299,7 @@ class ilv3_ilv5_form_button : public form_button{
     //! helper function for click_helper that sets up pages
     void page_creation_helper();
 
-    //! this function is invoked by the input_maker to have this form output to the HF file
+    //! invoked by the input_maker to have this form output to the HF file
     bool make_output(ofstream& outs,vector<index_value>& bad_input_list);
 
 	//! check to make sure the inputs are properly formed

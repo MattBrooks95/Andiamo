@@ -581,8 +581,8 @@ void sdl_help::calc_corners_helper(vector<field*>& line_in,
 
 		}		
 
-		cout << "Paramter placement####################" << endl;
-		cout << line_in[c]->xloc << ":" << line_in[c]->yloc << endl;
+		//cout << "Parameter placement##################" << endl;
+		//cout << line_in[c]->xloc << ":" << line_in[c]->yloc << endl;
 	}
 
 	//save the the start location for the next row

@@ -1,6 +1,7 @@
 //! \file input_maker.h \brief is the class that handles file manipulation
-/*! it handles creating the output file to be used by HF, and also reads in the config file "HF_config.txt"
- * and then makes decisions based on that config file */
+/*! it handles creating the output file to be used by HF, and also reads in
+ *the config file "HF_config.txt" and then makes decisions
+ *based on that config file */
 #pragma once
 
 #include<vector>

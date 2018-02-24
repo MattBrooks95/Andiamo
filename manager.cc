@@ -207,7 +207,7 @@ void manager::init(){
 
 			error_logger.push_msg("##########PUSHING FIELD###################");
 			temp_field->print();
-			cout << temp_field->tile_name << endl;
+			//cout << temp_field->tile_name << endl;
 			error_logger.push_msg("##########################################");
 
 			//push the field into the lookup map for that parameter's line

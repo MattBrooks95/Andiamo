@@ -53,8 +53,9 @@ class button{
 	virtual void make_rect();
 
 	//! this is the virtual set_corner_logic() function
-	/*! this will likely need overwritten if you want the button to be drawn somewhere special,
-	 * and not in the same location as more default-like buttons */
+	/*! this will likely need overwritten if you want the button to be
+	 *drawn somewhere special, and not in the same location
+	 *as more default-like buttons  */
 	virtual void set_corner_loc();
 
 	//! this member is used to set a custom corner location
@@ -105,19 +106,27 @@ class button{
 
   protected:
 
-	string image_name;//!< name of the image file
-	string total_image_p;//!< image file directory's path
+	//! name of the image file
+	string image_name;
 
-	int xloc;//!< horizontal location of the button's corner
-	int yloc;//!< vertical location of the button's corner
+	//! image file directory's path
+	string total_image_p;
 
-	int width;//!< width of the button's texture
-	int height;//!< height of the button's texture
+	//! horizontal location of the button's corner
+	int xloc;
 
-	//!< xloc, yloc, width and height in a SDL_Rect, for SDL functions
+	//! vertical location of the button's corner
+	int yloc;
+
+	//! width of the button's texture
+	int width;
+	//! height of the button's texture
+	int height;
+
+	//! xloc, yloc, width and height in a SDL_Rect, for SDL functions
 	SDL_Rect my_rect;
 
-	//!< save the texture pointer from the access manager
+	//! save the texture pointer from the access manager
 	SDL_Texture* button_texture;
 
 };

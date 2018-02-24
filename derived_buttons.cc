@@ -7,7 +7,7 @@ using namespace std;
 extern bool main_done;
 extern logger error_logger;
 
-//################################ EXIT BUTTON ########################################################
+//################################ EXIT BUTTON #################################
 
 exit_button::exit_button(){
 
@@ -35,7 +35,9 @@ bool exit_button::handle_click(SDL_Event& mouse_event){
 		//draw_me();
 
 		SDL_PollEvent(&mouse_event);
-		which = my_click(mouse_event);//see if they clicked on the yes or no boxes
+
+		//see if they clicked on the yes or no boxes
+		which = my_click(mouse_event);
 
 		my_click_helper(which,satisfied);
 		if(which == 1 || which == 2) did_something = true;
@@ -45,11 +47,17 @@ bool exit_button::handle_click(SDL_Event& mouse_event){
 }
 
 int exit_button::my_click(SDL_Event& mouse_event){
-	if( no_area.clicked(mouse_event) ){//"no" part was clicked
+
+	//"no" part was clicked
+	if( no_area.clicked(mouse_event) ){
 		return 1;
-	} else if( yes_area.clicked(mouse_event) ){//"yes" part was clicked
+
+	//"yes" part was clicked
+	} else if( yes_area.clicked(mouse_event) ){
 		return 2;
-	} else {//neither one was clicked
+
+	//neither one was clicked
+	} else {
 		return 0;
 	}
 
@@ -64,12 +72,14 @@ void exit_button::my_click_helper(int which,bool& satisfied){
 		//re-hide this button
 		satisfied = true;
 
-	} else if( which == 2 ){//exit the program
+	//exit the program
+	} else if( which == 2 ){
 		main_done = true;
 		satisfied = true;
 	} else {
 			
-		return;//do no work until they hit yes or no
+		//do no work until they hit yes or no
+		return;
 	}
 
 }
@@ -98,8 +108,9 @@ void exit_button::init(string image_name_in, string image_p_in){
 	no_area.width = 70;
 	no_area.height = 50;
 
-	//this 195 number was determined by trial and error, to get the box's actual dimensions to line up
-	//with the image's. I suppose measuring the pixel distance in a photo editor would have been more efficient
+	//this 195 number was determined by trial and error,
+	//to get the box's actual dimensions to line up with the image's.
+	//I suppose measuring the pixel distance in a photo editor would have been more efficient
 	yes_area.xloc = xloc + 195;
 	yes_area.yloc = yloc + 30;
 	yes_area.width = 70;
@@ -107,7 +118,7 @@ void exit_button::init(string image_name_in, string image_p_in){
 
 
 }
-//##############################################################################################
+//##############################################################################
 
 
 //############################## text_box button ###############################
@@ -179,9 +190,9 @@ int TC_input_file_button::work(){
 	return 0;
 }
 
-//###############################################################################################
+//##############################################################################
 
-//######################## CREATED HF FILE OUTPUT BUTTON ########################################
+//######################## CREATED HF FILE OUTPUT BUTTON #######################
 
 int output_file_button::work(/*input_maker& io_handler*/){
 	if(my_text_box.text.size() == 0 || my_text_box.text == " "){
@@ -194,16 +205,16 @@ int output_file_button::work(/*input_maker& io_handler*/){
 	}
 	return 0;
 }
+//##############################################################################
 
-//##############################################################################################
+//########################## GRAPHING OPTIONS BUTTON ###########################
 
-//########################## GRAPHING OPTIONS BUTTON ###########################################
-
-
+/*
 graphing_button::~graphing_button(){
 	SDL_FreeSurface(checked_surface);
 	SDL_DestroyTexture(checked_texture);
 }
+
 
 void graphing_button::draw_me(){
 	if(shown){
@@ -263,7 +274,7 @@ void graphing_button::force_corner_loc(int xloc_in, int yloc_in){
 	check_box.yloc = yloc_in + 35;
 }
 
-void graphing_button::init(const std::string& image_name_in,const std::string& image_p_in/*,sdl_help* sdl_help_in*/){
+void graphing_button::init(const std::string& image_name_in,const std::string& image_p_in){
 
 	//do the base class's setting up
 	text_box_button::init(image_name_in,image_p_in);
@@ -283,13 +294,13 @@ void graphing_button::init(const std::string& image_name_in,const std::string& i
 	checked_texture = SDL_CreateTextureFromSurface(sdl_access->renderer,checked_surface);
 	if(checked_texture == NULL) error_logger.push_error(string(SDL_GetError()));
 }
-
-//###############################################################################################
-
-
+*/
+//##############################################################################
 
 
-//################## FOP HANDLER BUTTON ##########################################################
+
+
+//################## FOP HANDLER BUTTON ########################################
 void fop_handler_button::click_helper(SDL_Event& mouse_event){
 	work();
 
@@ -299,7 +310,7 @@ void fop_handler_button::work(){
 	cout << "Message from the fop_button." << endl;
 	FOP_access->fop_main();
 }
-//#################################################################################################
+//##############################################################################
 
 
 

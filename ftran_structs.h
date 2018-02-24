@@ -1,4 +1,5 @@
-//! \file ftran_structs.h declares some structs that make keeping track out outputs easy
+/*! \file ftran_structs.h declares some structs that make keeping
+ *track out outputs easy */
 #pragma once
 #include<iostream>
 #include<vector> 
@@ -11,7 +12,8 @@ using std::vector;
 
 
 //! param_int4 is a default c++ integer "and more"
-/*! it allows storage of a name that serves a contextual purpose, and a value that is compatible with Fortran INT*4 */
+/*! it allows storage of a name that serves a contextual purpose,
+ *and a value that is compatible with Fortran INT*4 */
 struct param_int4{
 
 	//! constructor with default values
@@ -57,7 +59,8 @@ struct param_int4{
 };
 
 //! param_real8 is a default c++ double "and more"
-/*! it allows storage of a name that serves a contextual purpose, and a value that is compatible with Fortran REAL*8 */
+/*! it allows storage of a name that serves a contextual purpose,
+ *and a value that is compatible with Fortran REAL*8 */
 struct param_real8{
 
 	//! constructor with default values
@@ -103,10 +106,11 @@ struct param_real8{
 	double value;
 };
 
-//! this is a simple struct to keep track of a string parameter's "variable name" and string "value"
+//! keeps track of a string parameter's "variable name" and string "value"
 struct param_string{
-	//! the constructor sets fields to a parameter, or a default value if () version is called
-	/*!\param name_in the name that name will be set to
+	//! sets fields to a parameter, or a default value if () version is called
+	/*!
+	 *\param name_in the name that name will be set to
 	 *\param value_in is the value that value will be set to
 	 *\param size_in is the value that the size variable will be set to */
 	param_string(string name_in = "No name",string value_in = NULL,
@@ -115,16 +119,15 @@ struct param_string{
 	//! make sure that the c-style string's size matches fortran's
 	unsigned int size;
 
-	//! is the contextual name for the variable, like the label line in an HF input file
+	/*! is the contextual name for the variable,
+	 * like the label line in an HF input file */
 	string name;
 
 	//! is the actual string that should be output and cared about
 	string value;
 };
 
-//! this struct contains the information about a fortran array given in HF_config
-/*! I'm using c++'s <map> library, so input_maker can store a map of these.
-  *That way, they can be easily found with their 'key', most likely a string */
+//! contains the information about a fortran array given in HF_config
 struct param_int4_array{
 	param_int4_array(string name_in="no name given",unsigned int size = 1,bool satisfied_in=false);
 
@@ -134,14 +137,17 @@ struct param_int4_array{
 	bool is_satisfied();
 	
 	//! this function provides a string for the tile to default to
-	/*! this function is wierd compared to the other parameters because it is not a simple string
-	 *that can have the default value be stored in the field object. It stores an array of parameters,
-	 *so special care needs to be taken with how it is initialized to the default value from the config file
-	 *in input_maker, but then the field itself gets it in a simple string form. It will then need to be
-	 *changed back to a vector for the output functions */
+	/*! this function is wierd compared to the other parameters because
+	 *it is not a simple string that can have the default value
+	 *be stored in the field object. It stores an array of parameters,
+	 *so special care needs to be taken with how it is initialized to
+	 *the default value from the config file in input_maker, but then
+	 *the field itself gets it in a simple string form. It will then
+	 *need to be changed back to a vector for the output functions */
 	string get_string();
 
-	//! satisfied should start off false, then become true when size = values.size() (all values filled in)
+	/*! starts off false, then become true when size = values.size()
+	 *(all values filled in) */
 	bool satisfied;
 
 	//! size of the array as specified by HF_config file - should never change
@@ -155,16 +161,18 @@ struct param_int4_array{
 };
 
 //! this struct contains the information about a the fortran values in line 4-B in the input manual
-/*! these data types will function largely the same as param_int4_array, but will need different formating.
- *I'm not really sure what 8E10.3 means, so I'm going to operate under the assumption that it means
- *8 floating point numbers with a field width of 10 and 3 decimal places. */
+/*! these data types will function largely the same as real8_array,
+ *but will need different formating. */
 struct param_r8_array{
-	param_r8_array(string name_in ="no name given", unsigned int size_in = 1, bool satisfied_in=false);
+	param_r8_array(string name_in ="no name given", unsigned int size_in = 1,
+					bool satisfied_in=false);
 	
-	//! this member convers the vector of double values into a single, comma separated list contained in a string
+	/*! converts the vector of double values into a single,
+	 * comma separated list contained in a string */
 	string get_string();
 
-	//! should be true if array has the correct size and legal values, false elsewise
+	/*! should be true if array has the correct size and
+	 *legal values, false elsewise */
 	bool satisfied;
 
 	//! store an indefinite amount of numbers with decimal places
