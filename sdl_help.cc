@@ -50,8 +50,8 @@ sdl_help::sdl_help(string name_in,string HF_input_file_in,
 	//set window name
 	window_name = name_in;
 
-	font_p = "./Assets/fonts/";
-	hf_input_p = "./HF_Input/";
+	font_p = "/Andiamo/Assets/fonts/";
+	hf_input_p = "/Andiamo/HF_Input/";
 
 	frame_count = 0;
 
@@ -81,8 +81,11 @@ sdl_help::sdl_help(string name_in,string HF_input_file_in,
 	}
 
 	//set up pointer to font from file
-	font = TTF_OpenFont( "./Assets/fonts/LiberationSerif-Regular.ttf", 22);
+	string font_path = HOME;
+	font_path       += "/Andiamo/Assets/fonts/LiberationSerif-Regular.ttf";
+	font = TTF_OpenFont( font_path.c_str(), 22);
 	if(font == NULL) {
+		cout << SDL_GetError() << endl;
 		error_logger.push_error(SDL_GetError());
 	}
         error_logger.push_msg("Enacting tile_bag update with values: " +

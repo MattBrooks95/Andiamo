@@ -8,6 +8,7 @@ using namespace std;
 
 extern logger error_logger;
 extern sdl_help* sdl_access;
+extern string HOME;
 
 asset_manager::asset_manager(){
 
@@ -35,7 +36,9 @@ asset_manager::~asset_manager(){
 void asset_manager::pull_assets(){
 	
 	DIR* assets_home;
-	assets_home = opendir("./Assets");
+	string asset_path = HOME;
+	asset_path        += "/Andiamo/Assets";
+	assets_home = opendir(asset_path.c_str());
 	struct dirent* file_in_dir;
 	if(assets_home != NULL){
 
@@ -57,7 +60,7 @@ void asset_manager::pull_assets(){
 
 					//cout << "in dir file mode: " << file_in_dir->d_name << endl;
 					//build path to new subdirectories for the helper calls
-					string path_to_subdir = "./Assets";
+					string path_to_subdir = asset_path;
 					path_to_subdir += "/";
 					path_to_subdir += file_in_dir->d_name;
 					pull_helper(path_to_subdir);

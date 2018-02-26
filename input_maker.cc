@@ -15,10 +15,13 @@
 using namespace std;
 
 extern button_manager* button_access;
+extern string HOME;
 
 input_maker::input_maker(string output_file_name_in,string config_file_name_in){
-	config_p = "./config/";
-	output_p = "./output/";
+	config_p  = HOME;
+	config_p += "/Andiamo/config/";
+	output_p  = HOME;
+	output_p += "/Andiamo/output/";
 	output_file_name = output_file_name_in;
 	file_name = config_file_name_in;
 
@@ -612,9 +615,12 @@ void do_TC_coefficients(const map<string,param_real8>& real8_params,
 						const map<string,param_int4_array>& array_map,
 						string TC_input_file_name,ofstream& outs){
 	ifstream ins;
-	ins.open("./TC_files/"+TC_input_file_name);
+	string TC_path = HOME;
+	TC_path       += "/Andiamo/TC_files/";
+	TC_path       += TC_input_file_name;
+	ins.open(TC_path.c_str());
 	if(ins.fail()){
-		error_logger.push_error("Error! File:./TC_files/"+TC_input_file_name+
+		error_logger.push_error("Error! File:~/Andiamo/TC_files/"+TC_input_file_name+
 								" could not be found.");
 	}
 

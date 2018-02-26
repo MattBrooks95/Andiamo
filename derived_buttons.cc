@@ -178,7 +178,9 @@ int TC_input_file_button::work(){
 
 	}
 	ifstream ins_test;
-	ins_test.open("./TC_files/"+io_access->TC_input_file_name);
+	string ins_path(HOME);
+	ins_path += "/Andiamo/TC_files/"+io_access->TC_input_file_name;
+	ins_test.open(ins_path);
         if(ins_test.fail()){
 
 		//return -1, failed to open file

@@ -770,7 +770,8 @@ void icntrl6_form_button::cross_sections_helper(){
 void icntrl6_form_button::setup_landing(){
 
 	//setup the graphics pointers
-	string landing_target = "./Assets/Images/form_assets/icntrl6_landing.png";
+	string landing_target(HOME);
+	landing_target += "/Andiamo/Assets/Images/form_assets/icntrl6_landing.png";
 	landing_texture = asset_access->get_texture(landing_target);
 	if(landing_texture == NULL){
 		error_logger.push_error("Could not init the the icntrl6 form selection texture.",

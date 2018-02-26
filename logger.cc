@@ -1,33 +1,40 @@
-//! \file logger.cc this file describes the functions and objects declared in logger.h
+//! \file logger.cc describes the functions and objects declared in logger.h
 
 #include "logger.h"
 using namespace std;
 
+extern string HOME;
+
 logger::logger(){
 
+	//default to not worrying about operational messages
+	verbose = false;
 
-	verbose = false;//default to not worrying about operational messages
-
-	//build dynamic file name ###########################################################################
-	string path = "./error_logs/";
+	//build dynamic file name ##################################################
+	string path(HOME);
+	path       += "/Andiamo/error_logs/";
 	string prefix = "andiamo_errors_";//constant first part
 	string suffix = ".txt";//constant file extension
 	
-	//store the date and time of day as a unique file name to minimize over writing
+	//store the date and time of day as a unique file name
+	//to minimize over-writing
 	string time_string;
 
 	//unique_file_name will be comprised of a message and the date
 
-	time_t unix_time; //http://www.cplusplus.com/reference/ctime/localtime/ 
+	//http://www.cplusplus.com/reference/ctime/localtime/ 
+	time_t unix_time;
 	struct tm* time_info;
 	time(&unix_time);
 	time_info = localtime(&unix_time);
 	
 	string time_text = asctime(time_info);
 
-	time_string = to_string(time_info->tm_hour) + "h_" + to_string(time_info->tm_min) + "m_" +
-		      to_string(time_info->tm_mon + 1) + "_" + to_string(time_info->tm_mday) + "_" + 
-		      to_string(time_info->tm_year - 100);
+	time_string = to_string(time_info->tm_hour) + "h_" 
+					+ to_string(time_info->tm_min) + "m_" 
+					+ to_string(time_info->tm_mon + 1) + "_" 
+					+ to_string(time_info->tm_mday) + "_" 
+					+ to_string(time_info->tm_year - 100);
 
 
 	unique_file_name = path + prefix + time_string + suffix;
@@ -35,16 +42,16 @@ logger::logger(){
 	//cout << unique_file_name << endl;
 	//#########################################################################
 
-	errors_out.open( unique_file_name.c_str() );
+	//errors_out.open( unique_file_name.c_str() );
 	//it didn't work, make the dir and try again
-	if(errors_out.fail()){
-		system("mkdir error_logs");
+	//if(errors_out.fail()){
+		//system("mkdir ~/Andiamo/error_logs");
 		errors_out.open( unique_file_name.c_str() );
 	//it worked
-	} else {
+	//} else {
 		//close the file for now
-		errors_out.close();
-	}
+	//	errors_out.close();
+	//}
 	
 }
 
@@ -77,32 +84,44 @@ void logger::cleaning_check(){
 	//this allows the opening of a directory as if it were a file
 	DIR* dir_point;
 	struct dirent *file_in_dir;
-	dir_point = opendir("./error_logs");
+	string assets_path = HOME;
+	assets_path       += "/Andiamo/error_logs";
+	dir_point = opendir(assets_path.c_str());
 	if(dir_point != NULL){
 
-		//readdir is kind of like a getline statement, read in info then act on it
+		//readdir is kind of like a getline statement, read in info
+		//then act on it
 		while( (file_in_dir = readdir(dir_point)) ){
 
-			//this ensures that only regular files are considered, and not the . and .. directories
-			//that exist in nearly every linux directory (but hidden)
+			//this ensures that only regular files are considered, and
+			//not the . and .. directories that exist in nearly every
+			//linux directory (but hidden)
 			if( file_in_dir->d_type == DT_REG){
-				file_names.push_back(file_in_dir->d_name);//save # in vector
+
+				//save # in vector
+				file_names.push_back(file_in_dir->d_name);
 			}
 		}
 
-		closedir(dir_point);//close the directory
+		//close the directory
+		closedir(dir_point);
 
 	} else {
-		push_error("Failure to open the /error_logs file, for cleaning by cleaning_check()");
+		string err;
+		err  = "Failure to open the /error_logs file,";
+		err += " for cleaning by cleaning_check()";
+		push_error(err);
 	}
 
 	//if there's too many files in the folder, clean it out
 	if(file_names.size() > 30){
 
-		//this call sorts the vector of file names, with the most recent files having the lowest
-		//index in the vector. This way, we can pop_off the oldest entries and delete their files
+		//this call sorts the vector of file names, with the most
+		//recent files having the lowest index in the vector. This way,
+		//we can pop_off the oldest entries and delete their files
 		//until only 20 files exist
 		sort(file_names.begin(),file_names.end(), file_compare);
+
 		/*
 		for(unsigned int c = 0; c < file_names.size() ; c++){
 			cout << file_names[c] << endl;
@@ -110,7 +129,8 @@ void logger::cleaning_check(){
 
 		while(file_names.size() > 19){
 			//grab file name to complete path
-			string doomed_one = "./error_logs/" + file_names.back();
+			string doomed_one = HOME;
+			doomed_one       += "/Andiamo/error_logs/" + file_names.back();
 			//bash arg goes here
 			string sys_command = "rm ";
 
@@ -166,15 +186,16 @@ bool file_compare(string str_one, string str_two){
 	//this matches the numbers in the file name
 	regex split_nums("[0-9]+");
 
-	//these are filled in by quantify_file_name, and then used to compare the recentness of the files
+	//these are filled in by quantify_file_name, and then used to
+	//compare the recentness of the files
 	int str1_nums[5] = {0,0,0,0,0};
 	int str2_nums[5] = {0,0,0,0,0};
 
-	//cout << "##############################################################################" << endl;
+	//cout << "#######################################################" << endl;
 	quantify_file_name(split_nums,str_one,str1_nums);
 	//cout << "##################" << endl;
 	quantify_file_name(split_nums,str_two,str2_nums);
-	//cout << "##############################################################################" << endl;
+	//cout << "#######################################################" << endl;
 
 	for(unsigned int c = 4; c > 0; c--){
 		if(str1_nums[c] > str2_nums[c]) return true;

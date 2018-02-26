@@ -25,7 +25,8 @@ cursor::~cursor(){
 }
 //#########################################################################
 void cursor::init(SDL_Rect* box_location_in){
-	string cursor_p = "./Assets/Images/cursor.png";
+	string cursor_p(HOME);
+	cursor_p += "/Andiamo/Assets/Images/cursor.png";
 
 	my_texture = asset_access->get_texture(cursor_p);
 	if(my_texture == NULL){

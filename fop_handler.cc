@@ -25,9 +25,12 @@ fop_handler::~fop_handler(){
 
 void fop_handler::get_files_list(){
 
-	string omp_path     = OMP_PATH;
-	string trans_path   = TRANSMISSION_PATH;
-	string scratch_path = SCRATCH_PATH;
+	string omp_path(HOME);
+	omp_path     += OMP_PATH;
+	string trans_path(HOME);
+	omp_path     += TRANSMISSION_PATH;
+	string scratch_path(HOME);
+	scratch_path += SCRATCH_PATH;
 
 	vector<string> directories;
 	directories.push_back(omp_path);

@@ -248,9 +248,6 @@ class field{
 	 *it's normal box or help box */
 	bool help_mode;
 
-	//! this pointer allows field objects access to the font setting file
-	TTF_Font* font;
-
 	//! save the sdl texture for the lock icon
 	SDL_Texture* lock_texture;
 

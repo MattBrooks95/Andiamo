@@ -8,11 +8,12 @@ using namespace std;
 
 extern asset_manager* asset_access;
 extern manager* tile_access;
+extern string HOME;
 
 button_manager::button_manager(){
 
-	button_image_p = "./Assets/Images/Buttons/";
-
+	button_image_p = HOME;
+	button_image_p += "/Andiamo/Assets/Images/Buttons/";
 	tray_image_name = "button_tray.png";
 	form_tray_image_name = "form_tray.png";
 

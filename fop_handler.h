@@ -12,14 +12,14 @@
 #include "text_box.h"
 
 //define the path to the read-only optical model potentials folder
-#define OMP_PATH "./FOP/OpticalModels/"
+#define OMP_PATH "/Andiamo/FOP/OpticalModels/"
 //define the path to the folder where already calculated
 //transmission coefficients are stored
-#define TRANSMISSION_PATH "./FOP/TransmissionCoefficients/"
+#define TRANSMISSION_PATH "/Andiamo/FOP/TransmissionCoefficients/"
 /* define the path to where files are stored while they are being
   'worked on' by Andiamo and FOP so these may be FOP outputs
   that haven't been mapped to HF inputs yet  */
-#define SCRATCH_PATH "./FOP/FopScratch/"
+#define SCRATCH_PATH "/Andiamo/FOP/FopScratch/"
 
 using std::string;
 using std::vector;

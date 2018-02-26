@@ -8,7 +8,7 @@
 using namespace std;
 
 extern asset_manager* asset_access;
-
+extern string HOME;
 //############### FORM CLASS ################################################
 form::form(){
 	form_title = "no title";
@@ -96,7 +96,9 @@ void form::init(string form_title_in,string help_msg_image_name,int xloc_in,
 		SDL_Color black = {0,0,0,0};
 
 		//make this font a little bit bigger than the others
-		TTF_Font* title_font = TTF_OpenFont( "./Assets/fonts/LiberationSerif-Regular.ttf", 28);
+		string title_path(HOME);
+		title_path += "/Andiamo/Assets/fonts/LiberationSerif-Regular.ttf";
+		TTF_Font* title_font = TTF_OpenFont( title_path.c_str(), 28);
 		form_title_surface = TTF_RenderUTF8_Blended(title_font,form_title.c_str(),black);
 		if(form_title_surface == NULL) error_logger.push_error(SDL_GetError());
 		else {
@@ -149,7 +151,9 @@ void form::set_form_title(std::string new_title){
 	form_title = new_title;
 
 	//make this font a little bit bigger than the others
-	TTF_Font* title_font = TTF_OpenFont( "./Assets/fonts/LiberationSerif-Regular.ttf", 28);
+	string font_target(HOME);
+	font_target += "/Andiamo/Assets/fonts/LiberationSerif-Regular.ttf";
+	TTF_Font* title_font = TTF_OpenFont( font_target.c_str(), 28);
 
 	//render the text as a graphic
 

@@ -22,6 +22,7 @@ using std::string;
 using std::vector;
 
 extern logger error_logger;
+extern string HOME;
 
 //the distance between two adjacent tiles
 #define HORIZ_TILE_PADDING 5

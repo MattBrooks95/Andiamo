@@ -37,6 +37,11 @@ button_manager* button_access;
 //handles everything to do with transmission coefficients
 fop_handler* FOP_access;
 
+//lets objects know wher ethe home directory is
+//objects need to know to this to find their assets or what have you
+string HOME;
+
+
 //making this global and giving it a unique name,
 //so the exit button can change it
 bool main_done = false;
@@ -51,6 +56,9 @@ void no_work_done_message(exit_button& exit_dialogue);
  *an sdl_help object, and calls its drawing functions per run
  *of the loop. */
 int main(int argc, char *argv[]){
+
+  HOME = getenv("HOME");
+  //cout << HOME << endl;
 
   if(argc == 2){
   	string argument = argv[1];
@@ -81,7 +89,9 @@ int main(int argc, char *argv[]){
   sdl_access->init();
 
   //make the tiles
-  manager tile_bag("./Assets/Images/");
+  string man_path(HOME);
+  man_path += "/Andiamo/Assets/Images/";
+  manager tile_bag(man_path);
   tile_access = &tile_bag;
   tile_access->init();
   tile_access->init_fields_graphics();
