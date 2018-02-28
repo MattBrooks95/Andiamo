@@ -16,6 +16,11 @@
 
 using namespace std;
 
+
+//lets objects know where the home directory is
+//objects need to know to this to find their assets or what have you
+string HOME = getenv("HOME");
+
 //global object used for error message output
 logger          error_logger;
 
@@ -37,10 +42,6 @@ button_manager* button_access;
 //handles everything to do with transmission coefficients
 fop_handler* FOP_access;
 
-//lets objects know wher ethe home directory is
-//objects need to know to this to find their assets or what have you
-string HOME;
-
 
 //making this global and giving it a unique name,
 //so the exit button can change it
@@ -57,8 +58,8 @@ void no_work_done_message(exit_button& exit_dialogue);
  *of the loop. */
 int main(int argc, char *argv[]){
 
-  HOME = getenv("HOME");
-  //cout << HOME << endl;
+
+  cout << HOME << endl;
 
   if(argc == 2){
   	string argument = argv[1];

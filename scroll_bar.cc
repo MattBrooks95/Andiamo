@@ -6,11 +6,13 @@
 using namespace std;
 
 extern asset_manager* asset_access;
+extern string HOME;
 
-//###################### CONSTRUCTORS/DESTRUCTORS #################################################
+//###################### CONSTRUCTORS/DESTRUCTORS ##############################
 scroll_bar::scroll_bar(){
 
-	//dummy initial values to hint if things weren't initialized properly by init()
+	//dummy initial values to hint if things weren't
+	//initialized properly by init()
 	xloc = -1;
 	yloc = -1;
 	width = 0;
@@ -97,7 +99,8 @@ void scroll_bar::init(int* x_scroll_in, int* y_scroll_in,
 	window_height = window_height_in;
 	renderer = renderer_in;
 
-	image_p = "./Assets/scroll_bars/" + image_p_in;
+	image_p  = HOME;
+	image_p += "/Andiamo/Assets/scroll_bars/" + image_p_in;
 	init_corner_texture();
 
 }

@@ -42,16 +42,18 @@ logger::logger(){
 	//cout << unique_file_name << endl;
 	//#########################################################################
 
-	//errors_out.open( unique_file_name.c_str() );
+	errors_out.open( unique_file_name.c_str() );
 	//it didn't work, make the dir and try again
-	//if(errors_out.fail()){
-		//system("mkdir ~/Andiamo/error_logs");
+	if(errors_out.fail()){
+		string mkdir_target(HOME);
+		mkdir_target += "/Andiamo/error_logs";
+		system(mkdir_target.c_str());
 		errors_out.open( unique_file_name.c_str() );
 	//it worked
-	//} else {
+	} else {
 		//close the file for now
-	//	errors_out.close();
-	//}
+		errors_out.close();
+	}
 	
 }
 
@@ -129,7 +131,7 @@ void logger::cleaning_check(){
 
 		while(file_names.size() > 19){
 			//grab file name to complete path
-			string doomed_one = HOME;
+			string doomed_one(HOME);
 			doomed_one       += "/Andiamo/error_logs/" + file_names.back();
 			//bash arg goes here
 			string sys_command = "rm ";

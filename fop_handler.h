@@ -27,6 +27,7 @@ using std::vector;
 extern sdl_help* sdl_access;
 extern manager* tile_access;
 extern input_maker* io_access;
+extern string HOME;
 
 class fop_handler{
   public:

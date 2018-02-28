@@ -50,8 +50,8 @@ sdl_help::sdl_help(string name_in,string HF_input_file_in,
 	//set window name
 	window_name = name_in;
 
-	font_p = "/Andiamo/Assets/fonts/";
-	hf_input_p = "/Andiamo/HF_Input/";
+	font_p = HOME + "/Andiamo/Assets/fonts/";
+	hf_input_p = HOME + "/Andiamo/HF_Input/";
 
 	frame_count = 0;
 
@@ -81,9 +81,8 @@ sdl_help::sdl_help(string name_in,string HF_input_file_in,
 	}
 
 	//set up pointer to font from file
-	string font_path = HOME;
-	font_path       += "/Andiamo/Assets/fonts/LiberationSerif-Regular.ttf";
-	font = TTF_OpenFont( font_path.c_str(), 22);
+	font_p       += "/LiberationSerif-Regular.ttf";
+	font = TTF_OpenFont( font_p.c_str(), 22);
 	if(font == NULL) {
 		cout << SDL_GetError() << endl;
 		error_logger.push_error(SDL_GetError());
@@ -117,7 +116,7 @@ sdl_help::~sdl_help(){
 void sdl_help::init(){
 
 	//############## background image initialization ############################//
-	string bg_loc = "Assets/Images/Backgrounds/"+bg_image_name;
+	string bg_loc = HOME + "/Andiamo/Assets/Images/Backgrounds/"+bg_image_name;
 	bg_texture = asset_access->get_texture(bg_loc);
 	if(bg_texture == NULL) error_logger.push_error(SDL_GetError());
 	SDL_RenderCopy(renderer,bg_texture,NULL,NULL);

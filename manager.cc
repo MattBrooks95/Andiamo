@@ -17,7 +17,7 @@ bool man_test = true;
 
 void manager::init(){
 
-	tile_input_p = "tile_Input/";
+	tile_input_p = HOME + "/Andiamo/tile_Input/";
 
 	//ins will refer to the stream to the input file for tile information
 	fstream ins;
@@ -831,9 +831,8 @@ void manager::icntrl4_locking(){
 
   }
 
-
-
 }
+
 //this function is checked at the end of icntrl4 check lock, because the
 //parameters icntrl4 unlocks must also be set up to unlock the form button
 void manager::ich4_nch4_locking(){
@@ -895,6 +894,7 @@ void manager::ich4_nch4_locking(){
   }
 
 }
+
 void manager::icntrl8_locking(){
   try{
 	regex icntrl8_unlock("\\s*[0-9]+?\\s*");
@@ -918,6 +918,12 @@ void manager::icntrl8_locking(){
 
 	}
 
+	//toggle if the conditions are met for unlocking, and it is currently
+	//locked, or if the conditions are not met and it is unlocked
+	if( ( !(fields.at("line_6").at("ICNTRL8")->am_I_locking) && button_access->get_icntrl_8().get_is_locked() ) ||
+	    (fields.at("line_6").at("ICNTRL8")->am_I_locking && !button_access->get_icntrl_8().get_is_locked()) ){
+		button_access->get_icntrl_8().toggle_lock();
+	}
 
   } catch (out_of_range& map_error){
 	string err = "From: manager::icntrl8_locking()| ICNTRL8 was not found";
@@ -932,13 +938,6 @@ void manager::icntrl8_locking(){
 	fields.at("line_6").at("ICNTRL8")->am_I_locking = true;
 
   }
-
-	//toggle if the conditions are met for unlocking, and it is currently
-	//locked, or if the conditions are not met and it is unlocked
-	if( ( !(fields.at("line_6").at("ICNTRL8")->am_I_locking) && button_access->get_icntrl_8().get_is_locked() ) ||
-	    (fields.at("line_6").at("ICNTRL8")->am_I_locking && !button_access->get_icntrl_8().get_is_locked()) ){
-		button_access->get_icntrl_8().toggle_lock();
-	}
 
 
 }
@@ -967,6 +966,11 @@ void manager::icntrl10_locking(){
 	}
 
 
+	if( ( !(fields.at("line_6").at("ICNTRL10")->am_I_locking) && button_access->get_icntrl_10().get_is_locked() ) ||
+	    ( fields.at("line_6").at("ICNTRL10")->am_I_locking && !(button_access->get_icntrl_10().get_is_locked()) ) ){
+		button_access->get_icntrl_10().toggle_lock();
+	}
+
   } catch (out_of_range& map_error){
 	error_logger.push_error("From: manager::icntrl8_locking()| ICNTRL10 was not found in the map of parameter tiles,",
 				" please check that the tile and HF config files match");
@@ -980,10 +984,7 @@ void manager::icntrl10_locking(){
 
   }
 
-	if( ( !(fields.at("line_6").at("ICNTRL10")->am_I_locking) && button_access->get_icntrl_10().get_is_locked() ) ||
-	    ( fields.at("line_6").at("ICNTRL10")->am_I_locking && !(button_access->get_icntrl_10().get_is_locked()) ) ){
-		button_access->get_icntrl_10().toggle_lock();
-	}
+
 
 
 }
@@ -997,6 +998,27 @@ void manager::ilv3_ilv5_locking(){
 	//do checks for ILV3
 	ilv3_ilv5_locking_helper("ILV3",ilv3_ilv5_unlock);
 	ilv3_ilv5_locking_helper("ILV5",ilv3_ilv5_unlock);
+
+
+
+	//store the truth values that we care about in local variables,
+	//so the logic below is slightly more readable
+	bool i3_locking = fields.at("line_5").at("ILV3")->am_I_locking;
+	bool i5_locking = fields.at("line_5").at("ILV5")->am_I_locking;
+	bool i3_i5_locked = button_access->get_ilv3_ilv5().get_is_locked();
+
+
+
+    /*if the form button is locked, and 
+	 *ILV3 XOR ILV5 (one is true, one is false), then unlock it (by toggling)
+     *or, if the form button is not locked, and ILV3 XOR ILV5 is false
+	 *(both are false, or both are true), then toggle */
+	if( (i3_i5_locked && ((i3_locking && !i5_locking) || ((!i3_locking && i5_locking))))
+	    || (!i3_i5_locked && !((i3_locking && !i5_locking) || ((!i3_locking && i5_locking))))){
+		button_access->get_ilv3_ilv5().toggle_lock();
+	}
+
+
 
   } catch (out_of_range& map_error){
 	error_logger.push_error("From: manager::ilv3_ilv5_locking()| ILV3 or ILV5was not found in the map of parameter"
@@ -1012,18 +1034,6 @@ void manager::ilv3_ilv5_locking(){
 
 
   }
-	//store the truth values that we care about in local variables, so the logic below is slightly
-	//more readable
-	bool ilv3_locking = fields.at("line_5").at("ILV3")->am_I_locking;
-	bool ilv5_locking = fields.at("line_5").at("ILV5")->am_I_locking;
-
-    //if the form button is locked, and ILV3 XOR ILV5 (one is true, one is false), then unlock it (by toggling)
-    //or, if the form button is not locked, and ILV3 XOR ILV5 is false (both are false, or both are true), then toggle
-	if( (button_access->get_ilv3_ilv5().get_is_locked() && ((ilv3_locking && !ilv5_locking) || ((!ilv3_locking && ilv5_locking))))
-	    || (!button_access->get_ilv3_ilv5().get_is_locked() && !((ilv3_locking && !ilv5_locking) || ((!ilv3_locking && ilv5_locking))))
-          ){
-		button_access->get_ilv3_ilv5().toggle_lock();
-	}
 
 }
 
@@ -1075,10 +1085,7 @@ void manager::icntrl6_locking(){
 		fields.at("line_10").at("INM2")->is_locked = true;
 	}
 
-  } catch (out_of_range& map_error){
-	error_logger.push_error("From: manager::icntrl6_locking| One of the critical tiles associated with ICNTRL4",
-				" were not found, please check that tile and HF config files match.");
-  }
+	//######### block originally below the try/catch#################
 	bool icntrl6_lock_status = fields.at("line_6").at("ICNTRL6")->am_I_locking;
 	if( !icntrl6_lock_status ){
 		//these functions set the am_I_locking states for each
@@ -1095,8 +1102,9 @@ void manager::icntrl6_locking(){
 		bool iter_lock_status = fields.at("line_10").at("ITER")->am_I_locking;
 		bool icntrl6_locked = button_access->get_icntrl_6().get_is_locked();
 
-		//the following assumes that ITER must be greater than 0, and atleast one of INM1 or INM2 must be nonzero
-		//if form_button is not locked, and all are locking, then lock it
+		//the following assumes that ITER must be greater than 0, and atleast
+		//one of INM1 or INM2 must be nonzero if form_button is not locked,
+		// and all are locking, then lock it
 		if( (icntrl6_locked && !iter_lock_status && (!inm1_lock_status || !inm2_lock_status)) ||
 		    (!icntrl6_locked && iter_lock_status) ||
 		    (!icntrl6_locked && !iter_lock_status && (inm1_lock_status && inm2_lock_status))
@@ -1105,6 +1113,12 @@ void manager::icntrl6_locking(){
 			button_access->get_icntrl_6().toggle_lock();
 		}
 	}
+	//######### block originally below the try/catch#################
+
+  } catch (out_of_range& map_error){
+	error_logger.push_error("From: manager::icntrl6_locking| One of the critical tiles associated with ICNTRL4",
+				" were not found, please check that tile and HF config files match.");
+  }
 
 
 }

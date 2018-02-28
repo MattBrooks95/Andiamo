@@ -26,6 +26,7 @@ using std::map;
 
 extern logger error_logger;
 extern button_manager* button_access;
+extern string HOME;
 
 class button_manager;
 

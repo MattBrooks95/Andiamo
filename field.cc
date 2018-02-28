@@ -793,9 +793,8 @@ void field::text_box_init(){
 
 
 
-
-	text_box.cursor_texture =
-						asset_access->get_texture("Assets/Images/cursor.png");
+	string curs_target = HOME + "/Andiamo/Assets/Images/cursor.png";
+	text_box.cursor_texture = asset_access->get_texture(curs_target);
 
 	if(text_box.cursor_texture == NULL) error_logger.push_error(SDL_GetError());
 

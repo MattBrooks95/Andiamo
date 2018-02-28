@@ -32,7 +32,8 @@ form_button::~form_button(){
 
 void form_button::init(){	
 
-	lock_texture = asset_access->get_texture("Assets/Images/lock.png");
+	string lock_target = HOME+"/Andiamo/Assets/Images/lock.png";
+	lock_texture = asset_access->get_texture(lock_target);
 	if(lock_texture == NULL) error_logger.push_error(SDL_GetError());
 	is_locked = true;
 
