@@ -1,3 +1,5 @@
+//! \file deck.cc implements the functions declared in deck.h
+
 #include "deck.h"
 
 using namespace std;

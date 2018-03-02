@@ -1,4 +1,4 @@
-/*! \file field.h declares the field class, which is like a
+/*! \brief \file field.h declares the field class, which is like a
 	tile where users can enter parameters or use defaults */
 
 #pragma once
@@ -22,7 +22,7 @@ using std::string;
 using std::vector;
 
 
-/*! this is a handy bag for the textures and surfaces necessary
+/*! \brief this is a handy bag for the textures and surfaces necessary
 	for text box creation. To be used in a field object */
 struct sdl_text_box{
 	//! the constructor sets all pointers to NULL

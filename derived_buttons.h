@@ -1,5 +1,5 @@
-/*! \file derived_buttons.h declares the classes that inherit from button.h's
- *button class */
+/*! \brief \file derived_buttons.h declares the classes that inherit
+ *from button.h's button class */
 #pragma once
 #include<fstream>
 
@@ -80,6 +80,7 @@ class exit_button : public button{
 
 //##############################################################################
 
+//! base class for button's that have need of a text box, like output selection
 class text_box_button : public button{
   public:
 	//~text_box_button();
@@ -115,7 +116,7 @@ class text_box_button : public button{
 
 
 
-/*! this is derived from the text_box_button class, it should read
+/*! \brief this is derived from the text_box_button class, it should read
  *inputs from the given TC file */ 
 class TC_input_file_button : public text_box_button{
   public:
@@ -184,6 +185,7 @@ class graphing_button : public text_box_button{
 */
 //##############################################################################
 
+//! runs the FOP handler when the user clicks this button
 class fop_handler_button : public button{
 
 	//! overload handle_click, to open interactive FOP feature

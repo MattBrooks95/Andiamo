@@ -1,4 +1,4 @@
-//! file cursor.cc implements the class members found in cursor.h
+//! \file cursor.cc implements the class members found in cursor.h
 
 #include "cursor.h"
 

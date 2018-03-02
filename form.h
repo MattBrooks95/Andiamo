@@ -186,7 +186,7 @@ class form{
 
 };
 
-/*! class page handles the text boxes and the graphical
+/*! \brief handles the text boxes and the graphical
  *representation of itself. Form's have a vector of these.
  *Only the one being edited is displayed and interactable */
 class page{

@@ -11,14 +11,14 @@
 #include "input_maker.h"
 #include "text_box.h"
 
-//define the path to the read-only optical model potentials folder
+//! define the path to the read-only optical model potentials folder
 #define OMP_PATH "/Andiamo/FOP/OpticalModels/"
-//define the path to the folder where already calculated
-//transmission coefficients are stored
+/*! \brief define the path to the folder where already calculated
+ *transmission coefficients are stored */
 #define TRANSMISSION_PATH "/Andiamo/FOP/TransmissionCoefficients/"
-/* define the path to where files are stored while they are being
-  'worked on' by Andiamo and FOP so these may be FOP outputs
-  that haven't been mapped to HF inputs yet  */
+/*! \brief define the path to where files are stored while they are being
+ *'worked on' by Andiamo and FOP so these may be FOP outputs
+ *that haven't been mapped to HF inputs yet  */
 #define SCRATCH_PATH "/Andiamo/FOP/FopScratch/"
 
 using std::string;
@@ -29,6 +29,8 @@ extern manager* tile_access;
 extern input_maker* io_access;
 extern string HOME;
 
+/*! \brief uses a data directory and Andiamo inputs
+ *to use FOP to calculate the transmission coefficients */
 class fop_handler{
   public:
 

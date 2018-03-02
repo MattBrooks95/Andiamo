@@ -1,5 +1,6 @@
-/*! \file form_buttons.h describes special buttons that are activated by
- *parameters in the tile fields, and allows for extensive text
+/*! \brief \file form_buttons.h describes special buttons that are activated by
+ *parameters in the tile fields */
+/*! \details \file form_buttons.h allows for extensive text
  *dynamic text entry, as required by some of the parameters
  *specified in the input manual */
 
@@ -15,7 +16,7 @@ using std::vector;
 using std::regex;
 using std::ofstream;
 
-/*! "base" class for form buttons, that provides their general form,
+/*! \brief "base" class for form buttons, that provides their general form,
  *and can be inherited from to make more specialized forms */
 class form_button : public button{
 
@@ -99,6 +100,7 @@ class form_button : public button{
 	SDL_Texture* unlock_help_texture;
 };
 
+//! opens the form "Cutoff Nuclei"
 class icntrl8_form_button : public form_button{
 
   public:
@@ -134,6 +136,7 @@ class icntrl8_form_button : public form_button{
 
 };
 
+//! opens a form based off line 10's ITER, INM1 & INM2 values, for search
 class icntrl6_form_button : public form_button{
 
   public:
@@ -231,6 +234,9 @@ class icntrl6_form_button : public form_button{
 
 };
 
+//! opens the form "Spin Cutoff Info"
+/*! this form hasn't been implemented yet, because it is a
+ *special case */
 class icntrl10_form_button : public form_button{
 
   public:
@@ -251,6 +257,7 @@ class icntrl10_form_button : public form_button{
   private:
 };
 
+//! opens the form "Resolved Levels"
 class icntrl4_form_button : public form_button{
 
   public:
@@ -283,6 +290,9 @@ class icntrl4_form_button : public form_button{
     unsigned int nch4_val;
 };
 
+//! opens the ILV3 or ILV5 form
+/*! the form that is created depends on whether parameter ILV3 or
+ *parameter ILV5 was used to unlock this button */
 class ilv3_ilv5_form_button : public form_button{
 
   public:

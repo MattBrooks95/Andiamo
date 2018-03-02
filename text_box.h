@@ -1,5 +1,5 @@
-/*! \file text_box.h this file describes a struct that has the information
- *necessary for text boxes */
+/*! \brief \file text_box.h this file describes a struct that
+ *has the information necessary for text boxes */
 #pragma once
 #include<SDL2/SDL.h>
 #include<SDL2/SDL_image.h>
@@ -17,7 +17,9 @@ using std::regex;
 
 extern sdl_help* sdl_access;
 
-
+//! implements variables and logic for text boxes used by forms & buttons
+/*! different from the text boxes used by the field objects in the manager
+ *class unfortunately. Homogenizing them is a goal. */
 struct text_box{
 
 	//! constructor initializes the location of the text box

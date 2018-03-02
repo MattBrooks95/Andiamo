@@ -1,9 +1,13 @@
 //! \file form.cc implements the descriptions of the form class, which is found in form.h
 
 #include "form.h"
+//! message for when Andiamo prevents a double free error
 #define FORM_ERROR "Attempted double free in ~form"
+//! default text box width for form
 #define TEXT_BOX_W 60
+//! default horizontal distance between text boxes
 #define TEXT_BOX_HORIZ_PADDING 10
+//! how far right you need to progress to get the next number from the sprite
 #define SPRITE_OFFSET 20
 using namespace std;
 

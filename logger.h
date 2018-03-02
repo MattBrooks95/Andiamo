@@ -1,4 +1,4 @@
-/*! \file logger.h describes the logger class, which is used for
+/*! \brief \file logger.h describes the logger class, which is used for
  *creating error & verbose messages during runtime */
 
 #pragma once

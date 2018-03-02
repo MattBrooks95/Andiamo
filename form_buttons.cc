@@ -8,12 +8,20 @@
 using namespace std;
 
 //copied over from input_maker
+
+//! print floating point number with field width 8 (Fortran style)
 #define F << setw(8) <<
+//! print floating point number with field width 10 (Fortran style)
 #define F10 << setw(10) <<
+//! print floating point number with field width 5 (Fortran style)
 #define F5 << setw(5) <<
+//! print floating point number with field width 7 (Fortran style)
 #define F7 << setw(7) <<
+//! print floating point number with field width 8 (Fortran style)
 #define F8 << setw(8) <<
+//! print integer with field width 5 (Fortran style)
 #define I << setw(5) <<
+//! print integer with field width 10 (Fortran style)
 #define I10 << setw(10) <<
 
 extern asset_manager* asset_access;

@@ -1,4 +1,4 @@
-//! file cursor.h describes the class that implements the text editing cursor
+//! \file cursor.h describes the class that implements the text editing cursor
 
 #pragma once
 #include<SDL2/SDL.h>
@@ -75,7 +75,7 @@ class cursor{
 
 };
 
-
+//! prints variables of passed SDL_Rect to passed output stream
 void print_sdl_rect(ostream& outs,const SDL_Rect& print_me);
 
 

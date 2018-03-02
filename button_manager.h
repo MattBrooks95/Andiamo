@@ -1,4 +1,4 @@
-/*! \file button_manager.h this file describes the button_manager
+/*! \brief \file button_manager.h this file describes the button_manager
  *class that contains various derivations of class button */
 
 #pragma once

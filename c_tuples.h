@@ -1,4 +1,4 @@
-/*! \file c_tuples.h houses some structs that do little more than hold
+/*! \brief \file c_tuples.h houses some structs that do little more than hold
  *several values together */
 
 

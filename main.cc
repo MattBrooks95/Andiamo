@@ -17,29 +17,29 @@
 using namespace std;
 
 
-//lets objects know where the home directory is
-//objects need to know to this to find their assets or what have you
+//! lets objects know where the home directory is
+/*! objects need to know to this to find their assets or what have you */
 string HOME = getenv("HOME");
 
-//global object used for error message output
+//! global object used for error message output
 logger          error_logger;
 
-//manages textures
+//! global reference to asset_manager
 asset_manager*  asset_access;
 
-//graphics library wrapper
+//! global reference to graphics library wrapper
 sdl_help*       sdl_access;
 
-//handles HF parameter entry
+//! global reference to object that handles HF parameter entry
 manager*        tile_access;
 
-//makes HF file
+//! global reference to object that makes HF file
 input_maker*    io_access;
 
-//manages various buttons
+//! global reference to object that manages various buttons
 button_manager* button_access;
 
-//handles everything to do with transmission coefficients
+//! global reference to object that handles creating transmission coefficients
 fop_handler* FOP_access;
 
 

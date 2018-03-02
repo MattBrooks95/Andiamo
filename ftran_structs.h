@@ -1,5 +1,5 @@
-/*! \file ftran_structs.h declares some structs that make keeping
- *track out outputs easy */
+/*! \brief \file ftran_structs.h declares some structs that make keeping
+ *track of outputs easy */
 #pragma once
 #include<iostream>
 #include<vector> 

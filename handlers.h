@@ -1,9 +1,8 @@
-/*! \file handlers.h \brief handlers.h contains some useful functions that
- *help prevent main() from getting cluttered - implementations in handlers.cc
- *it implements a lot of the sub switch statements,
+/*! \brief \file handlers.h handlers.h contains some useful functions that
+ *help prevent main() from getting cluttered */
+/* \details \file handlers.h implements a lot of the sub switch statements,
  *and the handlers get the SDL_Event and sdl_help objects so that it can
- *enact the functions that it needs to
- */
+ *enact the functions that it needs to */
 #pragma once
 #include<string>
 

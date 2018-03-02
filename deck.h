@@ -1,4 +1,4 @@
-//! file deck.h implements cards for the FOP input
+//! \file deck.h implements cards for the FOP input
 #pragma once
 
 #include <vector>
@@ -62,6 +62,8 @@ class card{
 
 };
 
+//! card object specialized to process the title card (just a string)
+/*! note that a blank title card terminates reading of FOP input */
 class title_card : public card{
 
   public:

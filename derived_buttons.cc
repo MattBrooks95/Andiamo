@@ -1,4 +1,5 @@
-//! \file derived_buttons.cc implements the class functions declared in derived_buttons.h
+/*! \brief \file derived_buttons.cc implements the class functions
+ *declared in derived_buttons.h */
 
 #include<iostream>
 #include "derived_buttons.h"
