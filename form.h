@@ -1,3 +1,4 @@
+#pragma once
 //! \file form.h contains the descriptions of the form and page classes
 
 /*! \class form enables dynamic entry of parameters as a result of
@@ -14,13 +15,15 @@
 #include "text_box.h"
 #include "c_tuples.h"
 #include "asset_manager.h"
-
+#include "colors.h"
 
 using std::string;
 using std::vector;
 using std::regex;
 
 class page;
+
+extern string HOME;
 
 //! class that is housed by a form_button, allows for dynamic parameter entry
 /*! Forms are only used for the handful of parametes in the input manual
@@ -38,7 +41,7 @@ class form{
 	//! gets rid of the form's textures, giving that memory back to the OS
 	~form();
 
-	//! the init function sets up the form's variables as specified by the parameters it is passed.
+	//! sets up the form's variables
 	/*!
 	 *\param form_title_in sets the title at the top of the form
 	 *\param help_msg_image_name finishes the asset's path to the desired PNG
@@ -218,21 +221,21 @@ class page{
 					const vector<int>& column_spacings);
 
 	//! helper for page_init, does the mundane pass-through assignments
-	void page_init_local_var(uint num_columns_in, uint rows_needed,
+	void init_local_var(uint num_columns_in, uint rows_needed,
 								const vector<string>& column_labels_in,
 								vector<string>& row_labels_in);
 
 	//! sets up the row labels, if they exist
-	void page_init_set_row_labels(const vector<string>& row_labels_in,
+	void set_row_labels(const vector<string>& row_labels_in,
 									int& x_start_point);
 
 	//! helper for page_init that sets up the text boxes
-	void page_init_set_text_boxes(int& x_start_point,
+	void set_text_boxes(int& x_start_point,
 									const vector<int>& column_spacings,
 									bool& row_labels_exist);
 
 	//! helper for page_init that sets up the column labels/headers
-	void page_init_column_labels(const vector<int>& column_spacings,
+	void init_column_labels(const vector<int>& column_spacings,
 									int& x_start_point,bool& row_labels_exist);
 	//##########################################################################
 
