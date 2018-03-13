@@ -108,7 +108,7 @@ void fop_handler::fop_main(){
 	}
 
 	//set a path to an automated FOP output file,
-	//OR allow the user to enter a custom one
+	//OR allow the user to enter a custom one (not implemented yet)
 	most_recent_FOP_out = make_FOP_output_name(A_proj,Z_proj,A_targ,Z_targ);
 
 	ofstream FOP_input_file;
@@ -154,11 +154,6 @@ void fop_handler::calc_open_channels(int& A_proj, int& Z_proj,
 	//now we need to grab IENCH, will be read in from console
 	//in Andiamo, will come from parameter map
 	int IENCH = find_IENCH();
-
-	//used to do the calculation, needs to be calculated from
-	//IENCH and A and Z of compound nucleus from Andiamo inputs
-	//int A_proj = 0, Z_proj = 0;	
-	//int A_targ = 0, Z_targ = 0;
 
 	//use IENCH mode and the given compound information
 	//to calculate A & Z of target and A & Z of projectile/beam

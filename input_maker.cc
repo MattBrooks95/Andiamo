@@ -1,4 +1,5 @@
-//! \file input_maker.cc \brief implements the functions defined in input_maker.h
+/*! \file input_maker.cc \brief implements the functions
+ *defined in input_maker.h */
 
 #include<regex>
 #include<iomanip>
@@ -28,44 +29,44 @@ input_maker::input_maker(string output_file_name_in,string config_file_name_in){
 	//start off false, become positive when output() is ran
 	output_was_made = false;
 
-	//init();//parse config file
 }
 
-/*
-input_maker::~input_maker(){
-	output();
-}*/
 
 void input_maker::check_map(){
-	error_logger.push_msg("########### INPUT MAKER INT4 PARAMS MAP ##############################");
-	for(map<string,param_int4>::iterator int_it = int4_params.begin();
+	error_logger.push_msg("####### INPUT MAKER INT4 PARAMS MAP ##############");
+	for(int4_map::iterator int_it = int4_params.begin();
 	    int_it != int4_params.end();
 	    int_it++){
-		error_logger.push_msg_no_nl(int_it->second.get_string()+"   ");
+		error_logger.push_msg_no_nl(int_it->second.get_string()+"  ");
 	}
-	error_logger.push_msg("\n######### INPUT MAKER R8 PARAMS MAP #################################\n");
-	for(map<string,param_real8>::iterator r8_it = real8_params.begin();
+	error_logger.push_msg("\n######### INPUT MAKER R8 PARAMS MAP ##########\n");
+	for(real8_map::iterator r8_it = real8_params.begin();
 	    r8_it != real8_params.end();
 	    r8_it++){
 		error_logger.push_msg_no_nl(r8_it->second.get_string()+":");
 	}
-	error_logger.push_msg("\n######### INPUT MAKER STRING PARAMS MAP #############################\n");
-	for(map<string,param_string>::iterator string_it = string_params.begin();
+	error_logger.push_msg("\n######### INPUT MAKER STRING PARAMS MAP ######\n");
+	for(str_map::iterator string_it = string_params.begin();
 	    string_it != string_params.end();
 	    string_it++){
-		error_logger.push_msg_no_nl(string_it->first+":"+string_it->second.value+"   ");
+        string msg = string_it->first + ":" + string_it->second.value+"   ";
+		error_logger.push_msg_no_nl(msg);
 	}
-	error_logger.push_msg("\n######### INPUT MAKER INT4 ARRAY MAP ###############################\n");
-	for(map<string,param_int4_array>::iterator int4_array_it = int4_array_params.begin();
+	error_logger.push_msg("\n####### INPUT MAKER INT4 ARRAY MAP ###########\n");
+	for(int4arr_map::iterator int4_array_it = int4_array_params.begin();
 	    int4_array_it != int4_array_params.end();
 	    int4_array_it++){
-		error_logger.push_msg_no_nl(int4_array_it->first+":"+int4_array_it->second.get_string()+"   ");
+        string msg = int4_array_it->first + ":"
+                     + int4_array_it->second.get_string() + "  ";
+		error_logger.push_msg_no_nl(msg);
 	}
-	error_logger.push_msg("\n######### INPUT MAKER R8_ARRAY MAP ##################################\n");
-	for(map<string,param_r8_array>::iterator r8_array_it = r8_array_params.begin();
+	error_logger.push_msg("\n####### INPUT MAKER R8_ARRAY MAP #############\n");
+	for(r8arr_map::iterator r8_array_it = r8_array_params.begin();
 	    r8_array_it != r8_array_params.end();
 	    r8_array_it++){
-		error_logger.push_msg_no_nl(r8_array_it->first+":"+r8_array_it->second.get_string()+"   ");
+        string msg = r8_array_it->first + ":"
+                     + r8_array_it->second.get_string() + "  ";
+		error_logger.push_msg_no_nl(msg);
 	}
 
 }
@@ -73,12 +74,14 @@ void input_maker::check_map(){
 
 void input_maker::init(){
 
-	error_logger.push_msg("########################### INPUT_MAKER INIT ################################");
+	error_logger.push_msg("############ INPUT_MAKER INIT ####################");
 
 	ifstream ins;
 	ins.open( (config_p+file_name).c_str() );
 	if(ins.fail()){
-		error_logger.push_error("Error in input_maker::init(), couldn't find the input file!");
+        string err;
+        err = "Error in input_maker::init(), couldn't find the input file!";
+		error_logger.push_error(err);
 		return;
 	}
 
@@ -100,13 +103,18 @@ void input_maker::init(){
 
 	getline(ins,temp_string);
 	while(!ins.eof()){
-		if(ins.fail()) break; // get out, file stream is done
+
+        //get out, file stream is done
+		if(ins.fail()) break;
 
 
-		//some sort of bad or meaningless input, try again until something of value is found
-		//thanks to https://stackoverflow.com/questions/9235296/how-to-detect-empty-lines-while-reading-from-istream-object-in-c
-		//for convincing me to check string.empty() instead of "does string equal " ", "\n" or ""
-		//this check allows for "spacer" empty lines in the input file to make it easier to read
+		/*some sort of bad or meaningless input, try again until something of
+         *value is found thanks to 
+         *https://stackoverflow.com/questions/9235296/
+         *how-to-detect-empty-lines-while-reading-from-istream-object-in-c
+		 *for convincing me to check string.empty() instead of
+         *"does string equal " ", "\n" or "", this check allows for "spacer"
+         *empty lines in the input file to make it easier to read */
 		while( temp_string.empty() ){
 			if(!ins.fail()){
 				getline(ins,temp_string);
@@ -134,14 +142,18 @@ void input_maker::init(){
 				  value = stod(tokens[3]);
 				  
 				} catch (invalid_argument& error){
-				  error_logger.push_error("Error in input_maker::init(), real 8 parameter given bad initial value:"+tokens[3]);
+                  string err = "Error in input_maker::init(), real 8 parameter";
+                  err       +=" given bad initial value:" + tokens[3];
+				  error_logger.push_error(err);
 				  value = -180.4;
 				}
 				param_real8 new_param(var_name,value);
 				real8_params.emplace(var_name,new_param);
 
 			} else {
-				error_logger.push_msg("String:"+temp_string+" has no default set. This is likely intentional.");
+                string msg = "String:" + temp_string;
+                msg       += " has no default set. This is likely intentional.";
+				error_logger.push_msg(msg);
 				param_real8 new_param(var_name,-180.4);
 				real8_params.emplace(var_name,new_param);
 
@@ -161,9 +173,11 @@ void input_maker::init(){
 				try{
 				  value = stoi(tokens[3]);
 				} catch(invalid_argument& error){
-				  error_logger.push_error("Error in input_maker::init()! Illegal value in int4 declaration!:"+tokens[3]);
+                  string err = "Error in input_maker::init()! Illegal value";
+                  err += " in int4 declaration!:"+tokens[3];
+				  error_logger.push_error(err);
 				  //give it a bad value as an indication that
-				  //something went wrong				
+				  //something went wrong
 				  value = -1804;
 				}
 
@@ -172,8 +186,10 @@ void input_maker::init(){
 				int4_params.emplace(var_name,new_param);
 
 			} else {
-				error_logger.push_error("String"+temp_string+" has no default set. This is likely intentional.");
-				param_int4 new_param(var_name,-1804);//give it a -1
+                string err = "String" + temp_string;
+                err       += " has no default set. This is likely intentional.";
+				error_logger.push_error(err);
+				param_int4 new_param(var_name,-1804);
 				int4_params.emplace(var_name,new_param);
 
 			}
@@ -191,13 +207,16 @@ void input_maker::init(){
 
 
 			if(tokens[2] != "="){
-				error_logger.push_error("Error! Missing '=' in string declaration!");
+                string err = "Error! Missing '=' in string declaration!";
+				error_logger.push_error(err);
 			} else {
 
-				//will contain the number matched from the found label|SIZE| portion
+				//will contain the number matched from the
+                //found label|SIZE| portion
 				smatch number_matches;
 				//match with SIZE number
-				regex_search(tokens[1],number_matches,string_array_size_pattern);
+				regex_search(tokens[1],number_matches,
+                                string_array_size_pattern);
 
 				//put it into a string
 				//convert the string to an integer
@@ -215,7 +234,8 @@ void input_maker::init(){
 
 				//name can be found by token label|some-number| minus
 				//the |some-number| part
-				string name = tokens[1].substr(0,tokens[1].size()- temp_string.size());
+				string name;
+                name = tokens[1].substr(0,tokens[1].size() - temp_string.size());
 
 				//make sure bookkeeping vector knows what is going on
 				//names_in_order.push_back(name);
@@ -279,17 +299,22 @@ void input_maker::init(){
 
 			} else {
 				//if there was no match for some reason, print an error message
-				error_logger.push_error("Error! Could not determine array size from int4 array declaration line.");
+                string err = "Error! Could not determine array size from";
+                err       += " int4 array declaration line.";
+				error_logger.push_error(err);
 			}
 
 
 		} else if( regex_match(temp_string,r8_array) ){
-			error_logger.push_msg("LINE:"+temp_string+"is an E array!"); 
-			vector<string> tokens = split(temp_string,' ');//split across spaces
+			error_logger.push_msg("LINE:"+temp_string+"is an E array!");
+
+            //split across spaces 
+			vector<string> tokens = split(temp_string,' ');
 			for(unsigned int c = 0; c < tokens.size(); c++){
 				error_logger.push_msg("\t"+tokens[c]);
 
 			}
+
 			//token 1 should be just the variable name 
 			string name = tokens[1];
 
@@ -459,8 +484,10 @@ bool input_maker::output(vector<string>& form_bad_inputs){
 			form_bad_inputs.push_back("###########Icntrl4 error list#######\n");
 			form_bad_inputs.push_back("Resolved Level + Continuum form\n");
 			for(unsigned int c = 0; c < icntrl4_bad_inputs.size(); c++){
-				string temp_error =  "Index: " +to_string(icntrl4_bad_inputs[c].index)
-								     + "  Argument: " + icntrl4_bad_inputs[c].value
+				string temp_error =  "Index: "
+                                     + to_string(icntrl4_bad_inputs[c].index)
+								     + "  Argument: "
+                                     + icntrl4_bad_inputs[c].value
 							  		 + "\n";
 				form_bad_inputs.push_back(temp_error);
 			}
@@ -479,7 +506,7 @@ bool input_maker::output(vector<string>& form_bad_inputs){
 	if( int4_params.at("ICNTRL6").value > 0 &&
 		!button_access->get_icntrl_6().make_output(outs,icntrl6_bad_inputs)){
 
-		form_bad_inputs.push_back("##############Icntrl6 error list##############\n");
+		form_bad_inputs.push_back("########## Icntrl6 error list###########\n");
 		form_bad_inputs.push_back("Parameter Search form\n");
 		for(unsigned int c = 0; c < icntrl6_bad_inputs.size(); c++){
 			string temp_error =  "Index: " +to_string(icntrl6_bad_inputs[c].index)
@@ -493,10 +520,11 @@ bool input_maker::output(vector<string>& form_bad_inputs){
 	if(!button_access->get_icntrl_8().get_is_locked() && 
 	   !button_access->get_icntrl_8().make_output(outs,icntrl8_bad_inputs)){
 
-		form_bad_inputs.push_back("##############Icntrl8 error list##############\n");
+		form_bad_inputs.push_back("########## Icntrl8 error list ##########\n");
 		form_bad_inputs.push_back("Residual Level Threshold Count form\n");
 		for(unsigned int c = 0; c < icntrl8_bad_inputs.size(); c++){
-			string temp_error =  "Index: " +to_string(icntrl8_bad_inputs[c].index)
+			string temp_error =  "Index: "
+                                 + to_string(icntrl8_bad_inputs[c].index)
 							     + "  Argument: " + icntrl8_bad_inputs[c].value
 						  		 + "\n";
 			form_bad_inputs.push_back(temp_error);
@@ -510,7 +538,8 @@ bool input_maker::output(vector<string>& form_bad_inputs){
 		form_bad_inputs.push_back("#########Icntrl10 error list############\n");
 		form_bad_inputs.push_back("Specify Spin Cutoff? form\n");
 		for(unsigned int c = 0; c < icntrl10_bad_inputs.size(); c++){
-			string temp_error =  "Index: " +to_string(icntrl10_bad_inputs[c].index)
+			string temp_error =  "Index: "
+                                 + to_string(icntrl10_bad_inputs[c].index)
 							     + "  Argument: " + icntrl10_bad_inputs[c].value
 						  		 + "\n";
 			form_bad_inputs.push_back(temp_error);
@@ -564,24 +593,27 @@ void do_line1(ofstream& outs,const map<string,param_string>& string_params){
 
 	//if(string_params[0].name != "label" || string_params.size() == 0){
 	try{
-		output_string(outs,string_params.at("label").size,string_params.at("label").value);
+        uint size = string_params.at("label").size;
+        string value = string_params.at("label").value;
+		output_string(outs,size,value);
 		outs << "\n";
 
 	} catch( out_of_range& not_found ){
 
-		error_logger.push_error("Error in input_maker, 'label' parameter not found in vector string_params as it should be.");
 
-
+        string err = "Error in input_maker, 'label' parameter not found";
+        err       += " in vector string_params as it should be.";
+		error_logger.push_error(err);
 	}
-
 
 }
 
-void do_line2(ofstream& outs,const map<string,param_real8>& real8_params,const map<string,param_int4>& int4_params){
+void do_line2(ofstream& outs,const real8_map& real8_params,
+              const int4_map& int4_params){
 
 	//note, setw(something) needs to be called before every item is printed
-	//this is really annoying, so I have a macro up top where F = "<< setw(8) << " for
-	//printing the real 8 values
+	//this is really annoying, so I have a macro up top
+    //where F = "<< setw(8) << " for printing the real 8 values
 
 	outs << right;//right justify data in it's width field
 
@@ -590,13 +622,15 @@ void do_line2(ofstream& outs,const map<string,param_real8>& real8_params,const m
 
 	try{
 		// ELAB A Z FNRME1 FNRMM1
-		outs F real8_params.at("ELAB").value F real8_params.at("A").value F real8_params.at("Z").value
-		     F real8_params.at("FNRME1").value F real8_params.at("FNRMM1").value;
+		outs F real8_params.at("ELAB").value F real8_params.at("A").value
+             F real8_params.at("Z").value
+		     F real8_params.at("FNRME1").value
+             F real8_params.at("FNRMM1").value;
 
 		//I = "<< setw(5) <<" macro up top
 		//IENCH, ICM, NZ3, TCPR
-		outs I int4_params.at("IENCH").value I int4_params.at("ICM").value I int4_params.at("NZ3").value
-		     I int4_params.at("TCPR").value;
+		outs I int4_params.at("IENCH").value I int4_params.at("ICM").value
+             I int4_params.at("NZ3").value I int4_params.at("TCPR").value;
 
 		//make field width 8 again, FNRME2
 		outs F real8_params.at("FNRME2").value;
@@ -620,8 +654,9 @@ void do_TC_coefficients(const map<string,param_real8>& real8_params,
 	TC_path       += TC_input_file_name;
 	ins.open(TC_path.c_str());
 	if(ins.fail()){
-		error_logger.push_error("Error! File:~/Andiamo/TC_files/"+TC_input_file_name+
-								" could not be found.");
+        string err = "Error! File:~/Andiamo/TC_files/" + TC_input_file_name;
+        err       += " could not be found.";
+		error_logger.push_error(err);
 	}
 
 	vector<string> lines_in;
@@ -676,9 +711,7 @@ void do_line4(ofstream& outs,const map<string,param_real8>& real8_params,
 				const map<string,param_int4>& int4_params){
   try{
 	outs << right;
-	//     FJTAR               FCMJMAX          FRESIDEMAX         ITARPR               NG             
 	outs F10 real8_params.at("FJTAR").value F10 real8_params.at("FCMJMAX").value
-	// NG
 	F10 real8_params.at("FRESIDMAX").value
 	I int4_params.at("ITARPR").value I int4_params.at("NG").value << endl;
 
@@ -694,7 +727,8 @@ void do_line4A(ofstream& outs,const map<string,param_real8>& real8_params,
 				const map<string,param_int4>& int4_params){
   try{
 	outs << fixed << setprecision(2);
-	outs F5 real8_params.at("APAR").value F5 real8_params.at("ZPAR").value F5 real8_params.at("QIN").value 
+	outs F5 real8_params.at("APAR").value F5 real8_params.at("ZPAR").value
+         F5 real8_params.at("QIN").value 
 	     F5 real8_params.at("FJPAR").value F5 real8_params.at("FPRPAR").value;
 	outs I int4_params.at("NLIN").value << endl;
   } catch (out_of_range& not_found){
@@ -758,10 +792,13 @@ void do_line5E_D(ofstream& outs,const map<string,param_int4>& int4_params,
 void do_line6(ofstream& outs,const map<string,param_int4>& int4_params){
 	outs << right;
   try{
-	outs I int4_params.at("ICNTRL1").value I int4_params.at("ICNTRL2").value I int4_params.at("ICNTRL3").value
-	     I int4_params.at("ICNTRL4").value I int4_params.at("ICNTRL5").value I int4_params.at("ICNTRL6").value
+	outs I int4_params.at("ICNTRL1").value I int4_params.at("ICNTRL2").value
+         I int4_params.at("ICNTRL3").value
+	     I int4_params.at("ICNTRL4").value I int4_params.at("ICNTRL5").value
+         I int4_params.at("ICNTRL6").value
 	     I int4_params.at("ICNTRL7").value I int4_params.at("ICNTRL8").value
-	     I int4_params.at("ICNTRL9").value I int4_params.at("ICNTRL10").value << endl;
+	     I int4_params.at("ICNTRL9").value I int4_params.at("ICNTRL10").value
+         << endl;
   } catch (out_of_range& not_found){
 	error_logger.push_error("Error! Parameter in do_line6 not found in the map!");
   }
@@ -771,9 +808,13 @@ void do_line6(ofstream& outs,const map<string,param_int4>& int4_params){
 
 void do_line7(ofstream& outs,const map<string,param_real8>& real8_params){
   try{
-	outs << right;	//set the justification
-	outs << setprecision(2);//set precision for 2 points past the decimal
-	outs F5 real8_params.at("FMU").value F5 real8_params.at("FCON_").value << endl;
+
+	//set the justification
+	outs << right;
+    //set precision for 2 points past the decimal
+	outs << setprecision(2);
+	outs F5 real8_params.at("FMU").value F5 real8_params.at("FCON_").value
+         << endl;
   } catch (out_of_range& not_found){
 	error_logger.push_error("Error! Parameter in do_line7 not found in the map!");
   }
@@ -782,7 +823,8 @@ void do_line7(ofstream& outs,const map<string,param_real8>& real8_params){
 
 void do_line8(ofstream& outs,const map<string,param_int4>& int4_params){
   try{
-	outs << right;	//set the justification
+    //set the justification
+	outs << right;
 
 	outs I int4_params.at("ICH4").value I int4_params.at("NCH4").value << endl;
   } catch(out_of_range& not_found){
@@ -790,7 +832,8 @@ void do_line8(ofstream& outs,const map<string,param_int4>& int4_params){
   }
 }
 
-void do_line9(ofstream& outs,const map<string,param_int4>& int4_params,const map<string,param_real8>& real8_params){
+void do_line9(ofstream& outs,const map<string,param_int4>& int4_params,
+              const map<string,param_real8>& real8_params){
   try{
 	outs << right;
 	//set precision to 2 points past decimal
@@ -809,9 +852,10 @@ void do_line9(ofstream& outs,const map<string,param_int4>& int4_params,const map
 }
 
 void do_line10(ofstream& outs, const map<string,param_int4>& int4_params){
-	outs I int4_params.at("ITER").value I int4_params.at("INM1").value I int4_params.at("INM2").value << endl;
+	outs I int4_params.at("ITER").value I int4_params.at("INM1").value
+         I int4_params.at("INM2").value << endl;
 }
-//####################################################################################
+//##############################################################################
 
 
 

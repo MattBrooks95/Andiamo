@@ -19,6 +19,8 @@
 #include "logger.h"
 #include "c_tuples.h"
 
+#include "define.h"
+
 using std::string;
 using std::vector;
 using std::map;

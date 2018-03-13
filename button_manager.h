@@ -199,7 +199,9 @@ class button_manager{
 	//! button to allow user to select the input transmission coefficients file
 	TC_input_file_button t_coefficients;
 
-	button lets_go;//!< button to generate output
+    //! button to generate output
+	button lets_go;
+
 	//! button to allow user to select graphing options
 	//graphing_button graphing_options;
 
