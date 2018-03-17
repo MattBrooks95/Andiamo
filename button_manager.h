@@ -65,7 +65,7 @@ class button_manager{
 	icntrl6_form_button& get_icntrl_6(){return icntrl_6;}
 
 	//! returns reference to the icntrl10 form button
-	icntrl10_form_button& get_icntrl_10(){return icntrl_10;}
+	icntrl10_button& get_icntrl_10(){return icntrl_10;}
 
 	//! returns reference to the icntrl4 form button
 	icntrl4_form_button& get_icntrl_4(){return icntrl_4;}
@@ -87,7 +87,6 @@ class button_manager{
 	/*! the forms will use these to do type/input checking */
 	void fill_regex_vectors(vector<regex>& icntrl_6_patterns,
 							vector<regex>& icntrl_8_patterns,
-					   		vector<regex>& icntrl_10_patterns,
 							vector<regex>& icntrl_4_patterns,
 							vector<regex>& ilv3_ilv5_patterns);
 
@@ -168,7 +167,8 @@ class button_manager{
 	icntrl6_form_button icntrl_6;
 
 	//! allows user to enter extra lines as a result of ilv_2 being used
-	icntrl10_form_button icntrl_10;
+    icntrl10_button icntrl_10;
+	//icntrl10_form_button icntrl_10;
 
 	//! allows user to enter extra lines as a result of icntrl4 being used
 	icntrl4_form_button icntrl_4;

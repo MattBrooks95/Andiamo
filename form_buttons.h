@@ -234,27 +234,85 @@ class icntrl6_form_button : public form_button{
 
 };
 
+//! special object for icntrl10_button
+class icntrl10_data{
+
+  public:
+    icntrl10_data(){
+        line_entries.resize(3);
+    }
+
+    vector<text_box> line_entries;
+
+  private:
+
+
+
+};
+
+
 //! opens the form "Spin Cutoff Info"
 /*! this form hasn't been implemented yet, because it is a
  *special case */
-class icntrl10_form_button : public form_button{
+class icntrl10_button : public button{
 
   public:
 
+    icntrl10_button();
+
+    //! does the same logic as the form_button::init
+    void init();
+
+    //! set where this form button should be on the button tray
+    void set_corner_loc(int x, int y);
+
+    //! sets up the sdl rect
+    void make_rect(int width_in = 100,int height_in = 70);
+
+    //! set up the lock graphic for when icntrl10's data entry isn't active
+    void setup_lock();
+
+    //! draws the lock if icntrl10 isn't activated
+    void draw_lock();
+
+    //! changes the lock state of the icntrl10 button
+    void toggle_lock();
+
+    //! explains why the data entry is locked, when the button is clicked
+    void draw_help_msg(SDL_Event& big_event,SDL_Rect& destination);
+
 	//! impelements the special logic for this class
 	bool handle_click(SDL_Event& mouse_event);
-
-	//! sets up a form that suits the needs of icntrl10's logics 
-	void init_form(const vector<regex>& pattern_tests);
-
 
 	//! this function opens the icntrl10 form on click
 	void click_helper(SDL_Event& mouse_event);
 
 	//!  outputs form info to the input_maker file stream
-	bool make_output(ofstream& outs, vector<index_value>& bad_input_list);
+	bool make_output(ofstream& outs);
+
+    //! prepares the linear parameter entry 
+    void init_data(int num_contexts);
+
+    //! getter for locked status
+    bool get_is_locked(){ return is_locked;}
+
+    //! save placement for the lock graphic
+    SDL_Rect lock_rect;
 
   private:
+    //! store the graphical representation of the "lock"
+    SDL_Texture* lock_texture;
+
+    SDL_Texture* unlock_help_texture;
+
+    //! boolean to store whether or not this data entry is accessible
+    bool is_locked;
+
+    //! stores the objects for NNSIG lines of ICNTRL10 information
+    vector<icntrl10_data> data;
+
+    //! keep track of the previous NNSIG value that started this form
+    int prev_NNSIG;
 };
 
 //! opens the form "Resolved Levels"

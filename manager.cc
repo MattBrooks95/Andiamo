@@ -713,6 +713,7 @@ void manager::check_locks(){
 	//##### ICNTRL6 has a lot going on ##############
 	icntrl6_locking();
 	//###############################################
+
 }
 
 /* we can't do iench = 7
@@ -949,27 +950,59 @@ void manager::icntrl10_locking(){
 	int icntrl10_val = stoi(fields.at("line_6").at("ICNTRL10")->temp_input);
 	string icntrl10_str = fields.at("line_6").at("ICNTRL10")->temp_input;
 
+
+    int nnsig_val = stoi(fields.at("line_11").at("NNSIG")->temp_input);
+
+    if( !fields.at("line_11").at("NNSIG")->is_locked &&
+        nnsig_val > 0){
+
+        fields.at("line_11").at("NNSIG")->am_I_locking = false;
+        fields.at("line_11").at("NNSIG")->change_tile_background("andy_tile.png");
+    } else {
+
+        fields.at("line_11").at("NNSIG")->am_I_locking = true;
+        fields.at("line_11").at("NNSIG")->change_tile_background("purple_andy_tile.png");
+    }
+
 	//if icntrl10 tile is currently locking its button, and the conditions
 	//for unlocking it are true, then have it start unlocking
 	if( fields.at("line_6").at("ICNTRL10")->am_I_locking &&
 	    (regex_match(icntrl10_str,icntrl10_unlock) && icntrl10_val > 0) ){
+
 		fields.at("line_6").at("ICNTRL10")->change_tile_background("andy_tile.png");
 		fields.at("line_6").at("ICNTRL10")->am_I_locking = false;
+
+        fields.at("line_11").at("NNSIG")->is_locked = false;
+        
+
+
 
 	//otherwise, if it is not locking, and it's conditions are not met,
 	//then have it start locking
 	} else if( !(fields.at("line_6").at("ICNTRL10")->am_I_locking) && 
 		   !(regex_match(icntrl10_str,icntrl10_unlock) && icntrl10_val > 0) ){
+
 		fields.at("line_6").at("ICNTRL10")->change_tile_background("purple_andy_tile.png");
 		fields.at("line_6").at("ICNTRL10")->am_I_locking = true;
+        fields.at("line_11").at("NNSIG")->is_locked = true;
 
 	}
 
 
-	if( ( !(fields.at("line_6").at("ICNTRL10")->am_I_locking) && button_access->get_icntrl_10().get_is_locked() ) ||
-	    ( fields.at("line_6").at("ICNTRL10")->am_I_locking && !(button_access->get_icntrl_10().get_is_locked()) ) ){
-		button_access->get_icntrl_10().toggle_lock();
-	}
+	if( ( !(fields.at("line_6").at("ICNTRL10")->am_I_locking) &&
+          !fields.at("line_11").at("NNSIG")->am_I_locking &&
+          button_access->get_icntrl_10().get_is_locked() ) ||
+	      (fields.at("line_6").at("ICNTRL10")->am_I_locking &&
+          !(button_access->get_icntrl_10().get_is_locked()) ) ){
+		    button_access->get_icntrl_10().toggle_lock();
+
+	} else if( !button_access->get_icntrl_10().get_is_locked() &&
+               (fields.at("line_11").at("NNSIG")->is_locked ||
+               fields.at("line_11").at("NNSIG")->am_I_locking) ){
+
+        button_access->get_icntrl_10().toggle_lock();
+
+    }
 
   } catch (out_of_range& map_error){
 	error_logger.push_error("From: manager::icntrl8_locking()| ICNTRL10 was not found in the map of parameter tiles,",
@@ -1199,14 +1232,7 @@ void manager::iter_locking(){
 	fields.at("line_10").at("ITER")->am_I_locking = true;
   }
 
-
-
-
 }
-
-
-
-
 
 
 

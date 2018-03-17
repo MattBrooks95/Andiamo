@@ -936,7 +936,76 @@ bool icntrl6_form_button::check_values(vector<index_value>& error_details){
 
 //####################### ICNTRL10 BUTTON ########################################
 
-bool icntrl10_form_button::handle_click(SDL_Event& mouse_event){
+void icntrl10_button::init(){
+
+
+	string lock_target = HOME+"/Andiamo/Assets/Images/lock.png";
+	lock_texture = asset_access->get_texture(lock_target);
+	if(lock_texture == NULL) error_logger.push_error(SDL_GetError());
+	is_locked = true;
+}
+
+void icntrl10_button::set_corner_loc(int x, int y){
+
+    xloc = x;
+    yloc = y;
+
+
+}
+
+void icntrl10_button::make_rect(int width_in,int height_in){
+
+	//initialized by set_corner_loc
+	my_rect.x = xloc;
+	my_rect.y = yloc;
+
+    width = width_in;
+    height = height_in;
+
+	my_rect.w = width;
+	my_rect.h = height;
+
+}
+
+void icntrl10_button::setup_lock(){
+
+	lock_rect.w = 15;
+	lock_rect.h = 25;
+
+	lock_rect.x = my_rect.x + my_rect.w - 15;
+	lock_rect.y = my_rect.y;
+
+
+
+}
+
+void icntrl10_button::draw_lock(){
+
+	if(is_locked){
+		SDL_RenderCopy(sdl_access->renderer,lock_texture,NULL,&lock_rect);
+	}
+
+}
+
+void icntrl10_button::toggle_lock(){
+
+	if(is_locked){
+		is_locked = false;
+	} else {
+		is_locked = true;
+	}
+
+}
+
+
+icntrl10_button::icntrl10_button(){
+
+    is_locked = true;
+
+}
+
+
+bool icntrl10_button::handle_click(SDL_Event& mouse_event){
 	if(button::was_clicked(mouse_event)){
 		SDL_RenderClear(sdl_access->renderer);
 		click_helper(mouse_event);
@@ -946,32 +1015,75 @@ bool icntrl10_form_button::handle_click(SDL_Event& mouse_event){
 
 }
 
-void icntrl10_form_button::click_helper(SDL_Event& mouse_event){
+void icntrl10_button::click_helper(SDL_Event& mouse_event){
 	error_logger.push_msg("clicked the icntrl10/sigma info button ");
+
+    int current_NNSIG = stoi(tile_access->fields.at("line_11").at("NNSIG")->temp_input);
+
+    if( current_NNSIG != prev_NNSIG){
+
+        prev_NNSIG = current_NNSIG;
+        init_data(prev_NNSIG);
+
+    }
+
 	if(!is_locked){
-		screen_size();
+
+		//screen_size();
 
 		//let the form know that it is now active
-		my_form.toggle_active();
+		//my_form.toggle_active();
 
 		//enter the mini loop for form entry
-		my_form.form_event_loop(mouse_event);
+		//my_form.form_event_loop(mouse_event);
 	}
-}
-
-void icntrl10_form_button::init_form(const vector<regex>& pattern_tests){
-
-	my_form.init("Spin Cutoff Information (ICNTRL10)","default_form_help.png",0,0,
-                 pattern_tests);
 
 }
 
-bool icntrl10_form_button::make_output(ofstream& outs,vector<index_value>& bad_input_list){
+void icntrl10_button::init_data(int num_contexts){
+
+/*
+TTF_Font* font_in,string text_in,int xloc_in,
+			  int yloc_in,int width_in, int height_in
+*/
+        
+
+    for(uint context = 0; context < num_contexts; context++){
+
+        for(uint line = 0; line < 3; line++){
+    
+            text_box& this_box = data[context].line_entries[line];
+
+            this_box.init(sdl_access->font,"", 50, 50, 400, 25);
+
+        }
+
+    }   
+
+}
+
+void icntrl10_button::draw_help_msg(SDL_Event& big_event,SDL_Rect& destination){
+
+	SDL_RenderCopy(sdl_access->renderer,unlock_help_texture,NULL,&destination);
+	sdl_access->present();
+
+	//spin until they are done reading, and they click the mouse or push a key - I can't get this to work because
+	//of phantom events, for now it just stays up until they let the mouse button come up
+	while(big_event.type != SDL_MOUSEBUTTONUP ){
+		SDL_PollEvent(&big_event);
+	}
+					
+
+}
+
+
+bool icntrl10_button::make_output(ofstream& outs){
 
 		//code stub just to make this thing seem satisfied, icntrl10 isn't actually
 		//implemented yet
-		if(my_form.get_pages().size() == 0) return true;
-		else return false;
+		//if(my_form.get_pages().size() == 0) return true;
+		//else return false;
+    return false;
 }
 
 

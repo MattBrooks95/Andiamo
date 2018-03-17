@@ -291,11 +291,11 @@ c Varibale name in HF: ICNTRL6
 c 0 = no search
 c 1 = search
 c 2 = search with more intermediate output
-andy_tile.png
 160x50
 andy
 ICNTRL7:Point Level Density
 c Variable name in HF: ICNTRL7
+andy_tile.png
 c 0 = do not echo level densities or change
 c     file of reduced levels
 c 1 = echo level densities
@@ -389,4 +389,12 @@ c cross sections, i.e., (n,𝜶) is added
 c to (n,np) and (n,pn), for example
 andy_tile.png
 175x50
+andy
+line_11#######################################################################
+NNSIG: Special Sigma
+c NNSIG in HF manual
+c Number of nuclei with special
+c sigma values
+andy_tile.png
+200x50
 andy

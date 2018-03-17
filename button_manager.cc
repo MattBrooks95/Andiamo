@@ -191,29 +191,26 @@ void button_manager::init_form_buttons(){
 
 	icntrl_6.setup_help_msg();
 	icntrl_8.setup_help_msg();
-	icntrl_10.setup_help_msg();
+	//icntrl_10.setup_help_msg();
 	icntrl_4.setup_help_msg();
 	ilv3_ilv5.setup_help_msg();
 
 	vector<regex> icntrl_6_patterns;
 	vector<regex> icntrl_8_patterns;
 	vector<regex> ilv_2_patterns;
-	vector<regex> icntrl_10_patterns;
 	vector<regex> icntrl_4_patterns;
 	vector<regex> ilv3_ilv5_patterns;
-	fill_regex_vectors(icntrl_6_patterns,icntrl_8_patterns, icntrl_10_patterns,
+	fill_regex_vectors(icntrl_6_patterns,icntrl_8_patterns,
 					   icntrl_4_patterns, ilv3_ilv5_patterns);
 
 	icntrl_6.init_form(icntrl_6_patterns);
 	icntrl_8.init_form(icntrl_8_patterns);
-	icntrl_10.init_form(icntrl_10_patterns);
 	icntrl_4.init_form(icntrl_4_patterns);
 	ilv3_ilv5.init_form(ilv3_ilv5_patterns);
 }
 
 void button_manager::fill_regex_vectors(vector<regex>& icntrl_6_patterns,
 										vector<regex>& icntrl_8_patterns,
-					   					vector<regex>& icntrl_10_patterns,
 										vector<regex>& icntrl_4_patterns,
 										vector<regex>& ilv3_ilv5_patterns){
 
@@ -256,24 +253,6 @@ void button_manager::fill_regex_vectors(vector<regex>& icntrl_6_patterns,
     icntrl_8_patterns.push_back(int5);
 	icntrl_8_patterns.push_back(int5);
 	icntrl_8_patterns.push_back(f10_3);
-	
-
-
-    /* // icntrl10 may not be implemented
-	//set up icntrl_10 tests
-    //line '1'
-	icntrl_10_patterns.push_back(int5);
-    icntrl_10_patterns.push_back(f5_2);
-
-    //line '2'
-    for(int c = 0; c < 6; c++){
-        icntrl_10_patterns.push_back(f6_2);
-    }
-    //line '3'
-    for(int c = 0; c < 6; c++){
-        icntrl_10_patterns.push_back(f6_2);
-    }
-    */
 
 	//set up icntrl_4 tests################################################
     //line 8

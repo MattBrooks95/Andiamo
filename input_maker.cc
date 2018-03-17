@@ -534,16 +534,10 @@ bool input_maker::output(vector<string>& form_bad_inputs){
 	}
 
 	std::vector<index_value> icntrl10_bad_inputs;
-	if(!button_access->get_icntrl_10().make_output(outs,icntrl10_bad_inputs)){
-		form_bad_inputs.push_back("#########Icntrl10 error list############\n");
-		form_bad_inputs.push_back("Specify Spin Cutoff? form\n");
-		for(unsigned int c = 0; c < icntrl10_bad_inputs.size(); c++){
-			string temp_error =  "Index: "
-                                 + to_string(icntrl10_bad_inputs[c].index)
-							     + "  Argument: " + icntrl10_bad_inputs[c].value
-						  		 + "\n";
-			form_bad_inputs.push_back(temp_error);
-		}
+	if(!button_access->get_icntrl_10().make_output(outs)){
+    
+        
+
 	}
 	//########################################################################//
 

@@ -114,8 +114,8 @@ class manager{
 	//! helper function for check_locks()
 	void icntrl8_locking();
 
-	//! helper function for check_locks()
-	void icntrl10_locking();
+    //! helper function for icntrl10_locking, opens NNSIG parameter
+    void icntrl10_locking();
 
 	//! helper function for check_locks()
 	void ilv3_ilv5_locking();
@@ -136,7 +136,7 @@ class manager{
 	//! helper function for icntrl6_locking()
 	void inm2_locking();
 
-	//!helper function for icntrl6_locking()
+	//! helper function for icntrl6_locking()
 	void iter_locking();
 	//#######################################################################
 
