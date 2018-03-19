@@ -942,7 +942,12 @@ void icntrl10_button::init(){
 	string lock_target = HOME+"/Andiamo/Assets/Images/lock.png";
 	lock_texture = asset_access->get_texture(lock_target);
 	if(lock_texture == NULL) error_logger.push_error(SDL_GetError());
-	is_locked = true;
+	is_locked         = true;
+    active            = false;
+    current_context   = 0;
+
+    string back_target = HOME + "/Andiamo/Assets/Images/icntrl10_backdrop.png");
+    icntrl10_backdrop = asset_access->get_texture(back_target);
 }
 
 void icntrl10_button::set_corner_loc(int x, int y){
@@ -1018,14 +1023,7 @@ bool icntrl10_button::handle_click(SDL_Event& mouse_event){
 void icntrl10_button::click_helper(SDL_Event& mouse_event){
 	error_logger.push_msg("clicked the icntrl10/sigma info button ");
 
-    int current_NNSIG = stoi(tile_access->fields.at("line_11").at("NNSIG")->temp_input);
 
-    if( current_NNSIG != prev_NNSIG){
-
-        prev_NNSIG = current_NNSIG;
-        init_data(prev_NNSIG);
-
-    }
 
 	if(!is_locked){
 
@@ -1036,18 +1034,172 @@ void icntrl10_button::click_helper(SDL_Event& mouse_event){
 
 		//enter the mini loop for form entry
 		//my_form.form_event_loop(mouse_event);
+
+        string NNSIG_str;
+        NNSIG_str = tile_access->fields.at("line_11").at("NNSIG")->temp_input;
+
+        unsigned int current_NNSIG;
+        current_NNSIG = stoi(NNSIG_str);
+
+        if( current_NNSIG != prev_NNSIG){
+
+            prev_NNSIG = current_NNSIG;
+            init_data(prev_NNSIG);
+
+            event_loop(mouse_event);
+
+        } else {
+
+            event_loop(mouse_event);
+
+        }
+
+
 	}
 
 }
 
-void icntrl10_button::init_data(int num_contexts){
+void icntrl10_button::event_loop(SDL_Event& mouse_event){
 
-/*
-TTF_Font* font_in,string text_in,int xloc_in,
-			  int yloc_in,int width_in, int height_in
-*/
-        
+    // toggle to true to end the loop
+    bool done = false;
 
+    // prevents one click causing multiple events to happen
+    bool click_lock = false;
+
+    while(!done){
+
+    	if( !SDL_PollEvent(&mouse_event) ){
+            //arbitrary do-nothing event pushed onto queue,
+            //so it doesn't hit any cases
+    		mouse_event.type = 1776;
+    	}
+
+        switch(mouse_event.type){
+
+		    case SDL_QUIT:
+			    toggle_active();
+			    done = true;
+			    SDL_PushEvent(&mouse_event);
+			    break;
+		    case SDL_KEYDOWN:
+			    break;
+		    case SDL_KEYUP:
+			    break;
+		    case SDL_MOUSEBUTTONDOWN:
+			    event_loop_click(mouse_event,done,click_lock);
+			    break;
+		    case SDL_MOUSEBUTTONUP:
+			    //reset click lock, they let go finally
+			    click_lock = false;
+			    break;
+		    case SDL_MOUSEWHEEL:
+			    break;
+		    case SDL_WINDOWEVENT:
+			    break;
+		
+		    //nop
+		    case 1776:
+			    break;
+
+		    default:
+			    break;
+
+        }
+
+    	draw_me();
+    	sdl_access->present();
+    	SDL_Delay(50);
+
+    }
+
+}
+
+void icntrl10_button::event_loop_click(SDL_Event& mouse_event,bool& done,
+                                       bool& click_lock){
+
+	if(!click_lock){
+
+		//consider if the exit button was clicked
+		if(exit.clicked(mouse_event)){
+			error_logger.push_msg("Clicked the exit button.");
+			toggle_active();
+			done = true;//end mini loop
+
+		//consider if the right arrow was clicked
+		} else if(right_arrow.clicked(mouse_event) ){
+			error_logger.push_msg("clicked the page right button");
+			current_context++;
+
+		//consider if the left arrow was clicked
+		} else if(left_arrow.clicked(mouse_event) ){
+			error_logger.push_msg("clicked the page left button");
+			current_context--;
+
+        } else {
+
+    	//used to kick out of the loop after the text box that
+		//was clicked has been found
+		bool found = false;
+		if(!data.size() == 0){
+
+			//filled by text_box_loop to tell this loop to do things
+			string command;
+
+            icntrl10_data&  current = data[current_context];
+
+			for(unsigned int c = 0; c < 3 && !found; c++){
+
+				/*enter text box loop for the matching text box, where
+                 *the current text box was either clicked, or our index,
+                 *'c', was set for us by command being equal to "TAB" */
+    			if(current.line_entries[c].was_clicked(mouse_event) ||
+                   command == "TAB" ){
+
+						//reset command container if it was set
+						if(command == "TAB") command = "";
+
+						text_entry(current.line_entries[c],mouse_event,done,
+                                   command,c);
+
+						if(command == "TAB" &&  c < 3){
+							//redo this step, but act on the next text box
+							continue;
+						} else found = true;
+					}
+				}
+			}
+		}
+		click_lock = true;
+	}
+}
+
+void icntrl10_button::text_entry(text_box& curr_tb,SDL_Event& event,
+                                 bool& done,string& command, unsigned int which_box){
+
+
+
+
+
+
+
+
+}
+
+void icntrl10_button::draw_me(){
+
+
+
+}
+
+
+void icntrl10_button::init_data(unsigned int num_contexts){
+
+
+    //resize the vector to contain the correct number of input screens
+    data.resize(num_contexts);        
+
+    //loop over them and initialize them
     for(uint context = 0; context < num_contexts; context++){
 
         for(uint line = 0; line < 3; line++){

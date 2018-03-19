@@ -244,8 +244,8 @@ class icntrl10_data{
 
     vector<text_box> line_entries;
 
-  private:
 
+  private:
 
 
 };
@@ -287,17 +287,50 @@ class icntrl10_button : public button{
 	//! this function opens the icntrl10 form on click
 	void click_helper(SDL_Event& mouse_event);
 
+    //! event loop for entering in icntrl10 info
+    void event_loop(SDL_Event& mouse_event);
+
+    //! figure out which text box the user clicked on, and allow editing
+    void event_loop_click(SDL_Event& mouse_event,bool& done,bool& click_lock);
+
+    //! process what the user types for the passed text box
+    void text_entry(text_box& curr_tb,SDL_Event& event,bool& done,
+                    string& command,unsigned int which_box);
+
+    //! presents the entry form to the user
+    void draw_me();
+
+
 	//!  outputs form info to the input_maker file stream
 	bool make_output(ofstream& outs);
 
     //! prepares the linear parameter entry 
-    void init_data(int num_contexts);
+    void init_data(unsigned int num_contexts);
 
     //! getter for locked status
     bool get_is_locked(){ return is_locked;}
 
+    //! activate or de-activate this entry method
+    void toggle_active(){ active = !active; }
+
     //! save placement for the lock graphic
     SDL_Rect lock_rect;
+
+    //! stores the clickable location for the exit button in the top left
+	active_area exit;
+
+    //! stores the clickable location for the help arrow in the top left 
+	active_area help;
+
+    //! stores the clickable location for the page right arrow in the top right
+	active_area right_arrow;
+
+    //! stores the clickable location for the page left arrow in the top right
+	active_area left_arrow;
+
+    //! template for the icntrl10 graphical entry
+    SDL_Texture* icntrl10_backdrop;
+
 
   private:
     //! store the graphical representation of the "lock"
@@ -312,7 +345,17 @@ class icntrl10_button : public button{
     vector<icntrl10_data> data;
 
     //! keep track of the previous NNSIG value that started this form
-    int prev_NNSIG;
+    unsigned int prev_NNSIG;
+
+    //! keep track of the index of icntrl10 info being modified
+    /*! the current one should be the only one shown on the screen */
+    unsigned int current_context;
+
+    //! true when the user is interacting with this object, false elsewise
+    bool active;
+
+    //! store the 3 patterns necesary for checking these lines
+    vector<regex> my_patterns;
 };
 
 //! opens the form "Resolved Levels"
