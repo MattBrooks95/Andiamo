@@ -946,8 +946,61 @@ void icntrl10_button::init(){
     active            = false;
     current_context   = 0;
 
-    string back_target = HOME + "/Andiamo/Assets/Images/icntrl10_backdrop.png");
+    string back_target = HOME + "/Andiamo/Assets/Images/";
+    back_target       += "form_assets/icntrl10_backdrop.png";
     icntrl10_backdrop = asset_access->get_texture(back_target);
+    if(icntrl10_backdrop == NULL){
+        error_logger.push_error("Couldn't create texture for icntrl10 'form' ",
+                                SDL_GetError());
+        cout << SDL_GetError() << endl;
+    }
+
+    bd_dest = {0,0,800,800};
+    exit.set_loc(0,0,50,50);
+    left_arrow.set_loc(700,0,25,50);
+    right_arrow.set_loc(775,0,25,50);
+
+
+    //set up the empty overlay surface
+
+    Uint32 red,green,blue,alpha;
+    #if SDL_BYTEORDER == SDL_BIG_ENDIAN
+        red   = 0xff000000;
+        green = 0x00ff0000;
+        blue  = 0x0000ff00;
+        alpha = 0x000000ff;
+    #else
+        red   = 0x000000ff;
+        green = 0x0000ff00;
+        blue  =	0x00ff0000;
+        alpha = 0xff000000;
+    #endif
+    over_surface = 
+        SDL_CreateRGBSurface(0,800,800,32,red,green,blue,alpha);
+
+
+    //set up the context number indicator in the top right
+    string number_path(HOME);
+    number_path += "/Andiamo/Assets/Images/form_assets/number_sprites.png";
+	number_sprites = IMG_Load(number_path.c_str());
+	if(number_sprites == NULL) error_logger.push_error(SDL_GetError());
+
+
+
+    int offset = 20;
+    SDL_Rect source = {20,0,offset,offset};
+    SDL_Rect destination = {750,26,20,20};
+    
+    //draw max page # in top right
+    SDL_BlitSurface(number_sprites,&source,over_surface,&destination);
+
+    source = {offset+current_context*offset,0,offset,offset};
+    destination = {725,0,20,20};
+
+    //draw current page # (0) in rop right
+    SDL_BlitSurface(number_sprites,&source,over_surface,&destination);
+
+    over_texture = SDL_CreateTextureFromSurface(sdl_access->renderer,over_surface);
 }
 
 void icntrl10_button::set_corner_loc(int x, int y){
@@ -1059,7 +1112,7 @@ void icntrl10_button::click_helper(SDL_Event& mouse_event){
 
 }
 
-void icntrl10_button::event_loop(SDL_Event& mouse_event){
+void icntrl10_button::event_loop(SDL_Event& big_event){
 
     // toggle to true to end the loop
     bool done = false;
@@ -1069,25 +1122,29 @@ void icntrl10_button::event_loop(SDL_Event& mouse_event){
 
     while(!done){
 
-    	if( !SDL_PollEvent(&mouse_event) ){
+    	if( !SDL_PollEvent(&big_event) ){
             //arbitrary do-nothing event pushed onto queue,
             //so it doesn't hit any cases
-    		mouse_event.type = 1776;
+    		big_event.type = 1776;
     	}
 
-        switch(mouse_event.type){
+        switch(big_event.type){
 
 		    case SDL_QUIT:
 			    toggle_active();
 			    done = true;
-			    SDL_PushEvent(&mouse_event);
+			    SDL_PushEvent(&big_event);
 			    break;
 		    case SDL_KEYDOWN:
+                if(big_event.key.keysym.sym == SDLK_ESCAPE){
+                    toggle_active();
+                    done = true;
+                }
 			    break;
 		    case SDL_KEYUP:
 			    break;
 		    case SDL_MOUSEBUTTONDOWN:
-			    event_loop_click(mouse_event,done,click_lock);
+			    event_loop_click(big_event,done,click_lock);
 			    break;
 		    case SDL_MOUSEBUTTONUP:
 			    //reset click lock, they let go finally
@@ -1188,7 +1245,8 @@ void icntrl10_button::text_entry(text_box& curr_tb,SDL_Event& event,
 
 void icntrl10_button::draw_me(){
 
-
+    SDL_RenderCopy(sdl_access->renderer,icntrl10_backdrop,NULL,&bd_dest);
+    SDL_RenderCopy(sdl_access->renderer,over_texture,NULL,&bd_dest);
 
 }
 
@@ -1211,6 +1269,25 @@ void icntrl10_button::init_data(unsigned int num_contexts){
         }
 
     }   
+
+    //set up the area we are going to draw to
+    SDL_Rect destination = {752,27,20,20};
+
+    //overwrite the old number with white
+    SDL_PixelFormat* format = over_surface->format;
+    if(SDL_FillRect(over_surface,&destination,SDL_MapRGBA(format,WHITE)) != 0){
+        error_logger.push_error(SDL_GetError());
+    }
+
+    //draw the new number over it
+    SDL_Rect source = {20+num_contexts*20,0,20,20};
+    if(SDL_BlitSurface(number_sprites,&source,over_surface,&destination) != 0){
+        cout << "COULDNT CHANGE NUMBER" << endl;
+        error_logger.push_error(SDL_GetError());
+    }
+
+
+    over_texture = SDL_CreateTextureFromSurface(sdl_access->renderer,over_surface);
 
 }
 

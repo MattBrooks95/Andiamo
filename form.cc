@@ -73,7 +73,7 @@ void form::init(string form_title_in,string help_msg_image_name,int xloc_in,
     help_path += "/Andiamo/Assets/Images/form_assets/" + help_msg_image_name;
 
     string number_path(HOME);
-    number_path += "Andiamo/Assets/Images/form_assets/number_sprites.png";
+    number_path += "/Andiamo/Assets/Images/form_assets/number_sprites.png";
 	number_sprites = IMG_Load(number_path.c_str());
 	if(number_sprites == NULL) error_logger.push_error(SDL_GetError());
 	//##########################################################################
