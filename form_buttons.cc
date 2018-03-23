@@ -1001,6 +1001,15 @@ void icntrl10_button::init(){
     SDL_BlitSurface(number_sprites,&source,over_surface,&destination);
 
     over_texture = SDL_CreateTextureFromSurface(sdl_access->renderer,over_surface);
+
+    //patern for sub-line 1 of line 11 (page 12 in manual)
+    my_patterns.emplace_back(regex("(\\s*-?\\s*[0-9]{1,5}\\s*){1}\\s(\\s*-?\\s*[0-9]{1,3}\\s*\\.\\s*[0-9]{0,2}\\s*){1}"));
+    //pattern for sub-line 2 of line 11
+    my_patterns.emplace_back(regex("(\\s*-?\\s*[0-9]{1,4}\\s*\\.\\s*[0-9]{0,2}\\s*){6}"));
+    //pattern for sub-line 3 of line 11
+    my_patterns.emplace_back(regex("(\\s*-?\\s*[0-9]{1,4}\\s*\\.\\s*[0-9]{0,2}\\s*){6}"));
+
+//"\\s*-?\\s*[0-9]{1,3}\\s*\\.\\s*[0-9]{0,2}\\s*"
 }
 
 void icntrl10_button::set_corner_loc(int x, int y){
@@ -1186,12 +1195,14 @@ void icntrl10_button::event_loop_click(SDL_Event& mouse_event,bool& done,
 		//consider if the right arrow was clicked
 		} else if(right_arrow.clicked(mouse_event) ){
 			error_logger.push_msg("clicked the page right button");
-			current_context++;
+            page_right();      
+			//current_context++;
 
 		//consider if the left arrow was clicked
 		} else if(left_arrow.clicked(mouse_event) ){
 			error_logger.push_msg("clicked the page left button");
-			current_context--;
+            page_left();
+			//current_context--;
 
         } else {
 
@@ -1231,15 +1242,173 @@ void icntrl10_button::event_loop_click(SDL_Event& mouse_event,bool& done,
 	}
 }
 
+void icntrl10_button::page_right(){
+
+    if(current_context < data.size() - 1){
+        current_context++;
+        update_page_indicator();
+    }
+
+
+}
+
+void icntrl10_button::page_left(){
+
+    if(current_context > 0){
+        current_context--;
+        update_page_indicator();
+    }
+
+}
+
+void icntrl10_button::update_page_indicator(){
+
+    //set up the area we are going to draw to
+    SDL_Rect destination = {725,0,20,20};
+
+    //overwrite the old number with white
+    SDL_PixelFormat* format = over_surface->format;
+    if(SDL_FillRect(over_surface,&destination,SDL_MapRGBA(format,WHITE)) != 0){
+        error_logger.push_error(SDL_GetError());
+    }
+
+    //draw the new number over it
+    SDL_Rect source = {20+current_context*20,0,20,20};
+    if(SDL_BlitSurface(number_sprites,&source,over_surface,&destination) != 0){
+        cout << "COULDNT CHANGE NUMBER" << endl;
+        error_logger.push_error(SDL_GetError());
+    }
+
+
+    over_texture = SDL_CreateTextureFromSurface(sdl_access->renderer,over_surface);
+
+
+
+}
+
 void icntrl10_button::text_entry(text_box& curr_tb,SDL_Event& event,
                                  bool& done,string& command, unsigned int which_box){
 
+	//turn on the text input background functions
+	SDL_StartTextInput();
 
+	//used to control text entry loop
+	bool text_done = false;
+	//int c = 0;
+	bool text_was_changed = false;
 
+	//string container for event text info (which is normally a c-string)
+	string pass_me;
+	while(!text_done){
+		//if(c >= 10) return;
+		//do stuff
 
+		if( !SDL_PollEvent(&event) ){
+			//dummy event to stop it from printing default message every frame
+			//where no event happens
+			event.type = 1776;
+		}
+		/*if(event.type != 1776) cout << "Text box loop type:"
+                                      << event.type << endl; */
+		switch(event.type){
+		  case SDL_MOUSEMOTION:
+			break;
 
+		  case SDL_MOUSEBUTTONDOWN:
+			//if the click was within the text box, move the cursor maybe
+		  	if( curr_tb.was_clicked(event) ){
+                string msg = "Text box click at "+to_string(event.button.x);
+                msg += ":"+to_string(event.button.y);
+				error_logger.push_msg(msg);
 
+			//elsewise exit text input mode, user clicked off the text box
+		  	} else {
+                string msg = "Clicked outside of the text box,";
+                msg       += " exiting mini-loop";
+		  		error_logger.push_msg(msg);
 
+				SDL_Event keyup_event;
+				//putting in this key up removes the click locking
+				keyup_event.type = SDL_MOUSEBUTTONUP;
+				//for the loop in form_event_loop
+				SDL_PushEvent(&keyup_event);
+
+				//doing this allows the user to 'hop' to another text box
+				//directly from editing another box
+				SDL_PushEvent(&event);
+
+				text_done = true;
+			}
+		  	break;
+
+		  case SDL_TEXTINPUT:
+			pass_me = event.text.text;
+			curr_tb.update_text(pass_me,my_patterns[which_box]);
+			text_was_changed = true;
+		  	//here this actually causes a loss of letters, so the event
+            //flooding is necessary, don't flush
+			//SDL_FlushEvent(SDL_TEXTINPUT);
+			break;
+
+		  case SDL_KEYDOWN:
+			
+			if(event.key.keysym.sym == SDLK_BACKSPACE){
+				//they hit backspace, so delete the end character if
+                //it is non-empty
+				curr_tb.back_space(my_patterns[which_box]);
+				text_was_changed = true;
+
+			} else if(event.key.keysym.sym == SDLK_LEFT){
+
+                curr_tb.dec_cursor(text_was_changed);
+
+			} else if(event.key.keysym.sym == SDLK_RIGHT){
+
+                curr_tb.inc_cursor(text_was_changed);
+			
+
+            //tab over to next text box
+			} else if(event.key.keysym.sym == SDLK_TAB){
+				command = "TAB";
+				return;
+			}
+				
+
+            //prevent event flooding
+			SDL_FlushEvent(SDL_KEYDOWN);
+		  	break;
+		  case SDL_QUIT:
+			//puts another sdl quit in the event queue, so program
+			//can be terminated while in "text entry" mode
+			SDL_PushEvent(&event);
+			text_done = true;			
+			break;
+
+		  case 1776: //do nothing, event was not new
+			break;
+
+		  default:
+			//outs << "Error finding case in text entry mini-loop" << endl;
+			break;
+		}
+
+		//if something actually changed, re-draw
+		//elsewise don't do it to try and save time
+		if(text_was_changed){
+			//update picture
+			draw_me();
+			text_was_changed = false;
+
+			//show updated picture
+			sdl_access->present();
+		}
+
+		//c++;
+		//SDL_Delay(50);
+	}//end of loop
+
+    //stop text input functionality because it slows down the app
+	SDL_StopTextInput();
 
 }
 
@@ -1247,7 +1416,9 @@ void icntrl10_button::draw_me(){
 
     SDL_RenderCopy(sdl_access->renderer,icntrl10_backdrop,NULL,&bd_dest);
     SDL_RenderCopy(sdl_access->renderer,over_texture,NULL,&bd_dest);
-
+    for(unsigned int c  = 0; c < 3; c++){
+        data[current_context].line_entries[c].draw_me();
+    }
 }
 
 
@@ -1255,18 +1426,18 @@ void icntrl10_button::init_data(unsigned int num_contexts){
 
 
     //resize the vector to contain the correct number of input screens
-    data.resize(num_contexts);        
+    data.resize(num_contexts);
+
+    TTF_Font* font = sdl_access->font;
 
     //loop over them and initialize them
     for(uint context = 0; context < num_contexts; context++){
 
-        for(uint line = 0; line < 3; line++){
-    
-            text_box& this_box = data[context].line_entries[line];
-
-            this_box.init(sdl_access->font,"", 50, 50, 400, 25);
-
-        }
+        //these values make sure that the text box goes where
+        //there is space for them
+        data[context].line_entries[0].init(font,"",0,153,800,25);
+        data[context].line_entries[1].init(font,"",0,305,800,25);
+        data[context].line_entries[2].init(font,"",0,369,800,25);
 
     }   
 
@@ -1280,7 +1451,7 @@ void icntrl10_button::init_data(unsigned int num_contexts){
     }
 
     //draw the new number over it
-    SDL_Rect source = {20+num_contexts*20,0,20,20};
+    SDL_Rect source = {20+(num_contexts-1)*20,0,20,20};
     if(SDL_BlitSurface(number_sprites,&source,over_surface,&destination) != 0){
         cout << "COULDNT CHANGE NUMBER" << endl;
         error_logger.push_error(SDL_GetError());
@@ -1289,6 +1460,10 @@ void icntrl10_button::init_data(unsigned int num_contexts){
 
     over_texture = SDL_CreateTextureFromSurface(sdl_access->renderer,over_surface);
 
+    //we remade the form, so start back at page one
+    current_context = 0;
+
+    update_page_indicator();
 }
 
 void icntrl10_button::draw_help_msg(SDL_Event& big_event,SDL_Rect& destination){

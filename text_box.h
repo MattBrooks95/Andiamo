@@ -101,6 +101,7 @@ struct text_box{
 
 	//! the horizontal coordinate of the upper left corner
 	int xloc;
+
 	//! the vertical coordinate of the upper left corner
 	int yloc;
 

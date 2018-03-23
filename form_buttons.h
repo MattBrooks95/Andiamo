@@ -293,6 +293,15 @@ class icntrl10_button : public button{
     //! figure out which text box the user clicked on, and allow editing
     void event_loop_click(SDL_Event& mouse_event,bool& done,bool& click_lock);
 
+    //! change current context from n in NNSIG to n + 1
+    void page_right();
+
+    //! change current context from n in NNSIG to n - 1
+    void page_left();
+
+    //! changes the number for the current page in the top right
+    void update_page_indicator();
+
     //! process what the user types for the passed text box
     void text_entry(text_box& curr_tb,SDL_Event& event,bool& done,
                     string& command,unsigned int which_box);
