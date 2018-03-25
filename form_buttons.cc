@@ -1481,13 +1481,34 @@ void icntrl10_button::draw_help_msg(SDL_Event& big_event,SDL_Rect& destination){
 }
 
 
-bool icntrl10_button::make_output(ofstream& outs){
+bool icntrl10_button::make_output(ofstream& outs,vector<index_value>& icntrl10_errors){
 
-		//code stub just to make this thing seem satisfied, icntrl10 isn't actually
-		//implemented yet
-		//if(my_form.get_pages().size() == 0) return true;
-		//else return false;
-    return false;
+    //code stub just to make this thing seem satisfied, icntrl10 isn't actually
+    //implemented yet
+    //if(my_form.get_pages().size() == 0) return true;
+    //else return false;
+    
+    bool return_value = true;
+
+    cout << "Hello from icntrl10::make_output" << endl;
+    for(unsigned int c = 0; c < data.size();c++){
+
+        for(unsigned int d = 0; d < 3;d++){
+            if(data[c].line_entries[d].bad_input ){
+
+                index_value temp_bag(data[c].line_entries[d].text,c*3 + d);                
+                icntrl10_errors.push_back(temp_bag);
+                return_value = false;
+            } else {
+
+                outs << data[c].line_entries[d].text << endl;
+
+            }
+        }
+
+    }
+
+    return return_value;
 }
 
 

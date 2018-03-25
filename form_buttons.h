@@ -311,7 +311,7 @@ class icntrl10_button : public button{
 
 
 	//!  outputs form info to the input_maker file stream
-	bool make_output(ofstream& outs);
+	bool make_output(ofstream& outs,vector<index_value>& icntrl10_bad_inputs);
 
     //! prepares the linear parameter entry 
     void init_data(unsigned int num_contexts);

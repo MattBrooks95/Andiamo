@@ -533,12 +533,26 @@ bool input_maker::output(vector<string>& form_bad_inputs){
 		}
 	}
 
-	std::vector<index_value> icntrl10_bad_inputs;
-	if(!button_access->get_icntrl_10().make_output(outs)){
-    
-        
 
-	}
+    //only print the output for icntrl10 if it is activated & satisfied
+    vector<index_value> icntrl10_bad_inputs;
+    if(!button_access->get_icntrl_10().get_is_locked()){
+
+    	std::vector<index_value> icntrl10_bad_inputs;
+    	if(!button_access->get_icntrl_10().make_output(outs,icntrl10_bad_inputs)){
+
+            form_bad_inputs.push_back("##### ICNTRL10 ERRORS ######");
+            form_bad_inputs.push_back("Special Sigma");
+            for(unsigned int c = 0; c < icntrl10_bad_inputs.size();c++){
+
+                string push_me = "Value: " + icntrl10_bad_inputs[c].value;
+                push_me       += " Index: " + to_string(icntrl10_bad_inputs[c].index);
+                form_bad_inputs.push_back(push_me);
+            }        
+
+    	}        
+
+    }
 	//########################################################################//
 
 	//if the vector of error message's size is not 0, don't make the output file
