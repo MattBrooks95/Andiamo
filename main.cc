@@ -61,6 +61,64 @@ int main(int argc, char *argv[]){
 
   cout << HOME << endl;
 
+
+
+  if(argc > 1){
+
+    bool ignore_next_arg = false;
+
+    for(unsigned int c = 1; c < argc; c++){
+
+      //don't do any processing of this argument, it was
+      //a part of an earlier argument - reset the boolean
+      //so the next argument is processsed normally
+      if(ignore_next_arg){
+        ignore_next_arg = false;
+        continue;
+      }
+
+      string argument = argv[c];
+
+      //-v makes the error logger print debugging and run time messages
+      if(argument.compare("-v") == 0){
+
+        cout << "Verbose mode on" << endl;
+        error_logger.verbose = true;
+
+      } else if(argument.compare("-help") == 0){
+
+        //function there that prints all of the options
+        //to the screen
+        cout << "Explaining options here" << endl;
+
+      } else if(argument.compare("-configf") == 0){
+
+        cout << "Allowing the user to specify default values." << endl;
+        if( (c + 1) < argc ){
+          argument = argv[c+1];
+          cout << "Supplied file name: " << argument << endl; 
+          ignore_next_arg = true;
+        } else {
+
+          cout << "Failure to provide a file name for a custom "
+               << "default values file. Proper form is -configf some_file.txt."
+               << " Note that the file must be in ~/Andiamo/config/." << endl;
+                 
+
+        }
+
+      } else {
+
+        cout << "Unknown command-line argument: " << argument << endl;
+
+      }
+        
+
+        //cout << "Argument: " << c << " with value: " << argv[c] << endl;
+    }
+
+  }
+
   if(argc == 2){
   	string argument = argv[1];
 	if(argument.compare("-v") == 0){

@@ -6,7 +6,7 @@
 #string format is C* var_name|size| = default value
 #the value field should be enclosed in ""
 
-        #double format is R8 var_name = default value 
+#double format is R8 var_name = default value 
 #integer format is I4 var_name = default value
 
 #nodef = no default
@@ -97,5 +97,5 @@ I4 ITER = 0
 I4 INM1 = 0
 I4 INM2 = 0
 
-#line 11  - is this feasible to enter by hand
+#line 11 - if ICNTRL10 > 0
 I4 NNSIG = 0
