@@ -15,7 +15,7 @@ manager::manager(string image_p_in){
 
 bool man_test = true;
 
-void manager::init(){
+void manager::init(const string& graphical_config_file){
 
 	tile_input_p = HOME + "/Andiamo/tile_Input/";
 
@@ -23,7 +23,12 @@ void manager::init(){
 	fstream ins;
 
 	//open the file
-	ins.open((tile_input_p + "tiles.txt").c_str());
+
+    if(graphical_config_file.size() == 0){
+    	ins.open((tile_input_p + "tiles.txt").c_str());
+    } else {
+        ins.open((tile_input_p + graphical_config_file));
+    }
 
 	//if something went wrong, print an error message to console
 	if(ins.fail()){

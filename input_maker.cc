@@ -72,12 +72,17 @@ void input_maker::check_map(){
 }
 
 
-void input_maker::init(){
+void input_maker::init(const string& alternate_config){
 
 	error_logger.push_msg("############ INPUT_MAKER INIT ####################");
 
 	ifstream ins;
-	ins.open( (config_p+file_name).c_str() );
+    if(alternate_config.size() == 0){
+    	ins.open( (config_p+file_name).c_str() );
+    } else {
+        ins.open( (config_p+alternate_config).c_str() );
+    }
+
 	if(ins.fail()){
         string err;
         err = "Error in input_maker::init(), couldn't find the input file!";

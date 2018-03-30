@@ -704,7 +704,7 @@ bool field::update_my_value(){
 		int num_values = user_entered_values.size();
 
 		for(unsigned int c = 0;
-			c < num_values && c < int4_array_hook->values.size();c++){
+			c < (unsigned int)num_values && c < int4_array_hook->values.size();c++){
 
 			try{
 			  int4_array_hook->values[c] = stoi(user_entered_values[c]);
@@ -724,7 +724,7 @@ bool field::update_my_value(){
 		int num_values = user_entered_values.size();
 
 		for(unsigned int c = 0;
-			c < num_values && c < r8_array_hook->values.size();
+			c < (unsigned int)num_values && c < r8_array_hook->values.size();
 			c++){
 			try {
 			  r8_array_hook->values[c] = stod(user_entered_values[c]);

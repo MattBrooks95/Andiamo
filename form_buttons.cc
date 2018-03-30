@@ -1451,7 +1451,7 @@ void icntrl10_button::init_data(unsigned int num_contexts){
     }
 
     //draw the new number over it
-    SDL_Rect source = {20+(num_contexts-1)*20,0,20,20};
+    SDL_Rect source = {20+((int)num_contexts-1)*20,0,20,20};
     if(SDL_BlitSurface(number_sprites,&source,over_surface,&destination) != 0){
         cout << "COULDNT CHANGE NUMBER" << endl;
         error_logger.push_error(SDL_GetError());

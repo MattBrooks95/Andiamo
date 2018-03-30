@@ -42,7 +42,7 @@ class input_maker{
 
 	//! sets up the parameter vectors to the specifications of the config file
 	/*! It uses regular expressions, and the split functions in string+.h */
-	void init();
+	void init(const string& alternate_config);
 
 	//! prints out the information needed to be used by HF
 	/*! for now it defaults to printing to ./output/output.txt,
@@ -85,13 +85,13 @@ class input_maker{
 	 *aware of that when they try to exit the program */
 	bool output_was_made;
 
-
   private:
  	//! contains a string that provides the relative path to the config files
 	string config_p;
 
 	//! path to the output folder
 	string output_p;
+
 	//! set by the constructor to tell it which config file to use
 	string file_name;
 

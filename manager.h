@@ -82,7 +82,7 @@ class manager{
 	 *is not done in the constructor because it needs information from the sdl class, whose 
 	 *constructor is called after manager's apparently. It also sorts the tiles by descending width for
 	 *sdl_help's draw_tiles() function*/
-	void init();
+	void init(const string& graphical_config_file);
 
 	//! this function runs through the 2d map, and prints all of the lines and their fields
 	/* \param outs is the output stream that will be printed to */

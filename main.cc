@@ -13,6 +13,7 @@
 #include "button_manager.h"
 #include "logger.h"
 
+#include "command_args.h"
 
 using namespace std;
 
@@ -53,84 +54,34 @@ bool main_done = false;
  *in the same location relative to the button */
 void no_work_done_message(exit_button& exit_dialogue);
 
+
 /*! main() handles sdl events (keypress, mouse movements), instantiates
  *an sdl_help object, and calls its drawing functions per run
  *of the loop. */
 int main(int argc, char *argv[]){
 
 
-  cout << HOME << endl;
+  //cout << HOME << endl;
 
+  //this string starts off empty. If it remains empty by
+  //the time input_maker::init(string) is called, it defaults to
+  //HF_Config.txt. However, if a new one is specified via the command line
+  //this string is filled and used instead
+  string input_maker_config_file;
 
+  //similarly, this can be set to cause the tile manager object
+  //to use a file other than tiles.txt
+  string manager_config_file;
 
-  if(argc > 1){
+  if(!process_args(argc,argv,input_maker_config_file,manager_config_file)){
 
-    bool ignore_next_arg = false;
-
-    for(unsigned int c = 1; c < argc; c++){
-
-      //don't do any processing of this argument, it was
-      //a part of an earlier argument - reset the boolean
-      //so the next argument is processsed normally
-      if(ignore_next_arg){
-        ignore_next_arg = false;
-        continue;
-      }
-
-      string argument = argv[c];
-
-      //-v makes the error logger print debugging and run time messages
-      if(argument.compare("-v") == 0){
-
-        cout << "Verbose mode on" << endl;
-        error_logger.verbose = true;
-
-      } else if(argument.compare("-help") == 0){
-
-        //function there that prints all of the options
-        //to the screen
-        cout << "Explaining options here" << endl;
-
-      } else if(argument.compare("-configf") == 0){
-
-        cout << "Allowing the user to specify default values." << endl;
-        if( (c + 1) < argc ){
-          argument = argv[c+1];
-          cout << "Supplied file name: " << argument << endl; 
-          ignore_next_arg = true;
-        } else {
-
-          cout << "Failure to provide a file name for a custom "
-               << "default values file. Proper form is -configf some_file.txt."
-               << " Note that the file must be in ~/Andiamo/config/." << endl;
-                 
-
-        }
-
-      } else {
-
-        cout << "Unknown command-line argument: " << argument << endl;
-
-      }
-        
-
-        //cout << "Argument: " << c << " with value: " << argv[c] << endl;
-    }
+    //if one of the arguments was malformed, or -help,
+    //don't continue execution
+    exit(0);
 
   }
 
-  if(argc == 2){
-  	string argument = argv[1];
-	if(argument.compare("-v") == 0){
-		//if -v is appended at the command line, have the error logger also print
-		//runtime debugging messages
-		error_logger.verbose = true;
 
-	//if some arg exists but is not -v, make an error message	   
-	} else {
-		error_logger.push_error("Supplied useless command line argument");
-	}
-  }
   //error_logger.push_msg("And where does the newborn go from here?"
   //					  " The net is vast and infinite.");
 
@@ -152,14 +103,14 @@ int main(int argc, char *argv[]){
   man_path += "/Andiamo/Assets/Images/";
   manager tile_bag(man_path);
   tile_access = &tile_bag;
-  tile_access->init();
+  tile_access->init(manager_config_file);
   tile_access->init_fields_graphics();
 
   sdl_access->calc_corners();
 
   input_maker io_handler;
   io_access = &io_handler;
-  io_access->init();
+  io_access->init(input_maker_config_file);
 
   //give fields pointers to their val in input_maker
   tile_access->give_fields_defaults();
@@ -315,11 +266,10 @@ void no_work_done_message(exit_button& exit_dialogue){
 	dest.x = exit_dialogue.get_xloc() - width_offset;
 	dest.y = exit_dialogue.get_yloc() - dest.h;
 
-
-
 	SDL_RenderCopy(sdl_access->renderer,no_work_texture,NULL,&dest);
 
 }
+
 
 
 
