@@ -196,7 +196,28 @@ class fop_handler_button : public button{
 
 };
 
+//! allows the user to save the current state of Andiamo to a config file
+class save_context_button : public button{
+  public:
+    //! overloaded click_helper to call overloaded work
+    void click_helper(SDL_Event& mouse_event);
 
+    //! show popup 'window' and text box for file name entry 
+    void work();
+
+    //! helper for work(), saves field info to info_file string
+    void save_fields();
+
+    //! helper for work(), saves form info to info_file string
+    void save_forms();
+  private:
+
+    //! what is drawn to the screen when the user goes to enter the file name
+    SDL_Texture* popup_texture;
+
+    //! starts off empty, filled in with Andiamo's current parameters 
+    string info_file;
+};
 
 
 

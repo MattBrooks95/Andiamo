@@ -315,7 +315,26 @@ void fop_handler_button::work(){
 }
 //##############################################################################
 
+void save_context_button::click_helper(SDL_Event& mouse_event){
 
+    cout << "In save_context click_helper" << endl;
+    work();
+}
+
+void save_context_button::work(){
+
+    cout << "In save_context work" << endl;
+    save_fields();
+    save_forms();
+}
+
+void save_context_button::save_fields(){
+    cout << "In save_context's save_fields() helper function" << endl;
+}
+
+void save_context_button::save_forms(){
+    cout << "In save_context's save_forms() helper function" << endl;
+}
 
 
 

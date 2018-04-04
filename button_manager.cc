@@ -118,6 +118,8 @@ void button_manager::location_update(){
 	//graphing_options.handle_resize(new_y+7);
 
 	lets_go.handle_resize(new_y+7);
+    save_context.handle_resize(new_y+7);
+
 
 	tray_rect.y = new_y;
 	form_tray_rect.y = new_y - form_tray_rect.h;
@@ -133,6 +135,7 @@ void button_manager::init_buttons(){
 	t_coefficients.init("tc_file_button.png",button_image_p);
 	//graphing_options.init("graphing_options.png",button_image_p);
 	lets_go.init("lets_go.png",button_image_p);
+    save_context.init("save_context.png",button_image_p);
 
 	//exit dialogue is a special snowflake, handles its own location
 	exit_dialogue.init("exit_button.png",button_image_p);
@@ -158,8 +161,10 @@ void button_manager::init_buttons(){
 
 	//end_of_last_button = end_of_last_button+5+graphing_options.get_width();
 
-	lets_go.force_corner_loc( end_of_last_button+5, tray_rect.y + 7 );
-
+	//lets_go.force_corner_loc( end_of_last_button+5, tray_rect.y + 7 );
+    save_context.force_corner_loc( end_of_last_button+5,tray_rect.y + 7);
+    end_of_last_button = end_of_last_button+5+save_context.get_width();
+    lets_go.force_corner_loc( end_of_last_button+5, tray_rect.y + 7 );
 
 }
 
@@ -289,6 +294,8 @@ void button_manager::print_buttons(){
 
 	lets_go.print_me();
 
+    save_context.print_me();
+
 	//graphing_options.print_me();
 	string done_print_msg;
 	done_print_msg = "############# DONE PRINTING BUTTONS ####################";
@@ -320,6 +327,7 @@ void button_manager::draw_buttons(){
 	t_coefficients.draw_me();
 	//graphing_options.draw_me();
 	lets_go.draw_me();
+    save_context.draw_me();
 
 }
 
@@ -500,6 +508,15 @@ bool button_manager::click_handling(SDL_Event& mouse_event){
 			done_something = true;
 		}
 	}
+    if(!done_something && save_context.shown){
+
+        if(save_context.handle_click(mouse_event)){
+            //cout << "You clicked on the save context button!" << endl;
+            done_something = true;
+
+        }
+
+    }
 	/*if(!done_something && graphing_options.shown){
 		//needs text input handling and needs to do handle_click for check box
 		graphing_options.handle_click(mouse_event);

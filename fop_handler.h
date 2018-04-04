@@ -5,6 +5,9 @@
 #include <vector>
 #include <fstream>
 
+//allows use of std::pair, for storing FOP in -> FOP out file names
+#include <utility>
+
 #include "deck.h"
 #include "sdl_help.h"
 #include "manager.h"
@@ -44,7 +47,7 @@ class fop_handler{
 
 	//! populate vectors of file names
 	/*!  from subdirectories OMP_PATH, TRANSMISSION_PATH, and SCRATCH_PATH */ 
-	void get_files_list();
+	//void get_files_list();
 
 
 	//! do the work to get the transmission coefficients
@@ -54,10 +57,9 @@ class fop_handler{
 	void fop_main();
 
 
-
-
-	string make_FOP_output_name(const int& A_proj, const int& Z_proj,
-							   const int& A_targ, const int& Z_targ);
+    //! populates the fop_inputs vector with the appropriate file name pairs
+	void make_FOP_pair(const int& A_proj, const int& Z_proj,
+                       const int& A_targ, const int& Z_targ);
 
 
 	//! figure out how many times to run FOP
@@ -99,27 +101,26 @@ class fop_handler{
 	void prepare_deck();
 
 	//! run FOP once the cards are in place
-	/*! ensure that calc_open_channels(), prepare_decks(), and
-	 *run_fop() are called in that order
-	 * \param outs is the output stream to the FOP output file*/
-	void run_fop(std::ofstream& outs);
+	/*! ensure that calc_open_channels(), prepare_decks(), make_FOP_pair and
+	 *run_fop() are called in that order */
+	void run_fop();
 
 
 	//! this is mostly for testing
-	void print_file_list();
+	//void print_file_list();
 
   private:
 
 	//! list of all file names in OMP_PATH subdirectory
-	vector<string> optical_model_files;
+	//vector<string> optical_model_files;
 
 	//! list of all files in the transmission coefficients files
 	/*! these are files previously made by FOP */
-	vector<string> tc_files;
+	//vector<string> tc_files;
 
 	/*! list of all files that aren't yet ready for use by HF,
 	 * but fop_handler may need */
-	vector<string> scratch_files;
+	//vector<string> scratch_files;
 
 	//! keeps track of which input channels are open for this calculation
 	/*! filled in by calc_open_channels, using David Resler's mass excess tool.
@@ -134,11 +135,24 @@ class fop_handler{
 	 *[5] = 3He */
 	bool open_channels[6];
 
+    //! for each open channel, stores the fop input & output file name
+    std::pair<string,string> fop_file_names;
+
 	//! store the decks of cards to run FOP with
 	vector<deck> fop_decks;
 
-	//! store the name of the most recent FOP output file 
-	string most_recent_FOP_out;
+    //################ FOP PATH INFO ################################
+    //! path to the optical model potentials folder
+	string omp_path;
+
+    //! path to the transmission coefficients folder
+	string trans_path;
+
+    //! path to the temporary storage space
+    /*! This is where Andiamo's FOP handler stores the FOP input files
+     *that it will run FOP on. These should be deleted after use, probably.*/
+	string scratch_path;
+    //###############################################################
 
 };
 

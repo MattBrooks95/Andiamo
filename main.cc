@@ -124,8 +124,8 @@ int main(int argc, char *argv[]){
 
   //set up the FOP handling object
   fop_handler FOP;
-  FOP.get_files_list();
-  FOP.print_file_list();
+  //FOP.get_files_list();
+  //FOP.print_file_list();
   FOP_access = &FOP;
 
 

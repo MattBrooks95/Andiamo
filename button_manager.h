@@ -202,6 +202,9 @@ class button_manager{
     //! button to generate output
 	button lets_go;
 
+    //! button to save fields in a new HF config file
+    save_context_button save_context;
+
 	//! button to allow user to select graphing options
 	//graphing_button graphing_options;
 

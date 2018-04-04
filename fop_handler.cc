@@ -8,6 +8,12 @@ using namespace std;
 
 fop_handler::fop_handler(){	
 
+	omp_path     = HOME + OMP_PATH;
+
+	trans_path   = HOME + TRANSMISSION_PATH;
+
+	scratch_path = HOME + SCRATCH_PATH;
+
 	//start off assuming all channels are inactive
 	open_channels[0] = false;
 	open_channels[1] = false;
@@ -23,7 +29,7 @@ fop_handler::~fop_handler(){
 
 }
 
-void fop_handler::get_files_list(){
+/*void fop_handler::get_files_list(){
 
 	string omp_path(HOME);
 	omp_path     += OMP_PATH;
@@ -82,7 +88,7 @@ void fop_handler::get_files_list(){
 		}
 	}
 
-}
+}*/
 
 void fop_handler::fop_main(){
 
@@ -107,27 +113,42 @@ void fop_handler::fop_main(){
 
 	}
 
+    //I think this is wrong and needs cut ##############################
 	//set a path to an automated FOP output file,
 	//OR allow the user to enter a custom one (not implemented yet)
-	most_recent_FOP_out = make_FOP_output_name(A_proj,Z_proj,A_targ,Z_targ);
+	//most_recent_FOP_out = make_FOP_pairs(A_proj,Z_proj,A_targ,Z_targ);
+    //##################################################################
 
-	ofstream FOP_input_file;
-	FOP_input_file.open(SCRATCH_PATH + most_recent_FOP_out);
+    make_FOP_pair(A_proj,Z_proj,A_targ,Z_targ);
+    cout << "File pair for this calculation is:\n"
+         << fop_file_names.first << ":" << fop_file_names.second << endl;
+
+
+
+	/*ofstream FOP_input_file;
+	FOP_input_file.open(scratch_path + most_recent_FOP_out);
 	if(FOP_input_file.fail()){
 		cout << "Couldn't make output stream to: "
-			 << SCRATCH_PATH + most_recent_FOP_out << endl;
-	}
+			 << scratch_path + most_recent_FOP_out << endl;
+	}*/
+
+    //for each open channel, come up with the
+    //(FOP input file name, fop output file name) pairs
+    for(unsigned int c = 0; c < 6; c++){
+
+        ;
+
+    }
 
 
 	//run FOP per open channel
 	for(unsigned int c = 0; c < 6; c++){
 
 		if(open_channels[c]){
-			run_fop(FOP_input_file);
+			run_fop();
 		}
 	}
 
-	FOP_input_file.close();
 
 }
 
@@ -253,19 +274,25 @@ void fop_handler::calc_open_channels(int& A_proj, int& Z_proj,
 }
 
 
-string fop_handler::make_FOP_output_name(const int& A_proj, const int& Z_proj,
-									     const int& A_targ, const int& Z_targ)
-{
+void fop_handler::make_FOP_pair(const int& A_proj, const int& Z_proj,
+							     const int& A_targ, const int& Z_targ){
 
-	string temp_file_name;
+	string in_temp_file_name;
 
-	temp_file_name = to_string(A_proj)   + "_" + to_string(Z_proj)
+	in_temp_file_name = to_string(A_proj)   + "_" + to_string(Z_proj)
+					 + "_" + to_string(A_targ) + "_" + to_string(Z_targ)
+					 + "_fop_in" + ".txt";
+
+	cout << "Temp FOP input file name: " << in_temp_file_name << endl;
+    
+	string out_temp_file_name;
+
+	out_temp_file_name = to_string(A_proj)   + "_" + to_string(Z_proj)
 					 + "_" + to_string(A_targ) + "_" + to_string(Z_targ)
 					 + "_fop_out" + ".txt";
 
-	cout << "Temp FOP file output: " << temp_file_name << endl;
-
-	return temp_file_name;
+	cout << "Temp FOP output file name: " << out_temp_file_name << endl;
+    fop_file_names = pair<string,string>(in_temp_file_name,out_temp_file_name);
 }
 
 
@@ -449,13 +476,14 @@ void fop_handler::prepare_deck(){
 
 }
 
-void fop_handler::run_fop(ofstream& outs){
+void fop_handler::run_fop(){
 
-	outs << "Stand in for run_fop() work." << endl;
-
+	cout << "Stand in for run_fop() work." << endl;
+    cout << "FOP  input file: " << fop_file_names.first << endl;
+    cout << "FOP output file: " << fop_file_names.second << endl;
 }
 
-void fop_handler::print_file_list(){
+/*void fop_handler::print_file_list(){
 
 	cout << "#### FOLDER: " << OMP_PATH << " ####" << endl;
 	for(unsigned int c = 0; c < optical_model_files.size(); c++){
@@ -476,7 +504,7 @@ void fop_handler::print_file_list(){
 		cout << scratch_files[c] << endl;
 	}
 	cout << "###################################" << endl;
-}
+}*/
 //#############################################################################
 
 
