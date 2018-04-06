@@ -64,9 +64,11 @@ class fop_handler{
 
 	//! figure out how many times to run FOP
 	/*! Big thanks to Tom & Zach
-	 *for helping me with this */
+	 *for helping me with this.
+     *fills the parameters it is passed*/
 	void calc_open_channels(int& A_proj, int& Z_proj,
-							int& A_targ, int& Z_targ);
+							int& A_targ, int& Z_targ,
+                             double& ecm_value);
 
 	//! helper for calc_open_channels grabs ELAB parameter from Andiamo
 	/*! this variable may need converted to center of mass energy */
@@ -98,7 +100,8 @@ class fop_handler{
 	//! sets up the decks that will be FOP inputs
 	/* only does so for each of the possible channels
 	 *as determined by calc_open_channels() */
-	void prepare_deck();
+	void prepare_deck(int A_proj,int Z_proj,int A_targ,int Z_targ,
+                      double ecm_value);
 
 	//! run FOP once the cards are in place
 	/*! ensure that calc_open_channels(), prepare_decks(), make_FOP_pair and

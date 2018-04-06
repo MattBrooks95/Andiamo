@@ -6,32 +6,35 @@ using namespace std;
 //######### DECK ##############################################################
 deck::deck(){
 
-	card_list.resize(10,NULL);
-
-	card_list[0] = new card("","Default label",5);   //label card
-	card_list[1] = new card("C","",5);
-	card_list[2] = new card("D","",4);
-	card_list[3] = new card("E","",4);
+    //label card
+	cards.insert(c_pair("title",new title_card("","Default label",5)));
+    cards.insert(c_pair("C",new card("C","",5)));
+    cards.insert(c_pair("D",new card("D","",4)));
+    cards.insert(c_pair("E",new card("E","",4)));
 
 	//we're not fitting data, 0 out F card
-	card_list[4] = new card("F","0.0,0.0,0.0,0,0.0",5);
+    cards.insert(c_pair("F",new card("F","0.0,0.0,0.0,0,0.0",5)));
 
-	//card L indicates that we want to calculate TCs, so 0,3
-	card_list[5] = new card("L","0,3",5);
+    //card L says we need transmission coefficients, so 0,3
+    cards.insert(c_pair("L",new card("L","0,3",5)));
 
-	//the following cards come from our data directory
-	card_list[6] = new card("S","",5);
-	card_list[7] = new card("T","",5); 
-	card_list[8] = new card("U","",5);
-	card_list[9] = new card("V","",5); 
+    //cards are created using the data directory
+    cards.insert(c_pair("S",new card("S","",5)));
+    cards.insert(c_pair("T",new card("T","",5)));
+    cards.insert(c_pair("U",new card("U","",5)));
+    cards.insert(c_pair("V",new card("V","",5)));
 }
 
 //deck::deck(const deck& other){;}
 deck::~deck(){
 
-	for(unsigned int c = 0; c < card_list.size(); c++){
+	for(map<string,card*>::iterator it = cards.begin();
+        it != cards.end();
+        it++){
 
-		delete card_list[c];
+        if(it->second != NULL){
+		    delete it->second;
+        }
 
 	}
 }
@@ -94,6 +97,15 @@ bool card::check(){
 
 	//if we make it here, we are good, return true
 	return true;
+}
+
+title_card::title_card(const string& letter_in,const string& info_in,
+                       uint num_params_in){
+
+	letter     = letter_in;
+	info       = info_in;
+	num_params = num_params_in;
+
 }
 
 bool title_card::check(){

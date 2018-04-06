@@ -94,9 +94,10 @@ void fop_handler::fop_main(){
 
 	int A_proj = 0, Z_proj = 0;
 	int A_targ = 0, Z_targ = 0;
-
+    //fop needs this (potentially converted) beam energy
+    double ecm_value = 0;
 	//figure out which channels are possible
-	calc_open_channels(A_proj,Z_proj,A_targ,Z_targ);
+	calc_open_channels(A_proj,Z_proj,A_targ,Z_targ,ecm_value);
 
 	cout << "A Projectile: " << A_proj << " Z Projectile: " << Z_proj << endl;
 	cout << "A Target: " << A_targ << " Z Target: " << Z_targ << endl;
@@ -107,7 +108,7 @@ void fop_handler::fop_main(){
 
 		if(open_channels[c]){
 
-			prepare_deck();
+			//prepare_deck(A_proj,Z_proj,A_targ,Z_targ,ecm_value);
 
 		}
 
@@ -136,8 +137,9 @@ void fop_handler::fop_main(){
     //(FOP input file name, fop output file name) pairs
     for(unsigned int c = 0; c < 6; c++){
 
-        ;
-
+       if(open_channels[c]){
+            ;
+        }
     }
 
 
@@ -156,7 +158,8 @@ void fop_handler::fop_main(){
 
 
 void fop_handler::calc_open_channels(int& A_proj, int& Z_proj,
-									 int& A_targ, int& Z_targ){
+									 int& A_targ, int& Z_targ,
+                                     double& ecm_value){
 
 
 	//########### PART ONE ##################################################//
@@ -215,9 +218,7 @@ void fop_handler::calc_open_channels(int& A_proj, int& Z_proj,
 	//  = 1 given energies are in ecm, no need to convert
 	//*************************************************************
 
-	//we need this value for FOP
-	double ecm_value = 0;
-
+    //ecm_value was passed to and needs filled by this function
 	//first, we'll assume it's given as center of mass energy
 	ecm_value = find_elab();
 
@@ -470,10 +471,34 @@ void fop_handler::calc_Ap_Zp_At_Zt(int IENCH,
 
 }
 
-void fop_handler::prepare_deck(){
+void fop_handler::prepare_deck(int A_proj,int Z_proj,int A_targ,int Z_targ,
+                               double ecm_value){
 
-	cout << "Stand in for prepare_decks() work." << endl;
+	//cout << "Stand in for prepare_decks() work." << endl;
 
+    //create the fop deck for this run
+    fop_decks.emplace_back(deck());
+
+    //#### initialize it's cards to the proper values ####
+
+    //get a reference to the uninitialized fop deck we just made
+    deck& this_deck = fop_decks.back();
+
+    //c needs calculations #####################################
+    /* EMax  = (EBeam * (ATarget / (ABeam * ATarget)))
+     *         * ((ARecoil + AC)/(AR))
+     * EStep = EMax / N, where we will set N to be 20
+     * EMin = Emax - (N-1) * EStep  */
+    //double EMax = 
+
+    //##########################################################
+
+    //d comes from andiamo input, projectile info
+    //e also comes from andiamo input, target info
+    //f can be left alone, defaults to all 0's (no fitting)
+    //l can be left alone, just tells FOP to do TCs (0,3)
+
+    //s,t,u,v need initialized using data from giant directory
 }
 
 void fop_handler::run_fop(){

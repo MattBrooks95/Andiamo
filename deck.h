@@ -2,10 +2,13 @@
 #pragma once
 
 #include <vector>
+#include <map>
+#include <utility> //for pairs
 #include <string>
 #include <regex>
 
 #include "logger.h"
+#include "define.h"
 
 extern logger error_logger;
 
@@ -29,7 +32,7 @@ class deck{
 
   private:
 	//! store pointers to cards and derived card objects
-	vector<card*> card_list;
+	std::map<string,card*> cards;
 };
 
 
@@ -40,7 +43,7 @@ class card{
   public:
 
 	//! constructor saves a string, and the number of params the card needs
-	card(const string& letter_in,const string& info_in = "",
+	card(const string& letter_in = " ",const string& info_in = "",
 							unsigned int num_params_in = 7);
 
 	//! makes sure that the line is formatted properly
@@ -67,6 +70,8 @@ class card{
 class title_card : public card{
 
   public:
+    title_card(const string& letter_in,const string& info_in,
+               uint num_params_in);
 	//!make sure that the title card is formatted correctly
 	/*! the only restrictions here are that the card is less
 	 *than 80 columns, and does NOT start with a blank. A blank title

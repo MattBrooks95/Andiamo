@@ -4,6 +4,9 @@
 //! easier type declaration for an unsigned integer
 #define uint unsigned int
 
+//! shorter type declaration for pairs that are pushed into map of FOP cards
+#define c_pair std::pair<string,card*>
+
 //! shorter type declaration for a map of string:(string:field) pairs
 #define fields_map map<string,map<string,field*>>
 
