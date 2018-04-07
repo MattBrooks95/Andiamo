@@ -1,0 +1,9 @@
+[Desktop Entry]
+Version=1.0
+Name=Andiamo!
+Comment=Hauser-Feshbach made easier!
+Exec=/home/motoko/Andiamo/andiamo
+Icon=/home/motoko/Andiamo/Assets/Images/andiamo.png
+Terminal=false
+Type=Application
+Categories=Utility;Application;
