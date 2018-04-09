@@ -80,7 +80,7 @@ void input_maker::init(const string& alternate_config){
     if(alternate_config.size() == 0){
     	ins.open( (config_p+file_name).c_str() );
     } else {
-        ins.open( (config_p+alternate_config).c_str() );
+        ins.open( (config_p+"/custom_configs/"+alternate_config).c_str() );
     }
 
 	if(ins.fail()){

@@ -42,7 +42,7 @@ void options_help(){
          << "\n" << endl;
     cout << "2) -configf some_file_name.txt\n  changes the default"
          << " values file used by Andiamo! to the provided file name.\n"
-         << "  This file must be in ~/Andiamo/config/, and must have"
+         << "  This file must be in ~/Andiamo/config/custom_configs/, and must have"
          << " file extension \".txt\".\n"
          << "  The parameters in this file must match those in the current\n"
          << "  graphical configuration file."
@@ -111,7 +111,7 @@ bool process_args(int argc, char* argv[],string& input_maker_config_file,
                     argument = argv[c+1];
                     cout << "Supplied file name: " << argument << endl; 
 
-                    string full_path = HOME + "/Andiamo/config/" + argument;
+                    string full_path = HOME + "/Andiamo/config/custom_configs/" + argument;
                     std::ifstream test_open;
                     cout << "Attempting to open file:" << full_path << endl;
                     test_open.open(full_path.c_str());
@@ -123,7 +123,7 @@ bool process_args(int argc, char* argv[],string& input_maker_config_file,
 
                         cout << "File argument:" << argument;
                         cout << " Is seemingly not a proper config file.\n"
-                             << " Please ensure it's in [andiamo_root]/config/,\n"
+                             << " Please ensure it's in [andiamo_root]/config/custom_configs/,\n"
                              << "and that it ends in .txt"
                              << endl;
                         ignore_next_arg = true;
@@ -135,7 +135,7 @@ bool process_args(int argc, char* argv[],string& input_maker_config_file,
 
                     cout << "Failure to provide a file name for a custom "
                          << "default values file. Proper form is -configf some_file.txt."
-                         << " Note that the file must be in ~/Andiamo/config/." << endl;
+                         << " Note that the file must be in ~/Andiamo/config/custom_configs/." << endl;
                 }
 
             } else if(argument.compare("-graphic_configf") == 0){

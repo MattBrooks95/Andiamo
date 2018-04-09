@@ -205,11 +205,14 @@ class save_context_button : public button{
     //! show popup 'window' and text box for file name entry 
     void work();
 
+    //! query the user for their desired context file name
+    void get_context_save_name(string& context_file_name);
+
     //! helper for work(), saves field info to info_file string
-    void save_fields();
+    void save_fields(ofstream& context_out);
 
     //! helper for work(), saves form info to info_file string
-    void save_forms();
+    void save_forms(ofstream& context_out);
   private:
 
     //! what is drawn to the screen when the user goes to enter the file name

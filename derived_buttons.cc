@@ -324,16 +324,57 @@ void save_context_button::click_helper(SDL_Event& mouse_event){
 void save_context_button::work(){
 
     cout << "In save_context work" << endl;
-    save_fields();
-    save_forms();
+    string context_file_name = "custom_config.txt";
+
+    //call a function that queries the user for their
+    //desired file name
+    get_context_save_name(context_file_name);
+
+    ofstream context_out;
+    context_out.open(HOME+"/Andiamo/config/custom_configs/"+context_file_name);
+    if(!context_out.fail()){
+        save_fields(context_out);
+        save_forms(context_out);
+    }
+    context_out.close();
 }
 
-void save_context_button::save_fields(){
+void save_context_button::get_context_save_name(string& context_file_name){
+
+    cout << "Please enter the name you'd like to save this config file under."
+         << endl;
+    cin >> context_file_name;
+
+}
+
+void save_context_button::save_fields(ofstream& context_out){
     cout << "In save_context's save_fields() helper function" << endl;
+    fields_vec* fields_ref = &tile_access->fields_order;
+    for(uint line = 0; line < fields_ref->size();line++){
+        for(uint param = 0; param < (*fields_ref)[line].size(); param++){
+            if(((*fields_ref)[line][param])->int4_hook != NULL){
+                context_out << "I4 ";
+            } else if(((*fields_ref)[line][param])->real8_hook != NULL){
+                context_out << "R8 ";
+            } else if(((*fields_ref)[line][param])->string_hook != NULL){
+                context_out << "C* ";
+            } else {
+                context_out << "Tile arrays should be removed" << endl;
+            }
+            context_out << ((*fields_ref)[line][param])->tile_name;
+            if(((*fields_ref)[line][param])->string_hook != NULL){
+                context_out << "|" << ((*fields_ref)[line][param])->temp_input.size()
+                            << "|";
+            }
+            context_out << " = " << ((*fields_ref)[line][param])->temp_input << endl; 
+        }
+
+    }
 }
 
-void save_context_button::save_forms(){
+void save_context_button::save_forms(ofstream& context_out){
     cout << "In save_context's save_forms() helper function" << endl;
+    
 }
 
 

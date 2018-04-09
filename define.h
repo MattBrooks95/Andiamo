@@ -10,6 +10,9 @@
 //! shorter type declaration for a map of string:(string:field) pairs
 #define fields_map map<string,map<string,field*>>
 
+//! shorter type declaration fo ra vector of field pointers (as in manager)
+#define fields_vec vector<vector<field*>>
+
 //! easier type declaration for a map of string:param_int4 pairs
 #define int4_map map<string,param_int4>
 
