@@ -48,7 +48,7 @@ print(bin_path)
 local_desktop_file.write("Exec="+bin_path+"\n")
 
 #tell it what icon to use for the executable
-pic_path = home_path + "/Andiamo/Assets/Images/andiamo.png"
+pic_path = home_path + "/Andiamo/Assets/Images/andy_icon.png"
 local_desktop_file.write("Icon="+pic_path+"\n")
 
 #GUI shouldn't need terminal commands, and if a user does

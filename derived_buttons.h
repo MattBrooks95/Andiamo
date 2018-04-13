@@ -211,8 +211,9 @@ class save_context_button : public button{
     //! helper for work(), saves field info to info_file string
     void save_fields(ofstream& context_out);
 
-    //! helper for work(), saves form info to info_file string
-    void save_forms(ofstream& context_out);
+    /*
+    // helper for work(), saves form info to info_file string
+    void save_forms(ofstream& context_out);*/
   private:
 
     //! what is drawn to the screen when the user goes to enter the file name

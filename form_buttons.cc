@@ -44,7 +44,7 @@ void form_button::init(){
 	lock_texture = asset_access->get_texture(lock_target);
 	if(lock_texture == NULL) error_logger.push_error(SDL_GetError());
 	is_locked = true;
-
+    pre_config = false;
 }
 //should be used by the bmangers "form" init member to place each form button such that it lines up with
 //the graphic for the form button tray

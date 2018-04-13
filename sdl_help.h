@@ -27,7 +27,7 @@ extern string HOME;
 //the distance between two adjacent tiles
 #define HORIZ_TILE_PADDING 5
 
-
+#define APP_ICON "andy_icon.png"
 
 //forward declaration,so sdl can be passed a button_manager pointer
 //without needing to #include "button_manager.h",

@@ -735,6 +735,19 @@ void page::page_init(unsigned int num_columns_in, unsigned int rows_needed,
 
 
 }
+
+void init_from_config(unsigned int num_columns_in, unsigned int rows_needed,
+                      const vector<string>& column_labels_in,
+                      vector<string>& row_labels_in,
+                      const vector<int>& column_spacings,
+                      const vector<string>& init_values){
+
+
+
+
+
+}
+
 void page::init_local_var(uint num_columns_in, uint rows_needed,
                         const vector<string>& column_labels_in,
                         vector<string>& row_labels_in){

@@ -98,6 +98,11 @@ class form_button : public button{
 	form my_form;
 
 	SDL_Texture* unlock_help_texture;
+
+    /*! \brief true if this form has information pre-loaded
+     *from config, false otherwise */
+    bool pre_config;
+    
 };
 
 //! opens the form "Cutoff Nuclei"

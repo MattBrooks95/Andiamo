@@ -126,6 +126,27 @@ void sdl_help::init(){
 
 	//give horizontal scroll bar the address of the info it needs from the sdl_help object
 	horiz_bar.init(&x_scroll,&y_scroll, &window_s.width, &window_s.height, renderer,"h_ou_grey_quarter.png");
+
+    //set the application picture for the
+    //start/task bar or dash, and while alt-tabbing
+    //note that the asset manager is not used here because we
+    //need an SDL_Surface*, not an SDL_Texture*
+    string icon_location = HOME + "/Andiamo/Assets/Images/" + APP_ICON;
+    SDL_Surface* icon_surf = IMG_Load(icon_location.c_str());
+    //cout << "Icon should be located at:" << icon_location << endl;
+    if(icon_surf == NULL){
+        error_logger.push_error("Couldn't find the Andiamo window icon at: ",
+                              icon_location);
+        //cout << "Setting iwndow icon didn't work." << endl;
+    } else {
+
+        //setting the window icon does not work unless the image
+        //is 64x64 I guess, it wouldn't work for 600x600
+        //or 128x128
+        SDL_SetWindowIcon(window, icon_surf);
+        SDL_FreeSurface(icon_surf);
+
+    }
 }
 
 void sdl_help::window_update(int width_in, int height_in){

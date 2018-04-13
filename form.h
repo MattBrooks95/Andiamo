@@ -215,10 +215,19 @@ class page{
 	~page();
 
 	//##########################################################################
+    //! sets up this page's variables and graphics
 	void page_init(unsigned int num_columns_in, unsigned int rows_needed,
 					const vector<string>& column_labels_in,
 					vector<string>& row_labels_in,
 					const vector<int>& column_spacings);
+
+    /*! \brief sets up this page's variables and graphics, with info
+     *coming from a config file */
+    void init_from_config(unsigned int num_columns_in, unsigned int rows_needed,
+    					const vector<string>& column_labels_in,
+    					vector<string>& row_labels_in,
+    					const vector<int>& column_spacings,
+                        const vector<string>& init_values);
 
 	//! helper for page_init, does the mundane pass-through assignments
 	void init_local_var(uint num_columns_in, uint rows_needed,

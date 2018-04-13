@@ -334,7 +334,7 @@ void save_context_button::work(){
     context_out.open(HOME+"/Andiamo/config/custom_configs/"+context_file_name);
     if(!context_out.fail()){
         save_fields(context_out);
-        save_forms(context_out);
+        //save_forms(context_out);
     }
     context_out.close();
 }
@@ -371,11 +371,13 @@ void save_context_button::save_fields(ofstream& context_out){
 
     }
 }
-
+/*
 void save_context_button::save_forms(ofstream& context_out){
     cout << "In save_context's save_forms() helper function" << endl;
+
     
-}
+    
+}*/
 
 
 
