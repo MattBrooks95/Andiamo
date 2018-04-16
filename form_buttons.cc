@@ -43,7 +43,8 @@ void form_button::init(){
 	string lock_target = HOME+"/Andiamo/Assets/Images/lock.png";
 	lock_texture = asset_access->get_texture(lock_target);
 	if(lock_texture == NULL) error_logger.push_error(SDL_GetError());
-	is_locked = true;
+	is_locked  = true;
+    init_array = NULL;
     pre_config = false;
 }
 //should be used by the bmangers "form" init member to place each form button such that it lines up with
@@ -152,6 +153,39 @@ bool form_button::check_values(vector<index_value>& error_details){
 	return false;
 }
 
+void form_button::init_values_helper(int current_val){
+
+  //get a reference to this form's pages
+  vector<page>& page_ref = my_form.get_pages();
+
+  if(page_ref.size() == 0){
+    error_logger.push_msg("Page vector wasn't properly initialized.");
+    return;
+  }
+
+  //get the number of columns for the page, so that
+  //the default values are placed properly
+  int num_cols = page_ref[0].get_columns();  
+
+  //use default values if they exist and
+  //the # of them matches what is appropriate for
+  //the icntrl8 value
+  if(init_array != NULL && init_array->size() == num_cols * current_val ){
+
+    cout << "In init_values_helper" << endl;
+
+
+    for(uint page = 0; page < page_ref.size(); page++){
+      vector<text_box>& tb_ref = page_ref[page].get_text_boxes();
+      for(uint text_b = 0; text_b < tb_ref.size(); text_b++){
+
+        tb_ref[text_b].update_text(init_array->at(page*num_cols+text_b));
+
+      }
+    }
+  }
+
+}
 //#############################################################################
 
 
@@ -176,6 +210,10 @@ bool icntrl8_form_button::handle_click(SDL_Event& mouse_event){
 void icntrl8_form_button::click_helper(SDL_Event& mouse_event){
 	error_logger.push_msg("Clicked icntrl8/cutoff nuclei button");
 
+    //grab the value for icntrl8 as it exists with the GUI right now
+    int curr_val =
+        stoi(tile_access->fields.at("line_6").at("ICNTRL8")->temp_input);
+
 	//don't consider doing anything if the form is locked
 	if(!is_locked){
 		screen_size();
@@ -183,15 +221,18 @@ void icntrl8_form_button::click_helper(SDL_Event& mouse_event){
 		//in this case the form has not been previously created
 		if(!my_form.prev_initialized){
 
-			//most of this work is shared with the recreation case
-	    	//so it has been put into a helper function
-			page_creation_helper();
+
+            //make the blank form
+            page_creation_helper();
+
+            //this function pre-fills in the form, if necessary
+            init_values_helper(curr_val);
 
 			my_form.toggle_active();//let the form know that it is now active
 			//enter the mini loop for form entry
 			my_form.form_event_loop(mouse_event);
 
-		} else if(my_form.prev_init_value == stoi(tile_access->fields.at("line_6").at("ICNTRL8")->temp_input) ){
+		} else if( my_form.prev_init_value == curr_val ){
 
 			//let the form know that it is now active
 			my_form.toggle_active();
@@ -199,7 +240,8 @@ void icntrl8_form_button::click_helper(SDL_Event& mouse_event){
 			//enter the mini loop for form entry
 			my_form.form_event_loop(mouse_event);
 
-		//in this case, the form has been previously created, but the icntrl8 value has been changed, so it must be recreated
+		//in this case, the form has been previously created, but
+        //the icntrl8 value has been changed, so it must be recreated
 		} else {
 			my_form.flush_pages();//clear out previous info
 
@@ -207,12 +249,13 @@ void icntrl8_form_button::click_helper(SDL_Event& mouse_event){
 			//so it has been put into a helper function
 			page_creation_helper();
 
+            //this function pre-fills in the form, if necessary
+            init_values_helper(curr_val);
+
 			//let the form know that it is now active
 			my_form.toggle_active();
 			//enter the mini loop for form entry
 			my_form.form_event_loop(mouse_event);
-
-
 		}
 	}
 }
@@ -295,6 +338,16 @@ void icntrl8_form_button::page_creation_helper(){
 void icntrl8_form_button::init_form(const vector<regex>& pattern_tests){
 	my_form.init("Cutoff Nuclei (ICNTRL8)","icntrl8_form_help.png",0,0,
                  pattern_tests);
+
+
+    try{
+        init_array = &io_access->form_init_arrays.at("ICNTRL8");
+        cout << "ICNTRL8 default values received" << endl;
+    } catch(out_of_range& not_found){
+
+        
+
+    }
 }
 
 bool icntrl8_form_button::make_output(ofstream& outs,
@@ -500,6 +553,14 @@ void icntrl6_form_button::init_form(const vector<regex>& pattern_tests){
 	//INM2 form
 	cross_sections.init("# of Search Cross Sections","icntrl6_xsections_help.png",0,0,
                         inm2_patterns);
+
+
+    try{
+        init_array = &io_access->form_init_arrays.at("ICNTRL6");
+        cout << "Default ICNTRL6 values received." << endl;
+    } catch(out_of_range& not_found){
+
+    }
 
 }
 
@@ -1425,6 +1486,13 @@ void icntrl10_button::draw_me(){
 void icntrl10_button::init_data(unsigned int num_contexts){
 
 
+    try{
+        init_array = &io_access->form_init_arrays.at("ICNTRL10");
+        cout << "ICNTRL10 default values received" << endl;
+    } catch(out_of_range& not_found){
+
+    }   
+
     //resize the vector to contain the correct number of input screens
     data.resize(num_contexts);
 
@@ -1530,6 +1598,13 @@ void icntrl4_form_button::init_form(const vector<regex>& pattern_tests){
 	my_form.init("Resolved Levels (ICNTRL4)","icntrl4_form_help.png",0,0,
                  pattern_tests);
 
+
+    try{
+        init_array = &io_access->form_init_arrays.at("ICNTRL4");
+        cout << "Do stuff with ICNTRL4 init list" << endl;
+    } catch(out_of_range& not_found){
+
+    }
 }
 
 bool icntrl4_form_button::handle_click(SDL_Event& mouse_event){
@@ -1765,6 +1840,14 @@ void ilv3_ilv5_form_button::init_form(const vector<regex>& pattern_tests){
 	my_form.init("Distinct Residual Level Density","ilv3_form_help.png",0,0,
 					pattern_tests);
 
+
+
+    try{
+        init_array = &io_access->form_init_arrays.at("ILV3_ILV5");
+        cout << "Do stuff with ILV3/ILV5 init list" << endl;
+    } catch(out_of_range& not_found){
+
+    }
 }
 void ilv3_ilv5_form_button::page_creation_helper(){
 	int ilv3_val;

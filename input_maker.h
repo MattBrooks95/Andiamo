@@ -10,6 +10,10 @@
 #include<regex>
 #include<cstdlib>
 
+//string stream allows reading from a string like it was an input stream
+//makes reading in form_button initializer lists easier
+#include<sstream>
+
 //map is an associative array, like could be found in python or perl
 //items are accessed by name (key)
 #include<map> 
@@ -85,6 +89,12 @@ class input_maker{
 	 *aware of that when they try to exit the program */
 	bool output_was_made;
 
+
+    //! store a mapping of form_button names to their vector values
+    /*! this allows forms to be pre-filled if the config file in use
+     *specifies them */
+    map<string,vector<string>> form_init_arrays;
+
   private:
  	//! contains a string that provides the relative path to the config files
 	string config_p;
@@ -119,6 +129,7 @@ class input_maker{
 
 	//! store the TTAB numbers read in from the TC file
 	vector<param_real8> TTAB;
+
 };
 
 //#########################  NON MEMBER HELPERS  ##############################

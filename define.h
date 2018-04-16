@@ -28,3 +28,5 @@
 //! easier type declaration for a map of string:real8 pairs
 #define r8arr_map map<string,param_r8_array>
 
+//! easier type declaration for a map of strings -> string vectors
+#define str_vec_map map<string,vector<string>>

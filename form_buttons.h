@@ -32,7 +32,6 @@ class form_button : public button{
 	 *so they don't need to hold an image */
 	void init();
 
-
 	/*! used by the button manager to make sure this button lines
 	 *up with its image in the form tray */
 	void set_corner_loc(int x_in, int y_in);
@@ -80,6 +79,12 @@ class form_button : public button{
 	//! check to make sure the inputs are properly formed
 	virtual bool check_values(vector<index_value>& error_details);
 
+    //! helper to fill in text boxes with default values from init_array pointer
+    /* \parameter current_val is the current value of the Andiamo parameter
+     *that unlocked this form */
+    virtual void init_values_helper(int current_val);
+
+
 	//! this function is a const getter by reference for this button's form
 	const form& get_form(){ return my_form;}
 
@@ -102,6 +107,12 @@ class form_button : public button{
     /*! \brief true if this form has information pre-loaded
      *from config, false otherwise */
     bool pre_config;
+
+    //! store pointer to input_maker's initialization array for this form
+    /*! if this is NULL, forms will operate as normal.
+     *if input_maker has an array for this form button, a ptr to it
+     *will be stored here and used to set up the form */
+    vector<string>* init_array;
     
 };
 
@@ -364,6 +375,12 @@ class icntrl10_button : public button{
 
     //! boolean to store whether or not this data entry is accessible
     bool is_locked;
+
+    //! store pointer to input_maker's initialization array for this form
+    /*! if this is NULL, forms will operate as normal.
+     *if input_maker has an array for this form button, a ptr to it
+     *will be stored here and used to set up the form */
+    vector<string>* init_array;
 
     //! stores the objects for NNSIG lines of ICNTRL10 information
     vector<icntrl10_data> data;
