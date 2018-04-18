@@ -61,13 +61,13 @@ struct text_box{
 	 *go off the edge */
 	void update_text(string& new_text);
 
-	//! update the texture when the text is changed
-	void update_texture();
-
 	//! this version of update_text does input checking
 	/*! \param new_text is the test to be added
 	 *\param test is the pattern which indicates good input */ 
 	void update_text(string& new_text,const regex& test);
+
+	//! update the texture when the text is changed
+	void update_texture();
 
 	/*! decides whether or not the input is bad,
 	 *and changes the color of the text box accordingly */

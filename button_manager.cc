@@ -510,10 +510,15 @@ bool button_manager::click_handling(SDL_Event& mouse_event){
 	}
     if(!done_something && save_context.shown){
 
-        if(save_context.handle_click(mouse_event)){
+        if(save_context.my_text_box.was_clicked(mouse_event)){
             //cout << "You clicked on the save context button!" << endl;
+			text_box_loop(&save_context,mouse_event);
             done_something = true;
 
+        } else if(save_context.handle_click(mouse_event)){
+
+            //cout << "Clicked on the actual button, not the text box." << endl;
+            done_something = true;
         }
 
     }

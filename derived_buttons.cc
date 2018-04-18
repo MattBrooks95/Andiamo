@@ -145,7 +145,7 @@ void text_box_button::print_me(){
 	my_text_box.print_me();
 }
 	
-void text_box_button::init(const std::string& image_name_in,const std::string& image_p_in/*,sdl_help* sdl_help_in*/){
+void text_box_button::init(const std::string& image_name_in,const std::string& image_p_in){
 	button::init(image_name_in,image_p_in/*,sdl_help_in*/);
 
 	my_text_box.init(sdl_access->font,"",xloc,yloc+height-25,width,25);
@@ -319,32 +319,18 @@ void save_context_button::click_helper(SDL_Event& mouse_event){
 
     cout << "In save_context click_helper" << endl;
     work();
+
 }
 
-void save_context_button::work(){
-
-    cout << "In save_context work" << endl;
-    string context_file_name = "custom_config.txt";
-
-    //call a function that queries the user for their
-    //desired file name
-    get_context_save_name(context_file_name);
+int save_context_button::work(){
 
     ofstream context_out;
-    context_out.open(HOME+"/Andiamo/config/custom_configs/"+context_file_name);
+    context_out.open(HOME+"/Andiamo/config/custom_configs/"+my_text_box.text);
     if(!context_out.fail()){
         save_fields(context_out);
         //save_forms(context_out);
     }
     context_out.close();
-}
-
-void save_context_button::get_context_save_name(string& context_file_name){
-
-    cout << "Please enter the name you'd like to save this config file under."
-         << endl;
-    cin >> context_file_name;
-
 }
 
 void save_context_button::save_fields(ofstream& context_out){

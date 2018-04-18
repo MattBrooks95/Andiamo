@@ -10,7 +10,7 @@
 
 extern input_maker* io_access;
 extern fop_handler* FOP_access;
-
+extern asset_manager* asset_access;
 //################## EXIT BUTTON ###############################################
 
 using std::string;
@@ -91,9 +91,7 @@ class text_box_button : public button{
 	//! calls button:print_me(), but also prints info about its text box
 	void print_me();
 	//! this is a pure virtual member
-	/*! it must be implemented in classes that inherit from this class,
-	 *because some will want to READ from the input file,
-	 *and some will want to WRITE to the output file */
+	/*! it must be implemented in classes that inherit from this class */
 	virtual int work() = 0;
 
 	/*! overload parent's handle_resize() function, also
@@ -197,16 +195,18 @@ class fop_handler_button : public button{
 };
 
 //! allows the user to save the current state of Andiamo to a config file
-class save_context_button : public button{
+class save_context_button : public text_box_button{
   public:
+
+    //! sets up the "pop up" that allows the user to set save file name
+    void entry_init();
+
+
     //! overloaded click_helper to call overloaded work
     void click_helper(SDL_Event& mouse_event);
 
     //! show popup 'window' and text box for file name entry 
-    void work();
-
-    //! query the user for their desired context file name
-    void get_context_save_name(string& context_file_name);
+    int work();
 
     //! helper for work(), saves field info to info_file string
     void save_fields(ofstream& context_out);
@@ -215,9 +215,6 @@ class save_context_button : public button{
     // helper for work(), saves form info to info_file string
     void save_forms(ofstream& context_out);*/
   private:
-
-    //! what is drawn to the screen when the user goes to enter the file name
-    SDL_Texture* popup_texture;
 
     //! starts off empty, filled in with Andiamo's current parameters 
     string info_file;

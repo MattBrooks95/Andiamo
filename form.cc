@@ -220,8 +220,7 @@ void form::form_event_loop(SDL_Event& big_event){
 	//toggle to true to end the loop
 	bool done = false;
 
-	//used to prevent one click causing multiple things to happen,
-	//like repeatedly
+	//used to prevent one click causing multiple things to happen
 	bool click_lock = false;
 
 	while(!done){
