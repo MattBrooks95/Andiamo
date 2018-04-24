@@ -186,6 +186,28 @@ void form_button::init_values_helper(int current_val){
   }
 
 }
+
+void form_button::save_information(ofstream& context_out){ 
+
+    //get a refernce to all of the pages in this form
+    vector<page>& pages_ref = my_form.get_pages();
+
+    //iterate over all of the pages
+    for(uint page = 0; page < pages_ref.size(); page++){
+
+        //create a reference to this page's text_box array
+        vector<text_box>& tb_array = pages_ref[page].get_text_boxes();
+
+        //loop over all of the text boxes, saving their current
+        //information to the new config file
+        for(uint text_box = 0; text_box < tb_array.size(); text_box++){
+            context_out << tb_array[text_box].text << " ";     
+        }
+
+    }
+
+
+}
 //#############################################################################
 
 
@@ -397,6 +419,11 @@ bool icntrl8_form_button::check_values(vector<index_value>& error_details){
 
 }
 
+void icntrl8_form_button::save_information(ofstream& context_out){
+    context_out << "FORM:ICNTRL8 ";
+    form_button::save_information(context_out);
+
+}
 //##############################################################################
 
 
@@ -993,6 +1020,11 @@ bool icntrl6_form_button::check_values(vector<index_value>& error_details){
 	return return_me;
 }
 
+void icntrl6_form_button::save_information(ofstream& context_out){
+    context_out << "FORM:ICNTRL6 NEEDS SPECIAL FUNCTIONS";
+    form_button::save_information(context_out);
+
+}
 //################################################################################
 
 //####################### ICNTRL10 BUTTON ########################################
@@ -1761,6 +1793,12 @@ bool icntrl4_form_button::check_values(vector<index_value>& error_details){
 	return my_form.check_values(error_details);
 
 }
+
+void icntrl4_form_button::save_information(ofstream& context_out){
+    context_out << "FORM:ICNTRL4 ";
+    form_button::save_information(context_out);
+
+}
 //################################################################################
 
 //################## IVL4 || ILV5 BUTTON #########################################
@@ -1960,6 +1998,12 @@ bool ilv3_ilv5_form_button::make_output(ofstream& outs,vector<index_value>& bad_
 bool ilv3_ilv5_form_button::check_values(vector<index_value>& error_details){
 
 	return my_form.check_values(error_details);
+
+}
+
+void ilv3_ilv5_form_button::save_information(ofstream& context_out){
+    context_out << "FORM:ILV3_ILV5 ";
+    form_button::save_information(context_out);
 
 }
 //#################################################################################

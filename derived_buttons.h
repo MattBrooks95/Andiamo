@@ -11,6 +11,10 @@
 extern input_maker* io_access;
 extern fop_handler* FOP_access;
 extern asset_manager* asset_access;
+
+
+extern bool main_done;
+extern logger error_logger;
 //################## EXIT BUTTON ###############################################
 
 using std::string;
@@ -211,9 +215,10 @@ class save_context_button : public text_box_button{
     //! helper for work(), saves field info to info_file string
     void save_fields(ofstream& context_out);
 
-    /*
+    
     // helper for work(), saves form info to info_file string
-    void save_forms(ofstream& context_out);*/
+    void save_forms(ofstream& context_out);
+
   private:
 
     //! starts off empty, filled in with Andiamo's current parameters 

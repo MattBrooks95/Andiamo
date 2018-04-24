@@ -2,12 +2,11 @@
  *declared in derived_buttons.h */
 
 #include<iostream>
+#include "button_manager.h"
 #include "derived_buttons.h"
 using namespace std;
 
-extern bool main_done;
-extern logger error_logger;
-
+extern button_manager* button_access;
 //################################ EXIT BUTTON #################################
 
 exit_button::exit_button(){
@@ -328,7 +327,7 @@ int save_context_button::work(){
     context_out.open(HOME+"/Andiamo/config/custom_configs/"+my_text_box.text);
     if(!context_out.fail()){
         save_fields(context_out);
-        //save_forms(context_out);
+        save_forms(context_out);
     }
     context_out.close();
 }
@@ -357,13 +356,30 @@ void save_context_button::save_fields(ofstream& context_out){
 
     }
 }
-/*
-void save_context_button::save_forms(ofstream& context_out){
-    cout << "In save_context's save_forms() helper function" << endl;
 
+void save_context_button::save_forms(ofstream& context_out){
+
+    cout << "In save_context's save_forms() helper function" << endl;
     
-    
-}*/
+	//save icntrl8's information to the new config file
+	button_access->get_icntrl_8().save_information(context_out);
+    context_out << endl;
+
+	//save icntrl6's information to the new config file
+	button_access->get_icntrl_6().save_information(context_out);
+    context_out << endl;
+
+	//save icntrl10's information to the new config file
+    //button_access->get_icntrl_10().save_information(context_out);
+
+	//save icntrl4's information to the new config file
+	button_access->get_icntrl_4().save_information(context_out);
+    context_out << endl;
+
+	//save ilv3/ilv5's information to the new config file
+	button_access->get_ilv3_ilv5().save_information(context_out);
+    context_out << endl;
+}
 
 
 

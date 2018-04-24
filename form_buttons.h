@@ -84,6 +84,8 @@ class form_button : public button{
      *that unlocked this form */
     virtual void init_values_helper(int current_val);
 
+    virtual void save_information(ofstream& context_out);
+
 
 	//! this function is a const getter by reference for this button's form
 	const form& get_form(){ return my_form;}
@@ -146,6 +148,9 @@ class icntrl8_form_button : public form_button{
 	//! check to make sure the inputs are properly formed
 	bool check_values(vector<index_value>& error_details);
 
+    //! prints the label for this button, followed by the array information
+    /*! calls form_button::save_information */
+    void save_information(ofstream& context_out);
   private:
 	//! updated with the value from the field that corresponds to Cutoff Nuclei
 	unsigned int icntrl8_val;
@@ -218,6 +223,10 @@ class icntrl6_form_button : public form_button{
 
 	//! check to make sure the inputs are properly formed
 	bool check_values(vector<index_value>& error_details);
+
+    //! prints the label for this button, followed by the array information
+    /*! calls form_button::save_information */
+    void save_information(ofstream& context_out);
 
   private:
 
@@ -425,6 +434,10 @@ class icntrl4_form_button : public form_button{
 	//! check to make sure the inputs are properly formed
 	bool check_values(vector<index_value>& error_details);
 
+    //! prints the label for this button, followed by the array information
+    /*! calls form_button::save_information */
+    void save_information(ofstream& context_out);
+
   private:
 
     /*! not called icntrl4_val because derivative parameter
@@ -457,6 +470,9 @@ class ilv3_ilv5_form_button : public form_button{
 	//! check to make sure the inputs are properly formed
 	bool check_values(vector<index_value>& error_details);
 
+    //! prints the label for this button, followed by the array information
+    /*! calls form_button::save_information */
+    void save_information(ofstream& context_out);
   private:
         
 };
