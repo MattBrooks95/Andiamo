@@ -16,39 +16,52 @@ int filter_mouse_move(void* userdata, SDL_Event* big_event){
 	return 1;
 }
 int filter_mini(void* userdata, SDL_Event* big_event){
-	if(big_event->type == SDL_MOUSEMOTION || big_event->type == SDL_MOUSEBUTTONUP) return 1;
+	if(big_event->type == SDL_MOUSEMOTION ||
+       big_event->type == SDL_MOUSEBUTTONUP) return 1;
 	return 0;
 }
-//############################# MINI LOOP STUFF ###########################################################
+//############### MINI LOOP STUFF ##############################################
 void scrolling_mini_loop(SDL_Event& big_event,char which_bar){
-	bool exit = false;//change to true to end the mini loop
-	SDL_SetEventFilter(filter_mini,NULL);
+
+    //change to true to end the mini loop
+	bool exit = false;
 
 	//change the filter to disallow MOUSEBUTTONDOWN events and allow
 	//MOUSEMOTION events that we need to know in order to scroll 
-	SDL_FlushEvents(0,1000);//this this necessary
+	SDL_SetEventFilter(filter_mini,NULL);
+
+    //this this necessary
+	SDL_FlushEvents(0,1000);
 	while(!exit){
 		SDL_PollEvent(&big_event);
 
 		switch(big_event.type){
 			case SDL_MOUSEBUTTONDOWN:
-				error_logger.push_error("Error, MOUSEBUTTONDOWN not properly filtered in scrolling_mini_loop");
+                {string filt_err;
+                filt_err  = "Error, MOUSEBUTTONDOWN not properly filtered";
+                filt_err += "in scrolling_mini_loop.";
+				error_logger.push_error(filt_err);}
 				break;
+
 			case SDL_MOUSEBUTTONUP:
 				switch(big_event.button.button){
 					case SDL_BUTTON_LEFT:
-							exit = true; //let go of left click, leave
+
+                            //let go of left click, leave
+							exit = true;
 						break;
 					default:
 						break;
 				}//end SDL_MOUSEBUTTONUP baby switch
 				break;
-			case SDL_MOUSEMOTION:
-				if(which_bar == 'v'){ //do stuff for the vertical scroll bar
-				   //only care about y scrolling
 
-					//if(big_event.motion.y > sdl_help.get_v_bar().get_bottom()){
-					if(big_event.motion.y > sdl_access->get_v_bar().get_bottom()){
+			case SDL_MOUSEMOTION:
+
+                //do stuff for the vertical scroll bar
+				if(which_bar == 'v'){ 
+
+				    //only care about y scrolling
+				    if(big_event.motion.y > sdl_access->get_v_bar().get_bottom()){
 						//if user has drug above the top of this bar, scroll up
 						sdl_access->update_scroll(0,-45);
 
@@ -84,14 +97,17 @@ void scrolling_mini_loop(SDL_Event& big_event,char which_bar){
 					SDL_FlushEvent(SDL_MOUSEMOTION);
 				}
 				break;
+
 			case 1776:
 				break;
+
 			default:
-				error_logger.push_error("Error. Didn't hit a case in scrolling event sub-loop.");
+				error_logger.push_error("Didn't hit a case in scrolling event.");
 				exit = true;
 		}//end daddy switch statement
 		SDL_Delay(30);
 	}//end mini loop
+
 	//put the filter back as it was.
 	SDL_SetEventFilter(filter_mouse_move,NULL);
 }
@@ -118,8 +134,8 @@ void handle_mouseb_down( SDL_Event& big_event){
 
 			if( which_bar == 1){
 
-				//a return value of 1 means that the vertical scroll bar was clicked
-				//make sure vals line up
+				//a return value of 1 means that the vertical scroll bar
+                //was clicked make sure vals line up
 				error_logger.push_msg("Clicked on the vertical bar!");
 
 				if(sdl_access->get_v_bar().is_scrolling() == false){
@@ -130,13 +146,16 @@ void handle_mouseb_down( SDL_Event& big_event){
 
 				//should never hit this branch
 				} else {
-					error_logger.push_error("Error! V scroll bar already in scroll mode upon click!");
+
+                    string err = 
+                        "V scroll bar already in scroll mode upon click!";
+					error_logger.push_error(err);
 				}
 
 			} else if( which_bar == 2){
 
-				//a return value of 2 means that horizontal scroll bar was clicked
-				//make sure vals line up
+				//a return value of 2 means that horizontal scroll bar
+                //was clicked make sure vals line up
 				error_logger.push_msg("Clicked on the horizontal bar!");
 
 				if(sdl_access->get_h_bar().is_scrolling() == false){
@@ -148,7 +167,9 @@ void handle_mouseb_down( SDL_Event& big_event){
 				} else {
 
 					//should likewise never hit this branch
-					error_logger.push_error("Error! H scroll bar already in scroll mode upon click!");
+                    string err =
+                        "H scroll bar already in scroll mode upon click!";
+					error_logger.push_error(err);
 				}
 
 			//no scroll bar was clicked, look at other things
@@ -163,20 +184,27 @@ void handle_mouseb_down( SDL_Event& big_event){
 
 			//if which_bar is still -1, something is wrong
 			} else {
-				error_logger.push_error("Error in left mouse button case, sdl_help::scroll_clicked has a bad value.");
+
+                string err = "sdl_help::scroll_clicked has a bad value.";
+				error_logger.push_error(err);
 			}
 			break;
 
 		//handle right clicks
 		case SDL_BUTTON_RIGHT:
-			error_logger.push_msg("\nRight clicked at location = "+to_string(big_event.button.x)+":"+to_string(big_event.button.y));
+            {string msg = "\nRight clicked at location = "
+                         +to_string(big_event.button.x) + ":"
+                         +to_string(big_event.button.y);
+			error_logger.push_msg(msg);}
 			break;
 
 		//handle mousewheel clicks
-		case SDL_BUTTON_MIDDLE:
-
-			error_logger.push_msg("\nMousewheel clicked at location = "+to_string(big_event.button.x)+": "+
-			to_string(big_event.button.y));
+		case SDL_BUTTON_MIDDLE: {
+            string msg = "\nMousewheel clicked at location = "
+                         + to_string(big_event.button.x)+ ": "
+                         + to_string(big_event.button.y);
+			error_logger.push_msg(msg);
+        }
 
 		default:
 			break;

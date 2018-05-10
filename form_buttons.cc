@@ -113,15 +113,12 @@ void form_button::screen_size(){
 
 void form_button::draw_help_msg(SDL_Event& big_event,SDL_Rect& destination){
 
+    sdl_access->draw();
 	SDL_RenderCopy(sdl_access->renderer,unlock_help_texture,NULL,&destination);
 	sdl_access->present();
 
-	//spin until they are done reading, and they click the mouse or push a key - I can't get this to work because
-	//of phantom events, for now it just stays up until they let the mouse button come up
-	while(big_event.type != SDL_MOUSEBUTTONUP ){
-		SDL_PollEvent(&big_event);
-	}
-					
+    //spin until they hit a key, or click somewhere on the screen
+    while(SDL_PollEvent(&big_event) == 0 || big_event.type == SDL_MOUSEBUTTONUP);				
 
 }
 
@@ -1102,7 +1099,11 @@ void icntrl10_button::init(){
     //pattern for sub-line 3 of line 11
     my_patterns.emplace_back(regex("(\\s*-?\\s*[0-9]{1,4}\\s*\\.\\s*[0-9]{0,2}\\s*){6}"));
 
-//"\\s*-?\\s*[0-9]{1,3}\\s*\\.\\s*[0-9]{0,2}\\s*"
+    string unlock_path(HOME);
+    unlock_path +=
+        "/Andiamo/Assets/Images/form_assets/general_form_locked_msg.png";
+    unlock_help_texture = asset_access->get_texture(unlock_path);
+
 }
 
 void icntrl10_button::set_corner_loc(int x, int y){
@@ -1568,15 +1569,12 @@ void icntrl10_button::init_data(unsigned int num_contexts){
 
 void icntrl10_button::draw_help_msg(SDL_Event& big_event,SDL_Rect& destination){
 
+    sdl_access->draw();
 	SDL_RenderCopy(sdl_access->renderer,unlock_help_texture,NULL,&destination);
 	sdl_access->present();
 
-	//spin until they are done reading, and they click the mouse or push a key - I can't get this to work because
-	//of phantom events, for now it just stays up until they let the mouse button come up
-	while(big_event.type != SDL_MOUSEBUTTONUP ){
-		SDL_PollEvent(&big_event);
-	}
-					
+    //spin until they hit a key, or click somewhere on the screen
+    while(SDL_PollEvent(&big_event) == 0 || big_event.type == SDL_MOUSEBUTTONUP);				
 
 }
 

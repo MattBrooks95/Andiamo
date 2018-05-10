@@ -534,7 +534,8 @@ bool button_manager::click_handling(SDL_Event& mouse_event){
 
 	//############### FORM BUTTON CHECKS ######################################
 	if(!done_something){
-		SDL_Rect msg_dest = {250,form_tray_rect.y-500,500,500};
+		//SDL_Rect msg_dest = {250,form_tray_rect.y-500,500,500};
+        SDL_Rect msg_dest = {form_tray_rect.x+250,form_tray_rect.y-500,500,500};
 		if( icntrl_8.handle_click(mouse_event) ){
 			if(icntrl_8.get_is_locked()){
 				icntrl_8.draw_help_msg(mouse_event,msg_dest);
