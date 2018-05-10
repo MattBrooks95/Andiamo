@@ -120,7 +120,7 @@ class text_box_button : public button{
 
 /*! \brief this is derived from the text_box_button class, it should read
  *inputs from the given TC file */ 
-class TC_input_file_button : public text_box_button{
+class TC_dir_button : public text_box_button{
   public:
 	//! transmission coefficients can be read from a given file
 	/*! it modifies the transmission coefficient input file name variable

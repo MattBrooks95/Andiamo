@@ -52,7 +52,7 @@ andy_tile.png
 andy
 ICM:TC Reference Frame
 c Variable name in HF: ICM
-c 0 = energies given in lab,
+c 0 = energies given in lab
 c 1 = energies given in center-of-mass
 andy_tile.png
 200x50

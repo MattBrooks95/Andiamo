@@ -164,9 +164,9 @@ void text_box_button::force_corner_loc(int xloc_in, int yloc_in){
 //###############################################################################################
 
 //###################### TRANSMISSION COEFFICIENTS FILE BUTTON ##################################
-int TC_input_file_button::work(){
+int TC_dir_button::work(){
 
-	//set up the TC In put var in the input maker
+	//set up the TC input var in the input maker
 	io_access->TC_input_file_name = my_text_box.text;
 
 	if(my_text_box.text.size() == 0 || my_text_box.text == " "){
