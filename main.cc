@@ -73,7 +73,10 @@ int main(int argc, char *argv[]){
   //to use a file other than tiles.txt
   string manager_config_file;
 
-  if(!process_args(argc,argv,input_maker_config_file,manager_config_file)){
+  //used to set the show_line_guides boolean in the sdl class later
+  bool line_guides = true;
+  if(!process_args(argc,argv,input_maker_config_file,
+                   manager_config_file,line_guides) ){
 
     //if one of the arguments was malformed, or -help,
     //don't continue execution
@@ -88,6 +91,10 @@ int main(int argc, char *argv[]){
   //set up the sdl wrapper
   sdl_help sdl_helper("Andiamo!");
   sdl_access = &sdl_helper;
+  if(!line_guides){
+    sdl_access->show_line_guides = false;
+  }
+
 
   //import all of the assets
   asset_manager assets;

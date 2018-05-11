@@ -34,26 +34,26 @@ input_maker::input_maker(string output_file_name_in,string config_file_name_in){
 
 void input_maker::check_map(){
 	error_logger.push_msg("####### INPUT MAKER INT4 PARAMS MAP ##############");
-	for(int4_map::iterator int_it = int4_params.begin();
+	for(INT4_MAP::iterator int_it = int4_params.begin();
 	    int_it != int4_params.end();
 	    int_it++){
 		error_logger.push_msg_no_nl(int_it->second.get_string()+"  ");
 	}
 	error_logger.push_msg("\n######### INPUT MAKER R8 PARAMS MAP ##########\n");
-	for(real8_map::iterator r8_it = real8_params.begin();
+	for(REAL8_MAP::iterator r8_it = real8_params.begin();
 	    r8_it != real8_params.end();
 	    r8_it++){
 		error_logger.push_msg_no_nl(r8_it->second.get_string()+":");
 	}
 	error_logger.push_msg("\n######### INPUT MAKER STRING PARAMS MAP ######\n");
-	for(str_map::iterator string_it = string_params.begin();
+	for(STR_MAP::iterator string_it = string_params.begin();
 	    string_it != string_params.end();
 	    string_it++){
         string msg = string_it->first + ":" + string_it->second.value+"   ";
 		error_logger.push_msg_no_nl(msg);
 	}
 	error_logger.push_msg("\n####### INPUT MAKER INT4 ARRAY MAP ###########\n");
-	for(int4arr_map::iterator int4_array_it = int4_array_params.begin();
+	for(INT4_ARR_MAP::iterator int4_array_it = int4_array_params.begin();
 	    int4_array_it != int4_array_params.end();
 	    int4_array_it++){
         string msg = int4_array_it->first + ":"
@@ -61,7 +61,7 @@ void input_maker::check_map(){
 		error_logger.push_msg_no_nl(msg);
 	}
 	error_logger.push_msg("\n####### INPUT MAKER R8_ARRAY MAP #############\n");
-	for(r8arr_map::iterator r8_array_it = r8_array_params.begin();
+	for(R8_ARR_MAP::iterator r8_array_it = r8_array_params.begin();
 	    r8_array_it != r8_array_params.end();
 	    r8_array_it++){
         string msg = r8_array_it->first + ":"
@@ -677,8 +677,8 @@ void do_line1(ofstream& outs,const map<string,param_string>& string_params){
 
 }
 
-void do_line2(ofstream& outs,const real8_map& real8_params,
-              const int4_map& int4_params){
+void do_line2(ofstream& outs,const REAL8_MAP& real8_params,
+              const INT4_MAP& int4_params){
 
 	//note, setw(something) needs to be called before every item is printed
 	//this is really annoying, so I have a macro up top

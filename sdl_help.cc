@@ -96,26 +96,32 @@ sdl_help::sdl_help(string name_in,string HF_input_file_in,
 
 	x_scroll = 0; y_scroll = 0; //set scrolling variables to 0
 
+    show_line_guides = true;
 }
 
 sdl_help::~sdl_help(){
 
 	if(renderer != NULL && window != NULL && font != NULL){
-		SDL_DestroyRenderer(renderer);//stops memory leaks
+
+        //frees memory from the buffers
+		SDL_DestroyRenderer(renderer);
+        //free memory from & close the window
 		SDL_DestroyWindow(window);
-		TTF_CloseFont(font);//give back memory from the font pointer
+        //give back memory from the font pointer
+		TTF_CloseFont(font);
 	} else error_logger.push_error(SDL_HELP_ERROR);
 
+    //SDL clean up calls
 	TTF_Quit();
 	IMG_Quit();
 	SDL_Quit();
 }
 
-//#################################################################################
+//##############################################################################
 
 void sdl_help::init(){
 
-	//############## background image initialization ############################//
+	//############## background image initialization #########################//
 	string bg_loc = HOME + "/Andiamo/Assets/Images/Backgrounds/"+bg_image_name;
 	bg_texture = asset_access->get_texture(bg_loc);
 	if(bg_texture == NULL) error_logger.push_error(SDL_GetError());
@@ -169,6 +175,24 @@ void sdl_help::draw(){
 	//draw the background image to the screen
 	SDL_RenderCopy(renderer,bg_texture,NULL,NULL);
 
+    //if parameter line backdrops are enabled, draw them
+    if(show_line_guides) draw_guides();
+
+    /*
+    //draw the line guides first, to ensure that they end up beneath
+    //the parameter tiles
+    for(vector<LINE_GUIDE>::iterator it = line_guides.begin();
+        it != line_guides.end();
+        it++){
+        //drawing destination needs to change based on
+        //the user's scrolling, so copy & modify it
+        SDL_Rect account_scroll = it->first;
+        account_scroll.x += x_scroll;
+        account_scroll.y += y_scroll;
+
+        SDL_RenderCopy(renderer,it->second,NULL,&account_scroll);
+    }
+    */
 
 	tile_access->draw();
 	draw_sbars();
@@ -210,7 +234,7 @@ void sdl_help::toggle_resizable(){
 
 	}
 }*/
-//**********************SCROLLING FUNCTIONS ***************************************************/
+/**********************SCROLLING FUNCTIONS ***********************************/
 
 /* walk the tile locations vector, and keep track of the rightmost, leftmost,
 * bottommost, and upmost edges of all the tiles. This is used to make sure that
@@ -558,6 +582,17 @@ void sdl_help::calc_corners_helper(vector<field*>& line_in,
 	int y_corner = start_height;
 	
 
+
+    //update this to keep track of how big to make the backdrop
+    //for this line of HF parameters. At this point we know  only the top right
+    //corner
+    SDL_Rect bd_dims = {x_buffer-2,start_height-2,0,0};
+    //save the rightmost tile x corner + tile width value, so that
+    //we can fill in the 'width' variable of the line guide's dimensions
+    //at the end of this function
+    int rightmost_edge = 0;
+
+
 	//save the lowest ylocation + height value there is, so we can update
 	//start_height when this function is done, to allow other rows
 	//to know where to begin placing fields
@@ -573,7 +608,7 @@ void sdl_help::calc_corners_helper(vector<field*>& line_in,
 
 
 			x_corner = line_in[c]->xloc + line_in[c]->get_size().width + x_buffer;
-
+            if(x_corner > rightmost_edge) rightmost_edge = x_corner; 
 			
 			if(line_in[c]->yloc + line_in[c]->get_size().height + 5 > lowest_point){
 				error_logger.push_msg("OLD lowest_point:"+to_string(lowest_point));
@@ -608,11 +643,47 @@ void sdl_help::calc_corners_helper(vector<field*>& line_in,
 		//cout << line_in[c]->xloc << ":" << line_in[c]->yloc << endl;
 	}
 
+    //save the height variable for the line backdrop
+    bd_dims.h = lowest_point + 2 - start_height;
+    bd_dims.w = rightmost_edge; 
+
 	//save the the start location for the next row
 	//start_height = lowest_point + 5;
 	start_height = lowest_point + 15;
+
+    make_line_guide(bd_dims);
 }
 
+void sdl_help::make_line_guide(SDL_Rect bd_dims){
+
+    SDL_Surface* bd_surface;
+    bd_surface = SDL_CreateRGBSurface(0,bd_dims.w,bd_dims.h,32,0,0,0,0);
+    SDL_FillRect(bd_surface,NULL,SDL_MapRGB(bd_surface->format,BD_COLOR) );
+
+    SDL_Texture* bd_texture = SDL_CreateTextureFromSurface(renderer,bd_surface);
+    line_guides.push_back(LINE_GUIDE(bd_dims,bd_texture) );
+
+    //we have no need to store the surface, so give the memory back
+    SDL_FreeSurface(bd_surface);
+}
+
+void sdl_help::draw_guides(){
+
+    //draw the line guides first, to ensure that they end up beneath
+    //the parameter tiles
+    for(vector<LINE_GUIDE>::iterator it = line_guides.begin();
+        it != line_guides.end();
+        it++){
+        //drawing destination needs to change based on
+        //the user's scrolling, so copy & modify it
+        SDL_Rect account_scroll = it->first;
+        account_scroll.x += x_scroll;
+        account_scroll.y += y_scroll;
+
+        SDL_RenderCopy(renderer,it->second,NULL,&account_scroll);
+    }
+
+}
 //##################### NON-MEMBER HELPERS #####################################
 
 bool compare_width(names_and_width& left, names_and_width& right){

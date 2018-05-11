@@ -370,13 +370,13 @@ void manager::give_int4_fields_defaults(){
 	//that needs output to the HF file, and then runs through each line's
 	//map in the manager::fields map looking for the correct parameter
 	//name for that int4 param.
-	for(int4_map::iterator big_it = io_access->get_int4_params().begin();
+	for(INT4_MAP::iterator big_it = io_access->get_int4_params().begin();
 		big_it != io_access->get_int4_params().end();
 		big_it++){
 
 		//start off false, turn to true if the desired parameter is found
 		bool found = false;
-		for(fields_map::iterator line_it = fields.begin();
+		for(FIELDS_MAP::iterator line_it = fields.begin();
 			line_it != fields.end();
 			line_it++){
 		  //try to find the desired parameter in this line
@@ -440,11 +440,11 @@ void manager::give_int4_fields_defaults(){
 
 void manager::give_int4_array_fields_defaults(){
 
-	for(int4arr_map::iterator big_it = io_access->get_i4_array_params().begin();
+	for(INT4_ARR_MAP::iterator big_it = io_access->get_i4_array_params().begin();
 	    big_it != io_access->get_i4_array_params().end();
 	    big_it++){
 		bool found = false;
-		for(fields_map::iterator line_it = fields.begin();
+		for(FIELDS_MAP::iterator line_it = fields.begin();
 		    line_it != fields.end();
 		    line_it++){
 		  try{
@@ -482,12 +482,12 @@ void manager::give_int4_array_fields_defaults(){
 
 void manager::give_real8_fields_defaults(){
 
-	for(real8_map::iterator big_it = io_access->get_real8_params().begin();
+	for(REAL8_MAP::iterator big_it = io_access->get_real8_params().begin();
 	    big_it != io_access->get_real8_params().end();
 	    big_it++){
 
 		bool found = false;
-		for(fields_map::iterator line_it = fields.begin();
+		for(FIELDS_MAP::iterator line_it = fields.begin();
 		    line_it != fields.end();
 		    line_it++){
 		  try{
@@ -536,11 +536,11 @@ void manager::give_real8_fields_defaults(){
 
 void manager::give_string_fields_defaults(){
 
-	for(str_map::iterator big_it = io_access->get_string_params().begin();
+	for(STR_MAP::iterator big_it = io_access->get_string_params().begin();
 	    big_it != io_access->get_string_params().end();
 	    big_it++){
 		bool found = false;
-		for(fields_map::iterator line_it = fields.begin();
+		for(FIELDS_MAP::iterator line_it = fields.begin();
 		    line_it != fields.end();
 		    line_it++){
 		  try{
@@ -578,11 +578,11 @@ void manager::give_string_fields_defaults(){
 
 void manager::give_r8_array_fields_defaults(){
 
-	for(r8arr_map::iterator big_it = io_access->get_r8_array_params().begin();
+	for(R8_ARR_MAP::iterator big_it = io_access->get_r8_array_params().begin();
 	big_it != io_access->get_r8_array_params().end();
 	    big_it++){
 		bool found = false;
-		for(fields_map::iterator lines_it = fields.begin();
+		for(FIELDS_MAP::iterator lines_it = fields.begin();
 		    lines_it != fields.end();
 		    lines_it++){
 		  try{

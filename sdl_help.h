@@ -93,6 +93,9 @@ class sdl_help{
 	//! this function does all the drawing
 	void draw();
 
+    //! show the parameter line back drops
+    void draw_guides();
+
 	//! This member enacts the draw members of vert_bar and horiz_bar
 	/* This should likely be called directly below every call to draw_tiles() */ 
 	void draw_sbars();
@@ -110,8 +113,12 @@ class sdl_help{
 	void calc_corners();
 
 
+    //! called by calc_corners per line of parameters
 	void calc_corners_helper(vector<field*>& line_in,unsigned int& start_height,
 							 int row_limit);
+
+    //! called per calc_corners_helper run, to create parameter line backdrops
+    void make_line_guide(SDL_Rect backdrop_dims);
 
 	//! changes this class's x_scroll and y_scroll values
 	/*! This is being called from handlers.cc most of the time.
@@ -224,6 +231,9 @@ class sdl_help{
 	//! pointer to the font created from the font.ttf file in /config
 	TTF_Font* font;
 
+    //! store whether or not to show the line backdrops
+    bool show_line_guides;
+
   private:
 	//! A string that contains the window name, usually Andiamo."
 	string window_name;
@@ -239,6 +249,9 @@ class sdl_help{
 
 	//! stores the background image
 	SDL_Texture* bg_texture;
+
+    //! 'backdrops' to illustrate which parameters belong to which lines
+    vector<LINE_GUIDE> line_guides;
 
 	/************* FIELDS THAT PERTAIN TO SCROLLING ***************************/
 	/*! \brief contains functions to act on, and draw, the vertical

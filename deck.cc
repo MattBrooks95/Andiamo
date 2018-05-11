@@ -11,40 +11,40 @@ deck::deck(){
 
     //label card
     pass_ptr = new title_card("","Default label",5);
-	cards.insert(c_pair("title",pass_ptr) );
+	cards.insert(C_PAIR("title",pass_ptr) );
 
     pass_ptr = new card("C","",5);
-    cards.insert(c_pair("C",pass_ptr) );
+    cards.insert(C_PAIR("C",pass_ptr) );
 
     pass_ptr = new card("D","",4);
-    cards.insert(c_pair("D",pass_ptr) );
+    cards.insert(C_PAIR("D",pass_ptr) );
 
 
     pass_ptr = new card("E","",4);
-    cards.insert(c_pair("E",pass_ptr) );
+    cards.insert(C_PAIR("E",pass_ptr) );
 
 	//we're not fitting data, 0 out F card
     pass_ptr = new card("F","0.0,0.0,0.0,0,0.0",5);
-    cards.insert(c_pair("F",pass_ptr) );
+    cards.insert(C_PAIR("F",pass_ptr) );
 
     //card L says we need transmission coefficients, so 0,3
     pass_ptr = new card("L","0,3",5);
-    cards.insert(c_pair("L",pass_ptr) );
+    cards.insert(C_PAIR("L",pass_ptr) );
 
     //cards are created using the data directory
     pass_ptr = new card("S","",5);
-    cards.insert(c_pair("S",pass_ptr) );
+    cards.insert(C_PAIR("S",pass_ptr) );
 
     pass_ptr = new card("T","",5);
-    cards.insert(c_pair("T",pass_ptr) );
+    cards.insert(C_PAIR("T",pass_ptr) );
 
 
     pass_ptr = new card("U","",5);
-    cards.insert(c_pair("U",pass_ptr) );
+    cards.insert(C_PAIR("U",pass_ptr) );
 
 
     pass_ptr = new card("V","",5);
-    cards.insert(c_pair("V",pass_ptr) );
+    cards.insert(C_PAIR("V",pass_ptr) );
     pass_ptr = NULL;
 }
 

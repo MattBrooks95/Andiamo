@@ -334,7 +334,7 @@ int save_context_button::work(){
 
 void save_context_button::save_fields(ofstream& context_out){
     cout << "In save_context's save_fields() helper function" << endl;
-    fields_vec* fields_ref = &tile_access->fields_order;
+    FIELDS_VEC* fields_ref = &tile_access->fields_order;
     for(uint line = 0; line < fields_ref->size();line++){
         for(uint param = 0; param < (*fields_ref)[line].size(); param++){
             if(((*fields_ref)[line][param])->int4_hook != NULL){
