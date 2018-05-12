@@ -82,7 +82,7 @@ class form_button : public button{
     //! helper to fill in text boxes with default values from init_array pointer
     /* \parameter current_val is the current value of the Andiamo parameter
      *that unlocked this form */
-    virtual void init_values_helper(int current_val);
+    virtual void init_values_helper();
 
     virtual void save_information(ofstream& context_out);
 

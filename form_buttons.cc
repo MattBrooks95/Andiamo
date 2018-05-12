@@ -155,37 +155,32 @@ bool form_button::check_values(vector<index_value>& error_details){
 	return false;
 }
 
-void form_button::init_values_helper(int current_val){
-
-  //get a reference to this form's pages
-  vector<page>& page_ref = my_form.get_pages();
-
-  if(page_ref.size() == 0){
-    error_logger.push_msg("Page vector wasn't properly initialized.");
-    return;
-  }
-
-  //get the number of columns for the page, so that
-  //the default values are placed properly
-  int num_cols = page_ref[0].get_columns();  
-
-  //use default values if they exist and
-  //the # of them matches what is appropriate for
-  //the icntrl8 value
-  if(init_array != NULL && init_array->size() == num_cols * current_val ){
-
-    cout << "In init_values_helper" << endl;
+void form_button::init_values_helper(){
 
 
-    for(uint page = 0; page < page_ref.size(); page++){
-      vector<text_box>& tb_ref = page_ref[page].get_text_boxes();
-      for(uint text_b = 0; text_b < tb_ref.size(); text_b++){
+    vector<page>& pages = my_form.get_pages();    
 
-        tb_ref[text_b].update_text(init_array->at(page*num_cols+text_b));
+    if(init_array != NULL && pages.size() != 0){
 
-      }
+        UINT init_val_index = 0;
+        for(UINT page = 0; page < pages.size(); page++){
+
+            vector<text_box>& boxes = pages[page].get_text_boxes();
+
+            for(UINT box = 0; box < boxes.size(); box++){
+
+                if(init_val_index > (*init_array).size() ){
+                    break;
+                } else {
+                    boxes[box].update_text((*init_array)[init_val_index]);
+                    init_val_index++;
+                }
+            }
+
+        }
+
     }
-  }
+
 
 }
 
@@ -249,9 +244,6 @@ void icntrl8_form_button::click_helper(SDL_Event& mouse_event){
             //make the blank form
             page_creation_helper();
 
-            //this function pre-fills in the form, if necessary
-            init_values_helper(curr_val);
-
 			my_form.toggle_active();//let the form know that it is now active
 			//enter the mini loop for form entry
 			my_form.form_event_loop(mouse_event);
@@ -272,9 +264,6 @@ void icntrl8_form_button::click_helper(SDL_Event& mouse_event){
 			//most of this work is shared with the 1st time creation case
 			//so it has been put into a helper function
 			page_creation_helper();
-
-            //this function pre-fills in the form, if necessary
-            init_values_helper(curr_val);
 
 			//let the form know that it is now active
 			my_form.toggle_active();
@@ -353,6 +342,8 @@ void icntrl8_form_button::page_creation_helper(){
 
 	my_form.set_page_count(pages_made);
 
+    init_values_helper();
+
 	//let the form class know that it's pages have been set up
 	my_form.prev_initialized = true;
 	//and also what conditions caused such a creation
@@ -366,10 +357,7 @@ void icntrl8_form_button::init_form(const vector<regex>& pattern_tests){
 
     try{
         init_array = &io_access->form_init_arrays.at("ICNTRL8");
-        cout << "ICNTRL8 default values received" << endl;
     } catch(out_of_range& not_found){
-
-        
 
     }
 }
@@ -467,20 +455,22 @@ void icntrl6_form_button::click_helper(SDL_Event& mouse_event){
 		//have sdl_helper update the display
 		sdl_access->present();
 
-		//if we enter a form loop, we should ignore whatever event is in the queue when
-		//the form loop exits. So, this flag should be set to true if a form loop is entered,
-		//that way the do-while loop will know to not worry about where the most recent click was
+		//if we enter a form loop, we should ignore whatever event is in the
+        //queue when the form loop exits. So, this flag should be set to
+        //true if a form loop is entered, that way the do-while loop
+        //will know to not worry about where the most recent click was
 		bool did_something = false;
 
-		//enter this loop unconditionally at first, because the user had to have clicked on the form_button
-		//to get here
+		//enter this loop unconditionally at first, because the user had
+		//to have clicked on the form_button to get here
 		do{
 			//reset did_something flag
 			did_something = false;
 
 			//read from queue until a click event happens
 			while( !(SDL_PollEvent(&mouse_event) == 1 &&
-				(mouse_event.type == SDL_MOUSEBUTTONDOWN || mouse_event.type == SDL_QUIT) ) );
+				(mouse_event.type == SDL_MOUSEBUTTONDOWN ||
+                 mouse_event.type == SDL_QUIT) ) );
 
 			if(mouse_event.type == SDL_QUIT){
 				//putting the same event back in the queue
@@ -516,12 +506,17 @@ void icntrl6_form_button::click_helper(SDL_Event& mouse_event){
 				did_something = true;
 
 			}
-			SDL_RenderClear(sdl_access->renderer);//clear off the screen
+            //clear off the screen
+			SDL_RenderClear(sdl_access->renderer);
 
-			button_access->draw_tray(); //redraw the button tray
-			button_access->draw_form_tray(); //redraw the form button tray
-			button_access	->draw_buttons();//redraw the buttons themselves
-			show_landing();  //redraw the form selection area
+            //redraw the button tray
+			button_access->draw_tray();
+            //redraw the form button tray
+			button_access->draw_form_tray();
+            //redraw the buttons themselves
+			button_access	->draw_buttons();
+            //redraw the form selection area
+			show_landing();
 
 			sdl_access->present();
 
@@ -550,7 +545,8 @@ bool icntrl6_form_button::landing_was_clicked(SDL_Event& mouse_event){
 
 void icntrl6_form_button::init_form(const vector<regex>& pattern_tests){
 
-	//set up the image that lets the user switch between this button's different forms
+	//set up the image that lets the user switch between this
+    //button's different forms
 	setup_landing();
 
     vector<regex> inm1_patterns;
