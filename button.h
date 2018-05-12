@@ -166,15 +166,21 @@ struct active_area{
 	 *clicks with its texture's shape and location, like the "yes" and "no"
 	 *click areas in exit_button */
 	void print_me(){
+        string msg = std::to_string(xloc) + ":" + std::to_string(yloc)
+                     +"     "+ std::to_string(width) + ":"
+				      + std::to_string(height);
 		error_logger.push_msg("Printing active area");
-		error_logger.push_msg(std::to_string(xloc)+":"+std::to_string(yloc)+"     "+std::to_string(width)+":"
-				      +std::to_string(height));
+		error_logger.push_msg(msg);
 	}
 
-	int xloc;//!< corner'ss horizontal location
-	int yloc;//!< corner's vertical location
-	int width;//!< texture's width
-	int height;//!< texture's height
+    //! corner'ss horizontal location
+	int xloc;
+    //! corner's vertical location
+	int yloc;
+    //! texture's width
+	int width;
+    //! texture's height
+	int height;
 };
 
 

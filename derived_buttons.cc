@@ -20,6 +20,13 @@ void exit_button::set_corner_loc(){
 	xloc = (sdl_access->get_win_size()->width / 2) - (width / 2);
 	yloc = (sdl_access->get_win_size()->height / 2) - (height / 2);
 
+    //update the SDL_Rect that is used to draw the exit button
+    make_rect();
+
+    //update the clickable regions to match the exit button's new location
+    //this follows the logic from exit_button::init
+    no_area.set_loc(xloc+30,yloc+30,70,50);
+    yes_area.set_loc(xloc+195,yloc+30,70,50);
 }
 
 bool exit_button::handle_click(SDL_Event& mouse_event){
@@ -115,7 +122,6 @@ void exit_button::init(string image_name_in, string image_p_in){
 	yes_area.yloc = yloc + 30;
 	yes_area.width = 70;
 	yes_area.height = 50;
-
 
 }
 //##############################################################################

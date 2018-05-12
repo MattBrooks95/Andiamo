@@ -137,16 +137,21 @@ void form_button::toggle_lock(){
 
 }
 
-bool form_button::make_output(ofstream& outs,vector<index_value>& bad_input_list){
-	error_logger.push_error("A form button has called the base classes output creation member. Each form button is",
-				" likely to have a special format, so you should customize this function in the derived class.");
+bool form_button::make_output(ofstream& outs,
+                              vector<index_value>& bad_input_list){
+    string err = "A form button has called the base classes output creation ";
+    err       += "member. Each form button is likely to have a special format,";
+    err       += "so you should customize this function in the derived class.";
+	error_logger.push_error(err);
 	return false;
 }
 
 bool form_button::check_values(vector<index_value>& error_details){
 
-	error_logger.push_error("A form button has had check_values() called upon it, but",
-							"it hasn't been overloaded to fit a form. This could be unintended behavior");
+    string err = "A form button has had check_values() called upon it, but";
+    err       += " it hasn't been overloaded to fit a form. This could be";
+    err       += " unintended behavior";
+	error_logger.push_error(err);
 	return false;
 }
 

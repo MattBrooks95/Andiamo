@@ -121,10 +121,15 @@ void button_manager::location_update(){
     save_context.handle_resize(new_y+7);
 
 
+    //update the form tray
 	tray_rect.y = new_y;
 	form_tray_rect.y = new_y - form_tray_rect.h;
 	redo_locks();
     icntrl_6.update_landing();
+
+    //update the landing button's window dimension variables
+    exit_dialogue.set_corner_loc();
+
 }
 
 void button_manager::init_buttons(){
@@ -480,7 +485,7 @@ bool button_manager::click_handling(SDL_Event& mouse_event){
 			vector<string> bad_input_list;
 
 			//if everything is in place, go ahead and make the file
-			if( clean_up() == 0){
+			if( clean_up(mouse_event) == 0){
 
 				//update input_maker's info from the tiles
 				if( !tile_access->update_io_maker(bad_input_list) &&
@@ -540,20 +545,39 @@ bool button_manager::click_handling(SDL_Event& mouse_event){
 	if(!done_something){
 		//SDL_Rect msg_dest = {250,form_tray_rect.y-500,500,500};
         SDL_Rect msg_dest = {form_tray_rect.x+250,form_tray_rect.y-500,500,500};
+
+        //if cutoff_portion is greater than 0, then we need to
+        //"shove" the help message down, so it isn't drawn off the
+        //top of the screen
+        int cutoff_portion = 0 - (form_tray_rect.y - 500);
+        if(cutoff_portion > 0){
+            //this shifts the message's drawn destination down to compensate
+            //for a window that doesn't have much height to it
+            msg_dest.y += cutoff_portion;
+        }
 		if( icntrl_8.handle_click(mouse_event) ){
+
 			if(icntrl_8.get_is_locked()){
+
 				icntrl_8.draw_help_msg(mouse_event,msg_dest);
+
 			} else {
+
 				//incase a resize happened within the form functions,
 				//update the button_manager's location, called here bc
 				//buttons don't have reference to the button_manager
 				location_update();
 			}
 			done_something = true;
+
 		} else if( icntrl_6.handle_click(mouse_event) ){
+
 			if(icntrl_6.get_is_locked()){
+
 				icntrl_6.draw_help_msg(mouse_event,msg_dest);
+
 			} else {
+
 				//incase a resize happened within the form functions,
 				//update the button_manager's location, called here bc
 				//buttons don't have reference to the button_manager
@@ -562,8 +586,11 @@ bool button_manager::click_handling(SDL_Event& mouse_event){
 			done_something = true;
 
 		} else if( icntrl_10.handle_click(mouse_event) ) {
+
 			if(icntrl_10.get_is_locked()){
+
 				icntrl_10.draw_help_msg(mouse_event,msg_dest);
+
 			} else {
 				//incase a resize happened within the form functions,
 				//update the button_manager's location, called here bc
@@ -573,8 +600,11 @@ bool button_manager::click_handling(SDL_Event& mouse_event){
 			done_something = true;
 
 		} else if( icntrl_4.handle_click(mouse_event)  ) {
+
 			if(icntrl_4.get_is_locked()){
+
 				icntrl_4.draw_help_msg(mouse_event,msg_dest);
+
 			} else {
 				//incase a resize happened within the form functions,
 				//update the button_manager's location, called here bc
@@ -584,8 +614,11 @@ bool button_manager::click_handling(SDL_Event& mouse_event){
 			done_something = true;
 
 		} else if( ilv3_ilv5.handle_click(mouse_event) ) {
+
 			if(icntrl_4.get_is_locked()){
+
 				icntrl_4.draw_help_msg(mouse_event,msg_dest);
+
 			} else {
 				//incase a resize happened within the form functions,
 				//update the button_manager's location, called here bc
@@ -601,7 +634,8 @@ bool button_manager::click_handling(SDL_Event& mouse_event){
 
 
 	error_logger.push_msg("DONE HANDLING BUTTON CLICKS");
-	return done_something;//let main know if it should check tiles or not
+    //let main know if it should check tiles or not
+	return done_something;
 }
 
 void button_manager::form_error_message_loop(SDL_Event& event,
@@ -807,7 +841,7 @@ void button_manager::make_form_error_message(const vector<string>& form_bad_inpu
 
 }
 
-int button_manager::clean_up(){
+int button_manager::clean_up(SDL_Event& big_event){
 
 	bool bad_output_fname = false;
 	//bool bad_tc_input_fname = false;
@@ -825,7 +859,7 @@ int button_manager::clean_up(){
 
 	//if either 'bad' flag is true, make the warnings
 	if(bad_output_fname || tc_not_ready){
-		clean_up_warnings(bad_output_fname,tc_not_ready);
+		clean_up_warnings(big_event,bad_output_fname,tc_not_ready);
 	}
 
 	if(tc_not_ready){
@@ -859,7 +893,8 @@ void button_manager::bad_tile_input_warnings(vector<string>& bad_input_list){
 	SDL_DestroyTexture(bad_input_msg_texture);
 
 }
-void button_manager::clean_up_warnings(bool bad_output_fname,bool bad_tc_input_fname){
+void button_manager::clean_up_warnings(SDL_Event& big_event,
+                                bool bad_output_fname,bool bad_tc_input_fname){
 
 	SDL_Texture* tc_input_error_texture = NULL;
 
@@ -933,9 +968,11 @@ void button_manager::clean_up_warnings(bool bad_output_fname,bool bad_tc_input_f
 	}
 
 
-	sdl_access->present();//show the error messages to the screen
-	SDL_Delay(5000);//delay for 5 seconds, so they can read the messages
+    //show the error messages to the screen
+	sdl_access->present();
 
+    //spin until they hit a key, or click somewhere on the screen
+    while(SDL_PollEvent(&big_event) == 0 || big_event.type == SDL_MOUSEBUTTONUP);				
 }
 
 

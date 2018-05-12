@@ -104,13 +104,14 @@ class button_manager{
 	//!  clean_up lets input_maker know which options the user has selected
 	/*! this will be done by accessing the input_maker and
 	 *changing the output paths. */
-	int clean_up();
+	int clean_up(SDL_Event& big_event);
 
 	//! displays warning messages about why file generation may have failed
 	/*! it is a helper function for button_manager::clean_up().
 	 *It mostly just displays some premade error message boxes on the screen
 	 *for a couple of seconds before the program resumes */
-	void clean_up_warnings(bool bad_output_fname,bool bad_tc_input_fname);
+	void clean_up_warnings(SDL_Event& big_event,
+                                bool bad_output_fname,bool bad_tc_input_fname);
 
 	//! displays a warning when tiles fail to convert user inputs
 	/*! it used the vector of strings created by manger::update_io_maker
