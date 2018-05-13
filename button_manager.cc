@@ -564,8 +564,7 @@ bool button_manager::click_handling(SDL_Event& mouse_event){
 			} else {
 
 				//incase a resize happened within the form functions,
-				//update the button_manager's location, called here bc
-				//buttons don't have reference to the button_manager
+				//update the button_manager's location
 				location_update();
 			}
 			done_something = true;
@@ -578,9 +577,6 @@ bool button_manager::click_handling(SDL_Event& mouse_event){
 
 			} else {
 
-				//incase a resize happened within the form functions,
-				//update the button_manager's location, called here bc
-				//buttons don't have reference to the button_manager
 				location_update();
 			}
 			done_something = true;
@@ -592,9 +588,7 @@ bool button_manager::click_handling(SDL_Event& mouse_event){
 				icntrl_10.draw_help_msg(mouse_event,msg_dest);
 
 			} else {
-				//incase a resize happened within the form functions,
-				//update the button_manager's location, called here bc
-				//buttons don't have reference to the button_manager
+
 				location_update();
 			}
 			done_something = true;
@@ -606,23 +600,19 @@ bool button_manager::click_handling(SDL_Event& mouse_event){
 				icntrl_4.draw_help_msg(mouse_event,msg_dest);
 
 			} else {
-				//incase a resize happened within the form functions,
-				//update the button_manager's location, called here bc
-				//buttons don't have reference to the button_manager
+
 				location_update();
 			}
 			done_something = true;
 
 		} else if( ilv3_ilv5.handle_click(mouse_event) ) {
 
-			if(icntrl_4.get_is_locked()){
+			if(ilv3_ilv5.get_is_locked()){
 
 				icntrl_4.draw_help_msg(mouse_event,msg_dest);
 
 			} else {
-				//incase a resize happened within the form functions,
-				//update the button_manager's location, called here bc
-				//buttons don't have reference to the button_manager
+
 				location_update();
 			}
 			done_something = true;

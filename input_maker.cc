@@ -98,7 +98,7 @@ void input_maker::init(const string& alternate_config){
 	regex re_string("\\s*?C\\*\\s*?[A-Za-z_]+?\\|[0-9]+?\\|\\s*?=\\s*?\".+?\"\\s*");
 	regex re_real8("\\s*?R8\\s+?[A-Za-z0-9_]+?\\s+?=\\s+?((-?[0-9]*?\\.[0-9]*?)|(nodef))\\s*");
 
-    regex form_init("FORM:[A-Za-z0-9]*?\\s+?(-?[0-9]+?\\.?[0-9]*? ?)*");
+    regex form_init("FORM:[A-Za-z0-9_]*?\\s+?(-?[0-9]+?\\.?[0-9]*? ?)*");
 
 	regex string_array_size_pattern("\\|\\d+?\\|");
 	regex int_array_size_pattern("\\([0-9]+?\\)");
@@ -376,11 +376,11 @@ void input_maker::init(const string& alternate_config){
             string first_part;
 
             form_init_list >> first_part;
-            //cout << "First part: " << first_part << endl;
+            cout << "First part: " << first_part << endl;
 
 
             string form_name = split(first_part,':')[1];
-            //cout << "Form name: " << form_name << endl;
+            cout << "Form name: " << form_name << endl;
 
             //if this form_name is already in the map,
             //the user has two initializer lists with the same name

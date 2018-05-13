@@ -158,28 +158,40 @@ bool form_button::check_values(vector<index_value>& error_details){
 void form_button::init_values_helper(){
 
 
+    //get reference to this form's pages
     vector<page>& pages = my_form.get_pages();    
 
+    //if default values exist, and the there is at least one page made
     if(init_array != NULL && pages.size() != 0){
 
+        //keep track of which default value needs to be used
         UINT init_val_index = 0;
         for(UINT page = 0; page < pages.size(); page++){
 
+            //get a reference to this page's array of text boxes
             vector<text_box>& boxes = pages[page].get_text_boxes();
 
             for(UINT box = 0; box < boxes.size(); box++){
 
+                //make sure we don't go out of the bounds of the default
+                //value array
                 if(init_val_index > (*init_array).size() ){
                     break;
                 } else {
+                    //use update_text to fill in the box with default values
+                    //this handles the drawing, and moves the cursor
+                    //to the end of the new default value
                     boxes[box].update_text((*init_array)[init_val_index]);
+
+                    //move to the next init value
                     init_val_index++;
-                }
-            }
+                }//text setting if/else block
 
-        }
+            }//text box for loop
 
-    }
+        }//page for loop
+
+    }//outer if
 
 
 }
@@ -410,9 +422,10 @@ bool icntrl8_form_button::check_values(vector<index_value>& error_details){
 }
 
 void icntrl8_form_button::save_information(ofstream& context_out){
-    context_out << "FORM:ICNTRL8 ";
-    form_button::save_information(context_out);
-
+    if(my_form.prev_initialized && my_form.get_pages().size() != 0){
+        context_out << "FORM:ICNTRL8 ";
+        form_button::save_information(context_out);
+    }
 }
 //##############################################################################
 
@@ -704,7 +717,8 @@ void icntrl6_form_button::search_spectra_page_helper(){
 	uint vector_size = ceil((INM1_val * 35) / 725.0);
 	uint pages_made = 0;
 
-	vector<page>& pages = search_spectra.get_pages();//saves space later
+    //saves space later
+	vector<page>& pages = search_spectra.get_pages();
 	pages.resize(vector_size);
 
 
@@ -724,8 +738,9 @@ void icntrl6_form_button::search_spectra_page_helper(){
 		pages_made++;
 	}
 	if(pages_made != vector_size) {
-		error_logger.push_error("Error in icntrl6/search spectra page_creation_helper, # of created pages does not match",
-				       "expected value.");
+        string err = "Error in icntrl6/search spectra page_creation_helper, ";
+        err       += "# of created pages does not match, expected value.";
+		error_logger.push_error(err);
 	}
 
 	search_spectra.set_page_count(pages_made);
@@ -738,7 +753,8 @@ void icntrl6_form_button::search_spectra_page_helper(){
 
 }
 
-void icntrl6_form_button::fill_spectra_vectors(vector<string>& pass_column_labels,vector<int>& column_spaces){
+void icntrl6_form_button::fill_spectra_vectors(vector<string>& pass_column_labels,
+                                               vector<int>& column_spaces){
 	//fill column labels
 	pass_column_labels.push_back("IFIT");
 	pass_column_labels.push_back("SIGFIT");
@@ -1755,6 +1771,8 @@ void icntrl4_form_button::page_creation_helper(){
 
 	my_form.set_page_count(pages_made);
 
+    form_button::init_values_helper();
+
 	//let the form class know that it's pages have been set up
 	my_form.prev_initialized = true;
 	//and also what conditions caused such a creation
@@ -1794,9 +1812,10 @@ bool icntrl4_form_button::check_values(vector<index_value>& error_details){
 }
 
 void icntrl4_form_button::save_information(ofstream& context_out){
-    context_out << "FORM:ICNTRL4 ";
-    form_button::save_information(context_out);
-
+    if(my_form.prev_initialized && my_form.get_pages().size() != 0){
+        context_out << "FORM:ICNTRL4 ";
+        form_button::save_information(context_out);
+    }
 }
 //################################################################################
 
@@ -1966,6 +1985,8 @@ void ilv3_ilv5_form_button::page_creation_helper(){
 	}
 
 	my_form.set_page_count(pages_made);
+
+    form_button::init_values_helper();
 }
 
 bool ilv3_ilv5_form_button::make_output(ofstream& outs,vector<index_value>& bad_input_list){
@@ -2001,9 +2022,10 @@ bool ilv3_ilv5_form_button::check_values(vector<index_value>& error_details){
 }
 
 void ilv3_ilv5_form_button::save_information(ofstream& context_out){
-    context_out << "FORM:ILV3_ILV5 ";
-    form_button::save_information(context_out);
-
+    if(my_form.prev_initialized && my_form.get_pages().size() != 0){
+        context_out << "FORM:ILV3_ILV5 ";
+        form_button::save_information(context_out);
+    }
 }
 //#################################################################################
 
