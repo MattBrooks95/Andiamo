@@ -269,7 +269,6 @@ class icntrl10_data{
 
     vector<text_box> line_entries;
 
-
   private:
 
 
@@ -334,6 +333,11 @@ class icntrl10_button : public button{
     //! presents the entry form to the user
     void draw_me();
 
+    //! save the information to a custom configuration file
+    void save_information(ofstream& context_out);
+
+    //! load in the strings from a custom config file
+    void init_values_helper();
 
 	//!  outputs form info to the input_maker file stream
 	bool make_output(ofstream& outs,vector<index_value>& icntrl10_bad_inputs);

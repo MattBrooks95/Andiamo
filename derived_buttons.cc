@@ -376,7 +376,7 @@ void save_context_button::save_forms(ofstream& context_out){
     context_out << endl;
 
 	//save icntrl10's information to the new config file
-    //button_access->get_icntrl_10().save_information(context_out);
+    button_access->get_icntrl_10().save_information(context_out);
 
 	//save icntrl4's information to the new config file
 	button_access->get_icntrl_4().save_information(context_out);

@@ -1200,13 +1200,6 @@ void icntrl10_button::click_helper(SDL_Event& mouse_event){
 
 	if(!is_locked){
 
-		//screen_size();
-
-		//let the form know that it is now active
-		//my_form.toggle_active();
-
-		//enter the mini loop for form entry
-		//my_form.form_event_loop(mouse_event);
 
         string NNSIG_str;
         NNSIG_str = tile_access->fields.at("line_11").at("NNSIG")->temp_input;
@@ -1218,13 +1211,14 @@ void icntrl10_button::click_helper(SDL_Event& mouse_event){
 
             prev_NNSIG = current_NNSIG;
             init_data(prev_NNSIG);
+            init_values_helper();
 
             event_loop(mouse_event);
 
         } else {
 
             event_loop(mouse_event);
-
+            init_values_helper();
         }
 
 
@@ -1532,6 +1526,86 @@ void icntrl10_button::draw_me(){
     }
 }
 
+void icntrl10_button::save_information(ofstream& context_out){
+
+    if(!data.empty()){
+        stringstream output_line;
+        output_line << "FORM:ICNTRL10 ";
+        for(UINT data_obj = 0; data_obj < data.size(); data_obj++){
+
+            vector<text_box>& box_array = data[data_obj].line_entries;
+
+            for(UINT text_b = 0; text_b < box_array.size();text_b++){
+
+                if(text_b == 0){
+                    output_line << box_array[text_b].text;
+                } else {
+                    output_line  << "," << box_array[text_b].text;
+                }
+            }
+            if(data_obj+1 != data.size()){
+                output_line << "|";
+            }
+
+        }
+
+        cout << output_line.str() << endl;
+        context_out << output_line.str() << endl;
+    }
+
+}
+
+void icntrl10_button::init_values_helper(){
+
+    if(init_array != NULL && !data.empty()){
+
+        //there should only be one string in the string array
+        //and that is the entire line from the config file minus
+        //the FORM:ICNTRL10 part, so it needs parsed
+        vector<string> text_box_info;
+        string init_list = (*init_array)[0];
+
+        //splitting on '|' gives us a string where
+        //the 3 text boxes that each page of icntrl10 form needs
+        //are separated by ','
+        vector<string> each_page = split(init_list,'|');
+        for(UINT page_info = 0; page_info < each_page.size();page_info++){
+
+          //after splitting on ',', we have an array
+          //of the text strings that need to be inserted
+          //into the text boxes
+          vector<string> each_box = split(each_page[page_info],',');
+          for(UINT box_line = 0; box_line < each_box.size();box_line++){
+          
+            //insert this array of actual information into the array
+            //that will be used to fill in values later
+            text_box_info.push_back(each_box[box_line]);  
+
+          }
+        }
+
+        int init_val_index = 0;
+
+        //loop over each data object that has been created
+        for(UINT data_obj = 0; data_obj < data.size(); data_obj++){
+
+            //loop over each text box in that object
+            vector<text_box>& boxes = data[data_obj].line_entries;
+            for(UINT box = 0; box < boxes.size(); box++){
+
+                //initializing its graphics and data, using the
+                //array that was made previously
+                if(init_val_index != text_box_info.size()){
+                    boxes[box].update_text(text_box_info[init_val_index]);
+                    init_val_index++;
+                }
+            }
+
+        }
+
+    } 
+
+}
 
 void icntrl10_button::init_data(unsigned int num_contexts){
 

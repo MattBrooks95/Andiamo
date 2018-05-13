@@ -209,7 +209,7 @@ class save_context_button : public text_box_button{
     //! overloaded click_helper to call overloaded work
     void click_helper(SDL_Event& mouse_event);
 
-    //! show popup 'window' and text box for file name entry 
+    //! saves parameter tiles & form's current values to a custom config file
     int work();
 
     //! helper for work(), saves field info to info_file string

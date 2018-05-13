@@ -98,7 +98,8 @@ void input_maker::init(const string& alternate_config){
 	regex re_string("\\s*?C\\*\\s*?[A-Za-z_]+?\\|[0-9]+?\\|\\s*?=\\s*?\".+?\"\\s*");
 	regex re_real8("\\s*?R8\\s+?[A-Za-z0-9_]+?\\s+?=\\s+?((-?[0-9]*?\\.[0-9]*?)|(nodef))\\s*");
 
-    regex form_init("FORM:[A-Za-z0-9_]*?\\s+?(-?[0-9]+?\\.?[0-9]*? ?)*");
+    //regex form_init("FORM:[A-Za-z0-9_]*?\\s+?(-?[0-9]+?\\.?[0-9]*? ?)*");
+    regex form_init("FORM:[A-Za-z0-9_]*?\\s+?(-?[0-9]+?\\.?[0-9]*?[, |]?)*");
 
 	regex string_array_size_pattern("\\|\\d+?\\|");
 	regex int_array_size_pattern("\\([0-9]+?\\)");
@@ -378,7 +379,6 @@ void input_maker::init(const string& alternate_config){
             form_init_list >> first_part;
             cout << "First part: " << first_part << endl;
 
-
             string form_name = split(first_part,':')[1];
             cout << "Form name: " << form_name << endl;
 
@@ -398,21 +398,34 @@ void input_maker::init(const string& alternate_config){
 
                 vector<string> values;
                 pair<string,vector<string>> push_me(form_name,values);
-
                 form_init_arrays.emplace(push_me);
             }
 
-            //read all of the values into the vector string
-            while(!form_init_list.eof()){
+            //need a special case here, the ICNTRL10 initialization list
+            //has separators besides spaces. So, it's best to just
+            //send over an array of size 1, so that icntrl10 can do the
+            //processing. | separates 'pages', and ',' separates
+            //text boxes. ' ' separates values
+            if(form_name.compare("ICNTRL10") == 0){
 
-                if(form_init_list.fail()){
-                    break;
+
+                string entire_list = form_init_list.str();
+                string without_name = entire_list.substr(14,entire_list.size()-13);
+                form_init_arrays.at(form_name).push_back(without_name);
+
+
+            } else {
+                //read all of the values into the vector string
+                while(!form_init_list.eof()){
+
+                    if(form_init_list.fail()){
+                        break;
+                    }
+                    string this_bit;
+                    form_init_list >> this_bit;
+                    form_init_arrays.at(form_name).push_back(this_bit);
                 }
-                string this_bit;
-                form_init_list >> this_bit;
-                form_init_arrays.at(form_name).push_back(this_bit);
             }
-
             cout << form_name << "'s value list:\n";
             for(uint c = 0; c < form_init_arrays.at(form_name).size();c++){
                 cout << form_init_arrays.at(form_name)[c] << endl;
