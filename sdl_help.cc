@@ -178,22 +178,6 @@ void sdl_help::draw(){
     //if parameter line backdrops are enabled, draw them
     if(show_line_guides) draw_guides();
 
-    /*
-    //draw the line guides first, to ensure that they end up beneath
-    //the parameter tiles
-    for(vector<LINE_GUIDE>::iterator it = line_guides.begin();
-        it != line_guides.end();
-        it++){
-        //drawing destination needs to change based on
-        //the user's scrolling, so copy & modify it
-        SDL_Rect account_scroll = it->first;
-        account_scroll.x += x_scroll;
-        account_scroll.y += y_scroll;
-
-        SDL_RenderCopy(renderer,it->second,NULL,&account_scroll);
-    }
-    */
-
 	tile_access->draw();
 	draw_sbars();
 

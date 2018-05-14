@@ -95,6 +95,11 @@ class input_maker{
      *specifies them */
     map<string,vector<string>> form_init_arrays;
 
+    //! store the initialization lists for icntrl6's extra forms
+    /*! this storage is here and not in the icntrl6_form_button
+     *because the input maker is instantiated first */
+    vector<vector<string>> icntrl6_extra_init_arrays;
+
   private:
  	//! contains a string that provides the relative path to the config files
 	string config_p;

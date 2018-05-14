@@ -159,7 +159,7 @@ void form_button::init_values_helper(){
 
 
     //get reference to this form's pages
-    vector<page>& pages = my_form.get_pages();    
+    vector<page>& pages = my_form.get_pages();   
 
     //if default values exist, and the there is at least one page made
     if(init_array != NULL && pages.size() != 0){
@@ -175,7 +175,7 @@ void form_button::init_values_helper(){
 
                 //make sure we don't go out of the bounds of the default
                 //value array
-                if(init_val_index > (*init_array).size() ){
+                if(init_val_index == (*init_array).size() ){
                     break;
                 } else {
                     //use update_text to fill in the box with default values
@@ -196,9 +196,48 @@ void form_button::init_values_helper(){
 
 }
 
+void form_button::init_form_with_vec(form& fill_me,vector<string>& use_me){
+
+    //get reference to this form's pages
+    vector<page>& pages = fill_me.get_pages();    
+
+    //if default values exist, and the there is at least one page made
+    if(!use_me.empty() && pages.size() != 0){
+
+        //keep track of which default value needs to be used
+        UINT init_val_index = 0;
+        for(UINT page = 0; page < pages.size(); page++){
+
+            //get a reference to this page's array of text boxes
+            vector<text_box>& boxes = pages[page].get_text_boxes();
+
+            for(UINT box = 0; box < boxes.size(); box++){
+
+                //make sure we don't go out of the bounds of the default
+                //value array
+                if(init_val_index == use_me.size() ){
+                    break;
+                } else {
+                    //use update_text to fill in the box with default values
+                    //this handles the drawing, and moves the cursor
+                    //to the end of the new default value
+                    boxes[box].update_text(use_me[init_val_index]);
+
+                    //move to the next init value
+                    init_val_index++;
+                }//text setting if/else block
+
+            }//text box for loop
+
+        }//page for loop
+
+    }//outer if
+
+}
+
 void form_button::save_information(ofstream& context_out){ 
 
-    //get a refernce to all of the pages in this form
+    //get a reference to all of the pages in this form
     vector<page>& pages_ref = my_form.get_pages();
 
     //iterate over all of the pages
@@ -210,11 +249,34 @@ void form_button::save_information(ofstream& context_out){
         //loop over all of the text boxes, saving their current
         //information to the new config file
         for(uint text_box = 0; text_box < tb_array.size(); text_box++){
-            context_out << tb_array[text_box].text << " ";     
+            context_out << tb_array[text_box].text;
+            if(text_box != tb_array.size()-1) context_out << " ";     
         }
 
     }
 
+}
+
+void form_button::save_information(ofstream& context_out,form& this_form){
+
+    //get a reference to all of the pages in this form
+    vector<page>& pages_ref = this_form.get_pages();
+
+    //iterate over all of the pages
+    for(uint page = 0; page < pages_ref.size(); page++){
+
+        //create a reference to this page's text_box array
+        vector<text_box>& tb_array = pages_ref[page].get_text_boxes();
+
+        //loop over all of the text boxes, saving their current
+        //information to the new config file
+        for(uint text_box = 0; text_box < tb_array.size(); text_box++){
+            context_out << tb_array[text_box].text;
+            if(text_box != tb_array.size()-1) context_out << " ";     
+        }
+
+    }
+    
 
 }
 //#############################################################################
@@ -462,6 +524,9 @@ void icntrl6_form_button::click_helper(SDL_Event& mouse_event){
 		//resize the window if necessary
 		screen_size();
 
+        //draw the main context
+        sdl_access->draw();
+
 		//draw the form selection landing 
 		show_landing();
 
@@ -494,8 +559,11 @@ void icntrl6_form_button::click_helper(SDL_Event& mouse_event){
 
 
 			if( parity_area.clicked(mouse_event) ){
-
+                SDL_RenderClear(sdl_access->renderer);
 				parity_page_creation();
+
+                //this will set up the 'my_form' object just fine
+                init_values_helper();
 
 				//let the form know that it is now active
 				my_form.toggle_active();
@@ -505,15 +573,23 @@ void icntrl6_form_button::click_helper(SDL_Event& mouse_event){
 				did_something = true;
 
 			} else if( spectra_area.clicked(mouse_event) ){
-
+                SDL_RenderClear(sdl_access->renderer);
 				search_spectra_page_creation();
+                if(!io_access->icntrl6_extra_init_arrays.empty()){
+                    init_form_with_vec(search_spectra,
+                                   io_access->icntrl6_extra_init_arrays[0]);
+                }
 				search_spectra.toggle_active();
 				search_spectra.form_event_loop(mouse_event);
 				did_something = true;
 
 			} else if( xsections_area.clicked(mouse_event) ){
-
+                SDL_RenderClear(sdl_access->renderer);
 				cross_sections_page_creation();
+                if(!io_access->icntrl6_extra_init_arrays.empty()){
+                    init_form_with_vec(cross_sections,
+                                    io_access->icntrl6_extra_init_arrays[1]);
+                }
 				cross_sections.toggle_active();
 				cross_sections.form_event_loop(mouse_event);
 				did_something = true;
@@ -522,12 +598,14 @@ void icntrl6_form_button::click_helper(SDL_Event& mouse_event){
             //clear off the screen
 			SDL_RenderClear(sdl_access->renderer);
 
+            sdl_access->draw();
+
             //redraw the button tray
-			button_access->draw_tray();
+			//button_access->draw_tray();
             //redraw the form button tray
-			button_access->draw_form_tray();
+			//button_access->draw_form_tray();
             //redraw the buttons themselves
-			button_access	->draw_buttons();
+			//button_access->draw_buttons();
             //redraw the form selection area
 			show_landing();
 
@@ -753,6 +831,7 @@ void icntrl6_form_button::search_spectra_page_helper(){
 
 }
 
+
 void icntrl6_form_button::fill_spectra_vectors(vector<string>& pass_column_labels,
                                                vector<int>& column_spaces){
 	//fill column labels
@@ -873,8 +952,6 @@ void icntrl6_form_button::cross_sections_helper(){
 	search_spectra.prev_initialized = true;
 	//and also what conditions caused such a creation
 	search_spectra.prev_init_value = INM2_val;
-
-
 
 }
 
@@ -1035,8 +1112,19 @@ bool icntrl6_form_button::check_values(vector<index_value>& error_details){
 }
 
 void icntrl6_form_button::save_information(ofstream& context_out){
-    context_out << "FORM:ICNTRL6 NEEDS SPECIAL FUNCTIONS";
-    form_button::save_information(context_out);
+    if(my_form.prev_initialized && my_form.get_pages().size() != 0){
+        context_out << "FORM:ICNTRL6 ";
+        //this part outputs the Parity Info Entry form
+        //(the leftmost one that you can choose after clicking "Parameter Search"
+
+        //use pipe characters as a seperator for the information that corresponds
+        //to the three forms
+        form_button::save_information(context_out);
+        context_out << "|";
+        form_button::save_information(context_out,search_spectra);
+        context_out << "|";
+        form_button::save_information(context_out,cross_sections);
+    }    
 
 }
 //################################################################################
@@ -1565,6 +1653,7 @@ void icntrl10_button::init_values_helper(){
         vector<string> text_box_info;
         string init_list = (*init_array)[0];
 
+        cout << init_list << endl;
         //splitting on '|' gives us a string where
         //the 3 text boxes that each page of icntrl10 form needs
         //are separated by ','

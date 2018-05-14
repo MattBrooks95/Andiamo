@@ -411,8 +411,45 @@ void input_maker::init(const string& alternate_config){
 
                 string entire_list = form_init_list.str();
                 string without_name = entire_list.substr(14,entire_list.size()-13);
+                cout << "icntrl10 without name:" << without_name << endl;
                 form_init_arrays.at(form_name).push_back(without_name);
 
+            } else if(form_name.compare("ICNTRL6") == 0){
+
+                cout << "Processing icntrl6 init values." << endl;
+                //get entirety of input
+                string entire_list = form_init_list.str();
+                cout << entire_list << endl;
+                //cut off the form name
+                string without_name = entire_list.substr(13,entire_list.size()-12);
+                //split the big string along '\', separating it into 3 lists
+                //of values 
+                cout << without_name << endl;
+                vector<string> each_form = split(without_name,'|');
+                for(UINT c = 0; c < each_form.size();c++){
+                    cout << each_form[c] << endl;
+                }
+                //push the first list into the form_init_arrays map
+                //as normal, icntrl6 can use form_button::init_values_helper
+                //to fill out this one
+                vector<string> first_form = split(each_form[0],' ');
+                form_init_arrays.at(form_name) = first_form;
+
+                //but, we also need to fill in the init values for the
+                //other two forms: search_spectra, and cross_sections
+
+                //search_spectra's list of values is found by splitting
+                //its entire string along commas
+                vector<string> search_spectra = split(each_form[1],' ');
+
+                //do the same for cross_sections
+                vector<string> cross_sections = split(each_form[2],' ');
+
+                //push both of the lists into icntrl6's vector
+                //note that the order is important here:
+                //search_spectra then cross_sections
+                icntrl6_extra_init_arrays.push_back(search_spectra);
+                icntrl6_extra_init_arrays.push_back(cross_sections);
 
             } else {
                 //read all of the values into the vector string
@@ -432,7 +469,8 @@ void input_maker::init(const string& alternate_config){
             }
 
 		} else {
-			error_logger.push_error("Error! Line type wasn't determined.");
+			error_logger.push_error("Error! Line type wasn't determined:");
+            error_logger.push_error(temp_string);
 		}
 
 		getline(ins,temp_string);
