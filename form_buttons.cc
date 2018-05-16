@@ -433,6 +433,7 @@ void icntrl8_form_button::init_form(const vector<regex>& pattern_tests){
         init_array = &io_access->form_init_arrays.at("ICNTRL8");
     } catch(out_of_range& not_found){
 
+        init_array = NULL;
     }
 }
 
@@ -491,6 +492,7 @@ void icntrl8_form_button::save_information(ofstream& context_out){
     if(my_form.prev_initialized && my_form.get_pages().size() != 0 ){
         context_out << "FORM:ICNTRL8 ";
         form_button::save_information(context_out);
+        context_out << endl;
 
     //this is the case that the custom config file has provided icntrl8 values
     //but the user may or may not have clicked on the icntrl8 form
@@ -505,6 +507,7 @@ void icntrl8_form_button::save_information(ofstream& context_out){
                 context_out << " ";
             }
         }
+        context_out << endl;
     }
 }
 //##############################################################################
@@ -694,6 +697,7 @@ void icntrl6_form_button::init_form(const vector<regex>& pattern_tests){
         cout << "Default ICNTRL6 values received." << endl;
     } catch(out_of_range& not_found){
 
+        init_array = NULL;
     }
 
 }
@@ -1142,7 +1146,33 @@ void icntrl6_form_button::save_information(ofstream& context_out){
         form_button::save_information(context_out,search_spectra);
         context_out << "|";
         form_button::save_information(context_out,cross_sections);
-    }    
+        context_out << endl;
+    } else if(init_array != NULL){
+        
+        context_out << "FORM:ICNTRL6 ";
+        for(UINT c = 0; c < (*init_array).size();c++){
+            context_out << (*init_array)[0];
+            if(c != (*init_array).size() - 1){
+                context_out << " ";
+            }
+        }
+	    context_out << "|";
+        vector<vector<string>>& init_arrays =
+            io_access->icntrl6_extra_init_arrays;
+
+	    for(UINT c = 0; c < init_arrays.size(); c++){
+            for(UINT d = 0; d < init_arrays[c].size();d++){
+                context_out << init_arrays[c][d];
+                if(d != init_arrays[c].size() - 1){
+                    context_out << " ";
+                }
+            }
+            if(c != init_arrays.size() - 1){
+                context_out << "|";
+            }
+        }
+        context_out << endl;
+    }
 
 }
 //################################################################################
@@ -1227,6 +1257,14 @@ void icntrl10_button::init(){
         "/Andiamo/Assets/Images/form_assets/general_form_locked_msg.png";
     unlock_help_texture = asset_access->get_texture(unlock_path);
 
+    //init_array = NULL;
+    try{
+        init_array = &io_access->form_init_arrays.at("ICNTRL10");
+        cout << "ICNTRL10 default values received" << endl;
+    } catch(out_of_range& not_found){
+
+        init_array = NULL;
+    }   
 }
 
 void icntrl10_button::set_corner_loc(int x, int y){
@@ -1300,9 +1338,8 @@ bool icntrl10_button::handle_click(SDL_Event& mouse_event){
 }
 
 void icntrl10_button::click_helper(SDL_Event& mouse_event){
+
 	error_logger.push_msg("clicked the icntrl10/sigma info button ");
-
-
 
 	if(!is_locked){
 
@@ -1323,8 +1360,9 @@ void icntrl10_button::click_helper(SDL_Event& mouse_event){
 
         } else {
 
-            event_loop(mouse_event);
             init_values_helper();
+            event_loop(mouse_event);
+
         }
 
 
@@ -1634,7 +1672,7 @@ void icntrl10_button::draw_me(){
 
 void icntrl10_button::save_information(ofstream& context_out){
 
-    if(!data.empty()){
+    if(init_array != NULL && !data.empty()){
         stringstream output_line;
         output_line << "FORM:ICNTRL10 ";
         for(UINT data_obj = 0; data_obj < data.size(); data_obj++){
@@ -1655,8 +1693,11 @@ void icntrl10_button::save_information(ofstream& context_out){
 
         }
 
-        cout << output_line.str() << endl;
+        //cout << output_line.str() << endl;
         context_out << output_line.str() << endl;
+    } else if(init_array != NULL){
+
+        context_out << "FORM:ICNTRL10 " << (*init_array)[0] << endl;
     }
 
 }
@@ -1722,6 +1763,7 @@ void icntrl10_button::init_data(unsigned int num_contexts){
         cout << "ICNTRL10 default values received" << endl;
     } catch(out_of_range& not_found){
 
+        init_array = NULL;
     }   
 
     //resize the vector to contain the correct number of input screens
@@ -1832,6 +1874,7 @@ void icntrl4_form_button::init_form(const vector<regex>& pattern_tests){
         cout << "Do stuff with ICNTRL4 init list" << endl;
     } catch(out_of_range& not_found){
 
+        init_array = NULL;
     }
 }
 
@@ -2000,6 +2043,7 @@ void icntrl4_form_button::save_information(ofstream& context_out){
 
         context_out << "FORM:ICNTRL4 ";
         form_button::save_information(context_out);
+        context_out << endl;
 
     } else if(init_array != NULL){
 
@@ -2010,7 +2054,7 @@ void icntrl4_form_button::save_information(ofstream& context_out){
                 context_out << " ";
             }
         }
-
+        context_out << endl;
     }
 }
 //################################################################################
@@ -2099,6 +2143,7 @@ void ilv3_ilv5_form_button::init_form(const vector<regex>& pattern_tests){
         cout << "Do stuff with ILV3/ILV5 init list" << endl;
     } catch(out_of_range& not_found){
 
+        init_array = NULL;
     }
 }
 void ilv3_ilv5_form_button::page_creation_helper(){
@@ -2224,6 +2269,7 @@ void ilv3_ilv5_form_button::save_information(ofstream& context_out){
     if(my_form.prev_initialized && my_form.get_pages().size() != 0){
         context_out << "FORM:ILV3_ILV5 ";
         form_button::save_information(context_out);
+        context_out << endl;
     } else if(init_array != NULL){
 
         context_out << "FORM:ILV3_ILV5 ";
@@ -2233,7 +2279,7 @@ void ilv3_ilv5_form_button::save_information(ofstream& context_out){
                 context_out << " ";
             }
         }
-
+        context_out << endl;
     }
 }
 //#################################################################################

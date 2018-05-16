@@ -369,22 +369,22 @@ void save_context_button::save_forms(ofstream& context_out){
     
 	//save icntrl8's information to the new config file
 	button_access->get_icntrl_8().save_information(context_out);
-    context_out << endl;
+    //context_out << endl;
 
 	//save icntrl6's information to the new config file
 	button_access->get_icntrl_6().save_information(context_out);
-    context_out << endl;
+    //context_out << endl;
 
 	//save icntrl10's information to the new config file
     button_access->get_icntrl_10().save_information(context_out);
 
 	//save icntrl4's information to the new config file
 	button_access->get_icntrl_4().save_information(context_out);
-    context_out << endl;
+    //context_out << endl;
 
 	//save ilv3/ilv5's information to the new config file
 	button_access->get_ilv3_ilv5().save_information(context_out);
-    context_out << endl;
+    //context_out << endl;
 }
 
 
