@@ -484,9 +484,27 @@ bool icntrl8_form_button::check_values(vector<index_value>& error_details){
 }
 
 void icntrl8_form_button::save_information(ofstream& context_out){
-    if(my_form.prev_initialized && my_form.get_pages().size() != 0){
+
+    //this is the case that the user has opened & interacted with
+    //the cutoff nuclei form, and should take precedence over the
+    //initialization values
+    if(my_form.prev_initialized && my_form.get_pages().size() != 0 ){
         context_out << "FORM:ICNTRL8 ";
         form_button::save_information(context_out);
+
+    //this is the case that the custom config file has provided icntrl8 values
+    //but the user may or may not have clicked on the icntrl8 form
+    //because the user hasn't clicked on it, it hasn't been created,
+    //and the original default values stored in the input_maker must be used
+    } else if(init_array != NULL){
+
+        context_out << "FORM:ICNTRL8 ";
+        for(UINT c = 0; c < (*init_array).size();c++){
+            context_out << (*init_array)[c];
+            if(c != (*init_array).size() - 1){
+                context_out << " ";
+            }
+        }
     }
 }
 //##############################################################################
@@ -1975,9 +1993,24 @@ bool icntrl4_form_button::check_values(vector<index_value>& error_details){
 }
 
 void icntrl4_form_button::save_information(ofstream& context_out){
+
+    //icntrl8_form_button::save_information has explanations for these
+    //cases
     if(my_form.prev_initialized && my_form.get_pages().size() != 0){
+
         context_out << "FORM:ICNTRL4 ";
         form_button::save_information(context_out);
+
+    } else if(init_array != NULL){
+
+        context_out << "FORM:ICNTRL4 ";
+        for(UINT c = 0; c < (*init_array).size();c++){
+            context_out << (*init_array)[c];
+            if(c != (*init_array).size() - 1){
+                context_out << " ";
+            }
+        }
+
     }
 }
 //################################################################################
@@ -2185,9 +2218,22 @@ bool ilv3_ilv5_form_button::check_values(vector<index_value>& error_details){
 }
 
 void ilv3_ilv5_form_button::save_information(ofstream& context_out){
+
+    //icntrl8_form_button::save_information has explanations for these
+    //cases
     if(my_form.prev_initialized && my_form.get_pages().size() != 0){
         context_out << "FORM:ILV3_ILV5 ";
         form_button::save_information(context_out);
+    } else if(init_array != NULL){
+
+        context_out << "FORM:ILV3_ILV5 ";
+        for(UINT c = 0; c < (*init_array).size();c++){
+            context_out << (*init_array)[c];
+            if(c != (*init_array).size() - 1){
+                context_out << " ";
+            }
+        }
+
     }
 }
 //#################################################################################
