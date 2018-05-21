@@ -250,7 +250,7 @@ void form_button::save_information(ofstream& context_out){
         //information to the new config file
         for(uint text_box = 0; text_box < tb_array.size(); text_box++){
             context_out << tb_array[text_box].text;
-            if(text_box != tb_array.size()-1) context_out << " ";     
+            if(text_box != tb_array.size()-1 || page != pages_ref.size() - 1) context_out << " ";     
         }
 
     }
@@ -272,7 +272,7 @@ void form_button::save_information(ofstream& context_out,form& this_form){
         //information to the new config file
         for(uint text_box = 0; text_box < tb_array.size(); text_box++){
             context_out << tb_array[text_box].text;
-            if(text_box != tb_array.size()-1) context_out << " ";     
+            if(text_box != tb_array.size()-1 || page != pages_ref.size() - 1) context_out << " ";     
         }
 
     }
@@ -581,10 +581,8 @@ void icntrl6_form_button::click_helper(SDL_Event& mouse_event){
 
 			if( parity_area.clicked(mouse_event) ){
                 SDL_RenderClear(sdl_access->renderer);
-				parity_page_creation();
 
-                //this will set up the 'my_form' object just fine
-                init_values_helper();
+				parity_page_creation();
 
 				//let the form know that it is now active
 				my_form.toggle_active();
@@ -595,23 +593,19 @@ void icntrl6_form_button::click_helper(SDL_Event& mouse_event){
 
 			} else if( spectra_area.clicked(mouse_event) ){
                 SDL_RenderClear(sdl_access->renderer);
+
 				search_spectra_page_creation();
-                if(!io_access->icntrl6_extra_init_arrays.empty()){
-                    init_form_with_vec(search_spectra,
-                                   io_access->icntrl6_extra_init_arrays[0]);
-                }
 				search_spectra.toggle_active();
+
 				search_spectra.form_event_loop(mouse_event);
 				did_something = true;
 
 			} else if( xsections_area.clicked(mouse_event) ){
                 SDL_RenderClear(sdl_access->renderer);
+
 				cross_sections_page_creation();
-                if(!io_access->icntrl6_extra_init_arrays.empty()){
-                    init_form_with_vec(cross_sections,
-                                    io_access->icntrl6_extra_init_arrays[1]);
-                }
 				cross_sections.toggle_active();
+
 				cross_sections.form_event_loop(mouse_event);
 				did_something = true;
 
@@ -723,6 +717,8 @@ void icntrl6_form_button::parity_page_creation(){
 
 		my_form.get_pages()[0].page_init( 3, 18, column_labels,
 											row_labels,column_spaces);
+       //this will set up the 'my_form' object just fine
+       init_values_helper();
 	}
 
 
@@ -774,8 +770,14 @@ void icntrl6_form_button::search_spectra_page_creation(){
 
 		search_spectra_page_helper();
 
+        if(!io_access->icntrl6_extra_init_arrays.empty()){
+            init_form_with_vec(search_spectra,
+            io_access->icntrl6_extra_init_arrays[0]);
+        }
+
 	//case where form has been previously created, but INM1's val has not changed, so it does not need to be remade
 	} else if( search_spectra.prev_initialized && search_spectra.prev_init_value == current_INM1_val ){
+
 		return;
 
 	//case where form has been previously created, and the value of INM1 has been changed
@@ -894,6 +896,11 @@ void icntrl6_form_button::cross_sections_page_creation(){
 	if( !cross_sections.prev_initialized ){
 
 		cross_sections_helper();
+        if(!io_access->icntrl6_extra_init_arrays.empty()){
+            init_form_with_vec(cross_sections,
+                    io_access->icntrl6_extra_init_arrays[1]);
+        }
+
 
 	//case where form has been previously created, but INM2's val has not changed, so it does not need to be remade
 	} else if( cross_sections.prev_initialized && cross_sections.prev_init_value == current_INM2_val ){
@@ -922,9 +929,6 @@ void icntrl6_form_button::cross_sections_helper(){
 				  arg_error.what());
 	  INM2_val = 0;
   	}
-
-	cross_sections.prev_initialized = true;
-	cross_sections.prev_init_value = INM2_val;
 
 	//fill in column labels
 	vector<string> pass_column_labels,pass_row_labels;
@@ -971,9 +975,9 @@ void icntrl6_form_button::cross_sections_helper(){
 	cross_sections.set_page_count(pages_made);
 
 	//let the form class know that it's pages have been set up
-	search_spectra.prev_initialized = true;
+	cross_sections.prev_initialized = true;
 	//and also what conditions caused such a creation
-	search_spectra.prev_init_value = INM2_val;
+	cross_sections.prev_init_value = INM2_val;
 
 }
 
@@ -1149,28 +1153,31 @@ void icntrl6_form_button::save_information(ofstream& context_out){
         context_out << endl;
     } else if(init_array != NULL){
         
+        //###### print parity info data ########################
         context_out << "FORM:ICNTRL6 ";
         for(UINT c = 0; c < (*init_array).size();c++){
-            context_out << (*init_array)[0];
+            context_out << (*init_array)[c];
             if(c != (*init_array).size() - 1){
                 context_out << " ";
             }
         }
+        //######################################################
 	    context_out << "|";
         vector<vector<string>>& init_arrays =
             io_access->icntrl6_extra_init_arrays;
 
+        //print search spectra, then xsections
+        //##################################################################
 	    for(UINT c = 0; c < init_arrays.size(); c++){
             for(UINT d = 0; d < init_arrays[c].size();d++){
                 context_out << init_arrays[c][d];
-                if(d != init_arrays[c].size() - 1){
-                    context_out << " ";
-                }
+                if(d != init_arrays[c].size() - 1) context_out << " ";
             }
             if(c != init_arrays.size() - 1){
                 context_out << "|";
             }
         }
+        //##################################################################
         context_out << endl;
     }
 
