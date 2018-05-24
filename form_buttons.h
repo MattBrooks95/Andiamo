@@ -80,11 +80,23 @@ class form_button : public button{
 	virtual bool check_values(vector<index_value>& error_details);
 
     //! helper to fill in text boxes with default values from init_array pointer
-    /* \parameter current_val is the current value of the Andiamo parameter
+    /*! \parameter current_val is the current value of the Andiamo parameter
      *that unlocked this form */
-    virtual void init_values_helper(int current_val);
+    virtual void init_values_helper();
 
+    //! used to fill in an arbitrary from with an arbitrary string vector
+    /*! this was created for icntrl6 to use to fill it's extra forms */
+    static void init_form_with_vec(form& fill_me,vector<string>& use_me);
+
+    //! saves the parameters of the calling form_button's form object
+    /*! typical usage in virtual members involves the form button
+     *printing it's name as 'FORM:ICNTRLX ' and then a call to
+     *the default form_button::save_information */
     virtual void save_information(ofstream& context_out);
+
+    //! this is used by form_buttons that have more than one form object
+    /*! right now, this is only used by ICNTRl6 */
+    static void save_information(ofstream& context_out,form& this_form);
 
 
 	//! this function is a const getter by reference for this button's form
@@ -228,7 +240,19 @@ class icntrl6_form_button : public form_button{
     /*! calls form_button::save_information */
     void save_information(ofstream& context_out);
 
+    /*! \brief allow input_maker access to the vector of init values info
+     *for the two extra forms */
+    vector<vector<string>>& get_special_forms(){ return form_init_values;}
+
   private:
+
+    /*! \brief store the vector<strings> of information for the icntrl6 forms
+     *in the following order: search spectra, cross sections.*/
+    /*! like the icntrl10 button, there is a special case in the 
+     *input_makers parser for providing this form button with 2 vectors
+     *of initialization information. 'my_form' is filled out
+     *like normal, but the 2 extras are what needs the special attention */
+    vector<vector<string>> form_init_values;
 
 	//! track of what conditions caused the current pages to be made
 	int INM1_val;
@@ -268,7 +292,6 @@ class icntrl10_data{
     }
 
     vector<text_box> line_entries;
-
 
   private:
 
@@ -334,6 +357,11 @@ class icntrl10_button : public button{
     //! presents the entry form to the user
     void draw_me();
 
+    //! save the information to a custom configuration file
+    void save_information(ofstream& context_out);
+
+    //! load in the strings from a custom config file
+    void init_values_helper();
 
 	//!  outputs form info to the input_maker file stream
 	bool make_output(ofstream& outs,vector<index_value>& icntrl10_bad_inputs);

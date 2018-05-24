@@ -120,7 +120,7 @@ class text_box_button : public button{
 
 /*! \brief this is derived from the text_box_button class, it should read
  *inputs from the given TC file */ 
-class TC_input_file_button : public text_box_button{
+class TC_dir_button : public text_box_button{
   public:
 	//! transmission coefficients can be read from a given file
 	/*! it modifies the transmission coefficient input file name variable
@@ -209,7 +209,7 @@ class save_context_button : public text_box_button{
     //! overloaded click_helper to call overloaded work
     void click_helper(SDL_Event& mouse_event);
 
-    //! show popup 'window' and text box for file name entry 
+    //! saves parameter tiles & form's current values to a custom config file
     int work();
 
     //! helper for work(), saves field info to info_file string

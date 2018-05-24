@@ -3,6 +3,7 @@
 #include "fop_handler.h"
 #include "sdl_help.h"
 #include "input_maker.h"
+#include "button_manager.h"
 #include "logger.h"
 using namespace std;
 
@@ -22,10 +23,21 @@ fop_handler::fop_handler(){
 	open_channels[4] = false;
 	open_channels[5] = false;
 	open_channels[6] = false;
+
+    //no transmission coefficients are ready in between the fop_handler
+    //instantiation and fop_main being ran
+    ready = false;
 }
 
 fop_handler::~fop_handler(){
 
+    for(vector<deck*>::iterator it = fop_decks.begin();
+        it != fop_decks.end();
+        it++){
+
+        delete(*it);
+
+    }
 
 }
 
@@ -108,7 +120,7 @@ void fop_handler::fop_main(){
 
 		if(open_channels[c]){
 
-			//prepare_deck(A_proj,Z_proj,A_targ,Z_targ,ecm_value);
+			prepare_deck(A_proj,Z_proj,A_targ,Z_targ,ecm_value);
 
 		}
 
@@ -152,6 +164,8 @@ void fop_handler::fop_main(){
 	}
 
 
+    //set ready to true, transmission coefficients have been prepared
+    ready = true;
 }
 
 
@@ -473,16 +487,32 @@ void fop_handler::calc_Ap_Zp_At_Zt(int IENCH,
 
 void fop_handler::prepare_deck(int A_proj,int Z_proj,int A_targ,int Z_targ,
                                double ecm_value){
+    //start off assuming we'll use the default TC directory
+    string transmission_dir = trans_path;
+
+
+    //if the user has specified an alternate directory, 
+    //use that instead. Note that a full path must be provided here.
+    //The alternate directory must also have the same file structure
+    //as the provided default one.
+    string alt_tc_dir = button_access->get_tc_dir_button().my_text_box.text;
+    if(alt_tc_dir.size() != 0){
+        cout << "using alternate TC dir:" + alt_tc_dir << endl; 
+        transmission_dir = alt_tc_dir;
+    }
+
+    
 
 	//cout << "Stand in for prepare_decks() work." << endl;
 
-    //create the fop deck for this run
-    fop_decks.emplace_back(deck());
+    //push NULL ptr into back of fop_vector
+    fop_decks.push_back(NULL);
+    fop_decks.back() = new deck();
 
     //#### initialize it's cards to the proper values ####
 
     //get a reference to the uninitialized fop deck we just made
-    deck& this_deck = fop_decks.back();
+    deck* this_deck = fop_decks.back();
 
     //c needs calculations #####################################
     /* EMax  = (EBeam * (ATarget / (ABeam * ATarget)))
@@ -494,6 +524,10 @@ void fop_handler::prepare_deck(int A_proj,int Z_proj,int A_targ,int Z_targ,
     //##########################################################
 
     //d comes from andiamo input, projectile info
+    string D_args(to_string(Z_proj));
+    D_args += "," + to_string(Z_proj);
+    //this_deck->at("D")->info = 
+
     //e also comes from andiamo input, target info
     //f can be left alone, defaults to all 0's (no fitting)
     //l can be left alone, just tells FOP to do TCs (0,3)

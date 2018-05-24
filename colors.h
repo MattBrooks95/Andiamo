@@ -8,3 +8,5 @@
 #define BLACK 0,0,0,0
 //! pure white
 #define WHITE 255,255,255,255
+
+#define BD_COLOR 0,142,147

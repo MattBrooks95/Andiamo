@@ -113,15 +113,12 @@ void form_button::screen_size(){
 
 void form_button::draw_help_msg(SDL_Event& big_event,SDL_Rect& destination){
 
+    sdl_access->draw();
 	SDL_RenderCopy(sdl_access->renderer,unlock_help_texture,NULL,&destination);
 	sdl_access->present();
 
-	//spin until they are done reading, and they click the mouse or push a key - I can't get this to work because
-	//of phantom events, for now it just stays up until they let the mouse button come up
-	while(big_event.type != SDL_MOUSEBUTTONUP ){
-		SDL_PollEvent(&big_event);
-	}
-					
+    //spin until they hit a key, or click somewhere on the screen
+    while(SDL_PollEvent(&big_event) == 0 || big_event.type == SDL_MOUSEBUTTONUP);				
 
 }
 
@@ -140,56 +137,107 @@ void form_button::toggle_lock(){
 
 }
 
-bool form_button::make_output(ofstream& outs,vector<index_value>& bad_input_list){
-	error_logger.push_error("A form button has called the base classes output creation member. Each form button is",
-				" likely to have a special format, so you should customize this function in the derived class.");
+bool form_button::make_output(ofstream& outs,
+                              vector<index_value>& bad_input_list){
+    string err = "A form button has called the base classes output creation ";
+    err       += "member. Each form button is likely to have a special format,";
+    err       += "so you should customize this function in the derived class.";
+	error_logger.push_error(err);
 	return false;
 }
 
 bool form_button::check_values(vector<index_value>& error_details){
 
-	error_logger.push_error("A form button has had check_values() called upon it, but",
-							"it hasn't been overloaded to fit a form. This could be unintended behavior");
+    string err = "A form button has had check_values() called upon it, but";
+    err       += " it hasn't been overloaded to fit a form. This could be";
+    err       += " unintended behavior";
+	error_logger.push_error(err);
 	return false;
 }
 
-void form_button::init_values_helper(int current_val){
-
-  //get a reference to this form's pages
-  vector<page>& page_ref = my_form.get_pages();
-
-  if(page_ref.size() == 0){
-    error_logger.push_msg("Page vector wasn't properly initialized.");
-    return;
-  }
-
-  //get the number of columns for the page, so that
-  //the default values are placed properly
-  int num_cols = page_ref[0].get_columns();  
-
-  //use default values if they exist and
-  //the # of them matches what is appropriate for
-  //the icntrl8 value
-  if(init_array != NULL && init_array->size() == num_cols * current_val ){
-
-    cout << "In init_values_helper" << endl;
+void form_button::init_values_helper(){
 
 
-    for(uint page = 0; page < page_ref.size(); page++){
-      vector<text_box>& tb_ref = page_ref[page].get_text_boxes();
-      for(uint text_b = 0; text_b < tb_ref.size(); text_b++){
+    //get reference to this form's pages
+    vector<page>& pages = my_form.get_pages();   
 
-        tb_ref[text_b].update_text(init_array->at(page*num_cols+text_b));
+    //if default values exist, and the there is at least one page made
+    if(init_array != NULL && pages.size() != 0){
 
-      }
-    }
-  }
+        //keep track of which default value needs to be used
+        UINT init_val_index = 0;
+        for(UINT page = 0; page < pages.size(); page++){
+
+            //get a reference to this page's array of text boxes
+            vector<text_box>& boxes = pages[page].get_text_boxes();
+
+            for(UINT box = 0; box < boxes.size(); box++){
+
+                //make sure we don't go out of the bounds of the default
+                //value array
+                if(init_val_index == (*init_array).size() ){
+                    break;
+                } else {
+                    //use update_text to fill in the box with default values
+                    //this handles the drawing, and moves the cursor
+                    //to the end of the new default value
+                    boxes[box].update_text((*init_array)[init_val_index]);
+
+                    //move to the next init value
+                    init_val_index++;
+                }//text setting if/else block
+
+            }//text box for loop
+
+        }//page for loop
+
+    }//outer if
+
+
+}
+
+void form_button::init_form_with_vec(form& fill_me,vector<string>& use_me){
+
+    //get reference to this form's pages
+    vector<page>& pages = fill_me.get_pages();    
+
+    //if default values exist, and the there is at least one page made
+    if(!use_me.empty() && pages.size() != 0){
+
+        //keep track of which default value needs to be used
+        UINT init_val_index = 0;
+        for(UINT page = 0; page < pages.size(); page++){
+
+            //get a reference to this page's array of text boxes
+            vector<text_box>& boxes = pages[page].get_text_boxes();
+
+            for(UINT box = 0; box < boxes.size(); box++){
+
+                //make sure we don't go out of the bounds of the default
+                //value array
+                if(init_val_index == use_me.size() ){
+                    break;
+                } else {
+                    //use update_text to fill in the box with default values
+                    //this handles the drawing, and moves the cursor
+                    //to the end of the new default value
+                    boxes[box].update_text(use_me[init_val_index]);
+
+                    //move to the next init value
+                    init_val_index++;
+                }//text setting if/else block
+
+            }//text box for loop
+
+        }//page for loop
+
+    }//outer if
 
 }
 
 void form_button::save_information(ofstream& context_out){ 
 
-    //get a refernce to all of the pages in this form
+    //get a reference to all of the pages in this form
     vector<page>& pages_ref = my_form.get_pages();
 
     //iterate over all of the pages
@@ -201,11 +249,34 @@ void form_button::save_information(ofstream& context_out){
         //loop over all of the text boxes, saving their current
         //information to the new config file
         for(uint text_box = 0; text_box < tb_array.size(); text_box++){
-            context_out << tb_array[text_box].text << " ";     
+            context_out << tb_array[text_box].text;
+            if(text_box != tb_array.size()-1 || page != pages_ref.size() - 1) context_out << " ";     
         }
 
     }
 
+}
+
+void form_button::save_information(ofstream& context_out,form& this_form){
+
+    //get a reference to all of the pages in this form
+    vector<page>& pages_ref = this_form.get_pages();
+
+    //iterate over all of the pages
+    for(uint page = 0; page < pages_ref.size(); page++){
+
+        //create a reference to this page's text_box array
+        vector<text_box>& tb_array = pages_ref[page].get_text_boxes();
+
+        //loop over all of the text boxes, saving their current
+        //information to the new config file
+        for(uint text_box = 0; text_box < tb_array.size(); text_box++){
+            context_out << tb_array[text_box].text;
+            if(text_box != tb_array.size()-1 || page != pages_ref.size() - 1) context_out << " ";     
+        }
+
+    }
+    
 
 }
 //#############################################################################
@@ -247,9 +318,6 @@ void icntrl8_form_button::click_helper(SDL_Event& mouse_event){
             //make the blank form
             page_creation_helper();
 
-            //this function pre-fills in the form, if necessary
-            init_values_helper(curr_val);
-
 			my_form.toggle_active();//let the form know that it is now active
 			//enter the mini loop for form entry
 			my_form.form_event_loop(mouse_event);
@@ -270,9 +338,6 @@ void icntrl8_form_button::click_helper(SDL_Event& mouse_event){
 			//most of this work is shared with the 1st time creation case
 			//so it has been put into a helper function
 			page_creation_helper();
-
-            //this function pre-fills in the form, if necessary
-            init_values_helper(curr_val);
 
 			//let the form know that it is now active
 			my_form.toggle_active();
@@ -351,6 +416,8 @@ void icntrl8_form_button::page_creation_helper(){
 
 	my_form.set_page_count(pages_made);
 
+    init_values_helper();
+
 	//let the form class know that it's pages have been set up
 	my_form.prev_initialized = true;
 	//and also what conditions caused such a creation
@@ -364,11 +431,9 @@ void icntrl8_form_button::init_form(const vector<regex>& pattern_tests){
 
     try{
         init_array = &io_access->form_init_arrays.at("ICNTRL8");
-        cout << "ICNTRL8 default values received" << endl;
     } catch(out_of_range& not_found){
 
-        
-
+        init_array = NULL;
     }
 }
 
@@ -420,9 +485,30 @@ bool icntrl8_form_button::check_values(vector<index_value>& error_details){
 }
 
 void icntrl8_form_button::save_information(ofstream& context_out){
-    context_out << "FORM:ICNTRL8 ";
-    form_button::save_information(context_out);
 
+    //this is the case that the user has opened & interacted with
+    //the cutoff nuclei form, and should take precedence over the
+    //initialization values
+    if(my_form.prev_initialized && my_form.get_pages().size() != 0 ){
+        context_out << "FORM:ICNTRL8 ";
+        form_button::save_information(context_out);
+        context_out << endl;
+
+    //this is the case that the custom config file has provided icntrl8 values
+    //but the user may or may not have clicked on the icntrl8 form
+    //because the user hasn't clicked on it, it hasn't been created,
+    //and the original default values stored in the input_maker must be used
+    } else if(init_array != NULL){
+
+        context_out << "FORM:ICNTRL8 ";
+        for(UINT c = 0; c < (*init_array).size();c++){
+            context_out << (*init_array)[c];
+            if(c != (*init_array).size() - 1){
+                context_out << " ";
+            }
+        }
+        context_out << endl;
+    }
 }
 //##############################################################################
 
@@ -459,26 +545,31 @@ void icntrl6_form_button::click_helper(SDL_Event& mouse_event){
 		//resize the window if necessary
 		screen_size();
 
+        //draw the main context
+        sdl_access->draw();
+
 		//draw the form selection landing 
 		show_landing();
 
 		//have sdl_helper update the display
 		sdl_access->present();
 
-		//if we enter a form loop, we should ignore whatever event is in the queue when
-		//the form loop exits. So, this flag should be set to true if a form loop is entered,
-		//that way the do-while loop will know to not worry about where the most recent click was
+		//if we enter a form loop, we should ignore whatever event is in the
+        //queue when the form loop exits. So, this flag should be set to
+        //true if a form loop is entered, that way the do-while loop
+        //will know to not worry about where the most recent click was
 		bool did_something = false;
 
-		//enter this loop unconditionally at first, because the user had to have clicked on the form_button
-		//to get here
+		//enter this loop unconditionally at first, because the user had
+		//to have clicked on the form_button to get here
 		do{
 			//reset did_something flag
 			did_something = false;
 
 			//read from queue until a click event happens
 			while( !(SDL_PollEvent(&mouse_event) == 1 &&
-				(mouse_event.type == SDL_MOUSEBUTTONDOWN || mouse_event.type == SDL_QUIT) ) );
+				(mouse_event.type == SDL_MOUSEBUTTONDOWN ||
+                 mouse_event.type == SDL_QUIT) ) );
 
 			if(mouse_event.type == SDL_QUIT){
 				//putting the same event back in the queue
@@ -489,6 +580,7 @@ void icntrl6_form_button::click_helper(SDL_Event& mouse_event){
 
 
 			if( parity_area.clicked(mouse_event) ){
+                SDL_RenderClear(sdl_access->renderer);
 
 				parity_page_creation();
 
@@ -500,26 +592,37 @@ void icntrl6_form_button::click_helper(SDL_Event& mouse_event){
 				did_something = true;
 
 			} else if( spectra_area.clicked(mouse_event) ){
+                SDL_RenderClear(sdl_access->renderer);
 
 				search_spectra_page_creation();
 				search_spectra.toggle_active();
+
 				search_spectra.form_event_loop(mouse_event);
 				did_something = true;
 
 			} else if( xsections_area.clicked(mouse_event) ){
+                SDL_RenderClear(sdl_access->renderer);
 
 				cross_sections_page_creation();
 				cross_sections.toggle_active();
+
 				cross_sections.form_event_loop(mouse_event);
 				did_something = true;
 
 			}
-			SDL_RenderClear(sdl_access->renderer);//clear off the screen
+            //clear off the screen
+			SDL_RenderClear(sdl_access->renderer);
 
-			button_access->draw_tray(); //redraw the button tray
-			button_access->draw_form_tray(); //redraw the form button tray
-			button_access	->draw_buttons();//redraw the buttons themselves
-			show_landing();  //redraw the form selection area
+            sdl_access->draw();
+
+            //redraw the button tray
+			//button_access->draw_tray();
+            //redraw the form button tray
+			//button_access->draw_form_tray();
+            //redraw the buttons themselves
+			//button_access->draw_buttons();
+            //redraw the form selection area
+			show_landing();
 
 			sdl_access->present();
 
@@ -548,7 +651,8 @@ bool icntrl6_form_button::landing_was_clicked(SDL_Event& mouse_event){
 
 void icntrl6_form_button::init_form(const vector<regex>& pattern_tests){
 
-	//set up the image that lets the user switch between this button's different forms
+	//set up the image that lets the user switch between this
+    //button's different forms
 	setup_landing();
 
     vector<regex> inm1_patterns;
@@ -587,6 +691,7 @@ void icntrl6_form_button::init_form(const vector<regex>& pattern_tests){
         cout << "Default ICNTRL6 values received." << endl;
     } catch(out_of_range& not_found){
 
+        init_array = NULL;
     }
 
 }
@@ -612,6 +717,8 @@ void icntrl6_form_button::parity_page_creation(){
 
 		my_form.get_pages()[0].page_init( 3, 18, column_labels,
 											row_labels,column_spaces);
+       //this will set up the 'my_form' object just fine
+       init_values_helper();
 	}
 
 
@@ -663,8 +770,14 @@ void icntrl6_form_button::search_spectra_page_creation(){
 
 		search_spectra_page_helper();
 
+        if(!io_access->icntrl6_extra_init_arrays.empty()){
+            init_form_with_vec(search_spectra,
+            io_access->icntrl6_extra_init_arrays[0]);
+        }
+
 	//case where form has been previously created, but INM1's val has not changed, so it does not need to be remade
 	} else if( search_spectra.prev_initialized && search_spectra.prev_init_value == current_INM1_val ){
+
 		return;
 
 	//case where form has been previously created, and the value of INM1 has been changed
@@ -706,7 +819,8 @@ void icntrl6_form_button::search_spectra_page_helper(){
 	uint vector_size = ceil((INM1_val * 35) / 725.0);
 	uint pages_made = 0;
 
-	vector<page>& pages = search_spectra.get_pages();//saves space later
+    //saves space later
+	vector<page>& pages = search_spectra.get_pages();
 	pages.resize(vector_size);
 
 
@@ -726,8 +840,9 @@ void icntrl6_form_button::search_spectra_page_helper(){
 		pages_made++;
 	}
 	if(pages_made != vector_size) {
-		error_logger.push_error("Error in icntrl6/search spectra page_creation_helper, # of created pages does not match",
-				       "expected value.");
+        string err = "Error in icntrl6/search spectra page_creation_helper, ";
+        err       += "# of created pages does not match, expected value.";
+		error_logger.push_error(err);
 	}
 
 	search_spectra.set_page_count(pages_made);
@@ -740,7 +855,9 @@ void icntrl6_form_button::search_spectra_page_helper(){
 
 }
 
-void icntrl6_form_button::fill_spectra_vectors(vector<string>& pass_column_labels,vector<int>& column_spaces){
+
+void icntrl6_form_button::fill_spectra_vectors(vector<string>& pass_column_labels,
+                                               vector<int>& column_spaces){
 	//fill column labels
 	pass_column_labels.push_back("IFIT");
 	pass_column_labels.push_back("SIGFIT");
@@ -779,6 +896,11 @@ void icntrl6_form_button::cross_sections_page_creation(){
 	if( !cross_sections.prev_initialized ){
 
 		cross_sections_helper();
+        if(!io_access->icntrl6_extra_init_arrays.empty()){
+            init_form_with_vec(cross_sections,
+                    io_access->icntrl6_extra_init_arrays[1]);
+        }
+
 
 	//case where form has been previously created, but INM2's val has not changed, so it does not need to be remade
 	} else if( cross_sections.prev_initialized && cross_sections.prev_init_value == current_INM2_val ){
@@ -807,9 +929,6 @@ void icntrl6_form_button::cross_sections_helper(){
 				  arg_error.what());
 	  INM2_val = 0;
   	}
-
-	cross_sections.prev_initialized = true;
-	cross_sections.prev_init_value = INM2_val;
 
 	//fill in column labels
 	vector<string> pass_column_labels,pass_row_labels;
@@ -856,11 +975,9 @@ void icntrl6_form_button::cross_sections_helper(){
 	cross_sections.set_page_count(pages_made);
 
 	//let the form class know that it's pages have been set up
-	search_spectra.prev_initialized = true;
+	cross_sections.prev_initialized = true;
 	//and also what conditions caused such a creation
-	search_spectra.prev_init_value = INM2_val;
-
-
+	cross_sections.prev_init_value = INM2_val;
 
 }
 
@@ -1021,8 +1138,48 @@ bool icntrl6_form_button::check_values(vector<index_value>& error_details){
 }
 
 void icntrl6_form_button::save_information(ofstream& context_out){
-    context_out << "FORM:ICNTRL6 NEEDS SPECIAL FUNCTIONS";
-    form_button::save_information(context_out);
+    if(my_form.prev_initialized && my_form.get_pages().size() != 0){
+        context_out << "FORM:ICNTRL6 ";
+        //this part outputs the Parity Info Entry form
+        //(the leftmost one that you can choose after clicking "Parameter Search"
+
+        //use pipe characters as a seperator for the information that corresponds
+        //to the three forms
+        form_button::save_information(context_out);
+        context_out << "|";
+        form_button::save_information(context_out,search_spectra);
+        context_out << "|";
+        form_button::save_information(context_out,cross_sections);
+        context_out << endl;
+    } else if(init_array != NULL){
+        
+        //###### print parity info data ########################
+        context_out << "FORM:ICNTRL6 ";
+        for(UINT c = 0; c < (*init_array).size();c++){
+            context_out << (*init_array)[c];
+            if(c != (*init_array).size() - 1){
+                context_out << " ";
+            }
+        }
+        //######################################################
+	    context_out << "|";
+        vector<vector<string>>& init_arrays =
+            io_access->icntrl6_extra_init_arrays;
+
+        //print search spectra, then xsections
+        //##################################################################
+	    for(UINT c = 0; c < init_arrays.size(); c++){
+            for(UINT d = 0; d < init_arrays[c].size();d++){
+                context_out << init_arrays[c][d];
+                if(d != init_arrays[c].size() - 1) context_out << " ";
+            }
+            if(c != init_arrays.size() - 1){
+                context_out << "|";
+            }
+        }
+        //##################################################################
+        context_out << endl;
+    }
 
 }
 //################################################################################
@@ -1102,7 +1259,19 @@ void icntrl10_button::init(){
     //pattern for sub-line 3 of line 11
     my_patterns.emplace_back(regex("(\\s*-?\\s*[0-9]{1,4}\\s*\\.\\s*[0-9]{0,2}\\s*){6}"));
 
-//"\\s*-?\\s*[0-9]{1,3}\\s*\\.\\s*[0-9]{0,2}\\s*"
+    string unlock_path(HOME);
+    unlock_path +=
+        "/Andiamo/Assets/Images/form_assets/general_form_locked_msg.png";
+    unlock_help_texture = asset_access->get_texture(unlock_path);
+
+    //init_array = NULL;
+    try{
+        init_array = &io_access->form_init_arrays.at("ICNTRL10");
+        cout << "ICNTRL10 default values received" << endl;
+    } catch(out_of_range& not_found){
+
+        init_array = NULL;
+    }   
 }
 
 void icntrl10_button::set_corner_loc(int x, int y){
@@ -1176,19 +1345,11 @@ bool icntrl10_button::handle_click(SDL_Event& mouse_event){
 }
 
 void icntrl10_button::click_helper(SDL_Event& mouse_event){
+
 	error_logger.push_msg("clicked the icntrl10/sigma info button ");
-
-
 
 	if(!is_locked){
 
-		//screen_size();
-
-		//let the form know that it is now active
-		//my_form.toggle_active();
-
-		//enter the mini loop for form entry
-		//my_form.form_event_loop(mouse_event);
 
         string NNSIG_str;
         NNSIG_str = tile_access->fields.at("line_11").at("NNSIG")->temp_input;
@@ -1200,11 +1361,13 @@ void icntrl10_button::click_helper(SDL_Event& mouse_event){
 
             prev_NNSIG = current_NNSIG;
             init_data(prev_NNSIG);
+            init_values_helper();
 
             event_loop(mouse_event);
 
         } else {
 
+            init_values_helper();
             event_loop(mouse_event);
 
         }
@@ -1514,6 +1677,90 @@ void icntrl10_button::draw_me(){
     }
 }
 
+void icntrl10_button::save_information(ofstream& context_out){
+
+    if(init_array != NULL && !data.empty()){
+        stringstream output_line;
+        output_line << "FORM:ICNTRL10 ";
+        for(UINT data_obj = 0; data_obj < data.size(); data_obj++){
+
+            vector<text_box>& box_array = data[data_obj].line_entries;
+
+            for(UINT text_b = 0; text_b < box_array.size();text_b++){
+
+                if(text_b == 0){
+                    output_line << box_array[text_b].text;
+                } else {
+                    output_line  << "," << box_array[text_b].text;
+                }
+            }
+            if(data_obj+1 != data.size()){
+                output_line << "|";
+            }
+
+        }
+
+        //cout << output_line.str() << endl;
+        context_out << output_line.str() << endl;
+    } else if(init_array != NULL){
+
+        context_out << "FORM:ICNTRL10 " << (*init_array)[0] << endl;
+    }
+
+}
+
+void icntrl10_button::init_values_helper(){
+
+    if(init_array != NULL && !data.empty()){
+
+        //there should only be one string in the string array
+        //and that is the entire line from the config file minus
+        //the FORM:ICNTRL10 part, so it needs parsed
+        vector<string> text_box_info;
+        string init_list = (*init_array)[0];
+
+        cout << init_list << endl;
+        //splitting on '|' gives us a string where
+        //the 3 text boxes that each page of icntrl10 form needs
+        //are separated by ','
+        vector<string> each_page = split(init_list,'|');
+        for(UINT page_info = 0; page_info < each_page.size();page_info++){
+
+          //after splitting on ',', we have an array
+          //of the text strings that need to be inserted
+          //into the text boxes
+          vector<string> each_box = split(each_page[page_info],',');
+          for(UINT box_line = 0; box_line < each_box.size();box_line++){
+          
+            //insert this array of actual information into the array
+            //that will be used to fill in values later
+            text_box_info.push_back(each_box[box_line]);  
+
+          }
+        }
+
+        int init_val_index = 0;
+
+        //loop over each data object that has been created
+        for(UINT data_obj = 0; data_obj < data.size(); data_obj++){
+
+            //loop over each text box in that object
+            vector<text_box>& boxes = data[data_obj].line_entries;
+            for(UINT box = 0; box < boxes.size(); box++){
+
+                //initializing its graphics and data, using the
+                //array that was made previously
+                if(init_val_index != text_box_info.size()){
+                    boxes[box].update_text(text_box_info[init_val_index]);
+                    init_val_index++;
+                }
+            }
+
+        }
+
+    } 
+
+}
 
 void icntrl10_button::init_data(unsigned int num_contexts){
 
@@ -1523,6 +1770,7 @@ void icntrl10_button::init_data(unsigned int num_contexts){
         cout << "ICNTRL10 default values received" << endl;
     } catch(out_of_range& not_found){
 
+        init_array = NULL;
     }   
 
     //resize the vector to contain the correct number of input screens
@@ -1568,15 +1816,12 @@ void icntrl10_button::init_data(unsigned int num_contexts){
 
 void icntrl10_button::draw_help_msg(SDL_Event& big_event,SDL_Rect& destination){
 
+    sdl_access->draw();
 	SDL_RenderCopy(sdl_access->renderer,unlock_help_texture,NULL,&destination);
 	sdl_access->present();
 
-	//spin until they are done reading, and they click the mouse or push a key - I can't get this to work because
-	//of phantom events, for now it just stays up until they let the mouse button come up
-	while(big_event.type != SDL_MOUSEBUTTONUP ){
-		SDL_PollEvent(&big_event);
-	}
-					
+    //spin until they hit a key, or click somewhere on the screen
+    while(SDL_PollEvent(&big_event) == 0 || big_event.type == SDL_MOUSEBUTTONUP);				
 
 }
 
@@ -1636,6 +1881,7 @@ void icntrl4_form_button::init_form(const vector<regex>& pattern_tests){
         cout << "Do stuff with ICNTRL4 init list" << endl;
     } catch(out_of_range& not_found){
 
+        init_array = NULL;
     }
 }
 
@@ -1756,6 +2002,8 @@ void icntrl4_form_button::page_creation_helper(){
 
 	my_form.set_page_count(pages_made);
 
+    form_button::init_values_helper();
+
 	//let the form class know that it's pages have been set up
 	my_form.prev_initialized = true;
 	//and also what conditions caused such a creation
@@ -1795,9 +2043,26 @@ bool icntrl4_form_button::check_values(vector<index_value>& error_details){
 }
 
 void icntrl4_form_button::save_information(ofstream& context_out){
-    context_out << "FORM:ICNTRL4 ";
-    form_button::save_information(context_out);
 
+    //icntrl8_form_button::save_information has explanations for these
+    //cases
+    if(my_form.prev_initialized && my_form.get_pages().size() != 0){
+
+        context_out << "FORM:ICNTRL4 ";
+        form_button::save_information(context_out);
+        context_out << endl;
+
+    } else if(init_array != NULL){
+
+        context_out << "FORM:ICNTRL4 ";
+        for(UINT c = 0; c < (*init_array).size();c++){
+            context_out << (*init_array)[c];
+            if(c != (*init_array).size() - 1){
+                context_out << " ";
+            }
+        }
+        context_out << endl;
+    }
 }
 //################################################################################
 
@@ -1885,6 +2150,7 @@ void ilv3_ilv5_form_button::init_form(const vector<regex>& pattern_tests){
         cout << "Do stuff with ILV3/ILV5 init list" << endl;
     } catch(out_of_range& not_found){
 
+        init_array = NULL;
     }
 }
 void ilv3_ilv5_form_button::page_creation_helper(){
@@ -1967,6 +2233,8 @@ void ilv3_ilv5_form_button::page_creation_helper(){
 	}
 
 	my_form.set_page_count(pages_made);
+
+    form_button::init_values_helper();
 }
 
 bool ilv3_ilv5_form_button::make_output(ofstream& outs,vector<index_value>& bad_input_list){
@@ -2002,9 +2270,24 @@ bool ilv3_ilv5_form_button::check_values(vector<index_value>& error_details){
 }
 
 void ilv3_ilv5_form_button::save_information(ofstream& context_out){
-    context_out << "FORM:ILV3_ILV5 ";
-    form_button::save_information(context_out);
 
+    //icntrl8_form_button::save_information has explanations for these
+    //cases
+    if(my_form.prev_initialized && my_form.get_pages().size() != 0){
+        context_out << "FORM:ILV3_ILV5 ";
+        form_button::save_information(context_out);
+        context_out << endl;
+    } else if(init_array != NULL){
+
+        context_out << "FORM:ILV3_ILV5 ";
+        for(UINT c = 0; c < (*init_array).size();c++){
+            context_out << (*init_array)[c];
+            if(c != (*init_array).size() - 1){
+                context_out << " ";
+            }
+        }
+        context_out << endl;
+    }
 }
 //#################################################################################
 

@@ -316,7 +316,7 @@ void form::handle_click(SDL_Event& mouse_event,bool& done,bool& click_lock){
 				//filled by text_box_loop to tell this loop to do things
 				string command;
 
-                page&  current = pages[current_page];
+                page& current = pages[current_page];
 
 				for(unsigned int c = 0;
 					c < current.get_const_text_boxes().size() && !found;

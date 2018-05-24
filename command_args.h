@@ -36,7 +36,7 @@ void options_help(){
     //cout << "Explaining options here" << endl;
     cout << "The following command lines may be of use to you\n"
          << "when using Andiamo!" << endl;
-    cout << "1) -v\n'-v turns on \"verbose mode\", which prints out\n"
+    cout << "1) -v\n  -v turns on \"verbose mode\", which prints out\n"
          << "  a bunch of additional debugging and non-critical\n"
          << "  run time messages to the error_logs/ file for this session."
          << "\n" << endl;
@@ -56,6 +56,9 @@ void options_help(){
          << " ~/Andiamo/config/something.txt file. Failure\n  to ensure so may"
          << " cause undefined behavior.\n" << endl;
 
+    cout << "4) -noguides\n"
+         << "  turns off the backdrops that highlight each\n"
+         << "      line of parameters, per the user manual" << endl;
 }
 
 
@@ -63,7 +66,7 @@ void options_help(){
 /*! \return true if things went well
  *\return false if things did not go well */
 bool process_args(int argc, char* argv[],string& input_maker_config_file,
-                  string& manager_config_file){
+                  string& manager_config_file,bool& line_guides){
 
     //start off assuming things will go well.
     //if these arguments are malformed, this will
@@ -169,6 +172,10 @@ bool process_args(int argc, char* argv[],string& input_maker_config_file,
                     test_open.close();
 
                 }
+
+            } else if(argument.compare("-noguides") == 0){
+
+                line_guides = false;
 
             } else {
 

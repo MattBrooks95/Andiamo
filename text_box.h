@@ -113,6 +113,7 @@ struct text_box{
 
 	//! save the absolute dimensions of the text in the button
 	SDL_Rect text_dims;
+
     //! keep track of the currently shown subsection of the text
     SDL_Rect shown_area;
 
@@ -125,6 +126,7 @@ struct text_box{
 
 	//! the text that is rendered to the screen and changed by the user
 	string text;
+
 	//! keep track of whether this box has been given bad input or not
 	bool bad_input;
 

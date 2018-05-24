@@ -104,13 +104,14 @@ class button_manager{
 	//!  clean_up lets input_maker know which options the user has selected
 	/*! this will be done by accessing the input_maker and
 	 *changing the output paths. */
-	int clean_up();
+	int clean_up(SDL_Event& big_event);
 
 	//! displays warning messages about why file generation may have failed
 	/*! it is a helper function for button_manager::clean_up().
 	 *It mostly just displays some premade error message boxes on the screen
 	 *for a couple of seconds before the program resumes */
-	void clean_up_warnings(bool bad_output_fname,bool bad_tc_input_fname);
+	void clean_up_warnings(SDL_Event& big_event,
+                                bool bad_output_fname,bool bad_tc_input_fname);
 
 	//! displays a warning when tiles fail to convert user inputs
 	/*! it used the vector of strings created by manger::update_io_maker
@@ -144,6 +145,14 @@ class button_manager{
 
 	//! this member returns the fop opening button by reference
 	button& get_fop_button(){ return fop_button;}
+
+    //! return reference to the alternative TC specifying button
+    /*! this information could be needed by the fop_handler -
+     *if the button's string is empty, the fop_handler uses the default
+     *  TC_files directory.
+     *if the button's string is not empty, the fop_handler will attempt
+     *  to use the specified TC_dir instead */
+    TC_dir_button& get_tc_dir_button(){ return tc_dir;}
 
 	//!< this is a string that describes the path to the button's image files
 	string button_image_p;
@@ -196,8 +205,10 @@ class button_manager{
 	//! button to allow user to select where to output the HF input file
 	output_file_button output_fname;
 
-	//! button to allow user to select the input transmission coefficients file
-	TC_input_file_button t_coefficients;
+	//! allows the user to set a different transmission coefficients directory
+    /*! if this string this empty, the default /Andiamo/TC_files dir will
+     *be used */
+	TC_dir_button tc_dir;
 
     //! button to generate output
 	button lets_go;

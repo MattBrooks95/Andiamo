@@ -34,26 +34,26 @@ input_maker::input_maker(string output_file_name_in,string config_file_name_in){
 
 void input_maker::check_map(){
 	error_logger.push_msg("####### INPUT MAKER INT4 PARAMS MAP ##############");
-	for(int4_map::iterator int_it = int4_params.begin();
+	for(INT4_MAP::iterator int_it = int4_params.begin();
 	    int_it != int4_params.end();
 	    int_it++){
 		error_logger.push_msg_no_nl(int_it->second.get_string()+"  ");
 	}
 	error_logger.push_msg("\n######### INPUT MAKER R8 PARAMS MAP ##########\n");
-	for(real8_map::iterator r8_it = real8_params.begin();
+	for(REAL8_MAP::iterator r8_it = real8_params.begin();
 	    r8_it != real8_params.end();
 	    r8_it++){
 		error_logger.push_msg_no_nl(r8_it->second.get_string()+":");
 	}
 	error_logger.push_msg("\n######### INPUT MAKER STRING PARAMS MAP ######\n");
-	for(str_map::iterator string_it = string_params.begin();
+	for(STR_MAP::iterator string_it = string_params.begin();
 	    string_it != string_params.end();
 	    string_it++){
         string msg = string_it->first + ":" + string_it->second.value+"   ";
 		error_logger.push_msg_no_nl(msg);
 	}
 	error_logger.push_msg("\n####### INPUT MAKER INT4 ARRAY MAP ###########\n");
-	for(int4arr_map::iterator int4_array_it = int4_array_params.begin();
+	for(INT4_ARR_MAP::iterator int4_array_it = int4_array_params.begin();
 	    int4_array_it != int4_array_params.end();
 	    int4_array_it++){
         string msg = int4_array_it->first + ":"
@@ -61,7 +61,7 @@ void input_maker::check_map(){
 		error_logger.push_msg_no_nl(msg);
 	}
 	error_logger.push_msg("\n####### INPUT MAKER R8_ARRAY MAP #############\n");
-	for(r8arr_map::iterator r8_array_it = r8_array_params.begin();
+	for(R8_ARR_MAP::iterator r8_array_it = r8_array_params.begin();
 	    r8_array_it != r8_array_params.end();
 	    r8_array_it++){
         string msg = r8_array_it->first + ":"
@@ -98,7 +98,8 @@ void input_maker::init(const string& alternate_config){
 	regex re_string("\\s*?C\\*\\s*?[A-Za-z_]+?\\|[0-9]+?\\|\\s*?=\\s*?\".+?\"\\s*");
 	regex re_real8("\\s*?R8\\s+?[A-Za-z0-9_]+?\\s+?=\\s+?((-?[0-9]*?\\.[0-9]*?)|(nodef))\\s*");
 
-    regex form_init("FORM:[A-Za-z0-9]*?\\s+?(-?[0-9]+?\\.?[0-9]*? ?)*");
+    //regex form_init("FORM:[A-Za-z0-9_]*?\\s+?(-?[0-9]+?\\.?[0-9]*? ?)*");
+    regex form_init("FORM:[A-Za-z0-9_]*?\\s+?(-?[0-9]+?\\.?[0-9]*?[, |]?)*");
 
 	regex string_array_size_pattern("\\|\\d+?\\|");
 	regex int_array_size_pattern("\\([0-9]+?\\)");
@@ -376,11 +377,10 @@ void input_maker::init(const string& alternate_config){
             string first_part;
 
             form_init_list >> first_part;
-            //cout << "First part: " << first_part << endl;
-
+            cout << "First part: " << first_part << endl;
 
             string form_name = split(first_part,':')[1];
-            //cout << "Form name: " << form_name << endl;
+            cout << "Form name: " << form_name << endl;
 
             //if this form_name is already in the map,
             //the user has two initializer lists with the same name
@@ -398,28 +398,79 @@ void input_maker::init(const string& alternate_config){
 
                 vector<string> values;
                 pair<string,vector<string>> push_me(form_name,values);
-
                 form_init_arrays.emplace(push_me);
             }
 
-            //read all of the values into the vector string
-            while(!form_init_list.eof()){
+            //need a special case here, the ICNTRL10 initialization list
+            //has separators besides spaces. So, it's best to just
+            //send over an array of size 1, so that icntrl10 can do the
+            //processing. | separates 'pages', and ',' separates
+            //text boxes. ' ' separates values
+            if(form_name.compare("ICNTRL10") == 0){
 
-                if(form_init_list.fail()){
-                    break;
+
+                string entire_list = form_init_list.str();
+                string without_name = entire_list.substr(14,entire_list.size()-13);
+                cout << "icntrl10 without name:" << without_name << endl;
+                form_init_arrays.at(form_name).push_back(without_name);
+
+            } else if(form_name.compare("ICNTRL6") == 0){
+
+                cout << "Processing icntrl6 init values." << endl;
+                //get entirety of input
+                string entire_list = form_init_list.str();
+                cout << entire_list << endl;
+                //cut off the form name
+                string without_name = entire_list.substr(13,entire_list.size()-12);
+                //split the big string along '\', separating it into 3 lists
+                //of values 
+                cout << without_name << endl;
+                vector<string> each_form = split(without_name,'|');
+                for(UINT c = 0; c < each_form.size();c++){
+                    cout << each_form[c] << endl;
                 }
-                string this_bit;
-                form_init_list >> this_bit;
-                form_init_arrays.at(form_name).push_back(this_bit);
-            }
+                //push the first list into the form_init_arrays map
+                //as normal, icntrl6 can use form_button::init_values_helper
+                //to fill out this one
+                vector<string> first_form = split(each_form[0],' ');
+                form_init_arrays.at(form_name) = first_form;
 
+                //but, we also need to fill in the init values for the
+                //other two forms: search_spectra, and cross_sections
+
+                //search_spectra's list of values is found by splitting
+                //its entire string along commas
+                vector<string> search_spectra = split(each_form[1],' ');
+
+                //do the same for cross_sections
+                vector<string> cross_sections = split(each_form[2],' ');
+
+                //push both of the lists into icntrl6's vector
+                //note that the order is important here:
+                //search_spectra then cross_sections
+                icntrl6_extra_init_arrays.push_back(search_spectra);
+                icntrl6_extra_init_arrays.push_back(cross_sections);
+
+            } else {
+                //read all of the values into the vector string
+                while(!form_init_list.eof()){
+
+                    if(form_init_list.fail()){
+                        break;
+                    }
+                    string this_bit;
+                    form_init_list >> this_bit;
+                    form_init_arrays.at(form_name).push_back(this_bit);
+                }
+            }
             cout << form_name << "'s value list:\n";
             for(uint c = 0; c < form_init_arrays.at(form_name).size();c++){
                 cout << form_init_arrays.at(form_name)[c] << endl;
             }
 
 		} else {
-			error_logger.push_error("Error! Line type wasn't determined.");
+			error_logger.push_error("Error! Line type wasn't determined:");
+            error_logger.push_error(temp_string);
 		}
 
 		getline(ins,temp_string);
@@ -677,8 +728,8 @@ void do_line1(ofstream& outs,const map<string,param_string>& string_params){
 
 }
 
-void do_line2(ofstream& outs,const real8_map& real8_params,
-              const int4_map& int4_params){
+void do_line2(ofstream& outs,const REAL8_MAP& real8_params,
+              const INT4_MAP& int4_params){
 
 	//note, setw(something) needs to be called before every item is printed
 	//this is really annoying, so I have a macro up top

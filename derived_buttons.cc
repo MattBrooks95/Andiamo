@@ -20,6 +20,13 @@ void exit_button::set_corner_loc(){
 	xloc = (sdl_access->get_win_size()->width / 2) - (width / 2);
 	yloc = (sdl_access->get_win_size()->height / 2) - (height / 2);
 
+    //update the SDL_Rect that is used to draw the exit button
+    make_rect();
+
+    //update the clickable regions to match the exit button's new location
+    //this follows the logic from exit_button::init
+    no_area.set_loc(xloc+30,yloc+30,70,50);
+    yes_area.set_loc(xloc+195,yloc+30,70,50);
 }
 
 bool exit_button::handle_click(SDL_Event& mouse_event){
@@ -116,7 +123,6 @@ void exit_button::init(string image_name_in, string image_p_in){
 	yes_area.width = 70;
 	yes_area.height = 50;
 
-
 }
 //##############################################################################
 
@@ -164,9 +170,9 @@ void text_box_button::force_corner_loc(int xloc_in, int yloc_in){
 //###############################################################################################
 
 //###################### TRANSMISSION COEFFICIENTS FILE BUTTON ##################################
-int TC_input_file_button::work(){
+int TC_dir_button::work(){
 
-	//set up the TC In put var in the input maker
+	//set up the TC input var in the input maker
 	io_access->TC_input_file_name = my_text_box.text;
 
 	if(my_text_box.text.size() == 0 || my_text_box.text == " "){
@@ -334,7 +340,7 @@ int save_context_button::work(){
 
 void save_context_button::save_fields(ofstream& context_out){
     cout << "In save_context's save_fields() helper function" << endl;
-    fields_vec* fields_ref = &tile_access->fields_order;
+    FIELDS_VEC* fields_ref = &tile_access->fields_order;
     for(uint line = 0; line < fields_ref->size();line++){
         for(uint param = 0; param < (*fields_ref)[line].size(); param++){
             if(((*fields_ref)[line][param])->int4_hook != NULL){
@@ -363,22 +369,22 @@ void save_context_button::save_forms(ofstream& context_out){
     
 	//save icntrl8's information to the new config file
 	button_access->get_icntrl_8().save_information(context_out);
-    context_out << endl;
+    //context_out << endl;
 
 	//save icntrl6's information to the new config file
 	button_access->get_icntrl_6().save_information(context_out);
-    context_out << endl;
+    //context_out << endl;
 
 	//save icntrl10's information to the new config file
-    //button_access->get_icntrl_10().save_information(context_out);
+    button_access->get_icntrl_10().save_information(context_out);
 
 	//save icntrl4's information to the new config file
 	button_access->get_icntrl_4().save_information(context_out);
-    context_out << endl;
+    //context_out << endl;
 
 	//save ilv3/ilv5's information to the new config file
 	button_access->get_ilv3_ilv5().save_information(context_out);
-    context_out << endl;
+    //context_out << endl;
 }
 
 

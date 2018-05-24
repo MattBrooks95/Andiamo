@@ -29,6 +29,7 @@ using std::vector;
 
 extern sdl_help* sdl_access;
 extern manager* tile_access;
+extern button_manager* button_access;
 extern input_maker* io_access;
 extern string HOME;
 
@@ -112,6 +113,9 @@ class fop_handler{
 	//! this is mostly for testing
 	//void print_file_list();
 
+    //! tells whether or not the TC are ready for FOP input file creation
+    bool ready;
+
   private:
 
 	//! list of all file names in OMP_PATH subdirectory
@@ -142,7 +146,7 @@ class fop_handler{
     std::pair<string,string> fop_file_names;
 
 	//! store the decks of cards to run FOP with
-	vector<deck> fop_decks;
+	vector<deck*> fop_decks;
 
     //################ FOP PATH INFO ################################
     //! path to the optical model potentials folder
