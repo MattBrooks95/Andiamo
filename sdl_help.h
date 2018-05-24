@@ -93,13 +93,15 @@ class sdl_help{
 	//! this function does all the drawing
 	void draw();
 
+    //! show the labels for the lines of HF parameters
+    void draw_labels();
+
     //! show the parameter line back drops
     void draw_guides();
 
 	//! This member enacts the draw members of vert_bar and horiz_bar
 	/* This should likely be called directly below every call to draw_tiles() */ 
 	void draw_sbars();
-
 
 	//! presents the renderer and all of it's current textures to the screen
 	void present();
@@ -116,6 +118,10 @@ class sdl_help{
     //! called by calc_corners per line of parameters
 	void calc_corners_helper(vector<field*>& line_in,unsigned int& start_height,
 							 int row_limit);
+
+    //! create the labels for the lines in the main parameter screen
+    /*! pushes the label into the line_titles vector */
+    void make_line_label(const string& label,unsigned int& start_height);
 
     //! called per calc_corners_helper run, to create parameter line backdrops
     void make_line_guide(SDL_Rect backdrop_dims);
@@ -228,6 +234,10 @@ class sdl_help{
 
 	//! pointer to the renderer object
 	SDL_Renderer* renderer;
+
+    //! pointer to the font for the line labels
+    TTF_Font* label_font;
+
 	//! pointer to the font created from the font.ttf file in /config
 	TTF_Font* font;
 
@@ -249,6 +259,10 @@ class sdl_help{
 
 	//! stores the background image
 	SDL_Texture* bg_texture;
+
+
+    //! 'title cards' that have line names on them
+    vector<LINE_TITLE> line_titles;
 
     //! 'backdrops' to illustrate which parameters belong to which lines
     vector<LINE_GUIDE> line_guides;

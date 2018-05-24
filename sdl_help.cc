@@ -83,6 +83,10 @@ sdl_help::sdl_help(string name_in,string HF_input_file_in,
 	//set up pointer to font from file
 	font_p       += "/LiberationSerif-Regular.ttf";
 	font = TTF_OpenFont( font_p.c_str(), 22);
+
+    //set up the font for the line labels
+    label_font = TTF_OpenFont( font_p.c_str(),32);
+
 	if(font == NULL) {
 		cout << SDL_GetError() << endl;
 		error_logger.push_error(SDL_GetError());
@@ -174,6 +178,8 @@ void sdl_help::draw(){
 
 	//draw the background image to the screen
 	SDL_RenderCopy(renderer,bg_texture,NULL,NULL);
+
+    if(show_line_guides) draw_labels();
 
     //if parameter line backdrops are enabled, draw them
     if(show_line_guides) draw_guides();
@@ -540,8 +546,19 @@ void sdl_help::calc_corners(){
 		row_limit = window_s.width; 
 	}
 
+    //stores the strings for the line labels
+    vector<string> line_labels;
+
+    for(map<string,map<string,field*>>::iterator it = tile_access->fields.begin();
+        it != tile_access->fields.end();
+        it++){
+        cout << "LINE TITLE:" << it->first << endl;
+        line_labels.push_back(it->first);
+    }
+
 
 	for(uint c = 0; c < tile_access->fields_order.size();c++){
+        make_line_label(line_labels[c],row_height);
 		calc_corners_helper(tile_access->fields_order[c],
 							row_height,row_limit);
 
@@ -565,8 +582,6 @@ void sdl_help::calc_corners_helper(vector<field*>& line_in,
 	//line map takes up more than one row in the window
 	int y_corner = start_height;
 	
-
-
     //update this to keep track of how big to make the backdrop
     //for this line of HF parameters. At this point we know  only the top right
     //corner
@@ -638,6 +653,75 @@ void sdl_help::calc_corners_helper(vector<field*>& line_in,
     make_line_guide(bd_dims);
 }
 
+void sdl_help::make_line_label(const string& label,unsigned int& start_height){
+
+    //stores the dimensions of the rendered text
+    SDL_Rect label_loc;
+
+    //put in the x offset, so that the line labels
+    //are flush with the lines that they precede
+    label_loc.x = 3;
+    label_loc.y = start_height;
+
+    //fill variables with dims of rendered text
+    TTF_SizeText(label_font,label.c_str(),&label_loc.w,&label_loc.h);
+
+	//set up the surface's pixel masks. I don't fully understand this
+	//but it's from the sdl documentation
+	//https://wiki.libsdl.org/SDL_CreateRGBSurface
+	Uint32 red,green,blue,alpha;
+	#if SDL_BYTEORDER == SDL_BIG_ENDIAN
+		red   = 0xff000000;
+		green = 0x00ff0000;
+		blue  = 0x0000ff00;
+		alpha = 0x000000ff;
+	#else
+		red   = 0x000000ff;
+		green = 0x0000ff00;
+		blue  =	0x00ff0000;
+		alpha = 0xff000000;
+	#endif
+
+    //colored in square that the text will be printed on
+    SDL_Surface* temp_surface =
+        SDL_CreateRGBSurface(0,label_loc.w,label_loc.h,32,red,green,blue,alpha);
+    if(temp_surface == NULL){
+        error_logger.push_error("Couldn't make title card:"+label);
+    }
+
+    //fill in the label with the same color as the line guide
+    SDL_FillRect(temp_surface,NULL,SDL_MapRGB(temp_surface->format,BD_COLOR) );
+
+    //create a surface from the passed string
+    SDL_Color text_color = {BLACK};
+	SDL_Surface* text_surface =
+        TTF_RenderUTF8_Blended(label_font,label.c_str(),text_color );
+
+    //draw words on the label
+    if(SDL_BlitSurface(text_surface,NULL,temp_surface,NULL) != 0){
+        string error = SDL_GetError();
+        error_logger.push_error("Error in label blit."+error);
+    } 
+
+    //make sure that th rest of the calc_corners functions know
+    //how much this title card will offset the drawing
+    start_height += label_loc.h;    
+
+    //convert the surface to a renderable texture
+    SDL_Texture* label_texture = SDL_CreateTextureFromSurface(renderer,temp_surface);
+    if(label_texture == NULL){
+        error_logger.push_error("Error in creating line label texture.");
+
+    }
+
+    line_titles.push_back(LINE_TITLE(label_loc,label_texture));
+
+    //give memory for the surfaces back to OS, we no longer need them
+    SDL_FreeSurface(text_surface);
+    SDL_FreeSurface(temp_surface);
+
+}
+
 void sdl_help::make_line_guide(SDL_Rect bd_dims){
 
     SDL_Surface* bd_surface;
@@ -649,6 +733,23 @@ void sdl_help::make_line_guide(SDL_Rect bd_dims){
 
     //we have no need to store the surface, so give the memory back
     SDL_FreeSurface(bd_surface);
+}
+
+void sdl_help::draw_labels(){
+
+    //draw the line labels
+    for(vector<LINE_GUIDE>::iterator it = line_titles.begin();
+        it != line_titles.end();
+        it++){
+        //drawing destination needs to change based on
+        //the user's scrolling, so copy & modify it
+        SDL_Rect account_scroll = it->first;
+        account_scroll.x += x_scroll;
+        account_scroll.y += y_scroll;
+
+        SDL_RenderCopy(renderer,it->second,NULL,&account_scroll);
+    }
+
 }
 
 void sdl_help::draw_guides(){

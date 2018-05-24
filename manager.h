@@ -31,12 +31,12 @@ extern string HOME;
 class button_manager;
 
 
-//! The manager is a vector+ object that handles a standard vector that contains input tiles or 'cards'
+//! The manager handles an STL map and  vector that contains parameter's graphics
 class manager{
   public:
-	//! this is the constructor for the manager class, which implements some features on top of a std vector
-	/*! the manager constructor doesn't do anything right now, as set up must occur after sdl_help's
-	 *constructor */
+	//! this is the constructor for the manager class
+	/*! the manager constructor doesn't do anything right now, as set up
+     * must occur after sdl_help's constructor */
 	manager(string image_p_in);
 
 	//! destructor deletes the objects that the map & vector of tiles point to
@@ -45,10 +45,11 @@ class manager{
 	//! this function walks the map, and returns the width of the widest tile
 	int get_widest_tile_width();
 
-	//! this function "fills" each non-background tile with it's default value as a string
-	/* it also gives them a pointer reference to their position in input_maker's vector
-	 *to save time when we have to update input_maker's values. For this reason input_maker
-	 *shouldn't resize it's vector besides in the init function, because that could cause illegal reads
+	//! "fills" each non-background tile with it's default value as a string
+	/* it also gives them a pointer reference to their position in
+     *input_maker's vector to save time when we have to update input_maker's
+     *values. For this reason input_maker shouldn't resize it's vector
+     *besides in the init function, because that could cause illegal reads
 	 *because the field's pointer points to the vector's old location. */
 	void give_fields_defaults();
 
@@ -70,25 +71,29 @@ class manager{
 	void give_r8_array_fields_defaults();
 	//####################################################################################################//
 
-	//! this function updates input_maker's vectors with the field's new values (from user)
+	//! updates input_maker's vectors with the field's new values (from user)
 	/*\return true means that there was no errors in string->data conversion
-	 *\return false means that an stoi/stod function failed, and the file wasn't created */
+	 *\return false means that an stoi/stod function failed,
+     *and the file wasn't created */
 	bool update_io_maker(vector<string>& bad_input_list);
 
-	//! this member loads in tiles from the tile input file using regular expressions and file i/o
-	/*! this init member uses fstream and regex to open and process a text file, which for now defaults
-	 * to tiles.txt, in the folder tile_Input, so that information on what parameter tiles/cards need
-	 *can be loaded into the program, and new tiles can be loaded without rebuilding - this work
-	 *is not done in the constructor because it needs information from the sdl class, whose 
-	 *constructor is called after manager's apparently. It also sorts the tiles by descending width for
+	//! loads in tiles from the tile input file using regular expressions and file i/o
+	/*! this init member uses fstream and regex to open and process a text file,
+     *which for now defaults to tiles.txt, in the folder tile_Input,
+     *so that information on what parameter tiles/cards need
+	 *can be loaded into the program, and new tiles can be loaded without
+     *rebuilding - this work is not done in the constructor because it needs
+     *information from the sdl class, whose constructor is called after
+     *manager's apparently. It also sorts the tiles by descending width for
 	 *sdl_help's draw_tiles() function*/
 	void init(const string& graphical_config_file);
 
-	//! this function runs through the 2d map, and prints all of the lines and their fields
+	//! runs through the 2d map, and prints all of the lines and their fields
 	/* \param outs is the output stream that will be printed to */
 	void print_all();
 
-	//! this function analyzes some parameter tiles, to implement the control logic of selector variables
+	/*! \brief analyzes some parameter tiles, to implement the control logic
+     * of selector variables */
 	void check_locks();
 
 	//simple cases for locking and unlocking
@@ -97,15 +102,17 @@ class manager{
 	// helper function for check_locks()
 	void iench_locking();
 	*/
+
 	//! helper function for check_locks()
 	void ilv1_locking();
-	//#######################################
+	//###################################
 
 	//###################################################
-	//! helper function for check_locks()
+	//! helper for check_locks()
 	void icntrl4_locking();
 
-	//! helper function for icntrl4_locking(), it's unlocked parameters must also be filled in to unlock form button
+	/*! \brief helper for icntrl4_locking(), it's unlocked parameters
+     *must also be filled in to unlock form button */
 	void ich4_nch4_locking();
 	//###################################################
 
@@ -120,10 +127,13 @@ class manager{
 	//! helper function for check_locks()
 	void ilv3_ilv5_locking();
 
-	//! helper function for ilv3_ilv5_locking(), determines lock/unlock conditions of passed field
+	/*! \brief helper  for ilv3_ilv5_locking(), determines lock/unlock
+     *conditions of passed field */
 	/*! the field passed MUST be "ILV3" or "ILV5"
-	 *\param target_param is the name of the field to check the locking status of, MUST be "ILV3" or "ILV5" */
-	void ilv3_ilv5_locking_helper(const string& target_param,const regex& unlock_condition);
+	 *\param target_param is the name of the field to check the
+     *locking status of, MUST be "ILV3" or "ILV5" */
+	void ilv3_ilv5_locking_helper(const string& target_param,
+                                  const regex& unlock_condition);
 
 	//##### ICNTRL6 locking + helpers ######################################
 
@@ -146,9 +156,6 @@ class manager{
 	 *\param width_in is the desired new width
 	 *\param height_in is the desired new height */
 	void update_win(int width_in, int height_in);
-
-	// save the order in which the lines occur, maps don't do it automatically
-	//vector<string> line_order;
 
 	//! save the string names of lines & parameters in a vector
 	/*! this is to be used for iterating over the parameters,

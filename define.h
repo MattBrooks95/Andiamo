@@ -13,6 +13,8 @@
 //! shorter type declaration fo ra vector of field pointers (as in manager)
 #define FIELDS_VEC vector<vector<field*>>
 
+#define LINE_TITLE LINE_GUIDE
+
 //! shorter type declaration for storing line_guides in sdl_help
 #define LINE_GUIDE std::pair<SDL_Rect,SDL_Texture*>
 
