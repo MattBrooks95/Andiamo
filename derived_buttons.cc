@@ -354,10 +354,13 @@ void save_context_button::save_fields(ofstream& context_out){
             }
             context_out << ((*fields_ref)[line][param])->tile_name;
             if(((*fields_ref)[line][param])->string_hook != NULL){
-                context_out << "|" << ((*fields_ref)[line][param])->temp_input.size()
-                            << "|";
+                context_out << "|"
+                	<< ((*fields_ref)[line][param])->my_text_box.text.size()
+                    << "|";
             }
-            context_out << " = " << ((*fields_ref)[line][param])->temp_input << endl; 
+            context_out << " = "
+            			<< ((*fields_ref)[line][param])->my_text_box.text
+            			<< endl; 
         }
 
     }

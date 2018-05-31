@@ -171,9 +171,6 @@ class field{
 	/*! Set up by manager::give_fields_defaults */
 	param_r8_array* r8_array_hook;
 
-	//! stores text entered from the user
-	string temp_input;
-
 	//! save the text entry location
 	/*! this controls the cursor when the user is typing */
 	unsigned int editing_location;

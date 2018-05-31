@@ -51,6 +51,9 @@ text_box::text_box(const text_box& other){
 	width  = other.width;
 	height = other.height;
 
+	x_scroll = other.x_scroll;
+	y_scroll = other.y_scroll;
+
 	text      = other.text;
 	bad_input = other.bad_input;
 

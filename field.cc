@@ -30,28 +30,9 @@ field::field(string tile_name_in,string display_name_in,string image_name_in,
     //not in locking mode at Default
 	am_I_locking = false;
 
-	//start off input blank. Default value loaded in by input
-	//manager, overridden by user
-	temp_input = "temp_input -> default failure";
-
-    /*
-	editing_location = 0;
-	text_dims.w = 0;
-	text_dims.h = 0;
-
-	text_dims.x = 0;
-	text_dims.y = 0;
-    */
-
     //these will be taken care of by calc_corners()
 	xloc = 0;
 	yloc = 0;
-
-    /*
-	//these need to start off null, then be created later
-	my_text_surf = NULL;
-	my_text_tex  = NULL;
-    */
 
 	my_tex  = NULL;
 
@@ -87,7 +68,7 @@ field::field(const field& other){
 	int4_array_hook = other.int4_array_hook;
 	r8_array_hook   = other.r8_array_hook;
 
-	temp_input = other.temp_input; 
+	my_text_box.text = other.my_text_box.text; 
 
 	editing_location = other.editing_location;
 
@@ -427,10 +408,10 @@ bool field::update_my_value(){
 	}
 
 	if(int4_hook != NULL){
-		if( !temp_input.empty() ){
+		if( !my_text_box.text.empty() ){
 		  try{
-			if( !regex_search(temp_input,bad_int) ){
-				int4_hook->value = stoi(temp_input);
+			if( !regex_search(my_text_box.text,bad_int) ){
+				int4_hook->value = stoi(my_text_box.text);
 			} else {
 				error_logger.push_error(display_name+" has an illegal string:");
 				success = false;
@@ -444,20 +425,21 @@ bool field::update_my_value(){
 		  }
 		}
 	} else if(real8_hook != NULL){
-		if( !temp_input.empty() ){
+		if( !my_text_box.text.empty() ){
 			try{
-				if( !regex_search(temp_input,bad_real8) ){
-					real8_hook->value = stod(temp_input);
+				if( !regex_search(my_text_box.text,bad_real8) ){
+					real8_hook->value = stod(my_text_box.text);
 				} else {
 					string err;
-					err = display_name + " has an illegal string:" + temp_input;
+					err = display_name + " has an illegal string:"
+                          + my_text_box.text;
 					error_logger.push_error(err);
 					success = false;
 				}
 			} catch(invalid_argument& error){
 			  string err;
 			  err = "Error in field::update_my_value(), illegal value entered:"
-					+ temp_input;
+					+ my_text_box.text;
 			  error_logger.push_error(err);
 			  real8_hook->value = -180.4;
 			  success = false;
@@ -465,8 +447,8 @@ bool field::update_my_value(){
 		}
 	} else if(string_hook != NULL){
 
-		if( regex_match(temp_input,good_string) ){
-			string temp_string = temp_input;
+		if( regex_match(my_text_box.text,good_string) ){
+			string temp_string = my_text_box.text;
 			unsigned int balance_factor;
 			balance_factor = temp_string.length() - string_hook->value.length();
 			trim(temp_string,balance_factor);
@@ -485,7 +467,7 @@ bool field::update_my_value(){
 
 	} else if(int4_array_hook != NULL){
 		//split the user's string across commas
-		vector<string> user_entered_values = split(temp_input,',');
+		vector<string> user_entered_values = split(my_text_box.text,',');
 
 		//replace the default numbers in input_maker with the
 		//ones entered by the user
@@ -508,7 +490,7 @@ bool field::update_my_value(){
 
 	} else if(r8_array_hook != NULL){
 
-		vector<string> user_entered_values = split(temp_input,',');
+		vector<string> user_entered_values = split(my_text_box.text,',');
 
 		int num_values = user_entered_values.size();
 

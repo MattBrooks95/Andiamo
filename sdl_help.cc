@@ -476,7 +476,7 @@ void sdl_help::text_box_mini_loop_helper(SDL_Keysym& key,field* current_tile,
 	switch( key.sym ){
 		case SDLK_BACKSPACE:
 			//delete last character, unless it's empty already than do nothing
-			if( current_tile->temp_input.size() > 0 ){
+			if( current_tile->my_text_box.text.size() > 0 ){
 				//delete a character, update text's graphics
 				current_tile->my_text_box.back_space();
 				text_was_changed = true;
