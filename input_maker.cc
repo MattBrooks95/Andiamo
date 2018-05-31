@@ -6,6 +6,7 @@
 
 #include "input_maker.h"
 #include "button_manager.h"
+#include "regex_patterns.h"
 
 #define F << setw(8) <<
 #define F10 << setw(10) <<
@@ -92,20 +93,19 @@ void input_maker::init(const string& alternate_config){
 	}
 
 	//set up regex matches
-	regex re_comment("\\s*?#.*");
-	regex re_i4("\\s*?I4\\s+?[A-Za-z0-9_]+?\\s+?=\\s+?-?(([0-9]*)|(nodef))\\s*");
-	regex re_i4_array("\\s*?I4\\(\\s*?[0-9]+?\\s*?\\)\\s*?[A-Za-z0-9_]+?\\s*?=\\s*?\"(\\s*?-?[0-9]*?\\s*?,?)+?\"\\s*");
-	regex re_string("\\s*?C\\*\\s*?[A-Za-z_]+?\\|[0-9]+?\\|\\s*?=\\s*?\".+?\"\\s*");
-	regex re_real8("\\s*?R8\\s+?[A-Za-z0-9_]+?\\s+?=\\s+?((-?[0-9]*?\\.[0-9]*?)|(nodef))\\s*");
+	regex re_comment(RE_COMMENT);
+	regex re_i4(RE_INT4);
+	regex re_i4_array(RE_INT4_ARRAY);
+	regex re_string(RE_STRING);
+	regex re_real8(RE_REAL8);
 
-    //regex form_init("FORM:[A-Za-z0-9_]*?\\s+?(-?[0-9]+?\\.?[0-9]*? ?)*");
-    regex form_init("FORM:[A-Za-z0-9_]*?\\s+?(-?[0-9]+?\\.?[0-9]*?[, |]?)*");
+    regex form_init(RE_FORM_INIT);
 
-	regex string_array_size_pattern("\\|\\d+?\\|");
-	regex int_array_size_pattern("\\([0-9]+?\\)");
+	regex string_array_size_pattern(RE_STRING_ARRAY_SIZE);
+	regex int_array_size_pattern(RE_INT_ARRAY_SIZE);
 
-	regex r8_array("\\s*?R8\\(\\s*[0-9]+?\\s*?\\)\\s*?[A-Za-z0-9_]+?\\s*?=\\s*?\"(\\s*?[0-9]+?\\.[0-9]+?,?)+?\"");
-	regex nad_flag("nodef");
+	regex r8_array(RE_R8_ARRAY);
+	regex nad_flag(RE_NAD_FLAG);
 
 	string temp_string;
 	string temp_name;

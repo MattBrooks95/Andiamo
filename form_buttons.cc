@@ -5,6 +5,8 @@
 #include "form_buttons.h"
 #include "button_manager.h"
 #include "define.h"
+#include "regex_patterns.h"
+
 using namespace std;
 
 //copied over from input_maker
@@ -1254,11 +1256,11 @@ void icntrl10_button::init(){
     over_texture = SDL_CreateTextureFromSurface(sdl_access->renderer,over_surface);
 
     //patern for sub-line 1 of line 11 (page 12 in manual)
-    my_patterns.emplace_back(regex("(\\s*-?\\s*[0-9]{1,5}\\s*){1}\\s(\\s*-?\\s*[0-9]{1,3}\\s*\\.\\s*[0-9]{0,2}\\s*){1}"));
+    my_patterns.emplace_back(regex(RE_ICNTRL10_1));
     //pattern for sub-line 2 of line 11
-    my_patterns.emplace_back(regex("(\\s*-?\\s*[0-9]{1,4}\\s*\\.\\s*[0-9]{0,2}\\s*){6}"));
+    my_patterns.emplace_back(regex(RE_ICNTRL10_2));
     //pattern for sub-line 3 of line 11
-    my_patterns.emplace_back(regex("(\\s*-?\\s*[0-9]{1,4}\\s*\\.\\s*[0-9]{0,2}\\s*){6}"));
+    my_patterns.emplace_back(regex(RE_ICNTRL10_3));
 
     string unlock_path(HOME);
     unlock_path +=

@@ -3,6 +3,8 @@
 #include "button_manager.h"
 #include "asset_manager.h"
 
+#include "regex_patterns.h"
+
 using namespace std;
 
 
@@ -233,13 +235,13 @@ void button_manager::fill_regex_vectors(vector<regex>& icntrl_6_patterns,
 	//expressions, like the column of row labels in the icntrl6
 	//parity form
 	//regex dummy(".*");
-	regex int5("\\s*-?\\s*[0-9]{1,5}\\s*");
-	regex f10_3("\\s*-?\\s*[0-9]{1,6}\\s*\\.\\s*[0-9]{0,3}\\s*");
-	regex f8_4 ("\\s*-?\\s*[0-9]{1,4}\\s*\\.\\s*[0-9]{0,4}\\s*");
-	regex f10_4("\\s*-?\\s*[0-9]{1,5}\\s*\\.\\s*[0-9]{0,4}\\s*");
-	regex f5_2 ("\\s*-?\\s*[0-9]{1,3}\\s*\\.\\s*[0-9]{0,2}\\s*");
-	regex f5_1 ("\\s*-?\\s*[0-9]{1,3}\\s*\\.\\s*[0-9]{0,1}\\s*");
-	regex f7_3 ("\\s*-?\\s*[0-9]{1,4}\\s*\\.\\s*[0-9]{0,3}\\s*");
+	regex int5(RE_INT5);
+	regex f10_3(RE_F10_3);
+	regex f8_4 (RE_F8_4);
+	regex f10_4(RE_F10_4);
+	regex f5_2 (RE_F5_2);
+	regex f5_1 (RE_F5_1);
+	regex f7_3 (RE_F7_3);
 
 
 	//set up icntrl_6 tests

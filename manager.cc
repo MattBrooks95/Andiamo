@@ -3,7 +3,7 @@
 #include "button_manager.h"
 
 #include "define.h"
-
+#include "regex_patterns.h"
 using namespace std;
 
 //prototype for sorting function passed to algorithm::sort
@@ -41,27 +41,27 @@ void manager::init(const string& graphical_config_file){
 	string temp_string;
 
 	//this line specifies an image name
-	regex img_pattern("\\s*?.*\\.png\\s*?");
+	regex img_pattern(RE_IMG);
 
 	//this recognizes lines that specify tile size lines should be of the
 	//form widthxheight EX:100x100
-	regex field_size_pattern("\\s*?[0-9]+?\\s*?x\\s*?[0-9]+?\\s*?");
+	regex field_size_pattern(RE_FIELD_SIZE);
 
 	//this line specifies a tile name
-	regex name_pattern("\\s*?([a-z0-9_A-Z]+?):?(.*)?\\s*?");
+	regex name_pattern(RE_TILE_NAME);
 
 	//used to tell if the name line is of the form ->HFvariable:EnglishVariable
-	regex semi_pattern(":");
+	regex semi_pattern(RE_SEMI);
 
 	//describes a pattern for tile/input descriptors that starts with a 'c'
 	//and is followed by exactly one space,
 	//then contains any number of any characters
-	regex desc_pattern("c .*");
+	regex desc_pattern(RE_DESCRIPTION);
 
 	//this line recognizes the lines that separate
 	//the parameters into lines that correspond with the input manual,
 	//so they can be stored together
-	regex line_separator("\\s*?line_[0-9]+?[A-Z]?.*");
+	regex line_separator(RE_LINE_SEPARATOR);
 
 
 	getline(ins,temp_string);//priming read
@@ -753,7 +753,7 @@ void manager::iench_locking(){
 void manager::ilv1_locking(){
   try{
 	//do locking that pertains to ILV1
-	regex ilv1_good("\\s*6\\s*");
+	regex ilv1_good(RE_ILV1);
 	if(!regex_match(fields.at("line_5").at("ILV1")->my_text_box.text,ilv1_good)){
 		//make it purplish pink to indicate that it is locking other parameters
 		fields.at("line_5").at("ILV1")->change_tile_background("purple_andy_tile.png");
@@ -793,7 +793,7 @@ void manager::ilv1_locking(){
 
 void manager::icntrl4_locking(){
   try{
-	regex icntrl4_good("\\s*1\\s*");
+	regex icntrl4_good(RE_ICNTRL4);
 
 	if( !regex_match(fields.at("line_6").at("ICNTRL4")->my_text_box.text,icntrl4_good) ){
 		//make it purple to indicate it is locking other variables
@@ -834,7 +834,7 @@ void manager::icntrl4_locking(){
 void manager::ich4_nch4_locking(){
   try{
 
-	regex ich4_unlock("\\s*[1-6]\\s*");
+	regex ich4_unlock(RE_ICH4_UNLOCK);
 	//if both of it's params are correctly set up
 
 	string test_ich4 = fields.at("line_8").at("ICH4")->my_text_box.text;
@@ -893,7 +893,7 @@ void manager::ich4_nch4_locking(){
 
 void manager::icntrl8_locking(){
   try{
-	regex icntrl8_unlock("\\s*[0-9]+?\\s*");
+	regex icntrl8_unlock(RE_ICNTRL8_UNLOCK);
 
 	string icntrl_8_str = fields.at("line_6").at("ICNTRL8")->my_text_box.text;
 	int icntrl_8_val = stoi(fields.at("line_6").at("ICNTRL8")->my_text_box.text);
@@ -941,7 +941,7 @@ void manager::icntrl8_locking(){
 void manager::icntrl10_locking(){
   try{
 
-	regex icntrl10_unlock("\\s*[0-9]+?\\s*");
+	regex icntrl10_unlock(RE_ICNTRL10_UNLOCK);
 	int icntrl10_val = stoi(fields.at("line_6").at("ICNTRL10")->my_text_box.text);
 	string icntrl10_str = fields.at("line_6").at("ICNTRL10")->my_text_box.text;
 
@@ -1021,7 +1021,7 @@ void manager::ilv3_ilv5_locking(){
 
   try{
 
-	regex ilv3_ilv5_unlock("\\s*[0-9]+?\\s*");
+	regex ilv3_ilv5_unlock(RE_ILV3_ILV5_UNLOCK);
 
 	//do checks for ILV3
 	ilv3_ilv5_locking_helper("ILV3",ilv3_ilv5_unlock);
@@ -1094,7 +1094,7 @@ void manager::ilv3_ilv5_locking_helper(const string& target_param,const regex& u
 
 void manager::icntrl6_locking(){
   try{
-	regex icntrl6_unlock("\\s*[12]\\s*");
+	regex icntrl6_unlock(RE_ICNTRL6_UNLOCK);
 	//if icntrl6 is 1 or 2, unlock
 	if( regex_match(fields.at("line_6").at("ICNTRL6")->my_text_box.text,icntrl6_unlock) ){
 		//unlock params now that icntrl6 > 0
@@ -1155,7 +1155,7 @@ void manager::inm1_locking(){
   try{
 	int inm1_val = stoi(fields.at("line_10").at("INM1")->my_text_box.text);
 	string inm1_str = fields.at("line_10").at("INM1")->my_text_box.text;
-	regex inm1_good("\\s*[0-9]+\\s*");
+	regex inm1_good(RE_INM1_UNLOCK);
 
 	if( fields.at("line_10").at("INM1")->am_I_locking && (regex_match(inm1_str,inm1_good) && inm1_val > 0) ){
 		fields.at("line_10").at("INM1")->change_tile_background("andy_tile.png");
