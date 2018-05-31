@@ -21,29 +21,37 @@ field::field(string tile_name_in,string display_name_in,string image_name_in,
 	size.width = width;
     size.height = height;
 
-	help_mode = false; //start off in normal mode
+    //start off in normal mode
+	help_mode = false;
 
-	is_red = false; //not in error mode at default
+    //not in error mode at default
+	is_red = false;
 
-	am_I_locking = false;//not in locking mode at default
+    //not in locking mode at Default
+	am_I_locking = false;
 
 	//start off input blank. Default value loaded in by input
 	//manager, overridden by user
 	temp_input = "temp_input -> default failure";
 
+    /*
 	editing_location = 0;
 	text_dims.w = 0;
 	text_dims.h = 0;
 
 	text_dims.x = 0;
 	text_dims.y = 0;
+    */
 
-	xloc = 0;//these will be taken care of by calc_corners()
+    //these will be taken care of by calc_corners()
+	xloc = 0;
 	yloc = 0;
 
+    /*
 	//these need to start off null, then be created later
 	my_text_surf = NULL;
 	my_text_tex  = NULL;
+    */
 
 	my_tex  = NULL;
 
@@ -60,7 +68,6 @@ field::field(string tile_name_in,string display_name_in,string image_name_in,
 	string_hook     = NULL;
 	int4_array_hook = NULL;
 	r8_array_hook   = NULL;
-
 }
 
 field::field(const field& other){
@@ -107,40 +114,14 @@ field::field(const field& other){
 
 	lock_texture = NULL;
 
-	my_text_surf = NULL;
-
-	my_text_tex  = NULL;
-
 	my_tex       = NULL;
-
 	my_help_tex  = NULL;
 
 	size.width  = other.size.width;
     size.height = other.size.height;
-
-
-	text_box.y_offset = other.text_box.y_offset; 
-
-	text_box.text_color = other.text_box.text_color;
-
-	text_box.box_tex   = NULL;
-
-	text_box.text_surf = NULL;
-	text_box.text_tex  = NULL;
-
-	text_box.cursor_texture = NULL;
-
 }
 
 field::~field(){
-	if(my_text_surf != NULL && my_text_tex != NULL){
-		SDL_FreeSurface(my_text_surf);
-		my_text_surf = NULL;
-		SDL_DestroyTexture(my_text_tex);
-		my_text_tex  = NULL;
-	} else {
-		error_logger.push_error("Attempted double free in ~field!");
-	}
 
 	if(my_help_tex != NULL){
 		SDL_DestroyTexture(my_help_tex);
@@ -178,8 +159,9 @@ void field::graphics_init(string image_p_in){
 	if(lock_texture == NULL) error_logger.push_error(string(SDL_GetError()));
 
 	text_init();
-
+    my_text_box.init(sdl_access->font,"",xloc,yloc+25,size.width,25);
 }
+
 void field::text_init(){
 
 	//thanks to 
@@ -336,34 +318,14 @@ void field::draw_me(){
 		SDL_RenderCopy(renderer,my_text_tex,NULL,&text_dest_temp);
 		//######################################################################
 
-		//################ Do the drawing for the text box #####################
-		//text box xcoord will line up with tile's x coord
-		//y corner will be tile ycorner + scroll + calculated offset (by text_box_init(), same width
-		//height of 15 is line with the constant value in text_box_init()
-		SDL_Rect text_box_dest = {xloc+x_scroll, yloc + text_box.y_offset +y_scroll,width,25};
-
-		SDL_Rect text_box_src = {0,0,width,25};
-
-		SDL_RenderCopy(renderer,text_box.box_tex,&text_box_src,&text_box_dest);
-
-		SDL_Rect text_box_text_dest = {xloc+x_scroll, yloc + text_box.y_offset +y_scroll,0,0};
-
-		/*I had a "funny" bug here where I was drawing the text box's text using
-		 *the dimensions of the TILE NAME'S TEXTURE INSTEAD OF THE TEXT BOX'S
-		 *causing blurry text and such...changing it to text_box.text_text
-		 *fixed it. Unfortunate naming scheme */
-		 SDL_QueryTexture(text_box.text_tex,NULL,NULL,&text_box_text_dest.w,&text_box_text_dest.h);
-		 SDL_RenderCopy(renderer,text_box.text_tex,&text_dims,&text_box_text_dest);
-		//######################################################################
-
-
+        my_text_box.draw_me();
 	}
 
 	//handle the lock
 	if(is_locked){
-		SDL_Rect lock_dest = {xloc+x_scroll+size.width-15,
-									yloc+y_scroll+text_box.y_offset,15,25};
-		SDL_RenderCopy(renderer,lock_texture,NULL,&lock_dest);
+//		SDL_Rect lock_dest = {xloc+x_scroll+size.width-15,
+//									yloc+y_scroll+text_box.y_offset,15,25};
+//		SDL_RenderCopy(renderer,lock_texture,NULL,&lock_dest);
 	}
 
 
@@ -432,64 +394,6 @@ void field::clicked(SDL_Event& event, const int& click_x,const int& click_y){
 	help_toggle();
 }
 
-bool field::text_box_clicked(const int& click_x, const int& click_y){
-
-	//space saving references to scroll values
-	int x_scroll = sdl_access->get_xscroll();
-	int y_scroll = sdl_access->get_yscroll();
-
-	if( int4_hook == NULL && real8_hook == NULL && 
-		string_hook == NULL && int4_array_hook == NULL &&
-	    r8_array_hook == NULL){
-		//return false because there is no field to input_manager
-		//connection for the user to modify
-		return false;
-	}
-
-
-	//checking if a point is within a rectangle
-	bool below_top     = click_y >  yloc +y_scroll + size.height - 25;
-	bool above_bottom  = click_y < yloc + y_scroll + size.height;
-	bool right_of_left = click_x > xloc + x_scroll;
-	bool left_of_right = click_x < xloc +x_scroll + size.width; 
-	if( (below_top && above_bottom) && (right_of_left && left_of_right) ){
-		return true;
-	}
-	return false;
-
-}
-
-void field::back_space(){
-	if(editing_location > 0){
-
-		//erase from current editing location
-		temp_input.erase(editing_location-1,1);
-
-		//decrement editing location
-		editing_location--;
-	}
-
-	//update the cursor's size information
-	TTF_SizeText(sdl_access->font,temp_input.c_str(),&text_dims.w,&text_dims.h);
-
-	update_texture();
-}
-/* this is pretty much update_temp_input, but modified to be a helper function
- *for manager::give_defaults that way it can set up the text and update
- *the text's size saving variable */
-void field::init_temp_input(string data){
-
-	temp_input = data;
-	TTF_SizeText(sdl_access->font,temp_input.c_str(),&text_dims.w,&text_dims.h);
-
-	//start editing at end of the string by default
-	editing_location = temp_input.size()-1;
-
-	//update the texture
-	update_texture();
-}
-
-
 void field::change_tile_background(string image_name){
 	string full_path = image_p + image_name;
 
@@ -497,121 +401,6 @@ void field::change_tile_background(string image_name){
 
 	my_tex = asset_access->get_texture(full_path);
 	if(my_tex == NULL) error_logger.push_error(SDL_GetError());
-}
-
-
-
-void field::update_temp_input(SDL_Event& event){
-
-	//space saving reference to sdl class's font
-	TTF_Font* font = sdl_access->font;
-	
-	error_logger.push_msg("OLD LINE: "+temp_input);
-
-	if(check_text_box_bounds(event)){
-		temp_input.insert(editing_location,event.text.text);
-		editing_location += strlen(event.text.text);
-
-		TTF_SizeText(font,temp_input.c_str(),&text_dims.w,&text_dims.h);
-		error_logger.push_msg("AFTER APPEND:"+temp_input);
-		update_texture();
-	} else {
-		string err_msg = "Could not edit field's text,";
-		err_msg       += " as it would go out of bounds";
-		error_logger.push_msg(err_msg);
-	}
-}
-
-bool field::check_text_box_bounds(SDL_Event& event) const{
-
-	string fake_string = temp_input;
-	fake_string.insert(editing_location,event.text.text);
-	int new_w, new_h;
-	TTF_SizeText(sdl_access->font,fake_string.c_str(),&new_w,&new_h);
-	if(new_w > size.width) return false;
-	else return true;	
-}
-
-void field::draw_cursor(){
-
-
-	//space saving references
-	TTF_Font* font = sdl_access->font;
-	SDL_Renderer* renderer = sdl_access->renderer;
-	int x_scroll = sdl_access->get_xscroll();
-	int y_scroll = sdl_access->get_yscroll();
-
-
-	//do the math to figure out where the cursor should be placed
-
-	//start_to_edit is the width of temp_input's text -1 character,
-	//and no_point is a dummy, because SizeText expects 2 ints
-	int start_to_edit, no_point; 
-
-
-	TTF_SizeText(font, (temp_input.substr(0,editing_location)).c_str(),
-					&start_to_edit,&no_point);
-
-	//grab the cursor's width
-	int char_width;
-	TTF_SizeText(font, (temp_input.substr(editing_location,1)).c_str(),
-				 &char_width,&no_point);
-
-	//save the coordinates and dimensions for the cursor
-	SDL_Rect cursor_dest;
-	if(editing_location != temp_input.size()){
-
-		cursor_dest = {xloc +x_scroll+ start_to_edit,
-						yloc + text_box.y_offset +y_scroll,
-						char_width,text_dims.h};
-	} else {
-
-		//when the cursor is at the very end of the string,
-		//render a square of arbitrary size
-		cursor_dest = {xloc+x_scroll + text_dims.w,
-						yloc + text_box.y_offset +y_scroll, 6,text_dims.h};
-	}
-
-	if( SDL_RenderCopy(renderer,text_box.cursor_texture,NULL,&cursor_dest) ){
-		error_logger.push_error(SDL_GetError());
-	}
-
-}
-
-void field::update_texture(){
-
-	//space saving references
-	SDL_Renderer* renderer = sdl_access->renderer;
-	TTF_Font* font         = sdl_access->font;
-
-
-	//########################################################################
-	if(text_box.text_surf != NULL ){
-		//prevent memory loss
-		SDL_FreeSurface(text_box.text_surf);
-		text_box.text_surf = NULL;
-	} else {
-		string err_msg;
-		err_msg = "field::update_texture has an unexpected NULL text_surf ptr";
-		error_logger.push_msg(err_msg);
-	}
-	if(text_box.text_tex != NULL ){
-		//prevent memory loss
-		SDL_DestroyTexture(text_box.text_tex);
-		text_box.text_tex = NULL;
-	} else {
-		string err_msg;
-		err_msg = "field::update_texture has an unexpected NULL text_text ptr";
-		error_logger.push_msg(err_msg);
-	}
-	//########################################################################
-
-	text_box.text_surf = TTF_RenderUTF8_Blended(font,temp_input.c_str(),
-												text_box.text_color);
-	if(text_box.text_surf == NULL) error_logger.push_error(SDL_GetError());
-	text_box.text_tex = SDL_CreateTextureFromSurface(renderer,
-													 text_box.text_surf);
-	if(text_box.text_tex == NULL) error_logger.push_error(SDL_GetError());
 }
 
 //this function updates this fields ftran_struct in the input_maker vectors
@@ -768,84 +557,5 @@ void field::go_back(){
 		error_logger.push_error("Error in field::go_back() function: "+error);
 	}
 }
-
-
-void field::text_box_init(){
-
-	//space saving references
-	SDL_Renderer* renderer = sdl_access->renderer;
-	TTF_Font* font = sdl_access->font;
-
-
-	// v distance below tile = v tile height - v constant pixel height
-	text_box.y_offset        = size.height   -   25;
-
-	SDL_Color color = {BLACK};
-
-
-	//set up the text box background
-	text_box.box_tex = asset_access->get_texture(image_p+"text_box.png");
-	if(text_box.box_tex == NULL){
-		string error = SDL_GetError();
-		error_logger.push_error("Error in text_box_init! "+error);
-
-	}
-
-
-
-	string curs_target = HOME + "/Andiamo/Assets/Images/cursor.png";
-	text_box.cursor_texture = asset_access->get_texture(curs_target);
-
-	if(text_box.cursor_texture == NULL) error_logger.push_error(SDL_GetError());
-
-	//set up text box text
-	text_box.text_surf = TTF_RenderUTF8_Blended(font,temp_input.c_str(),color);
-
-	if(text_box.text_surf == NULL){
-		string error = SDL_GetError();
-		error_logger.push_error("Error in text_box_init! "+error);
-	}
-
-	text_box.text_tex =
-					SDL_CreateTextureFromSurface(renderer,text_box.text_surf);
-
-	if(text_box.text_tex == NULL){
-		string error = SDL_GetError();
-		error_logger.push_error("Error in text_box_init! "+error);
-	}
-	editing_location = temp_input.size();
-}
-
-sdl_text_box::sdl_text_box(){
-
-	box_tex        = NULL;
-
-	text_surf      = NULL;
-	text_tex       = NULL;
-
-	cursor_texture = NULL;
-
-	text_color = {0,0,0,0};
-
-	y_offset = 0;
-}
-
-sdl_text_box::~sdl_text_box(){
-
-    if(text_surf != NULL){
-	    SDL_FreeSurface(text_surf);
-		text_surf = NULL;
-    }
-    if(text_tex != NULL){
-    	SDL_DestroyTexture(text_tex);
-		text_tex = NULL;
-    }
-}
-
-
-
-
-
-
 
 

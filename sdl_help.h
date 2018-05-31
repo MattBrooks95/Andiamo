@@ -219,8 +219,14 @@ class sdl_help{
 	//! this member returns current horizontal scrolling value by value
 	int get_xscroll(){return x_scroll;}
 
+	//! returns a pointer to the x scrolling variable
+	int* get_xscroll_ptr(){return &x_scroll;}
+
 	//! this member returns current vertical scrolling value by value
 	int get_yscroll(){return y_scroll;}
+
+	//! returns a pointer to the y scrolling variable
+	int* get_yscroll_ptr(){return &y_scroll;}
 
 	//! this member serves as a getter for the SDL window
 	SDL_Window* get_window(){ return window;}

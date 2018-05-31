@@ -1,6 +1,7 @@
 //! \file cursor.cc implements the class members found in cursor.h
 
 #include "cursor.h"
+#include "sdl_help.h"
 
 using namespace std;
 
@@ -87,6 +88,18 @@ int cursor::calc_location(TTF_Font* font,const string& text,
 void cursor::draw_me(){
 
 	if( SDL_RenderCopy(sdl_access->renderer,my_texture,NULL,&cursor_dest) != 0){
+		error_logger.push_error(SDL_GetError());
+	}
+
+}
+
+void cursor::draw_me(const int x_scroll, const int y_scroll){
+
+	SDL_Rect mod_dest = cursor_dest;
+	mod_dest.x += x_scroll;
+	mod_dest.y += y_scroll;
+
+	if( SDL_RenderCopy(sdl_access->renderer,my_texture,NULL,&mod_dest) != 0){
 		error_logger.push_error(SDL_GetError());
 	}
 

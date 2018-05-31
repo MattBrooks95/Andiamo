@@ -13,6 +13,8 @@
 
 #include "define.h"
 
+#include "field.h"
+
 #define SDL_HELP_ERROR "Attempted double free in ~sdl_help"
 using namespace std;
 
@@ -355,7 +357,7 @@ void sdl_help::click_detection(ostream& outs,SDL_Event& event,int click_x, int c
 
 				//if they clicked the text box, allow them to
 				//edit the parameter
-				if(field_ptr->text_box_clicked(click_x,click_y)){
+				if(field_ptr->my_text_box.was_clicked(event)){
 
 					if(!field_ptr->is_locked){
 						text_box_mini_loop(outs,event,field_ptr);
@@ -409,7 +411,7 @@ void sdl_help::text_box_mini_loop(ostream& outs, SDL_Event& event,
 
 		  case SDL_MOUSEBUTTONDOWN:
 			//if the click was within the text box, move the cursor maybe
-		  	if( current_tile->text_box_clicked(event.button.x,event.button.y) ){
+		  	if( current_tile->my_text_box.was_clicked(event) ){
 
 				string msg = "Text box click at " + to_string(event.button.x);
 				msg       += ":" + to_string(event.button.y);
@@ -425,7 +427,8 @@ void sdl_help::text_box_mini_loop(ostream& outs, SDL_Event& event,
 		  	break;
 
 		  case SDL_TEXTINPUT:
-			current_tile->update_temp_input(event);
+			//current_tile->update_temp_input(event);
+		  	current_tile->my_text_box.update_text(event.text.text);
 			text_was_changed = true;
 		  	//here this actually causes a loss of letters, so the event
 			//flooding is necessary, don't flush SDL_FlushEvent(SDL_TEXTINPUT);
@@ -458,7 +461,7 @@ void sdl_help::text_box_mini_loop(ostream& outs, SDL_Event& event,
 
 			//update picture
 			sdl_access->draw();
-			current_tile->draw_cursor();
+			//current_tile->draw_cursor();
 			text_was_changed = false;
 			present();
 
@@ -475,7 +478,7 @@ void sdl_help::text_box_mini_loop_helper(SDL_Keysym& key,field* current_tile,
 			//delete last character, unless it's empty already than do nothing
 			if( current_tile->temp_input.size() > 0 ){
 				//delete a character, update text's graphics
-				current_tile->back_space();
+				current_tile->my_text_box.back_space();
 				text_was_changed = true;
 			}
 			break;
@@ -483,18 +486,20 @@ void sdl_help::text_box_mini_loop_helper(SDL_Keysym& key,field* current_tile,
 		case SDLK_LEFT:
 			//if we are not already at the very left of the text,
 			//move the editing position one to the left
-			if(current_tile->editing_location > 0){
+			/*if(current_tile->editing_location > 0){
 				current_tile->editing_location--;
 				text_was_changed = true;
-			}
+			}*/
+			current_tile->my_text_box.dec_cursor(text_was_changed);
 			break;
 		case SDLK_RIGHT:
 			//if we are not already at the very end of the text,
 			//move the editing position one to the right
-			if(current_tile->editing_location < current_tile->temp_input.size()){
+			/*if(current_tile->editing_location < current_tile->temp_input.size()){
 				current_tile->editing_location++;
 				text_was_changed = true;
-			}
+			}*/
+			current_tile->my_text_box.inc_cursor(text_was_changed);
 			break;
 	  default:
 	  	break;
@@ -604,7 +609,12 @@ void sdl_help::calc_corners_helper(vector<field*>& line_in,
 
 			line_in[c]->xloc = x_corner;
 			line_in[c]->yloc = y_corner;
-
+			line_in[c]->my_text_box.xloc += x_corner;
+			line_in[c]->my_text_box.yloc += y_corner;
+			//the text boxes used in the main context need to have their
+			//scrolling pointers set for click detection & drawing
+			line_in[c]->my_text_box.set_scrolling();
+			line_in[c]->my_text_box.make_rect();
 
 			x_corner = line_in[c]->xloc + line_in[c]->get_size().width + x_buffer;
             if(x_corner > rightmost_edge) rightmost_edge = x_corner; 
@@ -614,6 +624,8 @@ void sdl_help::calc_corners_helper(vector<field*>& line_in,
 				lowest_point = line_in[c]->yloc + line_in[c]->get_size().height + 5;
 				error_logger.push_msg(" NEW lowest_point:"+to_string(lowest_point));
 			}
+
+
 		//this is the case where the tile needs to be placed into
 		//a new row (because there's not enough width left)
 		} else {
@@ -631,6 +643,12 @@ void sdl_help::calc_corners_helper(vector<field*>& line_in,
 			//set that lowest point as the new y coordinate for the
 			//fields in this row
 			y_corner = lowest_point;
+
+			line_in[c]->my_text_box.xloc += x_buffer;
+			line_in[c]->my_text_box.yloc += y_corner;
+
+			line_in[c]->my_text_box.set_scrolling();
+			line_in[c]->my_text_box.make_rect();
 
 			//save new lowest point
 			lowest_point = line_in[c]->yloc +

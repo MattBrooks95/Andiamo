@@ -10,6 +10,8 @@
 #include<SDL2/SDL_image.h>
 #include<SDL2/SDL_ttf.h>
 
+#include "text_box.h"
+
 #include "colors.h"
 
 #include "ftran_structs.h"
@@ -20,36 +22,6 @@ extern logger error_logger;
 
 using std::string;
 using std::vector;
-
-
-/*! \brief this is a handy bag for the textures and surfaces necessary
-	for text box creation. To be used in a field object */
-struct sdl_text_box{
-	//! the constructor sets all pointers to NULL
-	sdl_text_box();
-
-	//! the destructor frees all of the memory
-	~sdl_text_box();
-
-	//! stores the tile_box's y offset from the top left corner of the tile
-	int y_offset; 
-
-	//! keep track of the text color
-	SDL_Color text_color;
-
-	//!< keep track of the texture for the (usually) white background
-	SDL_Texture* box_tex;
-
-	//!< keep track of the surface for the current text in the text box
-	SDL_Surface* text_surf;
-
-	//!< keep track of the texture for the current text in the text box
-	SDL_Texture* text_tex;
-
-	//!< save the texture for text entry indicator
-	SDL_Texture* cursor_texture;
-
-};
 
 //! tile_size is a struct that contains height and width for this parameter
 struct tile_size{
@@ -103,9 +75,6 @@ class field{
 	//! called from graphics_init(), this sets up the text's surface
 	void text_init();
 
-	//! sets up the text box
-	void text_box_init();
-
 	//! this will draw this field object's texture to the screen
 	/*! this works using its known corner values offset by the current scrolling
 	 *values */
@@ -116,18 +85,6 @@ class field{
 	 *\param click_x is the xlocation relative to the top left corner of the screen, where the user left clicked
 	 *\param click_y is the ylocation relative to the top left corner of the screen, where the user left clicked*/
 	void clicked(SDL_Event& event, const int& click_x,const int& click_y);
-
-	//! this function returns true if the text box was clicked, and false otherwise
-	/*! it will either implement text grabbing from keyboard, or call a function that does it */
-	bool text_box_clicked(const int& click_x, const int& click_y);
-
-	//! this function changes the temp_input field as a response to typing in the text box
-	/*! it should also update the surface for the text, so that the changes are reflected in the graphics when the next
-	 *frame is drawn */
-	void update_temp_input(SDL_Event& event);
-
-	//! this function makes sure that the user can't type off the bounds of the text box
-	bool check_text_box_bounds(SDL_Event& event) const;
 
 	//! this function is used by manager::give_fields_defaults to set the text as read in from the HF config file
 	/*! this helper will also update the text's surface dimensions, to be used when the text is drawn to the screen */
@@ -240,6 +197,10 @@ class field{
 
 	int xloc; //!< keeps track of the xcoordinate of its upper left corner
 	int yloc; //!< keeps track of the ycoordinate of its upper left corner
+
+	//! text box object for user info entry
+	text_box my_text_box;
+
   private:
 
 	//! string that corresponds to the path to the image resource directory.
@@ -259,7 +220,7 @@ class field{
 
 	 /*! keeps track of the surfaces and textures required for
 	  *the text box implementation */
-	sdl_text_box text_box;
+	//sdl_text_box text_box;
 
 	//! surface for the parameter explanation
 	SDL_Surface* my_help_surf;

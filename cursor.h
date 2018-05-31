@@ -8,7 +8,6 @@
 
 #include "asset_manager.h"
 #include "logger.h"
-#include "sdl_help.h"
 
 using std::string;
 using std::ostream;
@@ -38,6 +37,10 @@ class cursor{
 
 	//! this function draws the cursor the passed renderer
 	void draw_me();
+
+	//! draw the cursor with a modified location
+	/*! used in text boxes that require scrolling interaction */
+	void draw_me(const int x_change, const int y_change);
 
 	//! this function prints all of the cursor's info to a passed stream
 	/* or the error/message logger if no reference is given */

@@ -8,7 +8,7 @@
 #include<iostream>
 #include<string>
 
-#include "sdl_help.h"
+//#include "sdl_help.h"
 #include "cursor.h"
 #include "asset_manager.h"
 
@@ -42,10 +42,14 @@ struct text_box{
 	void init(TTF_Font* font_in,string text_in,int xloc_in,
 			  int yloc_in,int width_in, int height_in);
 
+	//! sets pointers to the sdl class's scrolling values
+	/*! this is another initialization step for text boxes
+	 *being used in a context that allows scrolling */
+	void set_scrolling();
+
 	//############## CLICK FUNCTIONS ###########################################
 	bool was_clicked(SDL_Event& mouse_event);
 	//##########################################################################
-
 
 	//! prints all of this structs information, usually for debugging
 	void print_me();
@@ -53,13 +57,16 @@ struct text_box{
 	//! this function draws the text box to the screen
 	void draw_me();
 
+	//! this version of draw_me draws the text box modified by scrolling
+	void draw_me(const int x_scroll, const int y_scroll);
+
 	//! updates the SDL_Rect storage of the text boxes location, for rendering
 	void make_rect();
 
 	//! this function updates the text that is rendererd to the screen
 	/*! it uses update_text_bounds_check to make sure that text can't
 	 *go off the edge */
-	void update_text(string& new_text);
+	void update_text(const string& new_text);
 
 	//! this version of update_text does input checking
 	/*! \param new_text is the test to be added
@@ -110,6 +117,12 @@ struct text_box{
 
 	//! the height should be set by the init function or the constructor
 	int height;
+
+	//! pointer to current x scrolling value, if it exists
+	int* x_scroll;
+
+	//! pointer to current y scrolling value, if it exists
+	int* y_scroll;
 
 	//! save the absolute dimensions of the text in the button
 	SDL_Rect text_dims;

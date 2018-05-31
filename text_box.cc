@@ -1,6 +1,6 @@
 //! \file text_box.cc implements the functions declared in text_box.h
 #include "text_box.h"
-
+#include "sdl_help.h"
 using namespace std;
 
 extern asset_manager* asset_access;
@@ -24,6 +24,9 @@ text_box::text_box(TTF_Font* font_in, string text_in, int xloc_in, int
 
 	width = width_in;
 	height = height_in; 
+
+	x_scroll = NULL;
+	y_scroll = NULL;
 
 	bad_input = false;
 	editing_location = 0;
@@ -137,6 +140,13 @@ void text_box::init(TTF_Font* font_in, string text_in, int xloc_in, int yloc_in,
 
 }
 
+void text_box::set_scrolling(){
+
+	x_scroll = sdl_access->get_xscroll_ptr();
+	y_scroll = sdl_access->get_yscroll_ptr();
+
+}
+
 void text_box::print_me(){
 
 	error_logger.push_msg("Printing text box.");
@@ -161,17 +171,24 @@ void text_box::print_me(){
 
 void text_box::draw_me(){
 
+
+	SDL_Rect modified_rect = my_rect;
+	if(x_scroll != NULL && y_scroll != NULL){
+		modified_rect.x += *x_scroll;
+		modified_rect.y += *y_scroll;
+	}
+
 	//if the text box hasn't been given bad input, or this text box
 	//just "doesn't care" then draw the normal white box
 	if(!bad_input){
 
 		//render the white box
-		SDL_RenderCopy(sdl_access->renderer,text_box_texture,NULL,&my_rect);
+		SDL_RenderCopy(sdl_access->renderer,text_box_texture,NULL,&modified_rect);
 
 	//elsewise, draw the text box as being red, to indicate that it has been given bad input
 	} else {
 
-		SDL_RenderCopy(sdl_access->renderer,bad_texture,NULL,&my_rect);
+		SDL_RenderCopy(sdl_access->renderer,bad_texture,NULL,&modified_rect);
 	}
 
 	if(text != " " && !text.empty() ){
@@ -184,7 +201,11 @@ void text_box::draw_me(){
 		// it didn' care about the constraining text box
 		raw_cursor_location = my_cursor.calc_location(sdl_access->font,
 													text,editing_location);
-		my_cursor.draw_me();
+		if(x_scroll == NULL && y_scroll == NULL){
+			my_cursor.draw_me();
+		} else {
+			my_cursor.draw_me(*x_scroll,*y_scroll);
+		}
 		my_cursor.print();
 
 
@@ -192,13 +213,13 @@ void text_box::draw_me(){
 		//text box's width this is the simplest case
 		if(text_dims.w < my_rect.w){
 
-			SDL_Rect mod_rect;
+			SDL_Rect mod_text_rect;
 			//half of the info will be the same 
-			mod_rect   = my_rect;
+			mod_text_rect   = modified_rect;
 			//width and height should match text exactly
-			mod_rect.w = text_dims.w;
-			mod_rect.h = text_dims.h;
-			SDL_RenderCopy(sdl_access->renderer,text_texture,NULL,&mod_rect);
+			mod_text_rect.w = text_dims.w;
+			mod_text_rect.h = text_dims.h;
+			SDL_RenderCopy(sdl_access->renderer,text_texture,NULL,&mod_text_rect);
 
 		//if the text is bigger than the text box, use the shown_area as
 		//source info things get a bit more complicated here
@@ -207,30 +228,30 @@ void text_box::draw_me(){
 			//the return value of the previously called my_cursor.calc_location
 			//this math gives an integer that tells us how many text boxes
 			//of space exist, and which one the cursor is in
-			int sub_area_selector = floor(raw_cursor_location / my_rect.w);
+			int sub_area_selector = floor(raw_cursor_location / modified_rect.w);
 
 			//make the start area for the source be the beginning of
 			//the appropriate bin
-			shown_area.x = 0 + my_rect.w * sub_area_selector;
+			shown_area.x = 0 + modified_rect.w * sub_area_selector;
 
 			//figure out if the text destination must be made smaller to avoid
 			//the stretching that results from assuming that the last sub
 			//bin will have the same width as the text box
 			int dist_from_end = (shown_area.x + my_rect.w) - text_dims.w;
-			SDL_Rect mod_dest = my_rect;
+			SDL_Rect mod_dest = modified_rect;
 			SDL_Rect mod_src  = shown_area;
 
 			//do some modification to make the source dimensions
 			//match the text in the last bin, if the cursor is in the last bin
 			//the first clause in english is "Am I (the cursor) in the last sub bin?"
-			if( raw_cursor_location > my_rect.w * (floor(text_dims.w / my_rect.w))
+			if( raw_cursor_location > modified_rect.w * (floor(text_dims.w / modified_rect.w))
 				//this second clause ensures that we only 'crop' the source box
 				//when the text in the last sub-bin doesn't use the
 				//whole sub-bin
-				&& dist_from_end < my_rect.w){
+				&& dist_from_end < modified_rect.w){
 
-				mod_dest.w = my_rect.w - dist_from_end;
-				mod_src.w  = my_rect.w - dist_from_end;
+				mod_dest.w = modified_rect.w - dist_from_end;
+				mod_src.w  = modified_rect.w - dist_from_end;
 			}
 
 			//at this point, mod_src and mod_dest have either been modified
@@ -250,7 +271,7 @@ void text_box::make_rect(){
 
 }
 
-void text_box::update_text(string& new_text){
+void text_box::update_text(const string& new_text){
 
 	text.insert(editing_location,new_text);
 	editing_location += strlen(new_text.c_str());
@@ -307,15 +328,22 @@ void text_box::update_texture(){
 		SDL_DestroyTexture(text_texture);
 	}
 
-	text_surface = TTF_RenderUTF8_Blended(font,text.c_str(),text_color);
-	if(text_surface == NULL){
-		error_logger.push_error(SDL_GetError());
-		text_surface = TTF_RenderUTF8_Blended(font," ",text_color);
+	if(font != NULL){
+		text_surface = TTF_RenderUTF8_Blended(font,text.c_str(),text_color);
+
+		if(text_surface == NULL){
+			error_logger.push_error(SDL_GetError());
+				text_surface = TTF_RenderUTF8_Blended(font," ",text_color);
+		}
+		text_texture = SDL_CreateTextureFromSurface(sdl_access->renderer,text_surface);
+		if(text_texture == NULL){
+			error_logger.push_error(SDL_GetError());
+		}
+
+	} else {
+		error_logger.push_error("In text_box::update_texture, font is NULL.");
 	}
-	text_texture = SDL_CreateTextureFromSurface(sdl_access->renderer,text_surface);
-	if(text_texture == NULL){
-		error_logger.push_error(SDL_GetError());
-	}
+
 }
 
 void text_box::toggle_red(){
@@ -363,8 +391,17 @@ void text_box::back_space(const regex& test){
 //################# CLICK FUNCTIONS ##########################################
 
 bool text_box::was_clicked(SDL_Event& event){
-	if( (event.button.x >= xloc && event.button.x <= xloc+width) &&
-	    (event.button.y >= yloc && event.button.y <= yloc + height) ) return true;
+	int real_xloc = xloc;
+	int real_yloc = yloc;
+
+	if(x_scroll != NULL && y_scroll != NULL){
+		real_xloc += *x_scroll;
+		real_yloc += *y_scroll;
+	}
+	if( (event.button.x >= real_xloc && event.button.x <= real_xloc+width) &&
+	    (event.button.y >= real_yloc && event.button.y <= real_yloc + height)){
+	    return true;
+	}
 	return false;
 }
 //############################################################################

@@ -390,7 +390,9 @@ void manager::give_int4_fields_defaults(){
 			//-1804 means that this parameter shouldn't have a default value,
 			//so set the text box's text to a message instead
 			if(big_it->second.value == -1804) {
-				line_it->second.at(big_it->first)->init_temp_input("no default");
+
+				line_it->second.at(big_it->first)->my_text_box.update_text("no default");
+
 			} else {
 
 				//field's parameter name
@@ -401,12 +403,9 @@ void manager::give_int4_fields_defaults(){
 				string io_str;
 				io_str = big_it->first;
 
-				line_it->second.at(io_str)->init_temp_input(field_str);
+				//line_it->second.at(io_str)->init_temp_input(field_str);
+				line_it->second.at(io_str)->my_text_box.update_text(field_str);
 			}
-
-
-			//set up the text box
-			line_it->second.at(big_it->first)->text_box_init();
 
 			//we found it, so make the flag good
 			found = true;
@@ -453,11 +452,8 @@ void manager::give_int4_array_fields_defaults(){
 			default_val = big_it->second.get_string();
 
 			line_it->second.at(big_it->first)->int4_array_hook = &big_it->second;
-			line_it->second.at(big_it->first)->init_temp_input(default_val);
-
-			//run the text box's init function
-			line_it->second.at(big_it->first)->text_box_init();
-
+			//line_it->second.at(big_it->first)->init_temp_input(default_val);
+			line_it->second.at(big_it->first)->my_text_box.update_text(default_val);
 			found = true;
 			break;
 		  } catch (out_of_range& not_found){
@@ -498,16 +494,18 @@ void manager::give_real8_fields_defaults(){
 			//-180.4 is the float version of the no applicable default flag,
 			//so set text box to be a message instead 
 			if(big_it->second.value == -180.4){
-				line_it->second.at(big_it->first)->init_temp_input("no default");
+
+				//line_it->second.at(big_it->first)->init_temp_input("no default");
+				line_it->second.at(big_it->first)->my_text_box.update_text("no default");
+
 			} else {
 
 				string temp_val;
 				temp_val = to_string(big_it->second.value);
-				line_it->second.at(big_it->first)->init_temp_input(temp_val);
-			}
+				//line_it->second.at(big_it->first)->init_temp_input(temp_val);
+				line_it->second.at(big_it->first)->my_text_box.update_text(temp_val);
 
-			//set up the text box
-			line_it->second.at(big_it->first)->text_box_init();
+			}
 
 			//set the flag to true, because we found
 			//the param we were looking for
@@ -551,10 +549,10 @@ void manager::give_string_fields_defaults(){
 
 			//set up the pointer to the parameter in input_maker
 			line_it->second.at(par_name)->string_hook = &big_it->second;
-			line_it->second.at(par_name)->init_temp_input(temp_str);
+			//line_it->second.at(par_name)->init_temp_input(temp_str);
+			line_it->second.at(par_name)->my_text_box.update_text(temp_str);
 
-			//set up the text box
-			line_it->second.at(big_it->first)->text_box_init();
+
 			found = true;
 			break;
 		  } catch (out_of_range& not_found){
@@ -592,10 +590,7 @@ void manager::give_r8_array_fields_defaults(){
 			
 			//set pointer to parameter in input maker
 			lines_it->second.at(big_it->first)->r8_array_hook = &big_it->second;
-			lines_it->second.at(big_it->first)->init_temp_input(temp_str);
-
-			 //set up text box
-			lines_it->second.at(big_it->first)->text_box_init();
+			lines_it->second.at(big_it->first)->my_text_box.update_text(temp_str);
 			found = true;
 
 			//stop checking lines
