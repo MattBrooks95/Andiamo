@@ -146,14 +146,14 @@ class input_maker{
 void output_string(ofstream& outs,const unsigned int& size,\
 					const string& string_in); 
 
-//! this function sets up line one of the HF input file
+//! sets up line one of the HF input file
 void do_line1(ofstream& outs,const map<string,param_string>& string_params);
 
-//! this function sets up line two of the HF input file
+//! sets up line two of the HF input file
 void do_line2(ofstream& outs,const map<string,param_real8>& real8_params,
 				const map<string,param_int4>& int4_params);
 
-//! this function implements the reading loop over the transmission coefficients
+//! implements the reading loop over the transmission coefficients
 /* NENT, LMAX and NGF control the loops, and TC_input_file button sets
  *this class's TC_input_file_name variable and the coefficients
  * are read in from there */
@@ -161,7 +161,7 @@ void do_TC_coefficients(const map<string,param_real8>& real8_params,
 						const map<string,param_int4_array>& array_map,
 						string TC_input_file_name,ofstream& outs);
 
-//! helper outputs the variables found in line 4 of the input description manual
+//! outputs the variables found in line 4 of the input description manual
 void do_line4(ofstream& outs,const map<string,param_real8>& real8_params,
 				const map<string,param_int4>& int4_params);
 
@@ -175,27 +175,42 @@ void do_line4A(ofstream& outs,const map<string,param_real8>& real8_params,
 void do_line4B(ofstream& outs,const map<string, param_r8_array>& e_params);
 */
 
-//! helper prints out line 5
+//! prints out line 5
 void do_line5(ofstream& outs,const map<string, param_int4>& int4_params);
 
 //! prints line 5A, should only be called if ILV1 is == 6
 void do_line5A(ofstream& outs, const map<string, param_real8>& real8_params);
 
-//! this helper outputs the values for the parameters in line 6
+//! outputs the values for the parameters in line 6
 void do_line6(ofstream& outs,const map<string,param_int4>& int4_params);
 
-//! this helper outputs the values for the parameters in line 7
+//! outputs the values for the parameters in line 7
 void do_line7(ofstream& outs,const map<string,param_real8>& real8_params);
 
-//! this helper outputs the variables in line 8, if ICNTRL4 != 0
+//! outputs the variables in line 8, if ICNTRL4 != 0
 void do_line8(ofstream& outs,const map<string,param_int4>& int4_params);
 
-//! this helper outputs the variables in line 9
+//! outputs the variables in line 9
 void do_line9(ofstream& outs,const map<string,param_int4>& int4_params,
 				const map<string,param_real8>& real8_params);
 
-//! this helper outputs the variables in line 10
-void do_line10(ofstream&outs,const map<string,param_int4>& int4_params);
+//! outputs the variables in line 10
+void do_line10(ofstream& outs,const map<string,param_int4>& int4_params);
+
+//! outputs the variables related to icntrl6
+void do_icntrl6(ofstream& outs, int icntrl6_value,
+				vector<string>& form_bad_inputs,
+				vector<index_value>& icntrl6_bad_inputs);
+
+//! outputs the variables related to icntrl8
+void do_icntrl8(ofstream& outs,
+				vector<string>& form_bad_inputs,
+				vector<index_value>& icntrl8_bad_inputs);
+
+//! outputs the variables related to icntrl10
+void do_icntrl10(ofstream& outs,
+				vector<string>& form_bad_inputs,
+				vector<index_value>& icntrl10_bad_inputs);
 //############################################################################
 
 

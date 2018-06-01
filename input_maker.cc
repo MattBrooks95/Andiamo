@@ -507,15 +507,21 @@ bool input_maker::output(vector<string>& form_bad_inputs){
 
 
 	//SET UP LINE 1#############################################################
+	outs << "LINE_1###################################" << endl;
 	do_line1(outs,string_params);
+	outs << "#########################################" << endl;
 	//##########################################################################
 
 	//SET UP LINE 2#############################################################
+	outs << "LINE_2###################################" << endl;
 	do_line2(outs,real8_params, int4_params);
+	outs << "#########################################" << endl;
 	//##########################################################################
 
 	//SET UP LINE 3#############################################################
+	outs << "LINE_3###################################" << endl;
 	do_TC_coefficients(real8_params,int4_array_params,TC_input_file_name,outs);
+	outs << "LINE_4###################################" << endl;
 	//##########################################################################
 
 
@@ -544,15 +550,20 @@ bool input_maker::output(vector<string>& form_bad_inputs){
 
 
     //do line 5
+    outs << "LINE_5###################################" << endl;
     do_line5(outs,int4_params);	
+    outs << "#########################################" << endl;
 
     //do line 5A
+    outs << "LINE_5A##################################" << endl;
     if(int4_params.at("ILV1").value == 6){
         do_line5A(outs,real8_params);
     }
+    outs << "#########################################" << endl;
 
 
     //do line 5D or 5E
+    outs << "LINE_5D or LINE 5E#######################" << endl;
 	std::vector<index_value> ilv3_ilv5_bad_inputs;
 	int ilv3_val = int4_params.at("ILV3").value;
 	int ilv5_val = int4_params.at("ILV5").value;
@@ -579,17 +590,26 @@ bool input_maker::output(vector<string>& form_bad_inputs){
 			}
 		}
 	}
+	outs << "#########################################" << endl;
 
 	//do line 6
+	outs << "LINE_6###################################" << endl;
 	do_line6(outs,int4_params);
+	outs << "#########################################" << endl;
 
 	//do line 7
+	outs << "LINE_7###################################" << endl;
 	do_line7(outs,real8_params);
+	outs << "#########################################" << endl;
 
+	//do line 8 and the line 9 loop
+	outs << "LINE_8 and LINE_9#######################" << endl;
 	//if the conditions from the input manual are met
 	if( int4_params.at("ICNTRL4").value != 0 ){
+		//static line 8
 		do_line8(outs,int4_params);
-		//do line 8
+
+		//dynamic line 9
 		//do the form's output
 		std::vector<index_value> icntrl4_bad_inputs;
 		if(!button_access->get_icntrl_4().make_output(outs,icntrl4_bad_inputs)){
@@ -605,66 +625,33 @@ bool input_maker::output(vector<string>& form_bad_inputs){
 			}
 		}
 	}//elsewise, don't do lines 8&9
+	outs << "#########################################" << endl;
 
-
+	//do line 10
+	outs << "LINE_10##################################" << endl;
 	if( int4_params.at("ICNTRL6").value > 0){
 		do_line10(outs,int4_params);
 	}
+	outs << "#########################################" << endl;
 
 
 	//#########MAKE OUTPUTS FROM FORM_BUTTONS ################################//
-	std::vector<index_value> icntrl6_bad_inputs;
+	outs << "ICNTRL6_FORM#############################" << endl;
+	vector<index_value> icntrl6_bad_inputs;
+	int icntrl6_value = int4_params.at("ICNTRL6").value;
+	do_icntrl6(outs,icntrl6_value,form_bad_inputs,icntrl6_bad_inputs);
+	outs << "#########################################" << endl;
 
-	if( int4_params.at("ICNTRL6").value > 0 &&
-		!button_access->get_icntrl_6().make_output(outs,icntrl6_bad_inputs)){
+	outs << "ICNTRL8_FORM#############################" << endl;
+	vector<index_value> icntrl8_bad_inputs;
+	do_icntrl8(outs,form_bad_inputs,icntrl8_bad_inputs);
+	outs << "$########################################" << endl;
 
-		form_bad_inputs.push_back("########## Icntrl6 error list###########\n");
-		form_bad_inputs.push_back("Parameter Search form\n");
-		for(unsigned int c = 0; c < icntrl6_bad_inputs.size(); c++){
-			string temp_error =  "Index: " +to_string(icntrl6_bad_inputs[c].index)
-							     + "  Argument: " + icntrl6_bad_inputs[c].value
-						  		 + "\n";
-			form_bad_inputs.push_back(temp_error);
-		}
-	}
-
-	std::vector<index_value> icntrl8_bad_inputs;
-	if(!button_access->get_icntrl_8().get_is_locked() && 
-	   !button_access->get_icntrl_8().make_output(outs,icntrl8_bad_inputs)){
-
-		form_bad_inputs.push_back("########## Icntrl8 error list ##########\n");
-		form_bad_inputs.push_back("Residual Level Threshold Count form\n");
-		for(unsigned int c = 0; c < icntrl8_bad_inputs.size(); c++){
-			string temp_error =  "Index: "
-                                 + to_string(icntrl8_bad_inputs[c].index)
-							     + "  Argument: " + icntrl8_bad_inputs[c].value
-						  		 + "\n";
-			form_bad_inputs.push_back(temp_error);
-			//cout << "Text: " << icntrl8_bad_inputs[c].value
-			//<< " Index: " << icntrl8_bad_inputs[c].index << endl;
-		}
-	}
-
-
-    //only print the output for icntrl10 if it is activated & satisfied
+	outs << "ICNTRL10_FORM############################" << endl;
     vector<index_value> icntrl10_bad_inputs;
-    if(!button_access->get_icntrl_10().get_is_locked()){
+    do_icntrl10(outs,form_bad_inputs,icntrl10_bad_inputs);
+    outs << "#########################################" << endl;
 
-    	std::vector<index_value> icntrl10_bad_inputs;
-    	if(!button_access->get_icntrl_10().make_output(outs,icntrl10_bad_inputs)){
-
-            form_bad_inputs.push_back("##### ICNTRL10 ERRORS ######");
-            form_bad_inputs.push_back("Special Sigma");
-            for(unsigned int c = 0; c < icntrl10_bad_inputs.size();c++){
-
-                string push_me = "Value: " + icntrl10_bad_inputs[c].value;
-                push_me       += " Index: " + to_string(icntrl10_bad_inputs[c].index);
-                form_bad_inputs.push_back(push_me);
-            }        
-
-    	}        
-
-    }
 	//########################################################################//
 
 	//if the vector of error message's size is not 0, don't make the output file
@@ -975,9 +962,66 @@ void do_line10(ofstream& outs, const map<string,param_int4>& int4_params){
 	outs I int4_params.at("ITER").value I int4_params.at("INM1").value
          I int4_params.at("INM2").value << endl;
 }
+
+void do_icntrl6(ofstream& outs,int icntrl6_value,
+				vector<string>& form_bad_inputs,
+				vector<index_value>& icntrl6_bad_inputs){
+
+	if( icntrl6_value > 0 &&
+		!button_access->get_icntrl_6().make_output(outs,icntrl6_bad_inputs)){
+
+		form_bad_inputs.push_back("########## Icntrl6 error list###########\n");
+		form_bad_inputs.push_back("Parameter Search form\n");
+		for(unsigned int c = 0; c < icntrl6_bad_inputs.size(); c++){
+			string temp_error =  "Index: "
+								 +to_string(icntrl6_bad_inputs[c].index)
+							     + "  Argument: " + icntrl6_bad_inputs[c].value
+						  		 + "\n";
+			form_bad_inputs.push_back(temp_error);
+		}
+	}
+}
+
+void do_icntrl8(ofstream& outs,
+				vector<string>& form_bad_inputs,
+				vector<index_value>& icntrl8_bad_inputs){
+
+	if(!button_access->get_icntrl_8().get_is_locked() && 
+	   !button_access->get_icntrl_8().make_output(outs,icntrl8_bad_inputs)){
+
+		form_bad_inputs.push_back("########## Icntrl8 error list ##########\n");
+		form_bad_inputs.push_back("Residual Level Threshold Count form\n");
+		for(unsigned int c = 0; c < icntrl8_bad_inputs.size(); c++){
+			string temp_error =  "Index: "
+                                 + to_string(icntrl8_bad_inputs[c].index)
+							     + "  Argument: " + icntrl8_bad_inputs[c].value
+						  		 + "\n";
+			form_bad_inputs.push_back(temp_error);
+		}
+	}
+}
+
+void do_icntrl10(ofstream& outs,
+				 vector<string>& form_bad_inputs,
+				 vector<index_value>& icntrl10_bad_inputs){
+
+    //only print the output for icntrl10 if it is activated & satisfied
+    if(!button_access->get_icntrl_10().get_is_locked()){
+
+    	std::vector<index_value> icntrl10_bad_inputs;
+    	if(!button_access->get_icntrl_10().make_output(outs,icntrl10_bad_inputs)){
+
+            form_bad_inputs.push_back("##### ICNTRL10 ERRORS ######");
+            form_bad_inputs.push_back("Special Sigma");
+            for(unsigned int c = 0; c < icntrl10_bad_inputs.size();c++){
+
+                string push_me = "Value: " + icntrl10_bad_inputs[c].value;
+                push_me       += " Index: " + to_string(icntrl10_bad_inputs[c].index);
+                form_bad_inputs.push_back(push_me);
+            }        
+
+    	}        
+
+    }
+}
 //##############################################################################
-
-
-
-
-

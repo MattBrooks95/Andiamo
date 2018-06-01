@@ -142,6 +142,45 @@ class output_file_button : public text_box_button{
 
 };
 
+//! runs the FOP handler when the user clicks this button
+class fop_handler_button : public button{
+
+	//! overload handle_click, to open interactive FOP feature
+	void click_helper(SDL_Event& mouse_event);
+
+	//! this function implementation opens a fop_handler object
+	void work();
+
+};
+
+//! allows the user to save the current state of Andiamo to a config file
+class save_context_button : public text_box_button{
+  public:
+
+    //! sets up the "pop up" that allows the user to set save file name
+    void entry_init();
+
+
+    //! overloaded click_helper to call overloaded work
+    void click_helper(SDL_Event& mouse_event);
+
+    //! saves parameter tiles & form's current values to a custom config file
+    int work();
+
+    //! helper for work(), saves field info to info_file string
+    void save_fields(ofstream& context_out);
+
+    
+    // helper for work(), saves form info to info_file string
+    void save_forms(ofstream& context_out);
+
+  private:
+
+    //! starts off empty, filled in with Andiamo's current parameters 
+    string info_file;
+};
+
+
 /*
 // implements the button that has the graphing options
 // these options should include a checkbox to control whether
@@ -186,47 +225,6 @@ class graphing_button : public text_box_button{
 };
 */
 //##############################################################################
-
-//! runs the FOP handler when the user clicks this button
-class fop_handler_button : public button{
-
-	//! overload handle_click, to open interactive FOP feature
-	void click_helper(SDL_Event& mouse_event);
-
-	//! this function implementation opens a fop_handler object
-	void work();
-
-};
-
-//! allows the user to save the current state of Andiamo to a config file
-class save_context_button : public text_box_button{
-  public:
-
-    //! sets up the "pop up" that allows the user to set save file name
-    void entry_init();
-
-
-    //! overloaded click_helper to call overloaded work
-    void click_helper(SDL_Event& mouse_event);
-
-    //! saves parameter tiles & form's current values to a custom config file
-    int work();
-
-    //! helper for work(), saves field info to info_file string
-    void save_fields(ofstream& context_out);
-
-    
-    // helper for work(), saves form info to info_file string
-    void save_forms(ofstream& context_out);
-
-  private:
-
-    //! starts off empty, filled in with Andiamo's current parameters 
-    string info_file;
-};
-
-
-
 
 
 

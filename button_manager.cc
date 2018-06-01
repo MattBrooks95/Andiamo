@@ -835,8 +835,12 @@ void button_manager::make_form_error_message(const vector<string>& form_bad_inpu
 
 int button_manager::clean_up(SDL_Event& big_event){
 
+	//start off assuming the user has not specified
+	//an alternative output file name
 	bool bad_output_fname = false;
-	//bool bad_tc_input_fname = false;
+
+	//check the fop handler to see if the transmission coefficients
+	//have been made yet
     bool tc_not_ready = !FOP_access->ready;
 
 	//set up input_makers output file location variable
@@ -845,18 +849,17 @@ int button_manager::clean_up(SDL_Event& big_event){
 		bad_output_fname = true;
 	}
 
-    //check the FOP wrapper to make sure that FOP has already been run
-    //and the transmission coefficients are ready for the FOP input file
-
-
 	//if either 'bad' flag is true, make the warnings
 	if(bad_output_fname || tc_not_ready){
 		clean_up_warnings(big_event,bad_output_fname,tc_not_ready);
 	}
 
+	/* //disabling this until the FOP wrapper is done, so other
+	   //parts of the code can be checked
 	if(tc_not_ready){
 		return -1;//return with error, TC input file must be given
-	}
+	}*/
+	
 	//elsewise, exit normally
 	return 0;//successful exit
 }

@@ -215,6 +215,91 @@ int output_file_button::work(/*input_maker& io_handler*/){
 }
 //##############################################################################
 
+//################## FOP HANDLER BUTTON ########################################
+void fop_handler_button::click_helper(SDL_Event& mouse_event){
+	work();
+
+}
+
+void fop_handler_button::work(){
+	cout << "Message from the fop_button." << endl;
+	FOP_access->fop_main();
+}
+//##############################################################################
+
+void save_context_button::click_helper(SDL_Event& mouse_event){
+
+    cout << "In save_context click_helper" << endl;
+    work();
+
+}
+
+int save_context_button::work(){
+
+    ofstream context_out;
+    context_out.open(HOME+"/Andiamo/config/custom_configs/"+my_text_box.text);
+    if(!context_out.fail()){
+        save_fields(context_out);
+        save_forms(context_out);
+    }
+    context_out.close();
+}
+
+void save_context_button::save_fields(ofstream& context_out){
+    cout << "In save_context's save_fields() helper function" << endl;
+    FIELDS_VEC* fields_ref = &tile_access->fields_order;
+    for(uint line = 0; line < fields_ref->size();line++){
+        for(uint param = 0; param < (*fields_ref)[line].size(); param++){
+            if(((*fields_ref)[line][param])->int4_hook != NULL){
+                context_out << "I4 ";
+            } else if(((*fields_ref)[line][param])->real8_hook != NULL){
+                context_out << "R8 ";
+            } else if(((*fields_ref)[line][param])->string_hook != NULL){
+                context_out << "C* ";
+            } else {
+                context_out << "Tile arrays should be removed" << endl;
+            }
+            context_out << ((*fields_ref)[line][param])->tile_name;
+            if(((*fields_ref)[line][param])->string_hook != NULL){
+                context_out << "|"
+                	<< ((*fields_ref)[line][param])->my_text_box.text.size()
+                    << "|";
+            }
+            context_out << " = "
+            			<< ((*fields_ref)[line][param])->my_text_box.text
+            			<< endl; 
+        }
+
+    }
+}
+
+void save_context_button::save_forms(ofstream& context_out){
+
+    cout << "In save_context's save_forms() helper function" << endl;
+    
+	//save icntrl8's information to the new config file
+	button_access->get_icntrl_8().save_information(context_out);
+    //context_out << endl;
+
+	//save icntrl6's information to the new config file
+	button_access->get_icntrl_6().save_information(context_out);
+    //context_out << endl;
+
+	//save icntrl10's information to the new config file
+    button_access->get_icntrl_10().save_information(context_out);
+
+	//save icntrl4's information to the new config file
+	button_access->get_icntrl_4().save_information(context_out);
+    //context_out << endl;
+
+	//save ilv3/ilv5's information to the new config file
+	button_access->get_ilv3_ilv5().save_information(context_out);
+    //context_out << endl;
+}
+
+
+
+
 //########################## GRAPHING OPTIONS BUTTON ###########################
 
 /*
@@ -304,96 +389,6 @@ void graphing_button::init(const std::string& image_name_in,const std::string& i
 }
 */
 //##############################################################################
-
-
-
-
-//################## FOP HANDLER BUTTON ########################################
-void fop_handler_button::click_helper(SDL_Event& mouse_event){
-	work();
-
-}
-
-void fop_handler_button::work(){
-	cout << "Message from the fop_button." << endl;
-	FOP_access->fop_main();
-}
-//##############################################################################
-
-void save_context_button::click_helper(SDL_Event& mouse_event){
-
-    cout << "In save_context click_helper" << endl;
-    work();
-
-}
-
-int save_context_button::work(){
-
-    ofstream context_out;
-    context_out.open(HOME+"/Andiamo/config/custom_configs/"+my_text_box.text);
-    if(!context_out.fail()){
-        save_fields(context_out);
-        save_forms(context_out);
-    }
-    context_out.close();
-}
-
-void save_context_button::save_fields(ofstream& context_out){
-    cout << "In save_context's save_fields() helper function" << endl;
-    FIELDS_VEC* fields_ref = &tile_access->fields_order;
-    for(uint line = 0; line < fields_ref->size();line++){
-        for(uint param = 0; param < (*fields_ref)[line].size(); param++){
-            if(((*fields_ref)[line][param])->int4_hook != NULL){
-                context_out << "I4 ";
-            } else if(((*fields_ref)[line][param])->real8_hook != NULL){
-                context_out << "R8 ";
-            } else if(((*fields_ref)[line][param])->string_hook != NULL){
-                context_out << "C* ";
-            } else {
-                context_out << "Tile arrays should be removed" << endl;
-            }
-            context_out << ((*fields_ref)[line][param])->tile_name;
-            if(((*fields_ref)[line][param])->string_hook != NULL){
-                context_out << "|"
-                	<< ((*fields_ref)[line][param])->my_text_box.text.size()
-                    << "|";
-            }
-            context_out << " = "
-            			<< ((*fields_ref)[line][param])->my_text_box.text
-            			<< endl; 
-        }
-
-    }
-}
-
-void save_context_button::save_forms(ofstream& context_out){
-
-    cout << "In save_context's save_forms() helper function" << endl;
-    
-	//save icntrl8's information to the new config file
-	button_access->get_icntrl_8().save_information(context_out);
-    //context_out << endl;
-
-	//save icntrl6's information to the new config file
-	button_access->get_icntrl_6().save_information(context_out);
-    //context_out << endl;
-
-	//save icntrl10's information to the new config file
-    button_access->get_icntrl_10().save_information(context_out);
-
-	//save icntrl4's information to the new config file
-	button_access->get_icntrl_4().save_information(context_out);
-    //context_out << endl;
-
-	//save ilv3/ilv5's information to the new config file
-	button_access->get_ilv3_ilv5().save_information(context_out);
-    //context_out << endl;
-}
-
-
-
-
-
 
 
 
