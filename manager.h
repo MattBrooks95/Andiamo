@@ -157,13 +157,22 @@ class manager{
 	 *\param height_in is the desired new height */
 	void update_win(int width_in, int height_in);
 
+	//! store the line names in order
+	/*! this is used by sdl_help::calc_corners to create the
+	 *graphical labels that tell the user what line each line
+	 *of parameters in the GUI corresponds to */
+	vector<string> line_names_read_order;
+
 	//! save the string names of lines & parameters in a vector
 	/*! this is to be used for iterating over the parameters,
 	 *so lines and their parameters can be processed in order.
 	 *The fields map should be used for individual item lookup */
 	vector<vector<field*>> fields_order;
 
-	//!< trying something new, to keep relevant tiles together
+	//! stores pointers to the fields in a 2D map
+	/*! the first access should be the line name from the HF manual
+	 *in which the desired parameter resides, then the second access
+	 *should be the parameter name. */
 	map<string,map<string,field*>> fields;
 
   private:

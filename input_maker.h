@@ -159,7 +159,7 @@ void do_line2(ofstream& outs,const map<string,param_real8>& real8_params,
  * are read in from there */
 void do_TC_coefficients(const map<string,param_real8>& real8_params,
 						const map<string,param_int4_array>& array_map,
-						string TC_input_file_name,ofstream& outs);
+						const string& alt_TC_dir,ofstream& outs);
 
 //! outputs the variables found in line 4 of the input description manual
 void do_line4(ofstream& outs,const map<string,param_real8>& real8_params,

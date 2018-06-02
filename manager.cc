@@ -93,8 +93,10 @@ void manager::init(const string& graphical_config_file){
 			getline(ins,temp_string);
 		}
 
-		error_logger.push_msg("Found a line name:"+temp_string);
 		strip_char(temp_string,'#');
+		//cout << "Found a line name:"+temp_string << endl;
+		error_logger.push_msg("Found a line name:"+temp_string);
+		line_names_read_order.push_back(temp_string);
 
 		//save line name for later
 		line_name = temp_string;

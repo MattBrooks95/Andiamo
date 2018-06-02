@@ -16,9 +16,11 @@
 
 //! define the path to the read-only optical model potentials folder
 #define OMP_PATH "/Andiamo/FOP/OpticalModels/"
+
 /*! \brief define the path to the folder where already calculated
  *transmission coefficients are stored */
 #define TRANSMISSION_PATH "/Andiamo/FOP/TransmissionCoefficients/"
+
 /*! \brief define the path to where files are stored while they are being
  *'worked on' by Andiamo and FOP so these may be FOP outputs
  *that haven't been mapped to HF inputs yet  */
@@ -45,11 +47,6 @@ class fop_handler{
 
 	//! destructor for the fop_handler class
 	~fop_handler();
-
-	//! populate vectors of file names
-	/*!  from subdirectories OMP_PATH, TRANSMISSION_PATH, and SCRATCH_PATH */ 
-	//void get_files_list();
-
 
 	//! do the work to get the transmission coefficients
 	/*! the data directory, user input, and a Q-value calculating
@@ -118,17 +115,6 @@ class fop_handler{
 
   private:
 
-	//! list of all file names in OMP_PATH subdirectory
-	//vector<string> optical_model_files;
-
-	//! list of all files in the transmission coefficients files
-	/*! these are files previously made by FOP */
-	//vector<string> tc_files;
-
-	/*! list of all files that aren't yet ready for use by HF,
-	 * but fop_handler may need */
-	//vector<string> scratch_files;
-
 	//! keeps track of which input channels are open for this calculation
 	/*! filled in by calc_open_channels, using David Resler's mass excess tool.
 	 *Values set to TRUE mean "this matters, run fop for this channel"
@@ -142,7 +128,7 @@ class fop_handler{
 	 *[5] = 3He */
 	bool open_channels[6];
 
-    //! for each open channel, stores the fop input & output file name
+    //! stores the most FOP file names for each open channel
     std::pair<string,string> fop_file_names;
 
 	//! store the decks of cards to run FOP with

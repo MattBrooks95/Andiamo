@@ -266,11 +266,11 @@ class sdl_help{
 	//! stores the background image
 	SDL_Texture* bg_texture;
 
-
-    //! 'title cards' that have line names on them
+    //! graphic info for 'title cards' that have line names on them
     vector<LINE_TITLE> line_titles;
 
-    //! 'backdrops' to illustrate which parameters belong to which lines
+    /*! \brief graphic info for 'backdrops' to illustrate which
+     *parameters belong to which lines */
     vector<LINE_GUIDE> line_guides;
 
 	/************* FIELDS THAT PERTAIN TO SCROLLING ***************************/

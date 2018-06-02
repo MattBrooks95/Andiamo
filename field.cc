@@ -304,11 +304,10 @@ void field::draw_me(){
 
 	//handle the lock
 	if(is_locked){
-//		SDL_Rect lock_dest = {xloc+x_scroll+size.width-15,
-//									yloc+y_scroll+text_box.y_offset,15,25};
-//		SDL_RenderCopy(renderer,lock_texture,NULL,&lock_dest);
+		SDL_Rect lock_dest = {xloc+x_scroll+size.width-15,
+							  yloc+y_scroll+25,15,25};
+		SDL_RenderCopy(renderer,lock_texture,NULL,&lock_dest);
 	}
-
 
 	//this part draws the "help box" in its place
 	if( help_mode && my_help_surf != NULL && my_help_tex != NULL){

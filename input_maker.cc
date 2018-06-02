@@ -482,6 +482,9 @@ void input_maker::init(const string& alternate_config){
 
 bool input_maker::output(vector<string>& form_bad_inputs){
 
+	//set to true to more easily identify specific
+	//lines from the HF manual, false to actually make FOP inputs
+	bool console_test = true;
 	//note that this will not yet be properly formatted for HF input,
 	//mostly here for testing field input and this class's output logic
 	ofstream outs;
@@ -507,24 +510,29 @@ bool input_maker::output(vector<string>& form_bad_inputs){
 
 
 	//SET UP LINE 1#############################################################
-	outs << "LINE_1###################################" << endl;
+	if(console_test) outs << "LINE_1###################################" << endl;
 	do_line1(outs,string_params);
-	outs << "#########################################" << endl;
+	if(console_test) outs << "#########################################" << endl;
 	//##########################################################################
 
 	//SET UP LINE 2#############################################################
-	outs << "LINE_2###################################" << endl;
+	if(console_test) outs << "LINE_2###################################" << endl;
 	do_line2(outs,real8_params, int4_params);
-	outs << "#########################################" << endl;
+	if(console_test) outs << "#########################################" << endl;
 	//##########################################################################
 
 	//SET UP LINE 3#############################################################
-	outs << "LINE_3###################################" << endl;
+	if(console_test) outs << "LINE_3###################################" << endl;
 	do_TC_coefficients(real8_params,int4_array_params,TC_input_file_name,outs);
-	outs << "LINE_4###################################" << endl;
+	if(console_test) outs << "LINE_4###################################" << endl;
 	//##########################################################################
 
 
+	/*from what I understand from the input manual, line 4
+	 *is always needed, even though Zach doesn't want 4A and 4B
+	 *in the Andiamo! project, something about IENCH = 7 not being
+	 *doable */
+	do_line4(outs,real8_params,int4_params);
 	/* we can't handle IENCH = 7, this is disabled
 	//IF IENCH = 7 #############################################################
 	//bool do_4a_4b = false;
@@ -538,7 +546,6 @@ bool input_maker::output(vector<string>& form_bad_inputs){
 	//only do the following lines if IENCH == 7, per the input manual
 	if(do_4a_4b){
 		//SET UP LINE 4#########################################################
-		do_line4(outs,real8_params,int4_params);
 
 		do_line4A(outs,real8_params,int4_params);
 
@@ -550,20 +557,20 @@ bool input_maker::output(vector<string>& form_bad_inputs){
 
 
     //do line 5
-    outs << "LINE_5###################################" << endl;
+    if(console_test) outs << "LINE_5###################################" << endl;
     do_line5(outs,int4_params);	
-    outs << "#########################################" << endl;
+    if(console_test) outs << "#########################################" << endl;
 
     //do line 5A
-    outs << "LINE_5A##################################" << endl;
+    if(console_test) outs << "LINE_5A##################################" << endl;
     if(int4_params.at("ILV1").value == 6){
         do_line5A(outs,real8_params);
     }
-    outs << "#########################################" << endl;
+    if(console_test) outs << "#########################################" << endl;
 
 
     //do line 5D or 5E
-    outs << "LINE_5D or LINE 5E#######################" << endl;
+    if(console_test) outs << "LINE_5D or LINE 5E#######################" << endl;
 	std::vector<index_value> ilv3_ilv5_bad_inputs;
 	int ilv3_val = int4_params.at("ILV3").value;
 	int ilv5_val = int4_params.at("ILV5").value;
@@ -590,20 +597,20 @@ bool input_maker::output(vector<string>& form_bad_inputs){
 			}
 		}
 	}
-	outs << "#########################################" << endl;
+	if(console_test) outs << "#########################################" << endl;
 
 	//do line 6
-	outs << "LINE_6###################################" << endl;
+	if(console_test) outs << "LINE_6###################################" << endl;
 	do_line6(outs,int4_params);
-	outs << "#########################################" << endl;
+	if(console_test) outs << "#########################################" << endl;
 
 	//do line 7
-	outs << "LINE_7###################################" << endl;
+	if(console_test) outs << "LINE_7###################################" << endl;
 	do_line7(outs,real8_params);
-	outs << "#########################################" << endl;
+	if(console_test) outs << "#########################################" << endl;
 
-	//do line 8 and the line 9 loop
-	outs << "LINE_8 and LINE_9#######################" << endl;
+	//do line 8 and the line 9 output from form
+	if(console_test) outs << "LINE_8 and LINE_9#######################" << endl;
 	//if the conditions from the input manual are met
 	if( int4_params.at("ICNTRL4").value != 0 ){
 		//static line 8
@@ -625,32 +632,32 @@ bool input_maker::output(vector<string>& form_bad_inputs){
 			}
 		}
 	}//elsewise, don't do lines 8&9
-	outs << "#########################################" << endl;
+	if(console_test) outs << "#########################################" << endl;
 
 	//do line 10
-	outs << "LINE_10##################################" << endl;
+	if(console_test) outs << "LINE_10##################################" << endl;
 	if( int4_params.at("ICNTRL6").value > 0){
 		do_line10(outs,int4_params);
 	}
-	outs << "#########################################" << endl;
+	if(console_test) outs << "#########################################" << endl;
 
 
 	//#########MAKE OUTPUTS FROM FORM_BUTTONS ################################//
-	outs << "ICNTRL6_FORM#############################" << endl;
+	if(console_test) outs << "ICNTRL6_FORM#############################" << endl;
 	vector<index_value> icntrl6_bad_inputs;
 	int icntrl6_value = int4_params.at("ICNTRL6").value;
 	do_icntrl6(outs,icntrl6_value,form_bad_inputs,icntrl6_bad_inputs);
-	outs << "#########################################" << endl;
+	if(console_test) outs << "#########################################" << endl;
 
-	outs << "ICNTRL8_FORM#############################" << endl;
+	if(console_test) outs << "ICNTRL8_FORM#############################" << endl;
 	vector<index_value> icntrl8_bad_inputs;
 	do_icntrl8(outs,form_bad_inputs,icntrl8_bad_inputs);
-	outs << "$########################################" << endl;
+	if(console_test) outs << "$########################################" << endl;
 
-	outs << "ICNTRL10_FORM############################" << endl;
+	if(console_test) outs << "ICNTRL10_FORM############################" << endl;
     vector<index_value> icntrl10_bad_inputs;
     do_icntrl10(outs,form_bad_inputs,icntrl10_bad_inputs);
-    outs << "#########################################" << endl;
+    if(console_test) outs << "#########################################" << endl;
 
 	//########################################################################//
 
@@ -754,14 +761,14 @@ void do_line2(ofstream& outs,const REAL8_MAP& real8_params,
 
 void do_TC_coefficients(const map<string,param_real8>& real8_params,
 						const map<string,param_int4_array>& array_map,
-						string TC_input_file_name,ofstream& outs){
+						const string& alt_TC_dir,ofstream& outs){
 	ifstream ins;
 	string TC_path = HOME;
 	TC_path       += "/Andiamo/TC_files/";
-	TC_path       += TC_input_file_name;
+	TC_path       += alt_TC_dir;
 	ins.open(TC_path.c_str());
 	if(ins.fail()){
-        string err = "Error! File:~/Andiamo/TC_files/" + TC_input_file_name;
+        string err = "Error! File:~/Andiamo/TC_files/" + alt_TC_dir;
         err       += " could not be found.";
 		error_logger.push_error(err);
 	}
@@ -799,16 +806,9 @@ void do_TC_coefficients(const map<string,param_real8>& real8_params,
 	}
 	error_logger.push_msg("############ DONE PRINTING TC ####################");
 
+	//this is the case where the FOP wrapper has been run
 
-
-	//#######################################################################
-
-	//here be the case where we have to use ESIS to do it ###################
-
-
-
-	//#######################################################################
-	
+	//###################################################
 
 	ins.close();
 

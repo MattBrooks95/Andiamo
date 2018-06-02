@@ -551,22 +551,11 @@ void sdl_help::calc_corners(){
 		row_limit = window_s.width; 
 	}
 
-    //stores the strings for the line labels
-    vector<string> line_labels;
-
-    for(map<string,map<string,field*>>::iterator it = tile_access->fields.begin();
-        it != tile_access->fields.end();
-        it++){
-        cout << "LINE TITLE:" << it->first << endl;
-        line_labels.push_back(it->first);
-    }
-
-
-	for(uint c = 0; c < tile_access->fields_order.size();c++){
-        make_line_label(line_labels[c],row_height);
+	for(uint c = 0; c < tile_access->line_names_read_order.size();c++){
+		
+        make_line_label(tile_access->line_names_read_order[c],row_height);
 		calc_corners_helper(tile_access->fields_order[c],
 							row_height,row_limit);
-
 	}
 
 	error_logger.push_msg("############# END CALC CORNERS #################");
