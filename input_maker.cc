@@ -523,18 +523,17 @@ bool input_maker::output(vector<string>& form_bad_inputs){
 
 	//SET UP LINE 3#############################################################
 	if(console_test) outs << "LINE_3###################################" << endl;
-	do_TC_coefficients(real8_params,int4_array_params,TC_input_file_name,outs);
-	if(console_test) outs << "LINE_4###################################" << endl;
+	do_TC_coefficients(real8_params,int4_array_params,outs);
 	//##########################################################################
 
-
+	if(console_test) outs << "LINE_4###################################" << endl;
 	/*from what I understand from the input manual, line 4
 	 *is always needed, even though Zach doesn't want 4A and 4B
 	 *in the Andiamo! project, something about IENCH = 7 not being
 	 *doable */
 	do_line4(outs,real8_params,int4_params);
 	/* we can't handle IENCH = 7, this is disabled
-	//IF IENCH = 7 #############################################################
+	//IF IENCH = 7
 	//bool do_4a_4b = false;
 
 	if(int4_params.at("IENCH").value == 7){
@@ -554,7 +553,7 @@ bool input_maker::output(vector<string>& form_bad_inputs){
 	}
 	//################### IENCH = 7 LINES ######################################
 	*/
-
+	if(console_test) outs << "########################################" << endl;
 
     //do line 5
     if(console_test) outs << "LINE_5###################################" << endl;
@@ -761,8 +760,8 @@ void do_line2(ofstream& outs,const REAL8_MAP& real8_params,
 
 void do_TC_coefficients(const map<string,param_real8>& real8_params,
 						const map<string,param_int4_array>& array_map,
-						const string& alt_TC_dir,ofstream& outs){
-	ifstream ins;
+						ofstream& outs){
+	/*ifstream ins;
 	string TC_path = HOME;
 	TC_path       += "/Andiamo/TC_files/";
 	TC_path       += alt_TC_dir;
@@ -811,7 +810,7 @@ void do_TC_coefficients(const map<string,param_real8>& real8_params,
 	//###################################################
 
 	ins.close();
-
+*/
 }
 
 void do_line4(ofstream& outs,const map<string,param_real8>& real8_params,

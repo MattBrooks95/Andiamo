@@ -186,12 +186,12 @@ class sdl_help{
 	 *to the respective field's temporary storage string.
 	 *This member started off being in class field, but I've since moved it to
 	 *sdl_help, because sdl_help needs to be able to draw in this loop */
-	void text_box_mini_loop(ostream& outs, SDL_Event& event,
-							field* current_tile);
+	void text_box_loop(ostream& outs, SDL_Event& event,
+							field* current_tile,string& command);
 
 	//! helps text_box_mini_loop by doing the text input handling
-	void text_box_mini_loop_helper(SDL_Keysym& key,field* current_tile,
-									bool& text_was_changed);
+	void text_box_key_helper(SDL_Keysym& key,field* current_tile,
+								bool& text_was_changed,string& command);
 
 	//! this is a boolean helper for click_detection()
 	/* this member just takes in a mouse click's x or y values,

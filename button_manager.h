@@ -152,7 +152,7 @@ class button_manager{
      *  TC_files directory.
      *if the button's string is not empty, the fop_handler will attempt
      *  to use the specified TC_dir instead */
-    TC_dir_button& get_tc_dir_button(){ return tc_dir;}
+    text_box_button& get_tc_dir_button(){ return tc_dir;}
 
 	//!< this is a string that describes the path to the button's image files
 	string button_image_p;
@@ -208,7 +208,7 @@ class button_manager{
 	//! allows the user to set a different transmission coefficients directory
     /*! if this string this empty, the default /Andiamo/TC_files dir will
      *be used */
-	TC_dir_button tc_dir;
+	text_box_button tc_dir;
 
     //! button to generate output
 	button lets_go;

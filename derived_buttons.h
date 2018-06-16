@@ -94,9 +94,6 @@ class text_box_button : public button{
 
 	//! calls button:print_me(), but also prints info about its text box
 	void print_me();
-	//! this is a pure virtual member
-	/*! it must be implemented in classes that inherit from this class */
-	virtual int work() = 0;
 
 	/*! overload parent's handle_resize() function, also
 	 *updates the text box's coordinates */
@@ -114,22 +111,6 @@ class text_box_button : public button{
   protected:
 	//! pointer to the font to use for this button
 	TTF_Font* sdl_help_font;
-};
-
-
-
-/*! \brief this is derived from the text_box_button class, it should read
- *inputs from the given TC file */ 
-class TC_dir_button : public text_box_button{
-  public:
-	//! transmission coefficients can be read from a given file
-	/*! it modifies the transmission coefficient input file name variable
-	 *in input_maker in the event that the text box for the
-	 *file name is empty, it will return -1 and prevent
-	 *button_manager::clean_up() from executing */
-	int work();
-  private:
-
 };
 
 //! writes the HF input file (final product) to this file

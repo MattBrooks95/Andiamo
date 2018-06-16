@@ -81,9 +81,6 @@ class input_maker{
 	//! name of the file in config_p's folder where output will be printed
 	string output_file_name;
 
-	//! name of the file from which the transmission coefficients should be read
-	string TC_input_file_name;
-
 	//! starts off false, then goes positive the user generates an input file
 	/*! this way, if an output file has not yet been made, we can make the user
 	 *aware of that when they try to exit the program */
@@ -159,7 +156,7 @@ void do_line2(ofstream& outs,const map<string,param_real8>& real8_params,
  * are read in from there */
 void do_TC_coefficients(const map<string,param_real8>& real8_params,
 						const map<string,param_int4_array>& array_map,
-						const string& alt_TC_dir,ofstream& outs);
+						ofstream& outs);
 
 //! outputs the variables found in line 4 of the input description manual
 void do_line4(ofstream& outs,const map<string,param_real8>& real8_params,

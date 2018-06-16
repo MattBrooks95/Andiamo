@@ -345,38 +345,56 @@ int sdl_help::scroll_clicked(int click_x, int click_y) const{
 
 void sdl_help::click_detection(ostream& outs,SDL_Event& event,int click_x, int click_y){
 
-	vector<vector<field*>>& fields_order = tile_access->fields_order;
+    //allows the key_helper to return user key presses
+    //that affect this loop
+    string command;
 
-	for(uint line = 0; line < fields_order.size();line++){
+    //turned to true if command has value "TAB"
+    //and isn't turned off until a suitable text box
+    //is found for the user to edit
+    bool user_tabbed = false;
 
-		for(uint param = 0; param < fields_order[line].size();param++){
-			
-			field* field_ptr = fields_order[line][param];
+    //easier access to the fields from the manager object
+    vector<vector<field*>>& fields_order = tile_access->fields_order;
 
-			if( in(click_x, click_y,field_ptr->get_rect()) ){
+    for(uint line = 0; line < fields_order.size();line++){
 
-				//if they clicked the text box, allow them to
-				//edit the parameter
-				if(field_ptr->my_text_box.was_clicked(event)){
+        for(uint param = 0; param < fields_order[line].size();param++){
 
-					if(!field_ptr->is_locked){
-						text_box_mini_loop(outs,event,field_ptr);
-					}
+            field* field_ptr = fields_order[line][param];
 
-				//if they clicked the parameter name, give them
-				//a brief explanation
-				} else {
+            if( user_tabbed || in(click_x, click_y,field_ptr->get_rect())){
 
-					field_ptr->clicked(event,click_x,click_y);
+                //if they clicked the text box, allow them to
+                //edit the parameter
+                if(user_tabbed || field_ptr->my_text_box.was_clicked(event)){
 
-				}//end help dialogue click case
-				
-			
-			}//end general click case
+                    if(!field_ptr->is_locked){
+                        user_tabbed = false;
+                        command     = "";
+                        text_box_loop(outs,event,field_ptr,command);
+                    } else if(user_tabbed){
+                        continue;
+                    }
 
-		}//end parameter for
+                //if they clicked the parameter name,
+                //show them the help message
+                } else {
 
-	}//end line for 
+                    field_ptr->clicked(event,click_x,click_y);
+
+                }//end help dialogue click case
+
+                if(command.compare("TAB") == 0){
+                    user_tabbed = true;
+                    continue;
+                }
+
+            }//end general click case
+
+        }//end parameter for
+
+    }//end line for 
 
 }//end function
 
@@ -384,8 +402,8 @@ void sdl_help::click_detection(ostream& outs,SDL_Event& event,int click_x, int c
 *http://lazyfoo.net/tutorials/SDL/32_text_input_and_clipboard_handling/index.php
 which was used as a reference */
  
-void sdl_help::text_box_mini_loop(ostream& outs, SDL_Event& event,
-													field* current_tile){
+void sdl_help::text_box_loop(ostream& outs, SDL_Event& event,
+									field* current_tile, string& command){
 
 	//turn on the text input background functions
 	SDL_StartTextInput();
@@ -397,7 +415,6 @@ void sdl_help::text_box_mini_loop(ostream& outs, SDL_Event& event,
 	bool text_was_changed = false;
 
 	while(!done){
-
 
 		if( !SDL_PollEvent(&event) ){
 			//dummy event to stop it from printing default message every frame
@@ -435,8 +452,8 @@ void sdl_help::text_box_mini_loop(ostream& outs, SDL_Event& event,
 			break;
 
 		  case SDL_KEYDOWN:
-			text_box_mini_loop_helper(event.key.keysym,current_tile,
-													text_was_changed);
+			text_box_key_helper(event.key.keysym,current_tile,
+									text_was_changed,command);
 
 			//prevent event flooding
 			SDL_FlushEvent(SDL_KEYDOWN);
@@ -457,21 +474,22 @@ void sdl_help::text_box_mini_loop(ostream& outs, SDL_Event& event,
 			break;
 		}
 
-
-
-			//update picture
-			sdl_access->draw();
-			//current_tile->draw_cursor();
-			text_was_changed = false;
-			present();
+        if(command.compare("TAB") == 0){
+            return;
+        }
+		//update picture
+		sdl_access->draw();
+		//current_tile->draw_cursor();
+		text_was_changed = false;
+		present();
 
 	}//end of loop
 	//stop text input functionality because it slows down the app
 	SDL_StopTextInput();
 }
 
-void sdl_help::text_box_mini_loop_helper(SDL_Keysym& key,field* current_tile,
-											bool& text_was_changed){
+void sdl_help::text_box_key_helper(SDL_Keysym& key,field* current_tile,
+									bool& text_was_changed, string& command){
 
 	switch( key.sym ){
 		case SDLK_BACKSPACE:
@@ -501,6 +519,13 @@ void sdl_help::text_box_mini_loop_helper(SDL_Keysym& key,field* current_tile,
 			}*/
 			current_tile->my_text_box.inc_cursor(text_was_changed);
 			break;
+
+        case SDLK_TAB:
+            //tell the loops calling this function that the user
+            //hit tab, so we can enter the text box loop for
+            //the next parameter over
+            command = "TAB";
+            break;
 	  default:
 	  	break;
 

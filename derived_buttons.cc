@@ -128,10 +128,6 @@ void exit_button::init(string image_name_in, string image_p_in){
 
 
 //############################## text_box button ###############################
-//TC_file_button::~TC_file_button(){
-
-//}
-
 void text_box_button::draw_me(){
 	if(shown){
 
@@ -168,37 +164,6 @@ void text_box_button::force_corner_loc(int xloc_in, int yloc_in){
 }
 
 //###############################################################################################
-
-//###################### TRANSMISSION COEFFICIENTS FILE BUTTON ##################################
-int TC_dir_button::work(){
-
-	//set up the TC input var in the input maker
-	io_access->TC_input_file_name = my_text_box.text;
-
-	if(my_text_box.text.size() == 0 || my_text_box.text == " "){
-			//return -1 to let button_manager.clean_up() know that a TC
-			// input file has not been supplied. This should halt output,
-			//because there's no reason to make an HF calculation without
-			//transmission coefficients (I think)
-			return -1;
-
-	}
-	ifstream ins_test;
-	string ins_path(HOME);
-	ins_path += "/Andiamo/TC_files/"+io_access->TC_input_file_name;
-	ins_test.open(ins_path);
-        if(ins_test.fail()){
-
-		//return -1, failed to open file
-		return -1;
-
-	}
-	ins_test.close();
-	//if we make it this far, we're good. Return a good message
-	return 0;
-}
-
-//##############################################################################
 
 //######################## CREATED HF FILE OUTPUT BUTTON #######################
 
