@@ -103,19 +103,6 @@ class form{
 	 *they can be recreated */
 	void flush_pages();
 
-	//! this is the text editing loop for the text boxes within a page
-	/*!
-	 *\param_current_box reference to which text box is being edited
-	 *\param event is a reference to the sdl event containeer
-	 *\param command may be changed and returned from the functon,
-	 *to tell the form_event_loop if any necessary behaviours are
-	 *needed, like tabbing to the next text box
-     *\param pattern is the regex used to test user input as they type */
-
-	void text_box_loop(text_box& current_box,SDL_Event& event,string& command,
-                       const regex& pattern);
-
-
     //these two functions are used to know when a form needs smashed
 	//and recreated because the user specified another size
 	//! remember if this form has been initialized or not

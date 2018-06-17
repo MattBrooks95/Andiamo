@@ -333,7 +333,7 @@ int sdl_help::scroll_clicked(int click_x, int click_y) const{
 	//1 means vertical bar was clicked
 	if(vert_bar.clicked(click_x,click_y)) return 1;
 
-	//call hbar's click detection member
+	//call hbar's click deteoutsction member
 	//2 means horizontal bar was clicked
 	if(horiz_bar.clicked(click_x,click_y)) return 2;
 
@@ -343,7 +343,7 @@ int sdl_help::scroll_clicked(int click_x, int click_y) const{
 }
 //*****************************************************************************/
 
-void sdl_help::click_detection(ostream& outs,SDL_Event& event,int click_x, int click_y){
+void sdl_help::click_detection(SDL_Event& event,int click_x, int click_y){
 
     //allows the key_helper to return user key presses
     //that affect this loop
@@ -372,7 +372,7 @@ void sdl_help::click_detection(ostream& outs,SDL_Event& event,int click_x, int c
                     if(!field_ptr->is_locked){
                         user_tabbed = false;
                         command     = "";
-                        text_box_loop(outs,event,field_ptr,command);
+                        field_ptr->my_text_box.edit_loop(event,command, NULL);
                     } else if(user_tabbed){
                         continue;
                     }
@@ -397,141 +397,6 @@ void sdl_help::click_detection(ostream& outs,SDL_Event& event,int click_x, int c
     }//end line for 
 
 }//end function
-
-/*thanks to 
-*http://lazyfoo.net/tutorials/SDL/32_text_input_and_clipboard_handling/index.php
-which was used as a reference */
- 
-void sdl_help::text_box_loop(ostream& outs, SDL_Event& event,
-									field* current_tile, string& command){
-
-	//turn on the text input background functions
-	SDL_StartTextInput();
-
-	//used to control text entry loop
-	bool done = false;
-
-	//int c = 0;
-	bool text_was_changed = false;
-
-	while(!done){
-
-		if( !SDL_PollEvent(&event) ){
-			//dummy event to stop it from printing default message every frame
-			//where no event happens
-			event.type = 1776; 
-		}
-
-		switch(event.type){
-		  case SDL_MOUSEMOTION:
-			break;
-
-		  case SDL_MOUSEBUTTONDOWN:
-			//if the click was within the text box, move the cursor maybe
-		  	if( current_tile->my_text_box.was_clicked(event) ){
-
-				string msg = "Text box click at " + to_string(event.button.x);
-				msg       += ":" + to_string(event.button.y);
-				error_logger.push_msg(msg);
-
-			//elsewise exit text input mode, user clicked off the text box
-		  	} else {
-				//doing this allows the user to 'hop' to another text box
-				//directly from editing another box
-				SDL_PushEvent(&event);
-				done = true;
-			}
-		  	break;
-
-		  case SDL_TEXTINPUT:
-			//current_tile->update_temp_input(event);
-		  	current_tile->my_text_box.update_text(event.text.text);
-			text_was_changed = true;
-		  	//here this actually causes a loss of letters, so the event
-			//flooding is necessary, don't flush SDL_FlushEvent(SDL_TEXTINPUT);
-			break;
-
-		  case SDL_KEYDOWN:
-			text_box_key_helper(event.key.keysym,current_tile,
-									text_was_changed,command);
-
-			//prevent event flooding
-			SDL_FlushEvent(SDL_KEYDOWN);
-		  	break;
-		  case SDL_QUIT:
-			//puts another sdl quit in the event queue, so program
-			//can be terminated while in "text entry" mode
-			SDL_PushEvent(&event);
-			done = true;			
-			break;
-
-		  //do nothing, event was not new
-		  case 1776:
-			break;
-
-		  default:
-			//outs << "Error finding case in text entry mini-loop" << endl;
-			break;
-		}
-
-        if(command.compare("TAB") == 0){
-            return;
-        }
-		//update picture
-		sdl_access->draw();
-		//current_tile->draw_cursor();
-		text_was_changed = false;
-		present();
-
-	}//end of loop
-	//stop text input functionality because it slows down the app
-	SDL_StopTextInput();
-}
-
-void sdl_help::text_box_key_helper(SDL_Keysym& key,field* current_tile,
-									bool& text_was_changed, string& command){
-
-	switch( key.sym ){
-		case SDLK_BACKSPACE:
-			//delete last character, unless it's empty already than do nothing
-			if( current_tile->my_text_box.text.size() > 0 ){
-				//delete a character, update text's graphics
-				current_tile->my_text_box.back_space();
-				text_was_changed = true;
-			}
-			break;
-	
-		case SDLK_LEFT:
-			//if we are not already at the very left of the text,
-			//move the editing position one to the left
-			/*if(current_tile->editing_location > 0){
-				current_tile->editing_location--;
-				text_was_changed = true;
-			}*/
-			current_tile->my_text_box.dec_cursor(text_was_changed);
-			break;
-		case SDLK_RIGHT:
-			//if we are not already at the very end of the text,
-			//move the editing position one to the right
-			/*if(current_tile->editing_location < current_tile->temp_input.size()){
-				current_tile->editing_location++;
-				text_was_changed = true;
-			}*/
-			current_tile->my_text_box.inc_cursor(text_was_changed);
-			break;
-
-        case SDLK_TAB:
-            //tell the loops calling this function that the user
-            //hit tab, so we can enter the text box loop for
-            //the next parameter over
-            command = "TAB";
-            break;
-	  default:
-	  	break;
-
-	}
-}
-
 
 bool sdl_help::in(int click_x, int click_y,const SDL_Rect& rect) const{
 	if( click_x > rect.x && click_x < rect.x + rect.w &&

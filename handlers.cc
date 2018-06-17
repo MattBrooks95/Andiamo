@@ -178,8 +178,8 @@ void handle_mouseb_down( SDL_Event& big_event){
 				if( !button_access->click_handling(big_event) ){
 
 					//if click_handling returns false, then check the tiles
-					sdl_access->click_detection(cout,big_event,
-									big_event.button.x,big_event.button.y);
+					sdl_access->click_detection(big_event, big_event.button.x,
+												big_event.button.y);
 				}
 
 			//if which_bar is still -1, something is wrong

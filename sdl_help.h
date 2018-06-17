@@ -175,23 +175,9 @@ class sdl_help{
 	/*! it walks linearly through the tile vector and enacts the clicked() member
 	 *of the tile that the user clicked.
 	 *this toggles their normal appearance with their help_mode appearance
-	 *\param outs output stream to send messages to
 	 *\param click_x mouse click's x value (distance from left side of window)
 	 *\param click_y mouse click's y value (distance from top of window) */
-	void click_detection(ostream& outs, SDL_Event& event, int click_x,
-						 int click_y);
-
-	//! handles the mini-loop where the user can edit the text box
-	/*! should turn off keybindings so keystrokes are interpreted as input
-	 *to the respective field's temporary storage string.
-	 *This member started off being in class field, but I've since moved it to
-	 *sdl_help, because sdl_help needs to be able to draw in this loop */
-	void text_box_loop(ostream& outs, SDL_Event& event,
-							field* current_tile,string& command);
-
-	//! helps text_box_mini_loop by doing the text input handling
-	void text_box_key_helper(SDL_Keysym& key,field* current_tile,
-								bool& text_was_changed,string& command);
+	void click_detection(SDL_Event& event, int click_x, int click_y);
 
 	//! this is a boolean helper for click_detection()
 	/* this member just takes in a mouse click's x or y values,

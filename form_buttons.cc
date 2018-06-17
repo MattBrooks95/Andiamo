@@ -183,7 +183,7 @@ void form_button::init_values_helper(){
                     //use update_text to fill in the box with default values
                     //this handles the drawing, and moves the cursor
                     //to the end of the new default value
-                    boxes[box].update_text((*init_array)[init_val_index]);
+                    boxes[box].update_text((*init_array)[init_val_index],NULL);
 
                     //move to the next init value
                     init_val_index++;
@@ -223,7 +223,7 @@ void form_button::init_form_with_vec(form& fill_me,vector<string>& use_me){
                     //use update_text to fill in the box with default values
                     //this handles the drawing, and moves the cursor
                     //to the end of the new default value
-                    boxes[box].update_text(use_me[init_val_index]);
+                    boxes[box].update_text(use_me[init_val_index],NULL);
 
                     //move to the next init value
                     init_val_index++;
@@ -1602,7 +1602,7 @@ void icntrl10_button::text_entry(text_box& curr_tb,SDL_Event& event,
 
 		  case SDL_TEXTINPUT:
 			pass_me = event.text.text;
-			curr_tb.update_text(pass_me,my_patterns[which_box]);
+			curr_tb.update_text(pass_me,&my_patterns[which_box]);
 			text_was_changed = true;
 		  	//here this actually causes a loss of letters, so the event
             //flooding is necessary, don't flush
@@ -1754,7 +1754,7 @@ void icntrl10_button::init_values_helper(){
                 //initializing its graphics and data, using the
                 //array that was made previously
                 if(init_val_index != text_box_info.size()){
-                    boxes[box].update_text(text_box_info[init_val_index]);
+                    boxes[box].update_text(text_box_info[init_val_index],NULL);
                     init_val_index++;
                 }
             }

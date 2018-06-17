@@ -214,9 +214,6 @@ void form::set_form_title(string new_title){
 
 void form::form_event_loop(SDL_Event& big_event){
 
-    //turn on text input
-	SDL_StartTextInput();
-
 	//toggle to true to end the loop
 	bool done = false;
 
@@ -269,8 +266,6 @@ void form::form_event_loop(SDL_Event& big_event){
 
  }
 
-	//turn off text input, it hurts performance
-	SDL_StopTextInput();
 }
 
 
@@ -311,25 +306,24 @@ void form::handle_click(SDL_Event& mouse_event,bool& done,bool& click_lock){
 			//used to kick out of the loop after the text box that
 			//was clicked has been found
 			bool found = false;
-			if(!pages.size() == 0){
+			if(pages.size() != 0){
 
 				//filled by text_box_loop to tell this loop to do things
 				string command;
 
                 page& current = pages[current_page];
 
-				for(unsigned int c = 0;
-					c < current.get_const_text_boxes().size() && !found;
-					c++){
+                vector<text_box>& boxes = current.get_text_boxes();
+				for(uint c = 0; c < boxes.size() && !found; c++){
 
 					/*enter text box loop for the matching text box, where
                      *the current text box was either clicked, or our index,
                      *'c', was set for us by command being equal to "TAB" */
-					if(current.get_text_boxes()[c].was_clicked(mouse_event) ||
+					if(boxes[c].was_clicked(mouse_event) ||
 					   command == "TAB" ){
 
 						//reset command container if it was set
-						if(command == "TAB") command = "";
+						command = "";
 
                         //the columns should line up with the supplied
                         //vector of regular expressions
@@ -341,16 +335,16 @@ void form::handle_click(SDL_Event& mouse_event,bool& done,bool& click_lock){
 						} else {
 							pattern_index  = c % (current.get_columns() - 1);
 						}
-                        //cout << "NUM COLUMNS: " << pattern_index << endl;
-                        //cout << "PATTERN INDEX: " << pattern_index << endl;
-                        //cout << "MY PATTERNS SIZE: " << my_patterns.size() << endl;
-						text_box_loop(current.get_text_boxes()[c],mouse_event,command,
-                                      my_patterns[pattern_index]);
 
-						if(command == "TAB" &&  c < current.get_text_boxes().size()){
+						boxes[c].edit_loop(mouse_event,command,
+											&my_patterns[pattern_index]);
+
+						if(command == "TAB" &&  c < boxes.size()){
 							//redo this step, but act on the next text box
 							continue;
-						} else found = true;
+						} else {
+							found = true;
+						}
 					}
 				}
 			}
@@ -544,12 +538,12 @@ void form::flush_pages(){
 	update_page_indicator();
 }
 
+/*
 void form::text_box_loop(text_box& current_box,SDL_Event& event,string& command,
                          const regex& pattern){
 
 	//turn on the text input background functions
 	SDL_StartTextInput();
-
 	//used to control text entry loop
 	bool done = false;
 	//int c = 0;
@@ -566,8 +560,8 @@ void form::text_box_loop(text_box& current_box,SDL_Event& event,string& command,
 			//where no event happens
 			event.type = 1776;
 		}
-		/*if(event.type != 1776) cout << "Text box loop type:"
-                                      << event.type << endl; */
+		//if(event.type != 1776) cout << "Text box loop type:"
+        //                          << event.type << endl;
 		switch(event.type){
 		  case SDL_MOUSEMOTION:
 			break;
@@ -601,7 +595,7 @@ void form::text_box_loop(text_box& current_box,SDL_Event& event,string& command,
 
 		  case SDL_TEXTINPUT:
 			pass_me = event.text.text;
-			current_box.update_text(pass_me,pattern);
+			current_box.update_text(pass_me,&pattern);
 			text_was_changed = true;
 		  	//here this actually causes a loss of letters, so the event
             //flooding is necessary, don't flush
@@ -668,7 +662,7 @@ void form::text_box_loop(text_box& current_box,SDL_Event& event,string& command,
     //stop text input functionality because it slows down the app
 	SDL_StopTextInput();
 
-}
+}*/
 
 //###################### PAGE CLASS BELOW ######################################
 page::page(){

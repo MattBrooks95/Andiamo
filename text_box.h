@@ -17,6 +17,8 @@ using std::regex;
 
 extern sdl_help* sdl_access;
 
+class field;
+
 //! implements variables and logic for text boxes used by forms & buttons
 /*! different from the text boxes used by the field objects in the manager
  *class unfortunately. Homogenizing them is a goal. */
@@ -51,6 +53,12 @@ struct text_box{
 	bool was_clicked(SDL_Event& mouse_event);
 	//##########################################################################
 
+	//! loop that modifies the text box's contents based on user input
+	void edit_loop(SDL_Event& event,string& command,regex* pattern);
+
+	//! helper for edit_loop, processes keystrokes
+    void edit_key_helper(SDL_Keysym& key,bool& text_was_changed,string& command);
+
 	//! prints all of this structs information, usually for debugging
 	void print_me();
 
@@ -63,15 +71,11 @@ struct text_box{
 	//! updates the SDL_Rect storage of the text boxes location, for rendering
 	void make_rect();
 
-	//! this function updates the text that is rendererd to the screen
-	/*! it uses update_text_bounds_check to make sure that text can't
-	 *go off the edge */
-	void update_text(const string& new_text);
-
-	//! this version of update_text does input checking
+	//! update the text of this text box
 	/*! \param new_text is the test to be added
-	 *\param test is the pattern which indicates good input */ 
-	void update_text(string& new_text,const regex& test);
+	 *\param test is a pointer to the regex pattern to use.
+	 *NULL if not needed. */ 
+	void update_text(const string& new_text,regex* test);
 
 	//! update the texture when the text is changed
 	void update_texture();

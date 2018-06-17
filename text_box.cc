@@ -1,6 +1,7 @@
 //! \file text_box.cc implements the functions declared in text_box.h
 #include "text_box.h"
 #include "sdl_help.h"
+
 using namespace std;
 
 extern asset_manager* asset_access;
@@ -274,21 +275,13 @@ void text_box::make_rect(){
 
 }
 
-void text_box::update_text(const string& new_text){
+void text_box::update_text(const string& new_text,regex* test){
 
 	text.insert(editing_location,new_text);
-	editing_location += strlen(new_text.c_str());
-	TTF_SizeText(sdl_access->font,text.c_str(),&text_dims.w,&text_dims.h);
-	shown_area.h = text_dims.h;
+	if(test != NULL){
+        check_text(*test);
+    }
 
-	//update the texture for the text
-	update_texture();
-}
-
-void text_box::update_text(string& new_text,const regex& test){
-
-	text.insert(editing_location,new_text);
-	check_text(test);
 	editing_location += strlen(new_text.c_str());
 	TTF_SizeText(sdl_access->font,text.c_str(),&text_dims.w,&text_dims.h);
 	shown_area.h = text_dims.h;
@@ -409,8 +402,135 @@ bool text_box::was_clicked(SDL_Event& event){
 }
 //############################################################################
 
+/*thanks to 
+*http://lazyfoo.net/tutorials/SDL/32_text_input_and_clipboard_handling/index.php
+which was used as a reference */
+void text_box::edit_loop(SDL_Event& event,string& command,regex* pattern){
 
+	//turn on the text input background functions
+	SDL_StartTextInput();
 
+	//used to control text entry loop
+	bool done = false;
+
+	//int c = 0;
+	bool text_was_changed = false;
+
+	//passable storage for event.text.text
+	string pass_me;
+
+	while(!done){
+
+		if( !SDL_PollEvent(&event) ){
+			//dummy event to stop it from printing default message every frame
+			//where no event happens
+			event.type = 1776; 
+		}
+
+		switch(event.type){
+		  case SDL_MOUSEMOTION:
+			break;
+
+		  case SDL_MOUSEBUTTONDOWN:
+			//if the click was within the text box, move the cursor maybe
+		  	//if( current_tile->my_text_box.was_clicked(event) ){
+		  	if( was_clicked(event) ){
+				string msg = "Text box click at " + to_string(event.button.x);
+				msg       += ":" + to_string(event.button.y);
+				error_logger.push_msg(msg);
+
+			//elsewise exit text input mode, user clicked off the text box
+		  	} else {
+				//doing this allows the user to 'hop' to another text box
+				//directly from editing another box
+				SDL_PushEvent(&event);
+				done = true;
+			}
+		  	break;
+
+		  case SDL_TEXTINPUT:
+		  	pass_me = event.text.text;
+		  	//current_tile->my_text_box.update_text(pass_me,pattern);
+		  	update_text(pass_me,pattern);
+			text_was_changed = true;
+		  	//here event flooding is necessary, don't flush
+			break;
+
+		  case SDL_KEYDOWN:
+			edit_key_helper(event.key.keysym,text_was_changed,command);
+
+			//prevent event flooding
+			SDL_FlushEvent(SDL_KEYDOWN);
+		  	break;
+		  case SDL_QUIT:
+			//puts another sdl quit in the event queue, so program
+			//can be terminated while in "text entry" mode
+			SDL_PushEvent(&event);
+			done = true;			
+			break;
+
+		  //do nothing, event was not new
+		  case 1776:
+			break;
+
+		  default:
+            error_logger.push_msg("Error finding case in text entry mini-loop");
+			break;
+		}
+
+        if(command.compare("TAB") == 0){
+            return;
+        }
+		//update picture
+/*		sdl_access->draw();
+		text_was_changed = false;
+		sdl_access->present();
+*/
+        draw_me();
+        text_was_changed =false;
+        sdl_access->present();
+	}//end of loop
+	//stop text input functionality because it slows down the app
+	SDL_StopTextInput();
+
+}
+
+void text_box::edit_key_helper(SDL_Keysym& key,bool& text_was_changed,
+								string& command){
+
+	switch( key.sym ){
+		case SDLK_BACKSPACE:
+			//delete last character, unless it's empty already than do nothing
+			if( text.size() > 0 ){
+				//delete a character, update text's graphics
+				back_space();
+				text_was_changed = true;
+			}
+			break;
+	
+		case SDLK_LEFT:
+			//if we are not already at the very left of the text,
+			//move the editing position one to the left
+			dec_cursor(text_was_changed);
+			break;
+		case SDLK_RIGHT:
+			//if we are not already at the very end of the text,
+			//move the editing position one to the right
+			inc_cursor(text_was_changed);
+			break;
+
+        case SDLK_TAB:
+            //tell the loops calling this function that the user
+            //hit tab, so we can enter the text box loop for
+            //the next parameter over
+            command = "TAB";
+            break;
+	  default:
+	  	break;
+
+	}
+
+}
 
 
 

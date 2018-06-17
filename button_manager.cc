@@ -387,7 +387,7 @@ void button_manager::text_box_loop(text_box_button* current_button,
 
 		  case SDL_TEXTINPUT:
 			pass_me = event.text.text;
-			current_button->my_text_box.update_text(pass_me);
+			current_button->my_text_box.update_text(pass_me,NULL);
 			text_was_changed = true;
 		  	//here this actually causes a loss of letters, so the
 			//event flooding is necessary, don't flush
