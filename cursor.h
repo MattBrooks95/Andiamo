@@ -42,11 +42,6 @@ class cursor{
 	/*! used in text boxes that require scrolling interaction */
 	void draw_me(const int x_change, const int y_change);
 
-	//! this function prints all of the cursor's info to a passed stream
-	/* or the error/message logger if no reference is given */
-	void print(ostream& outs);
-	void print();
-
 	//! this function moves the cursor to the left
 	/*! this also decrements the editing_location variable
 	 *\param text is a const reference to the text from the text box
@@ -77,11 +72,3 @@ class cursor{
 	SDL_Rect cursor_dest;
 
 };
-
-//! prints variables of passed SDL_Rect to passed output stream
-void print_sdl_rect(ostream& outs,const SDL_Rect& print_me);
-
-
-
-
-

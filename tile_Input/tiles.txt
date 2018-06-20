@@ -62,7 +62,7 @@ c Variable name in HF: NZ3
 c include or exclude d, t, 3He: 0 = include 2H, 3H, and 3He 
 c 1 = exclude 2H, 3H, and 3HE
 andy_tile.png
-250x50
+260x50
 andy
 TCPR:TC Printing Options
 c Variable name in HF: TCPR

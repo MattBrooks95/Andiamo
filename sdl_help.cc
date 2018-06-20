@@ -189,9 +189,7 @@ void sdl_help::draw(){
 	tile_access->draw();
 	draw_sbars();
 
-	button_access->draw_tray();
-	button_access->draw_form_tray();
-	button_access->draw_buttons();
+    button_access->draw_all();
 
 	//increment the frame counter
 	frame_count++;

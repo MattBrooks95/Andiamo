@@ -21,11 +21,11 @@ using std::ofstream;
 class form_button : public button{
 
   public:
+
 	//! the constructor NULLs all of the fields
 	 form_button();
 	//! returns memory back to the operating system when the object is killed
 	~form_button();
-
 
 	//! overload of the virtual init function from the default button class
 	/*! these buttons are drawn right on the form tray,
@@ -61,6 +61,9 @@ class form_button : public button{
 	/*! if a special message box is made, it would be wise to overload
 	 *this as well, so it can be placed in a different location */
 	virtual void draw_help_msg(SDL_Event& big_event, SDL_Rect& destination);
+
+    //! draws the form if it is active, in addition to button::draw_me
+    void draw_me();
 
 	//! This member draws the lock to the screen, if the button is in lock mode
 	void draw_lock();
@@ -103,6 +106,7 @@ class form_button : public button{
 	const form& get_form(){ return my_form;}
 
   protected:
+    
 	//! save the texture for the lock, when this button is not in use
 	SDL_Texture* lock_texture;
 
@@ -116,6 +120,7 @@ class form_button : public button{
 	//! object which allows for dynamic parameter entry
 	form my_form;
 
+    //! message to be shown when user tries to access something locked
 	SDL_Texture* unlock_help_texture;
 
     /*! \brief true if this form has information pre-loaded

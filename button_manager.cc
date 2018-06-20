@@ -309,6 +309,14 @@ void button_manager::print_buttons(){
 	error_logger.push_msg(done_print_msg);
 }
 
+void button_manager::draw_all(){
+
+	draw_tray();
+	draw_form_tray();
+	draw_buttons();
+	draw_form_buttons();
+}
+
 void button_manager::draw_tray(){
 	if(tray_shown){
 		SDL_RenderCopy(sdl_access->renderer,button_tray_texture,
@@ -317,7 +325,10 @@ void button_manager::draw_tray(){
 }
 
 void button_manager::draw_form_tray(){
+
+	//draw the tray first
 	SDL_RenderCopy(sdl_access->renderer,form_tray_texture,NULL,&form_tray_rect);
+
 	icntrl_8.draw_lock();
 	icntrl_6.draw_lock();
 	icntrl_10.draw_lock();
@@ -326,7 +337,16 @@ void button_manager::draw_form_tray(){
 	
 }
 
+void button_manager::draw_form_buttons(){
+	icntrl_8.draw_me();
+	icntrl_6.draw_me();
+	icntrl_10.draw_me();
+	icntrl_4.draw_me();
+	ilv3_ilv5.draw_me();
+}
+
 void button_manager::draw_buttons(){
+
 	draw_tray();
 	draw_form_tray();
 	fop_button.draw_me();
@@ -336,118 +356,9 @@ void button_manager::draw_buttons(){
 	lets_go.draw_me();
     save_context.draw_me();
 
-}
-
-void button_manager::text_box_loop(text_box_button* current_button,
-									SDL_Event& event){
-
-
-	//turn on the text input background functions
-	SDL_StartTextInput();
-
-	//used to control text entry loop
-	bool done = false;
-	//int c = 0;
-	bool text_was_changed = false;
-
-	//string container for event text info (which is normally a c-string)
-	string pass_me;
-	while(!done){
-		//if(c >= 10) return;
-		//do stuff
-
-		//dummy event to stop it from printing default message every frame
-		//where no event happens
-		if( !SDL_PollEvent(&event) ){
-			event.type = 1776;
-		}
-
-		switch(event.type){
-		  case SDL_MOUSEMOTION:
-			break;
-
-		  case SDL_MOUSEBUTTONDOWN:
-
-			//if the click was within the text box, move the cursor maybe
-		  	if( current_button->my_text_box.was_clicked(event) ){
-                string msg = "Text box click at "
-                             +to_string(event.button.x)+":"
-                             +to_string(event.button.y);
-				error_logger.push_msg(msg);
-
-			//elsewise exit text input mode, user clicked off the text box
-		  	} else {
-		  		error_logger.push_msg("Clicked outside of the text box, exiting mini-loop");
-				//doing this allows the user to 'hop' to another text box
-				//directly from editing another box
-				SDL_PushEvent(&event);
-				done = true;
-			}
-		  	break;
-
-		  case SDL_TEXTINPUT:
-			pass_me = event.text.text;
-			current_button->my_text_box.update_text(pass_me,NULL);
-			text_was_changed = true;
-		  	//here this actually causes a loss of letters, so the
-			//event flooding is necessary, don't flush
-			//SDL_FlushEvent(SDL_TEXTINPUT);
-			break;
-
-		  case SDL_KEYDOWN:
-			
-			if(event.key.keysym.sym == SDLK_BACKSPACE){
-				//they hit backspace, so delete the end character
-				//if it is non-empty
-				current_button->my_text_box.back_space();
-				text_was_changed = true;
-			} else if(event.key.keysym.sym == SDLK_LEFT){
-
-                current_button->my_text_box.dec_cursor(text_was_changed);
-
-			} else if(event.key.keysym.sym == SDLK_RIGHT){
-
-                current_button->my_text_box.inc_cursor(text_was_changed);
-			}
-
-			//prevent event flooding
-			SDL_FlushEvent(SDL_KEYDOWN); 
-		  	break;
-		  case SDL_QUIT:
-			//puts another sdl quit in the event queue, so program
-			//can be terminated while in "text entry" mode
-			SDL_PushEvent(&event);
-			done = true;			
-			break;
-
-		  //do nothing, event was not new
-		  case 1776:
-			break;
-
-		  default:
-			//outs << "Error finding case in text entry mini-loop" << endl;
-			break;
-		}
-
-		//if something actually changed, re-draw
-		//elsewise don't do it to try and save time
-		if(text_was_changed){
-
-			//update picture
-			text_was_changed = false;
-			draw_buttons();
-
-			//show updated picture
-			sdl_access->present();
-		}
-
-		//c++;
-		//SDL_Delay(50);
-	}//end of loop
-
-	//stop text input functionality because it slows down the app
-	SDL_StopTextInput();
-
+    //these are drawn last, so that if they are open
+    //they can't be overdrawn by anything else
+    draw_form_buttons();
 }
 
 bool button_manager::click_handling(SDL_Event& mouse_event){
@@ -466,7 +377,8 @@ bool button_manager::click_handling(SDL_Event& mouse_event){
 	if(!done_something && output_fname.shown){
 
 		if(output_fname.my_text_box.was_clicked(mouse_event) ){
-			text_box_loop(&output_fname,mouse_event);
+			string command;
+			output_fname.my_text_box.edit_loop(mouse_event,command,NULL);
 			done_something = true;
 		}
 
@@ -474,7 +386,8 @@ bool button_manager::click_handling(SDL_Event& mouse_event){
 	if(!done_something && tc_dir.shown){
 
 		if( tc_dir.my_text_box.was_clicked(mouse_event) ){
-			text_box_loop(&tc_dir,mouse_event);
+			string command;
+			tc_dir.my_text_box.edit_loop(mouse_event,command,NULL);
 			done_something = true;
 		}
 
@@ -522,8 +435,9 @@ bool button_manager::click_handling(SDL_Event& mouse_event){
     if(!done_something && save_context.shown){
 
         if(save_context.my_text_box.was_clicked(mouse_event)){
-            //cout << "You clicked on the save context button!" << endl;
-			text_box_loop(&save_context,mouse_event);
+
+        	string command;
+        	save_context.my_text_box.edit_loop(mouse_event,command,NULL);
             done_something = true;
 
         } else if(save_context.handle_click(mouse_event)){

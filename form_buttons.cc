@@ -124,6 +124,11 @@ void form_button::draw_help_msg(SDL_Event& big_event,SDL_Rect& destination){
 
 }
 
+void form_button::draw_me(){
+    button::draw_me();
+    my_form.draw_me();
+}
+
 void form_button::draw_lock(){
 	if(is_locked){
 		SDL_RenderCopy(sdl_access->renderer,lock_texture,NULL,&lock_rect);
@@ -1673,10 +1678,13 @@ void icntrl10_button::text_entry(text_box& curr_tb,SDL_Event& event,
 
 void icntrl10_button::draw_me(){
 
-    SDL_RenderCopy(sdl_access->renderer,icntrl10_backdrop,NULL,&bd_dest);
-    SDL_RenderCopy(sdl_access->renderer,over_texture,NULL,&bd_dest);
-    for(unsigned int c  = 0; c < 3; c++){
-        data[current_context].line_entries[c].draw_me();
+    button::draw_me();
+    if(active){
+        SDL_RenderCopy(sdl_access->renderer,icntrl10_backdrop,NULL,&bd_dest);
+        SDL_RenderCopy(sdl_access->renderer,over_texture,NULL,&bd_dest);
+        for(unsigned int c  = 0; c < 3; c++){
+            data[current_context].line_entries[c].draw_me();
+        }
     }
 }
 

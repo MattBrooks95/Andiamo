@@ -46,12 +46,25 @@ class button_manager{
 	 *  it is a helper function for location_update */
 	void redo_locks();
 
+	/*! does all of the drawing for every button
+	 *managed by the button_manager, even the form_buttons */
+	void draw_all();
+
 	//! this member displays the tray to the screen
 	void draw_tray();
+
+	//! this member calls each button's virtual draw_me() member
+	/*! it also calls draw_tray() at the very beginning,
+	 *so that the tray is drawn "below" the buttons */
+	void draw_buttons();
 
 	/*! this member displays the form button tray, and their locks,
 	 *when appropriate */
 	void draw_form_tray();
+
+	/*! draws the form buttons. If one of them are active,
+	 *they will draw the form itself on top of everything else */
+	void draw_form_buttons();
 
 	/*! this member updates the tray's location in response to
 	 *a window size change */
@@ -92,11 +105,6 @@ class button_manager{
 
 	//! this member calls each buttons virtual print_me() member
 	void print_buttons();
-
-	//! this member calls each button's virtual draw_me() member
-	/*! it also calls draw_tray() at the very beginning,
-	 *so that the tray is drawn "below" the buttons */
-	void draw_buttons();
 
 	//! logic to handle sdl_inputs and backspaces is here
 	void text_box_loop(text_box_button* current_button,SDL_Event& event);

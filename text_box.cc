@@ -210,8 +210,6 @@ void text_box::draw_me(){
 		} else {
 			my_cursor.draw_me(*x_scroll,*y_scroll);
 		}
-		my_cursor.print();
-
 
 		//use the entire text texture if it is smaller than the
 		//text box's width this is the simplest case
@@ -481,12 +479,9 @@ void text_box::edit_loop(SDL_Event& event,string& command,regex* pattern){
         if(command.compare("TAB") == 0){
             return;
         }
+
 		//update picture
-/*		sdl_access->draw();
-		text_was_changed = false;
-		sdl_access->present();
-*/
-        draw_me();
+        sdl_access->draw();
         text_was_changed =false;
         sdl_access->present();
 	}//end of loop

@@ -105,33 +105,6 @@ void cursor::draw_me(const int x_scroll, const int y_scroll){
 
 }
 
-void cursor::print(std::ostream& outs){
-	outs << "--------------------------------------------------------------\n";
-	outs << "Texture ptr: " << my_texture << endl;
-
-	outs << "Containing box's rectangle: ";
-	print_sdl_rect(outs,*box_location);
-
-	outs << "Destination rectangle: ";
-	print_sdl_rect(outs,cursor_dest);
-
-	outs << "--------------------------------------------------------------\n";
-}
-
-void cursor::print(){
-	//can't do this, printing messages will get put in the 'errors' section
-	//print(error_logger.get_stream());
-	string message = "----------------------------------------------------\n";
-	message += "Texture ptr: " + to_string(size_t(my_texture)) + "\n";
-	message += "Containing box's rectangle: " + to_string(box_location->x)
-			   + to_string(box_location->y) + to_string(box_location->w)  
-			   + to_string(box_location->h) + "\n";
-	message += "Destination rectangle: " + to_string(cursor_dest.x)
-			   + to_string(cursor_dest.y) + to_string(cursor_dest.w)
-			   + to_string(cursor_dest.h) + "\n";
-	message += "----------------------------------------------------------\n";
-}
-
 void cursor::left(const string& text,unsigned int& editing_location,
 						bool& changed){
 	//this logic ensures the editing location never rolls over
@@ -148,16 +121,6 @@ void cursor::right(const string& text,unsigned int& editing_location,
         changed = true;
     }
 }
-
-void print_sdl_rect(ostream& outs,const SDL_Rect& print_me){
-	outs << print_me.x << ":" << print_me.y << ":"
-		 << print_me.w << ":" << print_me.h << endl;
-}
-
-
-
-
-
 
 
 
