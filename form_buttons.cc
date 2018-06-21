@@ -84,6 +84,7 @@ void form_button::setup_help_msg(){
 	if(unlock_help_texture == NULL) error_logger.push_error(SDL_GetError());
 
 }
+
 void form_button::init_form(const vector<regex>& pattern_tests){
 	my_form.init("no title","default_form_help.png",0,0,pattern_tests);
 
@@ -1194,6 +1195,21 @@ void icntrl6_form_button::save_information(ofstream& context_out){
 
 //####################### ICNTRL10 BUTTON ########################################
 
+icntrl10_button::icntrl10_button(){
+
+    is_locked = true;
+    active    = false;
+
+    icntrl10_backdrop = NULL;
+    over_surface      = NULL;
+    over_texture      = NULL;
+    number_sprites    = NULL;
+
+    lock_texture        = NULL;
+    unlock_help_texture = NULL;
+
+}
+
 void icntrl10_button::init(){
 
 
@@ -1287,7 +1303,6 @@ void icntrl10_button::set_corner_loc(int x, int y){
     xloc = x;
     yloc = y;
 
-
 }
 
 void icntrl10_button::make_rect(int width_in,int height_in){
@@ -1334,14 +1349,6 @@ void icntrl10_button::toggle_lock(){
 
 }
 
-
-icntrl10_button::icntrl10_button(){
-
-    is_locked = true;
-
-}
-
-
 bool icntrl10_button::handle_click(SDL_Event& mouse_event){
 	if(button::was_clicked(mouse_event)){
 		SDL_RenderClear(sdl_access->renderer);
@@ -1358,6 +1365,7 @@ void icntrl10_button::click_helper(SDL_Event& mouse_event){
 
 	if(!is_locked){
 
+        active = true;
 
         string NNSIG_str;
         NNSIG_str = tile_access->fields.at("line_11").at("NNSIG")->my_text_box.text;
@@ -1386,7 +1394,7 @@ void icntrl10_button::click_helper(SDL_Event& mouse_event){
 }
 
 void icntrl10_button::event_loop(SDL_Event& big_event){
-
+    cout << "in i10 event loop" << endl;
     // toggle to true to end the loop
     bool done = false;
 
@@ -1437,10 +1445,9 @@ void icntrl10_button::event_loop(SDL_Event& big_event){
 
         }
 
-    	draw_me();
+        sdl_access->draw();
     	sdl_access->present();
     	SDL_Delay(50);
-
     }
 
 }
@@ -1491,8 +1498,8 @@ void icntrl10_button::event_loop_click(SDL_Event& mouse_event,bool& done,
 						//reset command container if it was set
 						if(command == "TAB") command = "";
 
-						text_entry(current.line_entries[c],mouse_event,done,
-                                   command,c);
+                        current.line_entries[c].edit_loop(mouse_event,command,
+                                                           &my_patterns[c]);
 
 						if(command == "TAB" &&  c < 3){
 							//redo this step, but act on the next text box
@@ -1547,132 +1554,6 @@ void icntrl10_button::update_page_indicator(){
     over_texture = SDL_CreateTextureFromSurface(sdl_access->renderer,over_surface);
 
 
-
-}
-
-void icntrl10_button::text_entry(text_box& curr_tb,SDL_Event& event,
-                                 bool& done,string& command, unsigned int which_box){
-
-	//turn on the text input background functions
-	SDL_StartTextInput();
-
-	//used to control text entry loop
-	bool text_done = false;
-	//int c = 0;
-	bool text_was_changed = false;
-
-	//string container for event text info (which is normally a c-string)
-	string pass_me;
-	while(!text_done){
-		//if(c >= 10) return;
-		//do stuff
-
-		if( !SDL_PollEvent(&event) ){
-			//dummy event to stop it from printing default message every frame
-			//where no event happens
-			event.type = 1776;
-		}
-		/*if(event.type != 1776) cout << "Text box loop type:"
-                                      << event.type << endl; */
-		switch(event.type){
-		  case SDL_MOUSEMOTION:
-			break;
-
-		  case SDL_MOUSEBUTTONDOWN:
-			//if the click was within the text box, move the cursor maybe
-		  	if( curr_tb.was_clicked(event) ){
-                string msg = "Text box click at "+to_string(event.button.x);
-                msg += ":"+to_string(event.button.y);
-				error_logger.push_msg(msg);
-
-			//elsewise exit text input mode, user clicked off the text box
-		  	} else {
-                string msg = "Clicked outside of the text box,";
-                msg       += " exiting mini-loop";
-		  		error_logger.push_msg(msg);
-
-				SDL_Event keyup_event;
-				//putting in this key up removes the click locking
-				keyup_event.type = SDL_MOUSEBUTTONUP;
-				//for the loop in form_event_loop
-				SDL_PushEvent(&keyup_event);
-
-				//doing this allows the user to 'hop' to another text box
-				//directly from editing another box
-				SDL_PushEvent(&event);
-
-				text_done = true;
-			}
-		  	break;
-
-		  case SDL_TEXTINPUT:
-			pass_me = event.text.text;
-			curr_tb.update_text(pass_me,&my_patterns[which_box]);
-			text_was_changed = true;
-		  	//here this actually causes a loss of letters, so the event
-            //flooding is necessary, don't flush
-			//SDL_FlushEvent(SDL_TEXTINPUT);
-			break;
-
-		  case SDL_KEYDOWN:
-			
-			if(event.key.keysym.sym == SDLK_BACKSPACE){
-				//they hit backspace, so delete the end character if
-                //it is non-empty
-				curr_tb.back_space(my_patterns[which_box]);
-				text_was_changed = true;
-
-			} else if(event.key.keysym.sym == SDLK_LEFT){
-
-                curr_tb.dec_cursor(text_was_changed);
-
-			} else if(event.key.keysym.sym == SDLK_RIGHT){
-
-                curr_tb.inc_cursor(text_was_changed);
-			
-
-            //tab over to next text box
-			} else if(event.key.keysym.sym == SDLK_TAB){
-				command = "TAB";
-				return;
-			}
-				
-
-            //prevent event flooding
-			SDL_FlushEvent(SDL_KEYDOWN);
-		  	break;
-		  case SDL_QUIT:
-			//puts another sdl quit in the event queue, so program
-			//can be terminated while in "text entry" mode
-			SDL_PushEvent(&event);
-			text_done = true;			
-			break;
-
-		  case 1776: //do nothing, event was not new
-			break;
-
-		  default:
-			//outs << "Error finding case in text entry mini-loop" << endl;
-			break;
-		}
-
-		//if something actually changed, re-draw
-		//elsewise don't do it to try and save time
-		if(text_was_changed){
-			//update picture
-			draw_me();
-			text_was_changed = false;
-
-			//show updated picture
-			sdl_access->present();
-		}
-
-		//c++;
-		//SDL_Delay(50);
-	}//end of loop
-
-    //stop text input functionality because it slows down the app
-	SDL_StopTextInput();
 
 }
 
@@ -1921,8 +1802,10 @@ void icntrl4_form_button::click_helper(SDL_Event& mouse_event){
 			//so it has been put into a helper function
 			page_creation_helper();
 
-			my_form.toggle_active();//let the form know that it is now active
-			my_form.form_event_loop(mouse_event);//enter the mini loop for form entry
+            //let the form know that it is now active
+			my_form.toggle_active();
+            //enter the mini loop for form entry
+			my_form.form_event_loop(mouse_event);
 
 		//in this case the form has been previously created, but the icntrl8 value has not changed, so nothing needs to be done
 		} else if(my_form.prev_init_value == stoi(tile_access->fields.at("line_8").at("NCH4")->my_text_box.text) ){
