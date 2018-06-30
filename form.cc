@@ -757,41 +757,40 @@ void page::draw_me(){
 
     SDL_Renderer* renderer = sdl_access->renderer;
 
-	if( column_label_textures.size() != column_label_rects.size() ){
+    if( column_label_textures.size() != column_label_rects.size() ){
         string err = "The vector that saves drawing location for page";
         err += " column labels does not have the same size as";
         err += " the vector that contains the textures. Aborting drawing.";
-   		error_logger.push_error(err);
-		return;
-	}
+        error_logger.push_error(err);
+        return;
+    }
 
-	for(unsigned int c = 0; c < column_label_textures.size();c++){
+    for(unsigned int c = 0; c < column_label_textures.size();c++){
 
-		if(SDL_RenderCopy(renderer,column_label_textures[c],NULL,&column_label_rects[c]) != 0){
-			error_logger.push_error("Could not draw column title.");
-		}
-	}
+        if(SDL_RenderCopy(renderer,column_label_textures[c],NULL,&column_label_rects[c]) != 0){
+            error_logger.push_error("Could not draw column title.");
+        }
+    }
 
-	if( row_label_textures.size() != row_label_rects.size() ){
+    if( row_label_textures.size() != row_label_rects.size() ){
         string err = "The vector that saves the drawing location for";
         err += " the page row labels does not have the same size";
         err += " as the vector that contains the textures. Aborting drawing.";
-		error_logger.push_error(err);
-		return;
-	}
+        error_logger.push_error(err);
+    return;
+    }
 
-	for(unsigned int c = 0; c < row_label_textures.size();c++){
+    for(unsigned int c = 0; c < row_label_textures.size();c++){
 
-		if( SDL_RenderCopy(renderer,row_label_textures[c],NULL,&row_label_rects[c]) != 0 ){
+        if( SDL_RenderCopy(renderer,row_label_textures[c],NULL,&row_label_rects[c]) != 0 ){
 
-		}
+        }
 
-	}
+    }
 
-	for(unsigned int c = 0; c < text_boxes.size();c++){
-		text_boxes[c].draw_me();
-	}
-
+    for(unsigned int c = 0; c < text_boxes.size();c++){
+        text_boxes[c].draw_me();
+    }
 }
 
 
