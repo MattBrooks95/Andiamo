@@ -31,97 +31,98 @@ extern manager* tile_access;
 
 //######################## FORM BUTTONS #####################################
 form_button::form_button(){
-	lock_texture = NULL;
-	is_locked = true;
-	unlock_help_texture = NULL;
+    lock_texture = NULL;
+    is_locked = true;
+    unlock_help_texture = NULL;
 }
 
 form_button::~form_button(){
 
 }
 
-void form_button::init(){	
+void form_button::init(){
 
-	string lock_target = HOME+"/Andiamo/Assets/Images/lock.png";
-	lock_texture = asset_access->get_texture(lock_target);
-	if(lock_texture == NULL) error_logger.push_error(SDL_GetError());
-	is_locked  = true;
+    string lock_target = HOME+"/Andiamo/Assets/Images/lock.png";
+    lock_texture = asset_access->get_texture(lock_target);
+    if(lock_texture == NULL) error_logger.push_error(SDL_GetError());
+    is_locked  = true;
     init_array = NULL;
     pre_config = false;
 }
+
 //should be used by the bmangers "form" init member to place each form button such that it lines up with
 //the graphic for the form button tray
 void form_button::set_corner_loc(int x_in, int y_in){
-	xloc = x_in;
-	yloc = y_in;
+    xloc = x_in;
+    yloc = y_in;
 }
 
 void form_button::make_rect(int width_in,int height_in){
 
-	//initialized by set_corner_loc
-	my_rect.x = xloc;
-	my_rect.y = yloc;
-	my_rect.w = width_in;
-	//the width field is the one used to check clicks
-	width = width_in;
+    //initialized by set_corner_loc
+    my_rect.x = xloc;
+    my_rect.y = yloc;
+    my_rect.w = width_in;
+    //the width field is the one used to check clicks
+    width = width_in;
 
-	my_rect.h = height_in;
-	//the height field is the one used to check clicks
-	height = height_in;
+    my_rect.h = height_in;
+    //the height field is the one used to check clicks
+    height = height_in;
 }
-void form_button::setup_lock(){
-	lock_rect.x = my_rect.x+my_rect.w-15;
-	lock_rect.y = my_rect.y;
-	lock_rect.w = 15;
-	lock_rect.h = 25;
 
+void form_button::setup_lock(){
+
+    lock_rect.x = my_rect.x+my_rect.w-15;
+    lock_rect.y = my_rect.y;
+    lock_rect.w = 15;
+    lock_rect.h = 25;
 }
 
 void form_button::setup_help_msg(){
 
-	string unlock_target = "Assets/Images/form_assets/general_form_locked_msg.png";
-	unlock_help_texture = asset_access->get_texture(unlock_target);
-	if(unlock_help_texture == NULL) error_logger.push_error(SDL_GetError());
-
+    string unlock_target = "Assets/Images/form_assets/general_form_locked_msg.png";
+    unlock_help_texture = asset_access->get_texture(unlock_target);
+    if(unlock_help_texture == NULL) error_logger.push_error(SDL_GetError());
 }
 
 void form_button::init_form(const vector<regex>& pattern_tests){
-	my_form.init("no title","default_form_help.png",0,0,pattern_tests);
+    my_form.init("no title","default_form_help.png",0,0,pattern_tests);
 
 }
 
 void form_button::screen_size(){
-	bool update = false;
+    bool update = false;
 
-	int old_width = sdl_access->get_win_size()->width;
-	int old_height = sdl_access->get_win_size()->height;
-	if(old_width < 800){
-		old_width = 800; 
-		update = true;
-	}
+    int old_width = sdl_access->get_win_size()->width;
+    int old_height = sdl_access->get_win_size()->height;
+    if(old_width < 800){
+        old_width = 800; 
+        update = true;
+    }
 
-	if(sdl_access->get_win_size()->width < 800){
-		old_height = 800;
-		update = true;
-	}
+    if(sdl_access->get_win_size()->width < 800){
+        old_height = 800;
+        update = true;
+    }
 
-	if(update){
+    if(update){
 
-		SDL_SetWindowSize(sdl_access->get_window(),old_width,old_height);
-		sdl_access->window_update(old_width,old_height);
+        SDL_SetWindowSize(sdl_access->get_window(),old_width,old_height);
+        sdl_access->window_update(old_width,old_height);
 
-		error_logger.push_msg("Updated screen size upon opening a form.");
-	}
+        error_logger.push_msg("Updated screen size upon opening a form.");
+    }
 }
 
 void form_button::draw_help_msg(SDL_Event& big_event,SDL_Rect& destination){
 
     sdl_access->draw();
-	SDL_RenderCopy(sdl_access->renderer,unlock_help_texture,NULL,&destination);
-	sdl_access->present();
+    SDL_RenderCopy(sdl_access->renderer,unlock_help_texture,NULL,&destination);
+    sdl_access->present();
 
     //spin until they hit a key, or click somewhere on the screen
-    while(SDL_PollEvent(&big_event) == 0 || big_event.type == SDL_MOUSEBUTTONUP);				
+    while(SDL_PollEvent(&big_event) == 0 || big_event.type == SDL_MOUSEBUTTONUP);
 
 }
 
@@ -131,18 +132,18 @@ void form_button::draw_me(){
 }
 
 void form_button::draw_lock(){
-	if(is_locked){
-		SDL_RenderCopy(sdl_access->renderer,lock_texture,NULL,&lock_rect);
-	}
+    if(is_locked){
+        SDL_RenderCopy(sdl_access->renderer,lock_texture,NULL,&lock_rect);
+    }
 }
 
 void form_button::toggle_lock(){
-	if(is_locked){
-		is_locked = false;
-	} else {
-		is_locked = true;
-	}
 
+    if(is_locked){
+        is_locked = false;
+    } else {
+        is_locked = true;
+    }
 }
 
 bool form_button::make_output(ofstream& outs,
@@ -527,131 +528,129 @@ icntrl6_form_button::~icntrl6_form_button(){
 }
 
 void icntrl6_form_button::setup_lock(){
-	lock_rect.w = 15;
-	lock_rect.h = 25;
+    lock_rect.w = 15;
+    lock_rect.h = 25;
 
-	lock_rect.x = my_rect.x + my_rect.w - 15;
-	lock_rect.y = my_rect.y + my_rect.h - lock_rect.h;
+    lock_rect.x = my_rect.x + my_rect.w - 15;
+    lock_rect.y = my_rect.y + my_rect.h - lock_rect.h;
 
 
 }
 
 bool icntrl6_form_button::handle_click(SDL_Event& mouse_event){
-	if(button::was_clicked(mouse_event)){
-		SDL_RenderClear(sdl_access->renderer);
-		click_helper(mouse_event);
-		return true;
-	}
-	return false;
+    if(button::was_clicked(mouse_event)){
+        SDL_RenderClear(sdl_access->renderer);
+        click_helper(mouse_event);
+        return true;
+    }
+    return false;
 }
 
 void icntrl6_form_button::click_helper(SDL_Event& mouse_event){
-	error_logger.push_msg("clicked the icntrl6/parameter search button");
 
-	if(!is_locked){
+    error_logger.push_msg("clicked the icntrl6/parameter search button");
 
-		//resize the window if necessary
-		screen_size();
+    if(!is_locked){
+
+        //resize the window if necessary
+        screen_size();
 
         //draw the main context
         sdl_access->draw();
 
-		//draw the form selection landing 
-		show_landing();
+        //draw the form selection landing 
+        show_landing();
 
-		//have sdl_helper update the display
-		sdl_access->present();
+        //have sdl_helper update the display
+        sdl_access->present();
 
-		//if we enter a form loop, we should ignore whatever event is in the
+        //if we enter a form loop, we should ignore whatever event is in the
         //queue when the form loop exits. So, this flag should be set to
         //true if a form loop is entered, that way the do-while loop
         //will know to not worry about where the most recent click was
-		bool did_something = false;
+        bool did_something = false;
 
-		//enter this loop unconditionally at first, because the user had
-		//to have clicked on the form_button to get here
-		do{
-			//reset did_something flag
-			did_something = false;
+        //enter this loop unconditionally at first, because the user had
+        //to have clicked on the form_button to get here
+        do{
+            //reset did_something flag
+            did_something = false;
 
-			//read from queue until a click event happens
-			while( !(SDL_PollEvent(&mouse_event) == 1 &&
-				(mouse_event.type == SDL_MOUSEBUTTONDOWN ||
-                 mouse_event.type == SDL_QUIT) ) );
+            //read from queue until a click event happens
+            while( !(SDL_PollEvent(&mouse_event) == 1 &&
+            (mouse_event.type == SDL_MOUSEBUTTONDOWN ||
+            mouse_event.type == SDL_QUIT) ) );
 
-			if(mouse_event.type == SDL_QUIT){
-				//putting the same event back in the queue
-				//makes it possible to exit andiamo directly
-				SDL_PushEvent(&mouse_event);
-				return;
-			}
+            if(mouse_event.type == SDL_QUIT){
+                //putting the same event back in the queue
+                //makes it possible to exit andiamo directly
+                SDL_PushEvent(&mouse_event);
+                return;
+            }
 
 
-			if( parity_area.clicked(mouse_event) ){
+            if( parity_area.clicked(mouse_event) ){
+
                 SDL_RenderClear(sdl_access->renderer);
 
-				parity_page_creation();
+                parity_page_creation();
 
-				//let the form know that it is now active
-				my_form.toggle_active();
+                //let the form know that it is now active
+                my_form.toggle_active();
 
-				//enter the mini loop for form entry
-				my_form.form_event_loop(mouse_event);
-				did_something = true;
+                //enter the mini loop for form entry
+                my_form.form_event_loop(mouse_event);
+                did_something = true;
 
-			} else if( spectra_area.clicked(mouse_event) ){
+            } else if( spectra_area.clicked(mouse_event) ){
+
                 SDL_RenderClear(sdl_access->renderer);
 
-				search_spectra_page_creation();
-				search_spectra.toggle_active();
+                search_spectra_page_creation();
+                search_spectra.toggle_active();
 
-				search_spectra.form_event_loop(mouse_event);
-				did_something = true;
+                search_spectra.form_event_loop(mouse_event);
+                did_something = true;
 
-			} else if( xsections_area.clicked(mouse_event) ){
+            } else if( xsections_area.clicked(mouse_event) ){
                 SDL_RenderClear(sdl_access->renderer);
 
-				cross_sections_page_creation();
-				cross_sections.toggle_active();
+                cross_sections_page_creation();
+                cross_sections.toggle_active();
 
-				cross_sections.form_event_loop(mouse_event);
-				did_something = true;
+                cross_sections.form_event_loop(mouse_event);
+                did_something = true;
 
-			}
+            }
+
             //clear off the screen
-			SDL_RenderClear(sdl_access->renderer);
+            SDL_RenderClear(sdl_access->renderer);
 
             sdl_access->draw();
+            show_landing();
 
-            //redraw the button tray
-			//button_access->draw_tray();
-            //redraw the form button tray
-			//button_access->draw_form_tray();
-            //redraw the buttons themselves
-			//button_access->draw_buttons();
-            //redraw the form selection area
-			show_landing();
+            sdl_access->present();
 
-			sdl_access->present();
-
-		//loop until the user clicks off the landing screen
-		} while( did_something || landing_was_clicked(mouse_event) );
+        //loop until the user clicks off the landing screen
+        } while( did_something || landing_was_clicked(mouse_event) );
 
 
-	}
+    }
 }
 
 bool icntrl6_form_button::landing_was_clicked(SDL_Event& mouse_event){
 
-		bool in_x = (mouse_event.button.x > landing_rect.x &&
-						 mouse_event.button.x < landing_rect.x + landing_rect.w);
-		bool in_y = (mouse_event.button.y > landing_rect.y &&
-						 mouse_event.button.y < landing_rect.y + landing_rect.h);
+    bool in_x = (mouse_event.button.x > landing_rect.x &&
+            mouse_event.button.x < landing_rect.x + landing_rect.w);
+    bool in_y = (mouse_event.button.y > landing_rect.y &&
+            mouse_event.button.y < landing_rect.y + landing_rect.h);
 
-		if( in_x && in_y ){
-			return true;
-		}
-		return false;
+    if( in_x && in_y ){
+
+        return true;
+    }
+
+    return false;
 
 }
 
@@ -659,16 +658,16 @@ bool icntrl6_form_button::landing_was_clicked(SDL_Event& mouse_event){
 
 void icntrl6_form_button::init_form(const vector<regex>& pattern_tests){
 
-	//set up the image that lets the user switch between this
+    //set up the image that lets the user switch between this
     //button's different forms
-	setup_landing();
+    setup_landing();
 
     vector<regex> inm1_patterns;
     inm1_patterns.push_back(pattern_tests[0]);
     //this line has many columns 9 floating point #'s with field width
-	// of 8 and precision of 4
+    // of 8 and precision of 4
     //for(int c = 0; c < 9; c++){
-	for(int c = 1; c < 10; c++){
+    for(int c = 1; c < 10; c++){
         inm1_patterns.push_back(pattern_tests[c]);;
     }
     vector<regex> inm2_patterns;
@@ -681,18 +680,17 @@ void icntrl6_form_button::init_form(const vector<regex>& pattern_tests){
     parity_patterns.push_back(pattern_tests[14]);
     parity_patterns.push_back(pattern_tests[15]);
 
-	//my_form (from default form_button class) will be the parity info
-	my_form.init("Parameter Search (ICNTRL6)","icntrl6_parity_help.png",0,0,
+    //my_form (from default form_button class) will be the parity info
+    my_form.init("Parameter Search (ICNTRL6)","icntrl6_parity_help.png",0,0,
                   parity_patterns);
 
-	//INM1 form
-	search_spectra.init("# of Search Spectra","icntrl6_spectra_help.png",0,0,
+    //INM1 form
+    search_spectra.init("# of Search Spectra","icntrl6_spectra_help.png",0,0,
                         inm1_patterns);
 
-	//INM2 form
-	cross_sections.init("# of Search Cross Sections","icntrl6_xsections_help.png",0,0,
+    //INM2 form
+    cross_sections.init("# of Search Cross Sections","icntrl6_xsections_help.png",0,0,
                         inm2_patterns);
-
 
     try{
         init_array = &io_access->form_init_arrays.at("ICNTRL6");
@@ -707,60 +705,60 @@ void icntrl6_form_button::init_form(const vector<regex>& pattern_tests){
 //this one is kind of unique because the form itself should not change, it has a fixed size in the input manual
 void icntrl6_form_button::parity_page_creation(){
 
-	if( !my_form.prev_initialized ){
+    if( !my_form.prev_initialized ){
 
-		my_form.prev_initialized = true;
-		my_form.prev_init_value = 18;
+        my_form.prev_initialized = true;
+        my_form.prev_init_value = 18;
 
-		//make room for the first and only page
-		my_form.get_pages().resize(1);
+        //make room for the first and only page
+        my_form.get_pages().resize(1);
 
-		vector<string> column_labels, row_labels;
-		fill_parity_labels(row_labels, column_labels);
+        vector<string> column_labels, row_labels;
+        fill_parity_labels(row_labels, column_labels);
 
-		vector<int> column_spaces;
-		column_spaces.push_back(0);
-		column_spaces.push_back(250);
-		column_spaces.push_back(100);
+        vector<int> column_spaces;
+        column_spaces.push_back(0);
+        column_spaces.push_back(250);
+        column_spaces.push_back(100);
 
-		my_form.get_pages()[0].page_init( 3, 18, column_labels,
-											row_labels,column_spaces);
-       //this will set up the 'my_form' object just fine
-       init_values_helper();
-	}
+        my_form.get_pages()[0].page_init( 3, 18, column_labels,
+                                            row_labels,column_spaces);
+        //this will set up the 'my_form' object just fine
+        init_values_helper();
+    }
 
 
 }
 
 void icntrl6_form_button::fill_parity_labels(vector<string>& row_labels,vector<string>& column_labels){
 
-	//########## ROW LABELS (PARAMETER NAMES) ################################
-	row_labels.push_back("α");   //1
-	row_labels.push_back("γ");   //2
-	row_labels.push_back("F1");  //3
-	row_labels.push_back("F2");  //4
-	row_labels.push_back("b0");  //5
-	row_labels.push_back("b1");  //6
-	row_labels.push_back("b2");  //7
-	row_labels.push_back("b3");  //8
-	row_labels.push_back("b4");  //9
-	row_labels.push_back("ECON");//10
-	row_labels.push_back("C0");  //11
-	row_labels.push_back("C10"); //12
-	row_labels.push_back("C11"); //13
-	row_labels.push_back("C12"); //14
-	row_labels.push_back("C3");  //15
-	row_labels.push_back("FF");  //16
-	row_labels.push_back("MU");  //17
-	row_labels.push_back("18");  //18
-	//#########################################################################
+    //########## ROW LABELS (PARAMETER NAMES) ################################
+    row_labels.push_back("α");   //1
+    row_labels.push_back("γ");   //2
+    row_labels.push_back("F1");  //3
+    row_labels.push_back("F2");  //4
+    row_labels.push_back("b0");  //5
+    row_labels.push_back("b1");  //6
+    row_labels.push_back("b2");  //7
+    row_labels.push_back("b3");  //8
+    row_labels.push_back("b4");  //9
+    row_labels.push_back("ECON");//10
+    row_labels.push_back("C0");  //11
+    row_labels.push_back("C10"); //12
+    row_labels.push_back("C11"); //13
+    row_labels.push_back("C12"); //14
+    row_labels.push_back("C3");  //15
+    row_labels.push_back("FF");  //16
+    row_labels.push_back("MU");  //17
+    row_labels.push_back("18");  //18
+    //#########################################################################
 
-	//################# COLUMN LABELS #########################################
-	column_labels.push_back("Al-Quraishi Parameter");
-	column_labels.push_back("value");
-	column_labels.push_back("Vary?");
+    //################# COLUMN LABELS #########################################
+    column_labels.push_back("Al-Quraishi Parameter");
+    column_labels.push_back("value");
+    column_labels.push_back("Vary?");
 
-	//#########################################################################
+    //#########################################################################
 }
 
 void icntrl6_form_button::search_spectra_page_creation(){
@@ -867,28 +865,27 @@ void icntrl6_form_button::search_spectra_page_helper(){
 
 void icntrl6_form_button::fill_spectra_vectors(vector<string>& pass_column_labels,
                                                vector<int>& column_spaces){
-	//fill column labels
-	pass_column_labels.push_back("IFIT");
-	pass_column_labels.push_back("SIGFIT");
-	pass_column_labels.push_back("DSIGFIT");
-	pass_column_labels.push_back("ESIG");
-	pass_column_labels.push_back("DESIG");
-	pass_column_labels.push_back("E2SIG");
-	pass_column_labels.push_back("DE2SIG");
-	pass_column_labels.push_back("ELIML");
-	pass_column_labels.push_back("ELIMU");
+    //fill column labels
+    pass_column_labels.push_back("IFIT");
+    pass_column_labels.push_back("SIGFIT");
+    pass_column_labels.push_back("DSIGFIT");
+    pass_column_labels.push_back("ESIG");
+    pass_column_labels.push_back("DESIG");
+    pass_column_labels.push_back("E2SIG");
+    pass_column_labels.push_back("DE2SIG");
+    pass_column_labels.push_back("ELIML");
+    pass_column_labels.push_back("ELIMU");
 
-	//fill column spacing info
-	column_spaces.push_back(0);
-	column_spaces.push_back(75);
-	column_spaces.push_back(85);
-	column_spaces.push_back(100);
-	column_spaces.push_back(85);
-	column_spaces.push_back(85);
-	column_spaces.push_back(85);
-	column_spaces.push_back(85);
-	column_spaces.push_back(85);
-
+    //fill column spacing info
+    column_spaces.push_back(0);
+    column_spaces.push_back(75);
+    column_spaces.push_back(85);
+    column_spaces.push_back(100);
+    column_spaces.push_back(85);
+    column_spaces.push_back(85);
+    column_spaces.push_back(85);
+    column_spaces.push_back(85);
+    column_spaces.push_back(85);
 }
 
 void icntrl6_form_button::cross_sections_page_creation(){
@@ -1032,17 +1029,28 @@ void icntrl6_form_button::update_landing(){
 	parity_area.set_loc(landing_rect.x,landing_rect.y,100,70);
 	spectra_area.set_loc(landing_rect.x+106,landing_rect.y,100,70);
 	xsections_area.set_loc(landing_rect.x+212,landing_rect.y,100,70);
-
-
 }
 
 void icntrl6_form_button::show_landing(){
 
-	SDL_RenderCopy(sdl_access->renderer,landing_texture,NULL,&landing_rect);
+    SDL_RenderCopy(sdl_access->renderer,landing_texture,NULL,&landing_rect);
+
+}
+
+void icntrl6_form_button::draw_me(){
+
+    if(my_form.is_active()){
+        my_form.draw_me();
+    } else if(search_spectra.is_active()){
+        search_spectra.draw_me();
+    } else if(cross_sections.is_active()){
+        cross_sections.draw_me();
+    }
 
 }
 
 bool icntrl6_form_button::make_output(ofstream& outs,vector<index_value>& bad_input_list){
+
 	if(outs.fail()){
 		error_logger.push_error("Icntrl6_form_button::make_output was not given a valid output file stream.",
 					"exiting.");
@@ -1350,7 +1358,8 @@ void icntrl10_button::toggle_lock(){
 }
 
 bool icntrl10_button::handle_click(SDL_Event& mouse_event){
-	if(button::was_clicked(mouse_event)){
+
+    if(button::was_clicked(mouse_event)){
 		SDL_RenderClear(sdl_access->renderer);
 		click_helper(mouse_event);
 		return true;
@@ -1550,11 +1559,7 @@ void icntrl10_button::update_page_indicator(){
         error_logger.push_error(SDL_GetError());
     }
 
-
     over_texture = SDL_CreateTextureFromSurface(sdl_access->renderer,over_surface);
-
-
-
 }
 
 void icntrl10_button::draw_me(){
@@ -1679,7 +1684,7 @@ void icntrl10_button::init_data(unsigned int num_contexts){
         data[context].line_entries[1].init(font,"",0,305,800,25);
         data[context].line_entries[2].init(font,"",0,369,800,25);
 
-    }   
+    }
 
     //set up the area we are going to draw to
     SDL_Rect destination = {752,27,20,20};

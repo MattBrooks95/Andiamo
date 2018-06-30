@@ -311,10 +311,10 @@ void button_manager::print_buttons(){
 
 void button_manager::draw_all(){
 
-	draw_tray();
-	draw_form_tray();
-	draw_buttons();
-	draw_form_buttons();
+    draw_tray();
+    draw_form_tray();
+    draw_buttons();
+    draw_form_buttons();
 }
 
 void button_manager::draw_tray(){
@@ -338,11 +338,11 @@ void button_manager::draw_form_tray(){
 }
 
 void button_manager::draw_form_buttons(){
-	icntrl_8.draw_me();
-	icntrl_6.draw_me();
-	icntrl_10.draw_me();
-	icntrl_4.draw_me();
-	ilv3_ilv5.draw_me();
+    icntrl_8.draw_me();
+    icntrl_6.draw_me();
+    icntrl_10.draw_me();
+    icntrl_4.draw_me();
+    ilv3_ilv5.draw_me();
 }
 
 void button_manager::draw_buttons(){
