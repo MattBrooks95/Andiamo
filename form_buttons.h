@@ -77,7 +77,7 @@ class form_button : public button{
     /*! has the form objects contained herein send their information
      *to the input_maker */
     virtual bool make_output(ofstream& outs,
-    							vector<index_value>& bad_input_list);
+                                vector<index_value>& bad_input_list);
 
     //! check to make sure the inputs are properly formed
     virtual bool check_values(vector<index_value>& error_details);
@@ -140,37 +140,37 @@ class icntrl8_form_button : public form_button{
 
   public:
 
-	/*! this function changes the default help message to one that
-	 *explains icntrl8's conditions */
-	void setup_help_msg();
+    /*! this function changes the default help message to one that
+     *explains icntrl8's conditions */
+    void setup_help_msg();
 
-	//! implements the special logic for this class
-	bool handle_click(SDL_Event& mouse_event);
+    //! implements the special logic for this class
+    bool handle_click(SDL_Event& mouse_event);
 
-	/*! sets up a form that suits the needs of icntrl8's logics
-	 *per the input manual */
-	void init_form(const vector<regex>& pattern_tests);
+    /*! sets up a form that suits the needs of icntrl8's logics
+     *per the input manual */
+    void init_form(const vector<regex>& pattern_tests);
 
-	//! this function opens the icntrl8 form on click
-	void click_helper(SDL_Event& mouse_event);
+    //! this function opens the icntrl8 form on click
+    void click_helper(SDL_Event& mouse_event);
 
-	/*! this function is a helper that compacts the code found
-	 *in click_helper that creates or recreates pages */
-	void page_creation_helper();
+    /*! this function is a helper that compacts the code found
+     *in click_helper that creates or recreates pages */
+    void page_creation_helper();
 
-	/*! this function outputs the form's info to the input_maker's
-	 *file stream when called */
-	bool make_output(ofstream& outs,vector<index_value>& bad_input_list);
+    /*! this function outputs the form's info to the input_maker's
+     *file stream when called */
+    bool make_output(ofstream& outs,vector<index_value>& bad_input_list);
 
-	//! check to make sure the inputs are properly formed
-	bool check_values(vector<index_value>& error_details);
+    //! check to make sure the inputs are properly formed
+    bool check_values(vector<index_value>& error_details);
 
     //! prints the label for this button, followed by the array information
     /*! calls form_button::save_information */
     void save_information(ofstream& context_out);
   private:
-	//! updated with the value from the field that corresponds to Cutoff Nuclei
-	unsigned int icntrl8_val;
+    //! updated with the value from the field that corresponds to Cutoff Nuclei
+    unsigned int icntrl8_val;
 
 };
 

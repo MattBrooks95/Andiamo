@@ -276,130 +276,141 @@ void text_box::make_rect(){
 
 void text_box::update_text(const string& new_text,regex* test){
 
-	text.insert(editing_location,new_text);
-	if(test != NULL){
+    text.insert(editing_location,new_text);
+    if(test != NULL){
         check_text(*test);
     }
 
-	editing_location += strlen(new_text.c_str());
-	TTF_SizeText(sdl_access->font,text.c_str(),&text_dims.w,&text_dims.h);
-	shown_area.h = text_dims.h;
+    editing_location += strlen(new_text.c_str());
+    TTF_SizeText(sdl_access->font,text.c_str(),&text_dims.w,&text_dims.h);
+    shown_area.h = text_dims.h;
 
-	//update the texture for the text
-	update_texture();
+    //update the texture for the text
+    update_texture();
 }
 
 void text_box::check_text(const regex& test){
-	bool test_result = regex_match(text,test);
-	if(!bad_input){
-		if(text != " " && !test_result){
-			toggle_red();
-		}
-	} else {
-		if(text == " " || test_result){
-			toggle_red();
-		}
-	}
 
+    bool test_result = regex_match(text,test);
+    if(!bad_input){
 
+        if(text != " " && !test_result){
+            toggle_red();
+        }
+
+    } else{
+
+        if(text == " " || test_result){
+            toggle_red();
+        }
+
+    }
 }
 
 void text_box::inc_cursor(bool& text_was_changed){
-	if(editing_location == text.size()) return;
-	my_cursor.right(text,editing_location,text_was_changed);
+    if(editing_location == text.size()) return;
+    my_cursor.right(text,editing_location,text_was_changed);
 }
 
 void text_box::dec_cursor(bool& text_was_changed){
-	if(editing_location == 0) return;
-	my_cursor.left(text,editing_location,text_was_changed);
+    if(editing_location == 0) return;
+    my_cursor.left(text,editing_location,text_was_changed);
 
 }
 
 void text_box::update_texture(){
-	if(text_surface != NULL){
-		SDL_FreeSurface(text_surface);
-	}
-	if(text_texture != NULL){
-		SDL_DestroyTexture(text_texture);
-	}
 
-	if(font != NULL){
-		text_surface = TTF_RenderUTF8_Blended(font,text.c_str(),text_color);
+    if(text_surface != NULL){
+        SDL_FreeSurface(text_surface);
+    }
 
-		if(text_surface == NULL){
-			error_logger.push_error(SDL_GetError());
-				text_surface = TTF_RenderUTF8_Blended(font," ",text_color);
-		}
-		text_texture = SDL_CreateTextureFromSurface(sdl_access->renderer,text_surface);
-		if(text_texture == NULL){
-			error_logger.push_error(SDL_GetError());
-		}
+    if(text_texture != NULL){
+        SDL_DestroyTexture(text_texture);
+    }
 
-	} else {
-		error_logger.push_error("In text_box::update_texture, font is NULL.");
-	}
+    if(font != NULL){
+
+        text_surface = TTF_RenderUTF8_Blended(font,text.c_str(),text_color);
+
+        if(text_surface == NULL){
+            error_logger.push_error(SDL_GetError());
+            text_surface = TTF_RenderUTF8_Blended(font," ",text_color);
+        }
+
+        text_texture = SDL_CreateTextureFromSurface(sdl_access->renderer,text_surface);
+
+        if(text_texture == NULL){
+            error_logger.push_error(SDL_GetError());
+        }
+
+    } else {
+        error_logger.push_error("In text_box::update_texture, font is NULL.");
+    }
 
 }
 
 void text_box::toggle_red(){
-	if(bad_input){
-		bad_input = false;
-	} else {
-		bad_input = true;
-	}
+    if(bad_input){
+        bad_input = false;
+    } else {
+        bad_input = true;
+    }
 }
 
 void text_box::back_space(){
 
-	if(editing_location <= 0) return;
+    if(editing_location <= 0) return;
 
-	//erase from current editing location
-	text.erase(editing_location-1,1);
+    //erase from current editing location
+    text.erase(editing_location-1,1);
 
-	//decrement editing location
-	editing_location--;
+    //decrement editing location
+    editing_location--;
 
-	//update text size information
-	TTF_SizeText(font,text.c_str(),&text_dims.w,&text_dims.h);
-	update_texture();
+    //update text size information
+    TTF_SizeText(font,text.c_str(),&text_dims.w,&text_dims.h);
+    update_texture();
 
 }
 
 void text_box::back_space(const regex& test){
 
-	if(editing_location <= 0) return;
+    if(editing_location <= 0) return;
 
-	//erase from current editing location
-	text.erase(editing_location-1,1);
-	check_text(test);
-	//decrement editing location
-	editing_location--;
+    //erase from current editing location
+    text.erase(editing_location-1,1);
+    check_text(test);
+    //decrement editing location
+    editing_location--;
 
-	//update text size information
-	TTF_SizeText(font,text.c_str(),&text_dims.w,&text_dims.h);
+    //update text size information
+    TTF_SizeText(font,text.c_str(),&text_dims.w,&text_dims.h);
 
-	check_text(test);
-	update_texture();
+    check_text(test);
+    update_texture();
 
 }
-
-//################# CLICK FUNCTIONS ##########################################
 
 bool text_box::was_clicked(SDL_Event& event){
-	int real_xloc = xloc;
-	int real_yloc = yloc;
 
-	if(x_scroll != NULL && y_scroll != NULL){
-		real_xloc += *x_scroll;
-		real_yloc += *y_scroll;
-	}
-	if( (event.button.x >= real_xloc && event.button.x <= real_xloc+width) &&
-	    (event.button.y >= real_yloc && event.button.y <= real_yloc + height)){
-	    return true;
-	}
-	return false;
+    int real_xloc = xloc;
+    int real_yloc = yloc;
+
+    if(x_scroll != NULL && y_scroll != NULL){
+        real_xloc += *x_scroll;
+        real_yloc += *y_scroll;
+    }
+
+    bool below_top    = (event.button.x >= real_xloc);
+    bool above_bottom = (event.button.x <= real_xloc+width);
+
+    bool left_of_right = (event.button.y <= real_yloc + height);
+    bool right_of_left = (event.button.y >= real_yloc);
+    if( (below_top && above_bottom) && (left_of_right && right_of_left)){
+        return true;
+    }
+    return false;
 }
-//############################################################################
 
 /*thanks to 
 *http://lazyfoo.net/tutorials/SDL/32_text_input_and_clipboard_handling/index.php
@@ -496,28 +507,28 @@ void text_box::edit_loop(SDL_Event& event,string& command,regex* pattern){
 }
 
 void text_box::edit_key_helper(SDL_Keysym& key,bool& text_was_changed,
-								string& command){
+                                string& command){
 
-	switch( key.sym ){
-		case SDLK_BACKSPACE:
-			//delete last character, unless it's empty already than do nothing
-			if( text.size() > 0 ){
-				//delete a character, update text's graphics
-				back_space();
-				text_was_changed = true;
-			}
-			break;
-	
-		case SDLK_LEFT:
-			//if we are not already at the very left of the text,
-			//move the editing position one to the left
-			dec_cursor(text_was_changed);
-			break;
-		case SDLK_RIGHT:
-			//if we are not already at the very end of the text,
-			//move the editing position one to the right
-			inc_cursor(text_was_changed);
-			break;
+    switch( key.sym ){
+        case SDLK_BACKSPACE:
+            //delete last character, unless it's empty already than do nothing
+            if( text.size() > 0 ){
+                //delete a character, update text's graphics
+                back_space();
+                text_was_changed = true;
+            }
+            break;
+    
+        case SDLK_LEFT:
+            //if we are not already at the very left of the text,
+            //move the editing position one to the left
+            dec_cursor(text_was_changed);
+            break;
+        case SDLK_RIGHT:
+            //if we are not already at the very end of the text,
+            //move the editing position one to the right
+            inc_cursor(text_was_changed);
+            break;
 
         case SDLK_TAB:
             //tell the loops calling this function that the user
@@ -525,10 +536,9 @@ void text_box::edit_key_helper(SDL_Keysym& key,bool& text_was_changed,
             //the next parameter over
             command = "TAB";
             break;
-	  default:
-	  	break;
-
-	}
+      default:
+        break;
+    }
 
 }
 
