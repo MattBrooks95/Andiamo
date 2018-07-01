@@ -1020,15 +1020,15 @@ void icntrl6_form_button::setup_landing(){
 void icntrl6_form_button::update_landing(){
 
     //70 pixels higher
-	landing_rect.y = yloc - 70;
+    landing_rect.y = yloc - 70;
 
-	landing_rect.w = 312;
-	landing_rect.h = 70;
+    landing_rect.w = 312;
+    landing_rect.h = 70;
 
-	//configure the click detection areas for the different form openers
-	parity_area.set_loc(landing_rect.x,landing_rect.y,100,70);
-	spectra_area.set_loc(landing_rect.x+106,landing_rect.y,100,70);
-	xsections_area.set_loc(landing_rect.x+212,landing_rect.y,100,70);
+    //configure the click detection areas for the different form openers
+    parity_area.set_loc(landing_rect.x,landing_rect.y,100,70);
+    spectra_area.set_loc(landing_rect.x+106,landing_rect.y,100,70);
+    xsections_area.set_loc(landing_rect.x+212,landing_rect.y,100,70);
 }
 
 void icntrl6_form_button::show_landing(){

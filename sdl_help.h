@@ -114,7 +114,6 @@ class sdl_help{
 	/*! parameter order is preserved, and is in line with the input manual */
 	void calc_corners();
 
-
     //! called by calc_corners per line of parameters
 	void calc_corners_helper(vector<field*>& line_in,unsigned int& start_height,
 							 int row_limit);
@@ -122,7 +121,7 @@ class sdl_help{
     //! create the labels for the lines in the main parameter screen
     /*! pushes the label into the line_titles vector */
     void make_line_label(const string& label,unsigned int& start_height);
-
+    
     //! called per calc_corners_helper run, to create parameter line backdrops
     void make_line_guide(SDL_Rect backdrop_dims);
 

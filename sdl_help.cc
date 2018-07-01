@@ -175,24 +175,24 @@ void sdl_help::window_update(int width_in, int height_in){
 
 void sdl_help::draw(){
 
-	//clear off the renderer, to prepare to re-draw
-	SDL_RenderClear(renderer);
+    //clear off the renderer, to prepare to re-draw
+    SDL_RenderClear(renderer);
 
-	//draw the background image to the screen
-	SDL_RenderCopy(renderer,bg_texture,NULL,NULL);
+    //draw the background image to the screen
+    SDL_RenderCopy(renderer,bg_texture,NULL,NULL);
 
     if(show_line_guides) draw_labels();
 
     //if parameter line backdrops are enabled, draw them
     if(show_line_guides) draw_guides();
 
-	tile_access->draw();
-	draw_sbars();
+    tile_access->draw();
+    draw_sbars();
 
     button_access->draw_all();
 
-	//increment the frame counter
-	frame_count++;
+    //increment the frame counter
+    frame_count++;
 }
 
 //prints area window size and display 

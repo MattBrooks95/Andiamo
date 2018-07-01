@@ -335,11 +335,11 @@ class icntrl10_button : public button{
     //! explains why the data entry is locked, when the button is clicked
     void draw_help_msg(SDL_Event& big_event,SDL_Rect& destination);
 
-	//! impelements the special logic for this class
-	bool handle_click(SDL_Event& mouse_event);
+    //! impelements the special logic for this class
+    bool handle_click(SDL_Event& mouse_event);
 
-	//! this function opens the icntrl10 form on click
-	void click_helper(SDL_Event& mouse_event);
+    //! this function opens the icntrl10 form on click
+    void click_helper(SDL_Event& mouse_event);
 
     //! event loop for entering in icntrl10 info
     void event_loop(SDL_Event& mouse_event);
@@ -365,8 +365,8 @@ class icntrl10_button : public button{
     //! load in the strings from a custom config file
     void init_values_helper();
 
-	//!  outputs form info to the input_maker file stream
-	bool make_output(ofstream& outs,vector<index_value>& icntrl10_bad_inputs);
+    //!  outputs form info to the input_maker file stream
+    bool make_output(ofstream& outs,vector<index_value>& icntrl10_bad_inputs);
 
     //! prepares the linear parameter entry 
     void init_data(unsigned int num_contexts);
@@ -381,13 +381,13 @@ class icntrl10_button : public button{
     SDL_Rect lock_rect;
 
     //! stores the clickable location for the exit button in the top left
-	active_area exit;
+    active_area exit;
 
     //! stores the clickable location for the page right arrow in the top right
-	active_area right_arrow;
+    active_area right_arrow;
 
     //! stores the clickable location for the page left arrow in the top right
-	active_area left_arrow;
+    active_area left_arrow;
 
     //! template for the icntrl10 graphical entry
     SDL_Texture* icntrl10_backdrop;
@@ -400,9 +400,9 @@ class icntrl10_button : public button{
 
   private:
 
-	/*! sprite sheet with numbers 0-9 on it,
-	 * so parts can be used to show page numbers */
-	SDL_Surface* number_sprites;
+    /*! sprite sheet with numbers 0-9 on it,
+     * so parts can be used to show page numbers */
+    SDL_Surface* number_sprites;
 
     //! keep track of where to draw the backdrop
     SDL_Rect bd_dest;
@@ -442,27 +442,27 @@ class icntrl10_button : public button{
 class icntrl4_form_button : public form_button{
 
   public:
-	/*! setup_lock is overloaded here, because it looks better on this
-	 *form button in the lower right corner */
-	void setup_lock();
+    /*! setup_lock is overloaded here, because it looks better on this
+     *form button in the lower right corner */
+    void setup_lock();
 
-	//! sets up a form that suits the needs of icntrl4's logics
-	void init_form(const vector<regex>& pattern_tests);
+    //! sets up a form that suits the needs of icntrl4's logics
+    void init_form(const vector<regex>& pattern_tests);
 
     //! helper function for form creation
     void page_creation_helper();
 
-	//! implements the special logic for this class
-	bool handle_click(SDL_Event& mouse_event);
+    //! implements the special logic for this class
+    bool handle_click(SDL_Event& mouse_event);
 
-	//! this function opens the icntrl4 form on click
-	void click_helper(SDL_Event& mouse_event);
+    //! this function opens the icntrl4 form on click
+    void click_helper(SDL_Event& mouse_event);
 
     //! outputs form info to the input_maker file stream
     bool make_output(ostream& outs,vector<index_value>& bad_input_list);
 
-	//! check to make sure the inputs are properly formed
-	bool check_values(vector<index_value>& error_details);
+    //! check to make sure the inputs are properly formed
+    bool check_values(vector<index_value>& error_details);
 
     //! prints the label for this button, followed by the array information
     /*! calls form_button::save_information */
@@ -471,7 +471,7 @@ class icntrl4_form_button : public form_button{
   private:
 
     /*! not called icntrl4_val because derivative parameter
-	 *nch4 controls # of text boxes needed */
+     *nch4 controls # of text boxes needed */
     unsigned int nch4_val;
 };
 
@@ -482,14 +482,14 @@ class ilv3_ilv5_form_button : public form_button{
 
   public:
 
-	//! sets up a form that suits the needs of icntrl4's logics
-	void init_form(const vector<regex>& pattern_tests);
+    //! sets up a form that suits the needs of icntrl4's logics
+    void init_form(const vector<regex>& pattern_tests);
 
-	//! implements the special logic for this class
-	bool handle_click(SDL_Event& mouse_event);
+    //! implements the special logic for this class
+    bool handle_click(SDL_Event& mouse_event);
 
-	//! this function opens the icntrl4 form on click
-	void click_helper(SDL_Event& mouse_event);
+    //! this function opens the icntrl4 form on click
+    void click_helper(SDL_Event& mouse_event);
 
     //! helper function for click_helper that sets up pages
     void page_creation_helper();
@@ -497,14 +497,13 @@ class ilv3_ilv5_form_button : public form_button{
     //! invoked by the input_maker to have this form output to the HF file
     bool make_output(ofstream& outs,vector<index_value>& bad_input_list);
 
-	//! check to make sure the inputs are properly formed
-	bool check_values(vector<index_value>& error_details);
+    //! check to make sure the inputs are properly formed
+    bool check_values(vector<index_value>& error_details);
 
     //! prints the label for this button, followed by the array information
     /*! calls form_button::save_information */
     void save_information(ofstream& context_out);
   private:
-        
 };
 
 
