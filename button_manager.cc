@@ -403,7 +403,7 @@ bool button_manager::click_handling(SDL_Event& mouse_event){
             if( clean_up(mouse_event) == 0){
 
                 //update input_maker's info from the tiles
-                if( !tile_access->update_io_maker(bad_input_list) &&
+                if( !io_access->grab_values(bad_input_list) &&
                     bad_input_list.size() != 0 ){
                     //if something went wrong, this code is executed
                     bad_tile_input_warnings(bad_input_list);

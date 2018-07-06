@@ -126,11 +126,11 @@ class output_file_button : public text_box_button{
 //! runs the FOP handler when the user clicks this button
 class fop_handler_button : public button{
 
-	//! overload handle_click, to open interactive FOP feature
-	void click_helper(SDL_Event& mouse_event);
+    //! overload handle_click, to open interactive FOP feature
+    void click_helper(SDL_Event& mouse_event);
 
-	//! this function implementation opens a fop_handler object
-	void work();
+    //! this function implementation opens a fop_handler object
+    void work();
 
 };
 

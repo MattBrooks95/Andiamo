@@ -45,14 +45,6 @@ class manager{
 	//! this function walks the map, and returns the width of the widest tile
 	int get_widest_tile_width();
 
-	//! "fills" each non-background tile with it's default value as a string
-	/* it also gives them a pointer reference to their position in
-     *input_maker's vector to save time when we have to update input_maker's
-     *values. For this reason input_maker shouldn't resize it's vector
-     *besides in the init function, because that could cause illegal reads
-	 *because the field's pointer points to the vector's old location. */
-	void give_fields_defaults();
-
 	//! sets the graphics for the main parameter fields, besides the text box
 	void init_fields_graphics();
 
