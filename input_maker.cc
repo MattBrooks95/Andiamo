@@ -686,87 +686,62 @@ bool input_maker::output(vector<string>& form_bad_inputs){
 void input_maker::initialize_fields(){
 
     give_int4_defaults();
-    give_int4_array_defaults();
+    // give_int4_array_defaults();
 
     give_r8_defaults();
-    give_r8_array_defaults();
+    // give_r8_array_defaults();
 
     give_string_defaults();
 }
 
-void input_maker::give_int4_defaults(){
+string input_maker::get_string_init_error_message(const string& param_name){
 
-//     //the outer loop just runs over every integer in the integer map
-//     //that needs output to the HF file, and then runs through each line's
-//     //map in the manager::fields map looking for the correct parameter
-//     //name for that int4 param.
-//     for(INT4_MAP::iterator big_it = io_access->get_int4_params().begin();
-//         big_it != io_access->get_int4_params().end();
-//         big_it++){
+    string err;
+    err  = "Error! Failed to find parameter:"+param_name;
+    err += "'s tile in the fields map.\nPlease make sure that";
+    err += " its entries in tile_Input/tiles.txt";
+    err += "and HF_Config/config.txt \n have matching names.";
+    error_logger.push_error(err);
 
-//         //start off false, turn to true if the desired parameter is found
-//         bool found = false;
-//         for(FIELDS_MAP::iterator line_it = fields.begin();
-//             line_it != fields.end();
-//             line_it++){
-//           //try to find the desired parameter in this line
-//           try {
-
-//             //let the field reference it's place in the input_maker map,
-//             //so it can output the new value given to it by the user,
-//             //to the HF output
-//             line_it->second.at(big_it->first)->int4_hook = &big_it->second;
-
-//             //-1804 means that this parameter shouldn't have a default value,
-//             //so set the text box's text to a message instead
-//             if(big_it->second.value == -1804) {
-
-//                 line_it->second.at(big_it->first)->my_text_box.update_text("no default",NULL);
-
-//             } else {
-
-//                 //field's parameter name
-//                 string field_str;
-//                 field_str = to_string(big_it->second.value);
-
-//                 //parameter name from the input maker
-//                 string io_str;
-//                 io_str = big_it->first;
-
-//                 line_it->second.at(io_str)->my_text_box.update_text(field_str,NULL);
-//             }
-
-//             //we found it, so make the flag good
-//             found = true;
-
-//             //leave this loop early, we don't need to check
-//             //the other line's maps
-//             break;
-
-//           //if it fails, need to check a different line's
-//           // map in the manager object
-//           } catch (out_of_range& not_found){
-
-//             //if it isn't found, just check the next line's map
-//             continue;
-//           }
-
-
-//         }
-//         if(!found){
-//             string err;
-//             err  = "Error! Failed to find parameter:"+big_it->first;
-//             err += "'s tile in the fields map.\nPlease make sure that";
-//             err += " its entries in tile_Input/tiles.txt";
-//             err += "and HF_Config/config.txt \n have matching names.";
-//             error_logger.push_error(err);
-
-//         }
-
-//     }
 }
 
-void input_maker::give_int4_array_defaults(){
+void input_maker::give_int4_defaults(){
+
+    //the outer loop just runs over every integer in the integer map
+    //that needs output to the HF file, and then runs through each line's
+    //map in the manager::fields map looking for the correct parameter
+    //name for that int4 param.
+    for(INT4_MAP::iterator i4_it = int4_params.begin();
+        i4_it != int4_params.end();
+        i4_it++){
+
+
+        field* this_params_field = tile_access->get_param(i4_it->first);
+
+
+        if(this_params_field != NULL){
+
+            if(i4_it->second.value == -1804){
+
+                this_params_field->my_text_box.update_text("no default", NULL);
+
+            } else {
+
+                string set_string = to_string(i4_it->second.value);
+                this_params_field->my_text_box.update_text(set_string,NULL);
+
+            }
+
+        } else {
+
+            string err = get_string_init_error_message(i4_it->first);
+            error_logger.push_error(err);
+
+        }
+    }
+}
+
+//void input_maker::give_int4_array_defaults(){
 
 //     for(INT4_ARR_MAP::iterator big_it = io_access->get_i4_array_params().begin();
 //         big_it != io_access->get_i4_array_params().end();
@@ -802,63 +777,46 @@ void input_maker::give_int4_array_defaults(){
 //         }
 //     }
 
-}
+//}
 
 void input_maker::give_r8_defaults(){
 
-//     for(REAL8_MAP::iterator big_it = io_access->get_real8_params().begin();
-//         big_it != io_access->get_real8_params().end();
-//         big_it++){
+    //the outer loop just runs over every integer in the integer map
+    //that needs output to the HF file, and then runs through each line's
+    //map in the manager::fields map looking for the correct parameter
+    //name for that int4 param.
+    for(REAL8_MAP::iterator r8_it = real8_params.begin();
+        r8_it != real8_params.end();
+        r8_it++){
 
-//         bool found = false;
-//         for(FIELDS_MAP::iterator line_it = fields.begin();
-//             line_it != fields.end();
-//             line_it++){
-//           try{
 
-//             //give field pointer access to it's value in input_maker
-//             line_it->second.at(big_it->first)->real8_hook = &big_it->second;
+        field* this_params_field = tile_access->get_param(r8_it->first);
 
-//             //-180.4 is the float version of the no applicable default flag,
-//             //so set text box to be a message instead 
-//             if(big_it->second.value == -180.4){
 
-//                 line_it->second.at(big_it->first)->my_text_box.update_text("no default",NULL);
+        if(this_params_field != NULL){
 
-//             } else {
+            if(r8_it->second.value == -1804){
 
-//                 string temp_val;
-//                 temp_val = to_string(big_it->second.value);
-//                 line_it->second.at(big_it->first)->my_text_box.update_text(temp_val,NULL);
+                this_params_field->my_text_box.update_text("no default", NULL);
 
-//             }
+            } else {
 
-//             //set the flag to true, because we found
-//             //the param we were looking for
-//             found = true;
-//             break;
-//           } catch (out_of_range& not_found){
+                string set_string = to_string(r8_it->second.value);
+                this_params_field->my_text_box.update_text(set_string,NULL);
 
-//             //it wasn't found, so check next line's map
-//             continue;
+            }
 
-//           }
-//           if(!found){
+        } else {
 
-//             string err = "Error! Failed to find parameter:"+big_it->first;
-//             err += "'s tile in the fields map.\nPlease make sure that its";
-//             err += " entries in tile_Input/tiles.txt and HF_Config/config.txt";
-//             err += "\n have matching names.";
-//             error_logger.push_error(err);
+            string err = get_string_init_error_message(r8_it->first);
+            error_logger.push_error(err);
 
-//           }
+        }
+    }
 
-//         }   
-
-//     }
 }
 
-void input_maker::give_r8_array_defaults(){
+//void input_maker::give_r8_array_defaults(){
 
 //     for(R8_ARR_MAP::iterator big_it = io_access->get_r8_array_params().begin();
 //     big_it != io_access->get_r8_array_params().end();
@@ -896,106 +854,68 @@ void input_maker::give_r8_array_defaults(){
 
 //     }
 
-}
+//}
 
 void input_maker::give_string_defaults(){
 
-//     for(STR_MAP::iterator big_it = io_access->get_string_params().begin();
-//         big_it != io_access->get_string_params().end();
-//         big_it++){
-//         bool found = false;
-//         for(FIELDS_MAP::iterator line_it = fields.begin();
-//             line_it != fields.end();
-//             line_it++){
-//           try{
+    //the outer loop just runs over every integer in the integer map
+    //that needs output to the HF file, and then runs through each line's
+    //map in the manager::fields map looking for the correct parameter
+    //name for that int4 param.
+    for(STR_MAP::iterator str_it = string_params.begin();
+        str_it != string_params.end();
+        str_it++){
 
+            field* this_params_field = tile_access->get_param(str_it->first);
 
-//             string temp_str = big_it->second.value;
-//             string par_name = big_it->first;
+        if(this_params_field != NULL){
 
-//             //set up the pointer to the parameter in input_maker
-//             line_it->second.at(par_name)->string_hook = &big_it->second;
-//             line_it->second.at(par_name)->my_text_box.update_text(temp_str,NULL);
+            this_params_field->my_text_box.update_text(str_it->second.value,NULL);
 
+        } else {
 
-//             found = true;
-//             break;
-//           } catch (out_of_range& not_found){
-//             //check the other lines
-//             continue;
-//           }
-//         }
-//         if(!found){
+            string err = get_string_init_error_message(str_it->first);
+            error_logger.push_error(err);
 
-//             string err = "Error! Failed to find parameter:"+big_it->first;
-//             err += "'s tile in the fields map.\nPlease make sure that";
-//             err += " its entries in tile_Input/tiles.txt and";
-//             err += " HF_Config/config.txt have matching names.";
-//             error_logger.push_error(err);
-
-//         }
-
-//     }
+        }
+    }
 
 }
 //##############################################################################
 
 bool input_maker::grab_values(vector<string>& bad_input_list){
-// bool manager::update_io_maker(vector<string>& bad_input_list){
 
-//     bool success = true;
+    bool success = true;
 
+    for(INT4_MAP::iterator it = int4_params.begin(); it != int4_params.end();it++){
 
+        cout << it->first << endl;
+        // it->second.value = tile_access->get_param(it->first).my_text_box.text;
+    }
 
-//     //for every line of parameters
-//     for(uint line = 0; line < fields_order.size();line++){
+    for(REAL8_MAP::iterator it = real8_params.begin(); it != real8_params.end();it++){
 
-//         //for each parameter in each line
-//         for(uint param = 0; param < fields_order[line].size();param++){
-
-//             //cast user entered string to concrete value
-//             //in input_maker. On success, the body of this if
-//             //statement does not happen
-//             if(!fields_order[line][param]->update_my_value()){
-
-//                 //if the casting failed, these statements are
-//                 //executed
-
-//                 //record the name of the parameter that failed
-//                 //type casting
-//                 string param_name;
-//                 param_name = fields_order[line][param]->tile_name;
-//                 bad_input_list.push_back(param_name);
-
-//                 //color the tile in red, so that the user
-//                 //can easily identify the parameter that had
-//                 //an invalid input
-//                 fields_order[line][param]->go_red();
-
-//                 //a param failed to be cast, so set bool return value
-//                 //to false
-//                 success = false;
-
-//             } else if(fields_order[line][param]->is_red){
-
-//                 //also, if this tile was previously in error
-//                 //hitting this case means that it has been corrected
-//                 //and should no longer be colored in red
-//                 fields_order[line][param]->go_back();
-//             }
-            
-
-//         }
-
-//     }
+        cout << it->first << endl;
+        // it->second.value = tile_access->get_param(it->first).my_text_box.text;
 
 
-//     //let button manager know that errors occured
-//     return success;
-// }
+    }
+
+    for(INT4_ARR_MAP::iterator it = int4_array_params.begin(); it != int4_array_params.end();it++){
+
+        cout << it->first << endl;
+        // it->second.value = tile_access->get_param(it->first).my_text_box.text;
+
+    }
+
+    for(R8_ARR_MAP::iterator it = r8_array_params.begin();it != r8_array_params.end();it++){
+
+        cout << it->first << endl;
+        // it->second.value = tile_access->get_param(it->first).my_text_box.text;
+
+    }
+    return success;
 }
-
-
 
 //################# CONTEXT SAVING     #########################################
 void input_maker::save_context(ofstream& outs){

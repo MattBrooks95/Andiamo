@@ -345,6 +345,35 @@ void manager::draw(){
 
 }
 
+field* manager::get_param(const string& target_param){
+
+
+    for(FIELDS_MAP::iterator line_it = fields.begin(); line_it != fields.end(); line_it++){
+
+        field* this_field = get_param_from_line(target_param,line_it->second);
+        if(this_field == NULL){
+            continue;
+        } else {
+            return this_field;
+        }
+    }
+
+    return NULL;
+}
+
+field* manager::get_param_from_line(const string& target_param,map<string,field*>& target_line){
+
+    try{
+
+        return target_line.at(target_param);
+
+    } catch(out_of_range& failure) {
+
+        return NULL;
+    }
+
+}
+
 void manager::update_win(int width_in,int height_in){
     win_w = width_in;
     win_h = height_in;

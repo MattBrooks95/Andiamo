@@ -51,6 +51,12 @@ class manager{
 	//! this function draws the tiles
 	void draw();
 
+    //! searches the field parameters 2D map using the passed string as the key
+    field* get_param(const string& target_param);
+
+    //! searches only a specific line of parameters
+    field* get_param_from_line(const string& target_param,map<string,field*>& target_line);
+
 	//############# GIVE_FIELDS_DEFAULTS() HELPERS ########################################################//
 	void give_int4_fields_defaults();
 

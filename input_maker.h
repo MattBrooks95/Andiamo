@@ -93,17 +93,19 @@ class input_maker{
      *one another */
     void initialize_fields();
 
+    string get_string_init_error_message(const string& param_name);
+
     //! give all int4 values to the parameters in the manager's field map
     void give_int4_defaults();
 
     //! give all int4 array values to the parameters in the manager's field map
-    void give_int4_array_defaults();
+    // void give_int4_array_defaults();
 
     //! give all r8 values to the parameters in the manager's field map
     void give_r8_defaults();
 
     //! give all r8 array values to the parameters in the manager's field map
-    void give_r8_array_defaults();
+    // void give_r8_array_defaults();
 
     //! give all string values to the parameters in the manager's field map
     void give_string_defaults();
@@ -113,7 +115,6 @@ class input_maker{
     /*!
      *
      */
-
     bool grab_values(vector<string>& bad_input_list);
 
     //##########################################################################
