@@ -65,7 +65,7 @@ void button::draw_me(){
     }
 }
 
-//virtual 
+//virtual
 void button::set_corner_loc(){
     xloc = 0;
     //this puts the tile in a fixed position just above the horizonal scroll bar
@@ -107,8 +107,6 @@ bool button::was_clicked(SDL_Event& mouse_event){
 
 void button::click_helper(SDL_Event& mouse_event){
     error_logger.push_msg("default button click_helper");
-
-
 }
 //################# virtual click members ###############
 

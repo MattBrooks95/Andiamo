@@ -62,7 +62,7 @@ void form::init(string form_title_in,string help_msg_image_name,int xloc_in,
 
 	//set up state variables
 	form_title = form_title_in;
-	
+
     //set up the patterns for user type checking
     my_patterns = pattern_tests;
 
@@ -121,11 +121,11 @@ void form::init(string form_title_in,string help_msg_image_name,int xloc_in,
 			if(SDL_BlitSurface(form_title_surface,&source,form_surface,&destination) != 0){
 				error_logger.push_error(SDL_GetError());
 			}
-			
+
 		}
 		TTF_CloseFont(title_font);
 	}
-	
+
 	form_texture =
 		SDL_CreateTextureFromSurface(sdl_access->renderer,form_surface);
 
@@ -160,7 +160,7 @@ void form::set_form_title(string new_title){
 	}
 	//destroy the old form title surface
 	SDL_FreeSurface(form_title_surface);
-        
+
 	//save the new title surface
 	form_title = new_title;
 
@@ -176,7 +176,7 @@ void form::set_form_title(string new_title){
 	form_title_surface =
                     TTF_RenderUTF8_Blended(title_font,form_title.c_str(),black);
 
-    //before we can draw the form title to the surface, 
+    //before we can draw the form title to the surface,
     //we must first fill over the old form title.
 	//Make sure the color is the same as the form's
     SDL_Rect source, destination;
@@ -214,57 +214,57 @@ void form::set_form_title(string new_title){
 
 void form::form_event_loop(SDL_Event& big_event){
 
-	//toggle to true to end the loop
-	bool done = false;
+    //toggle to true to end the loop
+    bool done = false;
 
-	//used to prevent one click causing multiple things to happen
-	bool click_lock = false;
+    //used to prevent one click causing multiple things to happen
+    bool click_lock = false;
 
-	while(!done){
-	//cout << "IN FORM MINI LOOP" << endl;
-	if( !SDL_PollEvent(&big_event) ){
-        //arbitrary do-nothing event pushed onto queue,
-        //so it doesn't hit any cases
-		big_event.type = 1776;
-	}
-	/*if(big_event.type != 1776){
+    while(!done){
+        //cout << "IN FORM MINI LOOP" << endl;
+        if( !SDL_PollEvent(&big_event) ){
+            //arbitrary do-nothing event pushed onto queue,
+            //so it doesn't hit any cases
+            big_event.type = 1776;
+        }
+        /*if(big_event.type != 1776){
         cout << "BIG EVENT TYPE:" << big_event.type << endl;
-    */
-	switch(big_event.type){
-		case SDL_QUIT:
-			toggle_active();
-			done = true;
-			SDL_PushEvent(&big_event);
-			break;
-		case SDL_KEYDOWN:
-			break;
-		case SDL_KEYUP:
-			break;
-		case SDL_MOUSEBUTTONDOWN:
-			handle_click(big_event,done,click_lock);
-			break;
-		case SDL_MOUSEBUTTONUP:
-			//reset click lock, they let go finally
-			click_lock = false;
-			break;
-		case SDL_MOUSEWHEEL:
-			break;
-		case SDL_WINDOWEVENT:
-			break;
-		
-		//nop
-		case 1776:
-			break;
+        */
+        switch(big_event.type){
+            case SDL_QUIT:
+                toggle_active();
+                done = true;
+                SDL_PushEvent(&big_event);
+                break;
+        case SDL_KEYDOWN:
+                break;
+        case SDL_KEYUP:
+                break;
+        case SDL_MOUSEBUTTONDOWN:
+                handle_click(big_event,done,click_lock);
+            break;
+        case SDL_MOUSEBUTTONUP:
+                //reset click lock, they let go finally
+                click_lock = false;
+            break;
+        case SDL_MOUSEWHEEL:
+            break;
+        case SDL_WINDOWEVENT:
+            break;
 
-		default:
-			break;
+        //nop
+        case 1776:
+            break;
 
-	}
-	draw_me();
-	sdl_access->present();
-	SDL_Delay(50);
+        default:
+        break;
 
- }
+        }
+
+        sdl_access->draw();
+        sdl_access->present();
+        SDL_Delay(50);
+    }
 
 }
 
@@ -328,7 +328,7 @@ void form::handle_click(SDL_Event& mouse_event,bool& done,bool& click_lock){
                         //the columns should line up with the supplied
                         //vector of regular expressions
                         int pattern_index = 0;
-						if(current.get_row_labels().size() == 0){						
+						if(current.get_row_labels().size() == 0){
                         	pattern_index =  c % current.get_columns();
 						//if there is a column of row labels for this page,
 						//mod by the number of actual input columns
@@ -377,7 +377,7 @@ void form::draw_me(){
 
 void form::toggle_active(){
 	if(active){
-		active = false;	
+		active = false;
 
 	} else {
 		active = true;
@@ -639,20 +639,20 @@ void page::set_row_labels(const vector<string>& row_labels_in,
 		row_label_textures.push_back(temp_texture);
 
 		//create surface from the text
-		temp_surface = 
+		temp_surface =
             TTF_RenderUTF8_Blended(sdl_access->font,row_labels[c].c_str(),black);
 
 		int width;
 		int height;
 
-			
+
 		if(TTF_SizeText(sdl_access->font,row_labels[c].c_str(),&width,&height) != 0){
             string err = "Error while making row labels in page,";
             err += " TTF_SizeText failure." + string(TTF_GetError());
 			error_logger.push_error(err);
         }
 
-			
+
 			//make the previously shoved null pointer now point
             //to a texture created from the surface
 			row_label_textures.back() =
@@ -660,7 +660,7 @@ void page::set_row_labels(const vector<string>& row_labels_in,
 
 			//calc location & use the size
 			//explicit cast of c to int stops compiler warnings
-			SDL_Rect temp_rect = 
+			SDL_Rect temp_rect =
                  {TEXT_BOX_HORIZ_PADDING,80+25*int(c)+10*int(c), width, height};
 
 			if(width > x_start_point){
@@ -686,7 +686,7 @@ void page::set_text_boxes(int& x_start_point,
 		j = 1;
 	}
 
-	//had a hard fight with the Rule of Three here.... 
+	//had a hard fight with the Rule of Three here....
 	//implementing a copy constructor stopped the double free()
 	// crash at the text_boxes.push_back
 	int x_offset = 0;
