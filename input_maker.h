@@ -16,12 +16,13 @@
 
 //map is an associative array, like could be found in python or perl
 //items are accessed by name (key)
-#include<map> 
+#include<map>
 
 #include "ftran_structs.h"
 #include "string+.h"
 #include "logger.h"
 #include "c_tuples.h"
+#include "helpers.h"
 
 #include "define.h"
 
@@ -33,7 +34,7 @@ using std::ostream;
 extern logger error_logger;
 class button_manager;
 
-//! input_maker makes the HF input and loads in the default values 
+//! input_maker makes the HF input and loads in the default values
 /*!reads a config file to configure itself, and then creates the outputs to
  *be used with HF it exists within sdl_help, and interacts heavily
  *with fields and the manager object */
@@ -53,7 +54,7 @@ class input_maker{
      *the output file can be specified by the output_fname button
      *in class button_manager*/
     bool output(vector<string>& form_bad_inputs);
-    
+
     //! prints all of the maps in this object to the error logger
     /* needs to be ran with the -v option */
     void check_map();
@@ -93,6 +94,7 @@ class input_maker{
      *one another */
     void initialize_fields();
 
+    //! returns a message about not being able to find a parameter
     string get_string_init_error_message(const string& param_name);
 
     //! give all int4 values to the parameters in the manager's field map
@@ -159,7 +161,7 @@ class input_maker{
     map<string,param_real8> real8_params;
 
     //! contains string parameters
-    map<string,param_string> string_params; 
+    map<string,param_string> string_params;
 
     //! this map contains the ftran_struct int4 array parameters
     /*! a specific one can be accessed by using map's at(name_string)
@@ -184,7 +186,7 @@ class input_maker{
  *\param size is the size read in by input_maker from the configuration file
  *\param output_me is the ftran_struct string_param to print to the file */
 void output_string(ofstream& outs,const unsigned int& size,\
-                    const string& string_in); 
+                    const string& string_in);
 
 //! sets up line one of the HF input file
 void do_line1(ofstream& outs,const map<string,param_string>& string_params);

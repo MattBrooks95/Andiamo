@@ -1,21 +1,16 @@
 #compilation flags
 SDL_INC = -lSDL2 -lSDL2_image -lSDL2_ttf
-C_FLG = -std=c++11 -Wall
+C_FLG   = -std=c++11 -Wall
 
 #valgrind flags
 vtool = --tool=memcheck
-vopt = --log-file="memory_check.txt" --leak-check=full
+vopt  = --log-file="memory_check.txt" --leak-check=full
 
 #object files
 
-F_OBJS = ./q_val/cqvalue.o ./q_val/dqvalu.o ./q_val/dmass.o ./q_val/bamt16.o
-OBJECTS = main.o handlers.o manager.o ftran_structs.o field.o sdl_help.o scroll_bar.o input_maker.o string+.o button_manager.o button.o form_buttons.o form.o derived_buttons.o fop_handler.o deck.o text_box.o cursor.o logger.o asset_manager.o
-MAIN_OBJECTS = handlers.o manager.o ftran_structs.o field.o sdl_help.o scroll_bar.o input_maker.o string+.o button_manager.o button.o form_buttons.o form.o derived_buttons.o fop_handler.o deck.o text_box.o cursor.o logger.o asset_manager.o
-
-
-
-#header files
-headers = button.h field.h ftran_structs.h logger.h sdl_help.h button_manager.h form_buttons.h handlers.h manager.h string+.h derived_buttons.h form.h input_maker.h scroll_bar.h text_box.h
+F_OBJS       = ./q_val/cqvalue.o ./q_val/dqvalu.o ./q_val/dmass.o ./q_val/bamt16.o
+OBJECTS      = main.o handlers.o manager.o ftran_structs.o field.o sdl_help.o scroll_bar.o input_maker.o string+.o button_manager.o button.o form_buttons.o form.o derived_buttons.o fop_handler.o deck.o text_box.o cursor.o logger.o asset_manager.o helpers.o
+MAIN_OBJECTS = handlers.o manager.o ftran_structs.o field.o sdl_help.o scroll_bar.o input_maker.o string+.o button_manager.o button.o form_buttons.o form.o derived_buttons.o fop_handler.o deck.o text_box.o cursor.o logger.o asset_manager.o helpers.o
 
 #executable name
 name = andiamo
@@ -65,7 +60,7 @@ manager.o: manager.cc manager.h field.o input_maker.o logger.o
 ftran_structs.o: ftran_structs.cc ftran_structs.h
 	g++ $(C_FLG) -c ftran_structs.cc
 
-input_maker.o: input_maker.cc input_maker.h string+.o ftran_structs.o string+.o button_manager.o
+input_maker.o: input_maker.cc input_maker.h string+.o ftran_structs.o string+.o button_manager.o helpers.o
 	g++ $(C_FLG) -c input_maker.cc
 
 fop_handler.o: fop_handler.cc fop_handler.h hf_qvalue deck.o
@@ -88,22 +83,31 @@ logger.o: logger.cc logger.h
 
 string.o: string+.cc string+.h
 	g++ $(C_FLG) -c string+.cc
+
+helpers.o: logger.o helpers.h helpers.cc
+	g++ $(C_FLG) -c helpers.cc
+
 #runs valgrind on the debug executable created by make gdb
+#do this to check for memory leaks and double free errors
 valgrind:
 	valgrind $(vtool) $(vopt) ./debug
+
 #compile for debugging, or when includes have gotten messed up
 gdb:
 	g++ -g -o debug $(C_FLG) *.cc $(SDL_INC) $(F_OBJS)
+
 #pack useful files up for an email or storage
 tar:
 	tar -czvf andiamo.tar.gz *.cc *.h Makefile doxyfile readme.md tile_Input Assets sandbox config sandbox output
+
 #have doxygen run and create a manual from source comments and the configuration settings in doxyfile
 doxy: doxyfile
 	doxygen doxyfile
 	$(browser) ./doxyout/html/index.html
+
 #remove compiled things, text editor saves, memory check output
 clean:
-	make clean -C ./q_val/ && rm *~ *.o andiamo debug memory_check.txt
+	make clean -C ./q_val/ && rm *~ *.o *.h.gch andiamo debug memory_check.txt
 
 
 

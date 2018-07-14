@@ -118,7 +118,7 @@ void input_maker::init(const string& alternate_config){
 
 
         /*some sort of bad or meaningless input, try again until something of
-         *value is found thanks to 
+         *value is found thanks to
          *https://stackoverflow.com/questions/9235296/
          *how-to-detect-empty-lines-while-reading-from-istream-object-in-c
          *for convincing me to check string.empty() instead of
@@ -149,7 +149,7 @@ void input_maker::init(const string& alternate_config){
                 double value;
                 try {
                   value = stod(tokens[3]);
-                  
+
                 } catch (invalid_argument& error){
                   string err = "Error in input_maker::init(), real 8 parameter";
                   err       +=" given bad initial value:" + tokens[3];
@@ -172,8 +172,8 @@ void input_maker::init(const string& alternate_config){
         //logics for reading in fortran integer 4's
         } else if( regex_match(temp_string,re_i4) ){
             error_logger.push_msg("Is an int4 line!");
-                
-            vector<string> tokens = split(temp_string,' ');         
+
+            vector<string> tokens = split(temp_string,' ');
             string var_name = tokens[1];
             if(tokens[2] != "="){
                 error_logger.push_msg("Missing '=' in I4 param declaration!");
@@ -255,14 +255,14 @@ void input_maker::init(const string& alternate_config){
                 //save this new param value in its vector
                 string_params.emplace(name,push_me);
             }
-            
+
         } else if( regex_match(temp_string,re_i4_array) ){
             string int_arr_msg = "Is an array of integers! This is that";
             int_arr_msg += " line split along spaces:";
             error_logger.push_msg(int_arr_msg);
-            
+
             vector<string> tokens = split(temp_string,' ');
-            
+
             for(unsigned int c = 0; c < tokens.size() ;c++){
                 error_logger.push_msg("\t"+tokens[c]);
             }
@@ -274,7 +274,7 @@ void input_maker::init(const string& alternate_config){
 
             //if a match was found
             if( size_match.ready() ){
-                
+
                 //create a string that contains just the size of the array
                 string temp_size_string;
                 temp_size_string = size_match[0].str().substr(1,
@@ -290,7 +290,7 @@ void input_maker::init(const string& alternate_config){
                   error_logger.push_error(i4_err);
                   array_size = 0;
                 }
-                
+
                 //create the int4 array that will be pushed into input_maker's
                 // containing vector tokens[1] should be the string name given,
                 //array_size was determined by the size_match regex should
@@ -298,7 +298,7 @@ void input_maker::init(const string& alternate_config){
                 // that it is OK for NENT
                 //to not have 7 values depending on some other variable.....
                 param_int4_array i4_array_push_me(tokens[1],array_size,false);
-                
+
                 handle_i4_array(tokens[3],i4_array_push_me.values);
                 error_logger.push_msg("VECTOR OF INTS AS FOLLOWS: ");
                 for(unsigned int c = 0; c < i4_array_push_me.values.size();c++){
@@ -317,14 +317,14 @@ void input_maker::init(const string& alternate_config){
         } else if( regex_match(temp_string,r8_array) ){
             error_logger.push_msg("LINE:"+temp_string+"is an E array!");
 
-            //split across spaces 
+            //split across spaces
             vector<string> tokens = split(temp_string,' ');
             for(unsigned int c = 0; c < tokens.size(); c++){
                 error_logger.push_msg("\t"+tokens[c]);
 
             }
 
-            //token 1 should be just the variable name 
+            //token 1 should be just the variable name
             string name = tokens[1];
 
             //fill this value later
@@ -339,7 +339,7 @@ void input_maker::init(const string& alternate_config){
             regex_search(tokens[0],size_match,int_array_size_pattern);
             if(size_match.ready()){
                 string temp_size_string;
-                temp_size_string = 
+                temp_size_string =
                     size_match[0].str().substr(1,size_match[0].str().size()-2);
 
                 try {
@@ -348,8 +348,8 @@ void input_maker::init(const string& alternate_config){
                   error_logger.push_error("Error in input_maker::init, real 8",
                                 " array given illegal size:"+temp_size_string);
                 }
-      
-            } else {    
+
+            } else {
 
                 string bad_size_msg = "Error! Could not determine array size";
                 bad_size_msg += "of R8 array (TIN?) declaration line.";
@@ -423,7 +423,7 @@ void input_maker::init(const string& alternate_config){
                 //cut off the form name
                 string without_name = entire_list.substr(13,entire_list.size()-12);
                 //split the big string along '\', separating it into 3 lists
-                //of values 
+                //of values
                 cout << without_name << endl;
                 vector<string> each_form = split(without_name,'|');
                 for(UINT c = 0; c < each_form.size();c++){
@@ -557,7 +557,7 @@ bool input_maker::output(vector<string>& form_bad_inputs){
 
     //do line 5
     if(console_test) outs << "LINE_5###################################" << endl;
-    do_line5(outs,int4_params); 
+    do_line5(outs,int4_params);
     if(console_test) outs << "#########################################" << endl;
 
     //do line 5A
@@ -577,14 +577,14 @@ bool input_maker::output(vector<string>& form_bad_inputs){
     if( !( ilv3_val == 0 && ilv5_val == 0) && !(ilv3_val > 0 && ilv5_val > 0)){
 
 
-        ilv3_ilv5_form_button& ilv3_ilv5 = button_access->get_ilv3_ilv5();      
+        ilv3_ilv5_form_button& ilv3_ilv5 = button_access->get_ilv3_ilv5();
 
         if( !ilv3_ilv5.make_output(outs,ilv3_ilv5_bad_inputs) ){
 
         string header = "##############Ilv3/ilv5 error list##############\n";
         string msg    = "Distinct Residual Level Density - Ilv3 OR";
         msg          += " Distinct Level Density Model form\n";
- 
+
         form_bad_inputs.push_back(header);
         form_bad_inputs.push_back(msg);
             for(unsigned int c = 0; c < ilv3_ilv5_bad_inputs.size(); c++){
@@ -701,8 +701,7 @@ string input_maker::get_string_init_error_message(const string& param_name){
     err += "'s tile in the fields map.\nPlease make sure that";
     err += " its entries in tile_Input/tiles.txt";
     err += "and HF_Config/config.txt \n have matching names.";
-    error_logger.push_error(err);
-
+    return err;
 }
 
 void input_maker::give_int4_defaults(){
@@ -829,7 +828,7 @@ void input_maker::give_r8_defaults(){
 
 //             string temp_str;
 //             temp_str = big_it->second.get_string();
-            
+
 //             //set pointer to parameter in input maker
 //             lines_it->second.at(big_it->first)->r8_array_hook = &big_it->second;
 //             lines_it->second.at(big_it->first)->my_text_box.update_text(temp_str,NULL);
@@ -840,7 +839,7 @@ void input_maker::give_r8_defaults(){
 //           } catch (out_of_range& not_found){
 //             //check other lines
 //             continue;
-//           }         
+//           }
 
 //         }
 //         if(!found){
@@ -889,31 +888,33 @@ bool input_maker::grab_values(vector<string>& bad_input_list){
 
     for(INT4_MAP::iterator it = int4_params.begin(); it != int4_params.end();it++){
 
-        cout << it->first << endl;
-        // it->second.value = tile_access->get_param(it->first).my_text_box.text;
+        string field_value = tile_access->get_param(it->first)->my_text_box.text;
+
+            it->second.value = str_to_integer(field_value);
+
     }
 
     for(REAL8_MAP::iterator it = real8_params.begin(); it != real8_params.end();it++){
 
-        cout << it->first << endl;
-        // it->second.value = tile_access->get_param(it->first).my_text_box.text;
+        string field_value = tile_access->get_param(it->first)->my_text_box.text;
 
-
-    }
-
-    for(INT4_ARR_MAP::iterator it = int4_array_params.begin(); it != int4_array_params.end();it++){
-
-        cout << it->first << endl;
-        // it->second.value = tile_access->get_param(it->first).my_text_box.text;
+        it->second.value = str_to_double(field_value);
 
     }
 
-    for(R8_ARR_MAP::iterator it = r8_array_params.begin();it != r8_array_params.end();it++){
+    // for(INT4_ARR_MAP::iterator it = int4_array_params.begin(); it != int4_array_params.end();it++){
 
-        cout << it->first << endl;
-        // it->second.value = tile_access->get_param(it->first).my_text_box.text;
+    //     cout << it->first << endl;
+    //     // it->second.value = tile_access->get_param(it->first).my_text_box.text;
 
-    }
+    // }
+
+    // for(R8_ARR_MAP::iterator it = r8_array_params.begin();it != r8_array_params.end();it++){
+
+    //     cout << it->first << endl;
+    //     // it->second.value = tile_access->get_param(it->first).my_text_box.text;
+
+    // }
     return success;
 }
 
@@ -950,7 +951,7 @@ void input_maker::save_fields(ofstream& context_out){
 //             }
 //             context_out << " = "
 //                         << ((*fields_ref)[line][param])->my_text_box.text
-//                         << endl; 
+//                         << endl;
 //         }
 
 //      }
@@ -960,7 +961,7 @@ void input_maker::save_fields(ofstream& context_out){
 void input_maker::save_forms(ofstream& context_out){
 
     // cout << "In save_context's save_forms() helper function" << endl;
-    
+
     // //save icntrl8's information to the new config file
     // button_access->get_icntrl_8().save_information(context_out);
     // //context_out << endl;
@@ -1078,7 +1079,7 @@ void do_TC_coefficients(const map<string,param_real8>& real8_params,
     //handy temporary string
     string temp_string;
 
-    
+
     while(!ins.eof()){
         if(ins.fail()){
             //leave loop, file is tapped out
@@ -1091,7 +1092,7 @@ void do_TC_coefficients(const map<string,param_real8>& real8_params,
         //shove it into the array
         lines_in.push_back(temp_string);
     }
-    
+
     //this will be the case where the exact TC file was given, just mirror it
     error_logger.push_msg("############# PRINTING TC ########################");
     outs << right;
@@ -1135,7 +1136,7 @@ void do_line4A(ofstream& outs,const map<string,param_real8>& real8_params,
   try{
     outs << fixed << setprecision(2);
     outs F5 real8_params.at("APAR").value F5 real8_params.at("ZPAR").value
-         F5 real8_params.at("QIN").value 
+         F5 real8_params.at("QIN").value
          F5 real8_params.at("FJPAR").value F5 real8_params.at("FPRPAR").value;
     outs I int4_params.at("NLIN").value << endl;
   } catch (out_of_range& not_found){
@@ -1159,7 +1160,7 @@ void do_line4B(ofstream& outs,const map<string, param_r8_array>& r8_array_params
 }
 
 void do_line5(ofstream& outs, const map<string,param_int4>& int4_params){
-    
+
     int ilv_1 = int4_params.at("ILV1").value;
     int ilv_2 = 0;
     int ilv_3 = int4_params.at("ILV3").value;
@@ -1191,7 +1192,7 @@ void do_line5A(ofstream& outs, const map<string,param_real8>& real8_params){
 
 void do_line5E_D(ofstream& outs,const map<string,param_int4>& int4_params,
                  const map<string,param_real8>& real8_params){
-    
+
 
 
 }
@@ -1286,7 +1287,7 @@ void do_icntrl8(ofstream& outs,
                 vector<string>& form_bad_inputs,
                 vector<index_value>& icntrl8_bad_inputs){
 
-    if(!button_access->get_icntrl_8().get_is_locked() && 
+    if(!button_access->get_icntrl_8().get_is_locked() &&
        !button_access->get_icntrl_8().make_output(outs,icntrl8_bad_inputs)){
 
         form_bad_inputs.push_back("########## Icntrl8 error list ##########\n");
@@ -1318,7 +1319,7 @@ void do_icntrl10(ofstream& outs,
                 string push_me = "Value: " + icntrl10_bad_inputs[c].value;
                 push_me       += " Index: " + to_string(icntrl10_bad_inputs[c].index);
                 form_bad_inputs.push_back(push_me);
-            }        
+            }
 
         }
 

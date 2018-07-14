@@ -1,5 +1,5 @@
 //! \file main.cc
-//! \brief main.cc is where the big loop happens.
+//! \brief main.cc creates the major objects, and routes user activities to them
 
 #include<string>
 #include<vector>
@@ -12,6 +12,7 @@
 #include "fop_handler.h"
 #include "button_manager.h"
 #include "logger.h"
+#include "helpers.h"
 
 #include "command_args.h"
 

@@ -7,7 +7,7 @@ using namespace std;
 extern asset_manager* asset_access;
 extern string HOME;
 
-text_box::text_box(TTF_Font* font_in, string text_in, int xloc_in, int 
+text_box::text_box(TTF_Font* font_in, string text_in, int xloc_in, int
                     yloc_in,int width_in, int height_in){
 
 
@@ -20,11 +20,11 @@ text_box::text_box(TTF_Font* font_in, string text_in, int xloc_in, int
     text_color.a = 0;
 
 
-    xloc = xloc_in;	
+    xloc = xloc_in;
     yloc = yloc_in;
 
     width = width_in;
-    height = height_in; 
+    height = height_in;
 
     x_scroll = NULL;
     y_scroll = NULL;
@@ -101,7 +101,7 @@ void text_box::init(TTF_Font* font_in, string text_in, int xloc_in, int yloc_in,
     text = text_in;
 
     //set up location
-    xloc = xloc_in;	
+    xloc = xloc_in;
     yloc = yloc_in;
 
     width = width_in;
@@ -158,7 +158,7 @@ void text_box::print_me(){
     error_logger.push_msg("My_rect:"+to_string(my_rect.x)+":"+to_string(my_rect.y)+" "+to_string(my_rect.w)+":"
                           +to_string(my_rect.h));
     error_logger.push_msg("Color: "+to_string(text_color.r)+":"+to_string(text_color.g)+":"+to_string(text_color.b)
-                              +":"+to_string(text_color.a)); 
+                              +":"+to_string(text_color.a));
     error_logger.push_msg("Text: "+text);
     error_logger.push_msg("sdl_access ptr: "+to_string(size_t(sdl_access)));
     error_logger.push_msg("font: "+to_string(size_t(font)));
@@ -217,7 +217,7 @@ void text_box::draw_me(){
         if(text_dims.w < my_rect.w){
 
         SDL_Rect mod_text_rect;
-        //half of the info will be the same 
+        //half of the info will be the same
         mod_text_rect   = modified_rect;
         //width and height should match text exactly
         mod_text_rect.w = text_dims.w;
@@ -246,14 +246,18 @@ void text_box::draw_me(){
 
 
             // is the cursor in the last bin?
-            int last_bin_loc = (floor(text_dims.w / modified_rect.w));
-            bool cursor_in_last_bin = modified_rect.w * last_bin_loc;
+
+            //calculate the number of bins before the last bin
+            int number_of_bins = (floor(text_dims.w / modified_rect.w));
+
+            //find the beginning of the last bin
+            int last_bin_begin = modified_rect.w * number_of_bins;
 
             //is the last bin's text shorter than the bin?
             bool partial_bin = (dist_from_end < modified_rect.w);
 
             //adjust the source dimensions to match text exactly
-            if(raw_cursor_location > cursor_in_last_bin && partial_bin){
+            if(raw_cursor_location > last_bin_begin && partial_bin){
                 mod_dest.w = modified_rect.w - dist_from_end;
                 mod_src.w  = modified_rect.w - dist_from_end;
             }
@@ -412,7 +416,7 @@ bool text_box::was_clicked(SDL_Event& event){
     return false;
 }
 
-/*thanks to 
+/*thanks to
 *http://lazyfoo.net/tutorials/SDL/32_text_input_and_clipboard_handling/index.php
 which was used as a reference */
 void text_box::edit_loop(SDL_Event& event,string& command,regex* pattern){
@@ -434,7 +438,7 @@ void text_box::edit_loop(SDL_Event& event,string& command,regex* pattern){
         if( !SDL_PollEvent(&event) ){
         //dummy event to stop it from printing default message every frame
         //where no event happens
-        event.type = 1776; 
+        event.type = 1776;
         }
 
         switch(event.type){
@@ -518,7 +522,7 @@ void text_box::edit_key_helper(SDL_Keysym& key,bool& text_was_changed,
                 text_was_changed = true;
             }
             break;
-    
+
         case SDLK_LEFT:
             //if we are not already at the very left of the text,
             //move the editing position one to the left
