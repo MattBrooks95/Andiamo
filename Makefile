@@ -7,7 +7,6 @@ vtool = --tool=memcheck
 vopt  = --log-file="memory_check.txt" --leak-check=full
 
 #object files
-
 F_OBJS       = ./q_val/cqvalue.o ./q_val/dqvalu.o ./q_val/dmass.o ./q_val/bamt16.o
 OBJECTS      = main.o handlers.o manager.o ftran_structs.o field.o sdl_help.o scroll_bar.o input_maker.o string+.o button_manager.o button.o form_buttons.o form.o derived_buttons.o fop_handler.o deck.o text_box.o cursor.o logger.o asset_manager.o helpers.o
 MAIN_OBJECTS = handlers.o manager.o ftran_structs.o field.o sdl_help.o scroll_bar.o input_maker.o string+.o button_manager.o button.o form_buttons.o form.o derived_buttons.o fop_handler.o deck.o text_box.o cursor.o logger.o asset_manager.o helpers.o

@@ -4,6 +4,7 @@
 #pragma once
 
 #include<string>
+#include<limits>
 
 #include "logger.h"
 
@@ -12,9 +13,15 @@ using std::string;
 extern logger error_logger;
 
 //! stoi, with exception handling
+/*! \param convert_me is the string to be casted to an integer
+ *  \return returns the result of the conversion or the minimum integer
+ *possible on error */
 int str_to_integer(const string& convert_me);
 
 //! stod, with exception handling
+/*! \param convert_me is the string to be casted to a double
+ *  \return returns the result of the conversion, or the minimum double
+ *  possible on error */
 double str_to_double(const string& convert_me);
 
 /*! crafts an error message about converting from string to X type, with an

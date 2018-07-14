@@ -80,16 +80,22 @@ void input_maker::init(const string& alternate_config){
 
     ifstream ins;
     if(alternate_config.size() == 0){
+
         ins.open( (config_p+file_name).c_str() );
+
     } else {
+
         ins.open( (config_p+"/custom_configs/"+alternate_config).c_str() );
+
     }
 
     if(ins.fail()){
+
         string err;
         err = "Error in input_maker::init(), couldn't find the input file!";
         error_logger.push_error(err);
         return;
+
     }
 
     //set up regex matches
@@ -116,7 +122,6 @@ void input_maker::init(const string& alternate_config){
         //get out, file stream is done
         if(ins.fail()) break;
 
-
         /*some sort of bad or meaningless input, try again until something of
          *value is found thanks to
          *https://stackoverflow.com/questions/9235296/
@@ -134,129 +139,33 @@ void input_maker::init(const string& alternate_config){
 
 
         if( regex_match(temp_string,re_comment) ){
-            error_logger.push_msg("Is a comment line!");
+
             //comment line, don't do anything
+            error_logger.push_msg("Is a comment line!");
 
-        //logics for reading in fortran real 8's
-        } else if( regex_match(temp_string,re_real8) ){
-            error_logger.push_msg("Is an R8 line!");
-
-            vector<string> tokens = split(temp_string,' ');
-            string var_name = tokens[1];
-            if(tokens[2] != "="){
-                error_logger.push_error("Missing '=' in R8 param declaration!");
-            } else if( !regex_search(temp_string,nad_flag) ){
-                double value;
-                try {
-                  value = stod(tokens[3]);
-
-                } catch (invalid_argument& error){
-                  string err = "Error in input_maker::init(), real 8 parameter";
-                  err       +=" given bad initial value:" + tokens[3];
-                  error_logger.push_error(err);
-                  value = -180.4;
-                }
-                param_real8 new_param(var_name,value);
-                real8_params.emplace(var_name,new_param);
-
-            } else {
-                string msg = "String:" + temp_string;
-                msg       += " has no default set. This is likely intentional.";
-                error_logger.push_msg(msg);
-                param_real8 new_param(var_name,-180.4);
-                real8_params.emplace(var_name,new_param);
-
-
-            }
-
-        //logics for reading in fortran integer 4's
+        //logics for reading in fortran integer 4s
         } else if( regex_match(temp_string,re_i4) ){
+
             error_logger.push_msg("Is an int4 line!");
+            process_int4(temp_string,nad_flag);
 
-            vector<string> tokens = split(temp_string,' ');
-            string var_name = tokens[1];
-            if(tokens[2] != "="){
-                error_logger.push_msg("Missing '=' in I4 param declaration!");
-            } else if( !regex_search(temp_string,nad_flag) ){
-                int value;
-                try{
-                  value = stoi(tokens[3]);
-                } catch(invalid_argument& error){
-                  string err = "Error in input_maker::init()! Illegal value";
-                  err += " in int4 declaration!:"+tokens[3];
-                  error_logger.push_error(err);
-                  //give it a bad value as an indication that
-                  //something went wrong
-                  value = -1804;
-                }
+        //logics for reading in fortran real 8s
+        } else if( regex_match(temp_string,re_real8) ){
 
-
-                param_int4 new_param(var_name,value);
-                int4_params.emplace(var_name,new_param);
-
-            } else {
-                string err = "String" + temp_string;
-                err       += " has no default set. This is likely intentional.";
-                error_logger.push_error(err);
-                param_int4 new_param(var_name,-1804);
-                int4_params.emplace(var_name,new_param);
-
-            }
+            error_logger.push_msg("Is an R8 line!");
+            process_real8(temp_string,nad_flag);
 
         //logics for reading in fortran strings
         //and their size
         } else if( regex_match(temp_string,re_string) ){
-                error_logger.push_msg("Is a string line!");
-                error_logger.push_msg("This is that line split along spaces:");
-                //split across spaces, except for spaces within ""
-                vector<string> tokens = split(temp_string,' ');
-                for(unsigned int c = 0; c < tokens.size() ;c++){
-                    error_logger.push_msg("\t:"+ tokens[c]);
-                }
 
+            error_logger.push_msg("Is a string line!");
+            error_logger.push_msg("This is that line split along spaces:");
 
-            if(tokens[2] != "="){
-                string err = "Error! Missing '=' in string declaration!";
-                error_logger.push_error(err);
-            } else {
-
-                //will contain the number matched from the
-                //found label|SIZE| portion
-                smatch number_matches;
-                //match with SIZE number
-                regex_search(tokens[1],number_matches,
-                                string_array_size_pattern);
-
-                //put it into a string
-                //convert the string to an integer
-                string temp_string = number_matches[0].str();
-                int size;
-                try {
-                  size = stoi( temp_string.substr(1,temp_string.length()-1));
-                } catch(invalid_argument& error){
-                  string bad_size_msg = "Error! Illegal string size value in";
-                  bad_size_msg += " input_maker::init() :";
-                  bad_size_msg += temp_string.substr(1,temp_string.length()-1);
-                  error_logger.push_error(bad_size_msg);
-                  size = 0;
-                }
-
-                //name can be found by token label|some-number| minus
-                //the |some-number| part
-                string name;
-                name = tokens[1].substr(0,tokens[1].size() - temp_string.size());
-
-                //make sure bookkeeping vector knows what is going on
-                //names_in_order.push_back(name);
-
-                //create new ftran struct
-
-                param_string push_me(name,tokens[tokens.size()-1],size);
-                //save this new param value in its vector
-                string_params.emplace(name,push_me);
-            }
+            process_string(temp_string,string_array_size_pattern,nad_flag);
 
         } else if( regex_match(temp_string,re_i4_array) ){
+
             string int_arr_msg = "Is an array of integers! This is that";
             int_arr_msg += " line split along spaces:";
             error_logger.push_msg(int_arr_msg);
@@ -266,6 +175,7 @@ void input_maker::init(const string& alternate_config){
             for(unsigned int c = 0; c < tokens.size() ;c++){
                 error_logger.push_msg("\t"+tokens[c]);
             }
+
             //store numerical result of grabbing the array's size
             smatch size_match;
 
@@ -281,7 +191,9 @@ void input_maker::init(const string& alternate_config){
                                                 size_match[0].str().size()-2);
                 int array_size;
                 try {
+
                   array_size = stoi(temp_size_string);
+
                 } catch(invalid_argument& error){
 
                   string i4_err = "Error in input_maker::init(), i4 array";
@@ -315,11 +227,13 @@ void input_maker::init(const string& alternate_config){
 
 
         } else if( regex_match(temp_string,r8_array) ){
+
             error_logger.push_msg("LINE:"+temp_string+"is an E array!");
 
             //split across spaces
             vector<string> tokens = split(temp_string,' ');
             for(unsigned int c = 0; c < tokens.size(); c++){
+
                 error_logger.push_msg("\t"+tokens[c]);
 
             }
@@ -370,103 +284,7 @@ void input_maker::init(const string& alternate_config){
 
         } else if( regex_match(temp_string,form_init) ){
 
-            //cout << "Line: " << temp_string << " describes a form "
-            //     << "initialization list!" << endl;
-            stringstream form_init_list(temp_string);
-
-            string first_part;
-
-            form_init_list >> first_part;
-            cout << "First part: " << first_part << endl;
-
-            string form_name = split(first_part,':')[1];
-            cout << "Form name: " << form_name << endl;
-
-            //if this form_name is already in the map,
-            //the user has two initializer lists with the same name
-            //we don't know which to use, so abort and ask them to
-            //fix the file
-            try{
-                form_init_arrays.at(form_name);
-                error_logger.push_error("Error while parsing config file,",
-                    " redundant form button initializer list. Exiting.");
-                exit(-1);
-
-            //elsewise, if this form_name is not already in the map,
-            //go ahead and insert it
-            } catch(out_of_range& not_found){
-
-                vector<string> values;
-                pair<string,vector<string>> push_me(form_name,values);
-                form_init_arrays.emplace(push_me);
-            }
-
-            //need a special case here, the ICNTRL10 initialization list
-            //has separators besides spaces. So, it's best to just
-            //send over an array of size 1, so that icntrl10 can do the
-            //processing. | separates 'pages', and ',' separates
-            //text boxes. ' ' separates values
-            if(form_name.compare("ICNTRL10") == 0){
-
-
-                string entire_list = form_init_list.str();
-                string without_name = entire_list.substr(14,entire_list.size()-13);
-                cout << "icntrl10 without name:" << without_name << endl;
-                form_init_arrays.at(form_name).push_back(without_name);
-
-            } else if(form_name.compare("ICNTRL6") == 0){
-
-                cout << "Processing icntrl6 init values." << endl;
-                //get entirety of input
-                string entire_list = form_init_list.str();
-                cout << entire_list << endl;
-                //cut off the form name
-                string without_name = entire_list.substr(13,entire_list.size()-12);
-                //split the big string along '\', separating it into 3 lists
-                //of values
-                cout << without_name << endl;
-                vector<string> each_form = split(without_name,'|');
-                for(UINT c = 0; c < each_form.size();c++){
-                    cout << each_form[c] << endl;
-                }
-                //push the first list into the form_init_arrays map
-                //as normal, icntrl6 can use form_button::init_values_helper
-                //to fill out this one
-                vector<string> first_form = split(each_form[0],' ');
-                form_init_arrays.at(form_name) = first_form;
-
-                //but, we also need to fill in the init values for the
-                //other two forms: search_spectra, and cross_sections
-
-                //search_spectra's list of values is found by splitting
-                //its entire string along commas
-                vector<string> search_spectra = split(each_form[1],' ');
-
-                //do the same for cross_sections
-                vector<string> cross_sections = split(each_form[2],' ');
-
-                //push both of the lists into icntrl6's vector
-                //note that the order is important here:
-                //search_spectra then cross_sections
-                icntrl6_extra_init_arrays.push_back(search_spectra);
-                icntrl6_extra_init_arrays.push_back(cross_sections);
-
-            } else {
-                //read all of the values into the vector string
-                while(!form_init_list.eof()){
-
-                    if(form_init_list.fail()){
-                        break;
-                    }
-                    string this_bit;
-                    form_init_list >> this_bit;
-                    form_init_arrays.at(form_name).push_back(this_bit);
-                }
-            }
-            cout << form_name << "'s value list:\n";
-            for(uint c = 0; c < form_init_arrays.at(form_name).size();c++){
-                cout << form_init_arrays.at(form_name)[c] << endl;
-            }
+            process_form_init(temp_string);
 
         } else {
             error_logger.push_error("Error! Line type wasn't determined:");
@@ -478,6 +296,255 @@ void input_maker::init(const string& alternate_config){
     string im_end_msg = "########## END INPUT MAKER INIT() ##################";
     error_logger.push_error(im_end_msg);
     ins.close();
+}
+
+void input_maker::process_int4(const string& line,const regex& nad_flag){
+
+    vector<string> tokens = split(line,' ');
+
+    //if there aren't exactly 4 strings in the array, something is amiss
+    if(tokens.size() != 4){
+        error_logger.push_error("Faulty int4 line:"+line);
+        return;
+    }
+
+    //variable name comes after type, right before the =
+    string var_name = tokens[1];
+
+    int value = 0;
+
+    if(tokens[2] != "="){
+
+        error_logger.push_msg("Missing '=' in I4 param declaration!");
+        return;
+
+    } else if( !regex_search(line,nad_flag) ){
+
+        value = str_to_integer(tokens[3]);
+
+        if( value == numeric_limits<int>::min() ){
+
+            string err = "Error in input_maker::init() int4 declaration!:";
+            err       += tokens[3];
+            error_logger.push_error(err);
+
+        }
+
+    } else {
+
+        string err = "String" + line;
+        err       += " has no default set. This is likely intentional.";
+        error_logger.push_error(err);
+
+    }
+
+        param_int4 new_param(var_name,value);
+        int4_params.emplace(var_name,new_param);
+
+}
+
+void input_maker::process_real8(const string& line,const regex& nad_flag){
+
+    vector<string> tokens = split(line,' ');
+
+    //if there aren't exactly 4 strings in the array, something is amiss
+    if(tokens.size() != 4){
+        error_logger.push_error("Faulty real8 line:"+line);
+        return;
+    }
+
+    string var_name = tokens[1];
+
+    double value = 0.0;
+
+    if(tokens[2] != "="){
+
+        error_logger.push_error("Missing '=' in R8 param declaration!");
+        return;
+
+    } else if( !regex_search(line,nad_flag) ){
+
+        value = str_to_double(tokens[3]);
+
+        if(value == numeric_limits<double>::min()){
+            string err = "Error in input_maker::init()! Illegal value";
+            err += " in real8 declaration!:"+tokens[3];
+            error_logger.push_error(err);
+        }
+
+    } else {
+
+        string msg = "String:" + line;
+        msg       += " has no default set. This is likely intentional.";
+        error_logger.push_msg(msg);
+
+    }
+
+    param_real8 new_param(var_name,value);
+    real8_params.emplace(var_name,new_param);
+
+}
+
+void input_maker::process_string(const string& line,
+                                 const regex& string_array_size_pattern,
+                                 const regex& nad_flag){
+
+    //split across spaces, except for spaces within ""
+    vector<string> tokens = split(line,' ');
+    for(unsigned int c = 0; c < tokens.size() ;c++){
+        error_logger.push_msg("\t:"+ tokens[c]);
+    }
+
+    string initial_string = tokens[tokens.size()-1];
+
+    if(tokens[2] != "="){
+
+        string err = "Error! Missing '=' in string declaration!";
+        error_logger.push_error(err);
+
+        initial_string = "Failed to initialize string argument.";
+
+    } else {
+
+        //will contain the number matched from the
+        //found label|SIZE| portion
+        smatch number_matches;
+
+        //match with SIZE number
+        regex_search(tokens[1],number_matches, string_array_size_pattern);
+
+        //put it into a string convert the string to an integer
+        string size_string = number_matches[0].str();
+
+        int size;
+        size = str_to_integer(size_string.substr(1,size_string.length()-1));
+
+        if(size == numeric_limits<int>::min()){
+
+            string bad_size_msg = "Error! Illegal string size value in";
+            bad_size_msg       += " input_maker::init() :";
+            bad_size_msg       += line.substr(1,size_string.length()-1);
+            error_logger.push_error(bad_size_msg);
+
+            initial_string = "Failed to initialize string, invalid size value.";
+        }
+
+        //name can be found by token label|some-number| minus
+        //the |some-number| part
+        string name;
+        name = tokens[1].substr(0,tokens[1].size() - line.size());
+
+        //create new ftran struct
+        param_string push_me(name,initial_string,size);
+
+        //save this new param value in its vector
+        string_params.emplace(name,push_me);
+    }
+
+}
+
+void input_maker::process_form_init(const string& line){
+
+    stringstream form_init_list(line);
+
+    string first_part;
+
+    form_init_list >> first_part;
+    cout << "First part: " << first_part << endl;
+
+    string form_name = split(first_part,':')[1];
+    cout << "Form name: " << form_name << endl;
+
+    //if this form_name is already in the map, the user has two initializer
+    //lists with the same name we don't know which to use, so abort and
+    //ask them to fix the file
+    try{
+
+        form_init_arrays.at(form_name);
+        error_logger.push_error("Error while parsing config file,",
+            " redundant form button initializer list. Exiting.");
+        exit(-1);
+
+    //elsewise, if this form_name is not already in the map,
+    //go ahead and insert it
+    } catch(out_of_range& not_found){
+
+        vector<string> values;
+        pair<string,vector<string>> push_me(form_name,values);
+        form_init_arrays.emplace(push_me);
+    }
+
+    //need a special case here, the ICNTRL10 initialization list
+    //has separators besides spaces. So, it's best to just
+    //send over an array of size 1, so that icntrl10 can do the
+    //processing. | separates 'pages', and ',' separates
+    //text boxes. ' ' separates values
+    if(form_name.compare("ICNTRL10") == 0){
+
+        string entire_list = form_init_list.str();
+        string without_name = entire_list.substr(14,entire_list.size()-13);
+        cout << "icntrl10 without name:" << without_name << endl;
+        form_init_arrays.at(form_name).push_back(without_name);
+
+    } else if(form_name.compare("ICNTRL6") == 0){
+
+        cout << "Processing icntrl6 init values." << endl;
+
+        //get entirety of input
+        string entire_list = form_init_list.str();
+        cout << entire_list << endl;
+
+        //cut off the form name
+        string without_name = entire_list.substr(13,entire_list.size()-12);
+
+        //split the big string along '\', separating it into 3 lists
+        //of values
+        cout << without_name << endl;
+        vector<string> each_form = split(without_name,'|');
+        for(UINT c = 0; c < each_form.size();c++){
+            cout << each_form[c] << endl;
+        }
+
+        //push the first list into the form_init_arrays map
+        //as normal, icntrl6 can use form_button::init_values_helper
+        //to fill out this one
+        vector<string> first_form = split(each_form[0],' ');
+        form_init_arrays.at(form_name) = first_form;
+
+        //but, we also need to fill in the init values for the
+        //other two forms: search_spectra, and cross_sections
+
+        //search_spectra's list of values is found by splitting
+        //its entire string along commas
+        vector<string> search_spectra = split(each_form[1],' ');
+
+        //do the same for cross_sections
+        vector<string> cross_sections = split(each_form[2],' ');
+
+        //push both of the lists into icntrl6's vector
+        //note that the order is important here:
+        //search_spectra then cross_sections
+        icntrl6_extra_init_arrays.push_back(search_spectra);
+        icntrl6_extra_init_arrays.push_back(cross_sections);
+
+    } else {
+        //read all of the values into the vector string
+        while(!form_init_list.eof()){
+
+            if(form_init_list.fail()){
+                break;
+            }
+            string this_bit;
+            form_init_list >> this_bit;
+            form_init_arrays.at(form_name).push_back(this_bit);
+        }
+    }
+    cout << form_name << "'s value list:\n";
+    for(uint c = 0; c < form_init_arrays.at(form_name).size();c++){
+        cout << form_init_arrays.at(form_name)[c] << endl;
+    }
+
+
 }
 
 bool input_maker::output(vector<string>& form_bad_inputs){
@@ -720,7 +787,7 @@ void input_maker::give_int4_defaults(){
 
         if(this_params_field != NULL){
 
-            if(i4_it->second.value == -1804){
+            if(i4_it->second.value == numeric_limits<int>::min()){
 
                 this_params_field->my_text_box.update_text("no default", NULL);
 
@@ -794,7 +861,7 @@ void input_maker::give_r8_defaults(){
 
         if(this_params_field != NULL){
 
-            if(r8_it->second.value == -1804){
+            if(r8_it->second.value == numeric_limits<double>::min()){
 
                 this_params_field->my_text_box.update_text("no default", NULL);
 

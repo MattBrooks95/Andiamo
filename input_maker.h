@@ -30,6 +30,7 @@ using std::string;
 using std::vector;
 using std::map;
 using std::ostream;
+using std::regex;
 
 extern logger error_logger;
 class button_manager;
@@ -48,6 +49,20 @@ class input_maker{
     //! sets up the parameter vectors to the specifications of the config file
     /*! It uses regular expressions, and the split functions in string+.h */
     void init(const string& alternate_config);
+
+    //! attempts to parse a real8 declaration and put it in the real 8 map
+    void process_real8(const string& line,const regex& nad_flag);
+
+    //! attempts to parse an int4 declaration and put it in the int4 map
+    void process_int4(const string& line,const regex& nad_flag);
+
+    //! attempts to parse a string declaration and put it in the string map
+    void process_string(const string& line,
+                        const regex& string_array_size_pattern,
+                        const regex& nad_flag);
+
+    //! attempts to parse a list of form parameter initialization values
+    void process_form_init(const string& line);
 
     //! prints out the information needed to be used by HF
     /*! for now it defaults to printing to ./output/output.txt,
