@@ -418,7 +418,7 @@ void input_maker::process_string(const string& line,
 
         int size;
         size = str_to_integer(size_string.substr(1,size_string.length()-1));
-
+        cout << "parameter size: " << size << endl;
         if(size == numeric_limits<int>::min()){
 
             string bad_size_msg = "Error! Illegal string size value in";
@@ -432,7 +432,9 @@ void input_maker::process_string(const string& line,
         //name can be found by token label|some-number| minus
         //the |some-number| part
         string name;
-        name = tokens[1].substr(0,tokens[1].size() - line.size());
+
+        // name = tokens[1].substr(0,tokens[1].size() - line.size());
+        name = tokens[1].substr(0,tokens[1].size() - size_string.size());
 
         //create new ftran struct
         param_string push_me(name,initial_string,size);
@@ -931,15 +933,15 @@ void input_maker::give_string_defaults(){
     for(STR_MAP::iterator str_it = string_params.begin();
         str_it != string_params.end();
         str_it++){
-
-            field* this_params_field = tile_access->get_param(str_it->first);
+        cout << "string param" << str_it->first << " " << str_it->second.value << endl;
+        field* this_params_field = tile_access->get_param(str_it->first);
 
         if(this_params_field != NULL){
 
             this_params_field->my_text_box.update_text(str_it->second.value,NULL);
 
         } else {
-
+            cout << "Null string pointer" << endl;
             string err = get_string_init_error_message(str_it->first);
             error_logger.push_error(err);
 
