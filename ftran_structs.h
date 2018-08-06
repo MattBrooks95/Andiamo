@@ -2,60 +2,58 @@
  *track of outputs easy */
 #pragma once
 #include<iostream>
-#include<vector> 
+#include<vector>
 #include<string>
-
 
 using std::ostream;
 using std::string;
 using std::vector;
-
 
 //! param_int4 is a default c++ integer "and more"
 /*! it allows storage of a name that serves a contextual purpose,
  *and a value that is compatible with Fortran INT*4 */
 struct param_int4{
 
-	//! constructor with default values
-	param_int4(string name_in = "No name",int val_in = 0);
+    //! constructor with default values
+    param_int4(string name_in = "No name",int val_in = 0);
 
-	//! overloaded << operator for printing
-	friend ostream& operator <<(ostream& outs, const param_int4& rhs);
+    //! overloaded << operator for printing
+    friend ostream& operator <<(ostream& outs, const param_int4& rhs);
 
-	//! returns a string version of this parameter's information
-	string get_string();
+    //! returns a string describing all of this struct's info
+    string get_string();
 
-	//! I don't know if this works
-	/*! Something like this will need to be done when/if we have Andiamo
-	 * running the Hauser-Feshbach code in place */
-	int* get_ptr();
+    //! I don't know if this works
+    /*! Something like this will need to be done when/if we have Andiamo
+     * running the Hauser-Feshbach code in place */
+    int* get_ptr();
 
-	//! operator for setting value to be equivalent to a right hand param_real8
-	void operator =(const param_int4& other);
+    //! operator for setting value to be equivalent to a right hand param_real8
+    void operator =(const param_int4& other);
 
-	//! operator for setting name equal to a string
-	void operator =(string other);
+    //! operator for setting name equal to a string
+    void operator =(string other);
 
-	//! operator for setting value equal to a double
-	void operator =(double other);
+    //! operator for setting value equal to a double
+    void operator =(double other);
 
-	//! boolean equality check of two param_real8s
-	bool operator ==(const param_int4& other);
+    //! boolean equality check of two param_real8s
+    bool operator ==(const param_int4& other);
 
-	//! boolean equality check of name field vs a right hand argument string
-	bool operator ==(string other);
+    //! boolean equality check of name field vs a right hand argument string
+    bool operator ==(string other);
 
-	//! boolean equality check of value field vs a right hand argument double
-	bool operator ==(int other);
+    //! boolean equality check of value field vs a right hand argument double
+    bool operator ==(int other);
 
-	//! this is mostly an error message. Fortran doesn't have type conversion
-	void operator =(int other);
+    //! this is mostly an error message. Fortran doesn't have type conversion
+    void operator =(int other);
 
 
-	//! contextual name for the parameter. This is how the output is associated with its tile
-	string name;
-	//! integer value to be output after some formatting
-	int value;
+    //! contextual name for the parameter. This is how the output is associated with its tile
+    string name;
+    //! integer value to be output after some formatting
+    int value;
 };
 
 //! param_real8 is a default c++ double "and more"
@@ -69,7 +67,7 @@ struct param_real8{
 	//! overloaded << operator for printing
 	friend ostream& operator <<(ostream& outs, const param_real8& rhs);
 
-	//! returns a string version of this parameter's information
+    //! returns a string describing all of this struct's info
 	string get_string();
 
 	//! I don't know if this works
@@ -116,6 +114,9 @@ struct param_string{
 	param_string(string name_in = "No name",string value_in = NULL,
 		     unsigned int size_in = 0);
 
+    //! returns a string describing all of this struct's info
+    string get_string();
+
 	//! make sure that the c-style string's size matches fortran's
 	unsigned int size;
 
@@ -135,7 +136,7 @@ struct param_int4_array{
 	/*! where true means enough inputs have been filled in
 	 *and false means that more inputs are needed */
 	bool is_satisfied();
-	
+
 	//! this function provides a string for the tile to default to
 	/*! this function is wierd compared to the other parameters because
 	 *it is not a simple string that can have the default value
@@ -156,7 +157,7 @@ struct param_int4_array{
 	//! contextual name for the array, like NENT or LMAX
 	string name;
 
-	//! is the array of integers 
+	//! is the array of integers
 	vector<int> values;
 };
 
@@ -166,7 +167,7 @@ struct param_int4_array{
 struct param_r8_array{
 	param_r8_array(string name_in ="no name given", unsigned int size_in = 1,
 					bool satisfied_in=false);
-	
+
 	/*! converts the vector of double values into a single,
 	 * comma separated list contained in a string */
 	string get_string();

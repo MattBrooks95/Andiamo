@@ -6,7 +6,7 @@
 #string format is C* var_name|size| = default value
 #the value field should be enclosed in ""
 
-#double format is R8 var_name = default value 
+#double format is R8 var_name = default value
 #integer format is I4 var_name = default value
 
 #nodef = no default
@@ -14,20 +14,20 @@
 C* label|79|      = "Fe58(He-3,n)Fe58:HF2002 Calculations, Ed=10.0 MeV."
 
 #line 2
-R8 ELAB = 9.9
-R8 A = 61.0
-R8 Z = 28.0
+R8 ELAB   = 9.9
+R8 A      = 61.0
+R8 Z      = 28.0
 R8 FNRME1 = 1.0
 R8 FNRMM1 = 1.0
 
 I4 IENCH = 3
-I4 ICM = 1
-I4 NZ3 = 1
-I4 TCPR = 0
+I4 ICM   = 1
+I4 NZ3   = 1
+I4 TCPR  = 0
 
 R8 FNRME2 = 1.00
-I4 NGF = 2
-#end line 2  
+I4 NGF    = 2
+#end line 2
 
 #line 3a
 I4(7) NENT = "20,20,0,0,0,20"
@@ -35,11 +35,11 @@ I4(6) LMAX = "10,10,0,0,0,10"
 C* TCTITLE|60| = "ProjecA=    1     Z=        0"
 
 #line 4
-R8 FJTAR = 0.0
-R8 FCMJMAX = 10.0
+R8 FJTAR     = 0.0
+R8 FCMJMAX   = 10.0
 R8 FRESIDMAX = 10.0
-I4 ITARPR = 1
-I4 NG = 0
+I4 ITARPR    = 1
+I4 NG        = 0
 
 #line 4-A
 #R8 APAR   = 3.00
@@ -85,7 +85,7 @@ I4 ICNTRL9  = 0
 I4 ICNTRL10 = 0
 
 #line 7
-R8 FMU  = 1.00
+R8 FMU   = 1.00
 R8 FCON_ = 0.00
 
 #line 8

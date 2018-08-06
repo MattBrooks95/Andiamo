@@ -8,11 +8,14 @@ using namespace std;
 
 //######################### FTRAN STRING ##########################################
 param_string::param_string(string name_in,string value_in,unsigned int size_in){
-	name = name_in;
+	name  = name_in;
 	value = value_in;
-	size = size_in;
+	size  = size_in;
 }
 
+string param_string::get_string(){
+    return "C* "+name+'|'+to_string(value.size())+'|'+" = "+value;
+}
 //#################################################################################
 
 //######################### INT*4 VARIABLE ########################################
@@ -27,7 +30,7 @@ ostream& operator <<(ostream& outs, const param_int4& rhs){
 }
 
 string param_int4::get_string(){
-	return (name+to_string(value));
+	return ("I4 "+name+" = "+to_string(value));
 }
 
 int* param_int4::get_ptr(){
@@ -63,7 +66,7 @@ bool param_int4::operator ==(int other){
 }
 
 void param_int4::operator =(double other){
-	error_logger.push_msg("Error! Fortran struct: "+this->name+" can not have a float value assigned to it."); 
+	error_logger.push_msg("Error! Fortran struct: "+this->name+" can not have a float value assigned to it.");
 }
 //#############################################################################
 
@@ -80,7 +83,7 @@ ostream& operator <<(ostream& outs, const param_real8& rhs){
 }
 
 string param_real8::get_string(){
-	return (name+to_string(value));
+	return ("R8 "+name+" = "+to_string(value));
 }
 
 double* param_real8::get_ptr(){
@@ -117,7 +120,7 @@ bool param_real8::operator ==(double other){
 
 void param_real8::operator =(int other){
 	error_logger.push_msg("Error! Fortran struct: "+ this->name +
-						" can not have an integer assigned to it."); 
+						" can not have an integer assigned to it.");
 }
 //############################################################################
 
@@ -161,8 +164,8 @@ string param_r8_array::get_string(){
 
 		//index for formatting loop
 		unsigned int rear_index = 1;
-	
-		while( number_bit[number_bit.size()-rear_index]  == '0' && 
+
+		while( number_bit[number_bit.size()-rear_index]  == '0' &&
 			    number_bit[number_bit.size()-1-rear_index] != '.' ){
 			//remove extra zeros, but always leave one
 		    //after decimal

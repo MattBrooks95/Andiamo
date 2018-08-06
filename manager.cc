@@ -136,7 +136,7 @@ void manager::init(const string& graphical_config_file){
 
 
                 //if this line has '.png' in it,
-                if( regex_match(temp_string,img_pattern) ){ 
+                if( regex_match(temp_string,img_pattern) ){
 
                     //process it as an input picture name
                     error_logger.push_msg("Found an image name!: "+temp_string);
@@ -192,7 +192,7 @@ void manager::init(const string& graphical_config_file){
                     err       += "\nIt may be a missing 'Andy' separator";
                     err       += " in the tiles.txt config file.";
                     error_logger.push_error(err);
-                
+
                 }
 
 
@@ -221,7 +221,7 @@ void manager::init(const string& graphical_config_file){
             new_line.emplace(tile_name,temp_field);
 
             //also push the field into the parameter vector
-            params_vector.push_back(temp_field);            
+            params_vector.push_back(temp_field);
 
             if( !ins.fail() ){
                 //"andy" is the current line, so go ahead and read the next one
@@ -281,7 +281,7 @@ int manager::get_widest_tile_width(){
         for(uint param = 0; param < fields_order[line].size();param++){
             int candidate_width = fields_order[line][param]->get_size().width;
             if(candidate_width > max_width){
-                max_width = candidate_width;    
+                max_width = candidate_width;
             }
 
         }
@@ -357,7 +357,7 @@ field* manager::get_param(const string& target_param){
             return this_field;
         }
     }
-
+    error_logger.push_error("Couldn't find param:"+target_param+" in the fields map.");
     return NULL;
 }
 
@@ -435,7 +435,7 @@ void manager::iench_locking(){
         fields.at("line_4B").at("TIN").is_locked   = true;
 
     } else {//do the unlocking
-        //switch the IENCH tile back to the default gray 
+        //switch the IENCH tile back to the default gray
         fields.at("line_2").at("IENCH").change_tile_background("andy_tile.png");
 
         fields.at("line_4A").at("APAR").is_locked  = false;
@@ -508,7 +508,7 @@ void manager::icntrl4_locking(){
         fields.at("line_8").at("NCH4")->is_locked  = true;
         if( !(button_access->get_icntrl_4().get_is_locked()) ){
             button_access->get_icntrl_4().toggle_lock();
-        } 
+        }
 
 
     } else { //do the unlocking
@@ -528,7 +528,7 @@ void manager::icntrl4_locking(){
     string err = "From: manager::icntrl4_locking| One of the critical";
     err       += " tiles associated with ICNTRL4, were not found";
     err       += ", please check that the tile and HF config files match.";
-    error_logger.push_error(err); 
+    error_logger.push_error(err);
 
   }
 
@@ -565,7 +565,7 @@ void manager::ich4_nch4_locking(){
         fields.at("line_8").at("NCH4")->am_I_locking = true;
     }
 
-    if( button_access->get_icntrl_4().get_is_locked() && 
+    if( button_access->get_icntrl_4().get_is_locked() &&
         (!(fields.at("line_8").at("ICH4")->am_I_locking) && !(fields.at("line_8").at("NCH4")->am_I_locking)) ){
 
         //unlock the button, both are satisfied
@@ -673,13 +673,13 @@ void manager::icntrl10_locking(){
         fields.at("line_6").at("ICNTRL10")->am_I_locking = false;
 
         fields.at("line_11").at("NNSIG")->is_locked = false;
-        
+
 
 
 
     //otherwise, if it is not locking, and it's conditions are not met,
     //then have it start locking
-    } else if( !(fields.at("line_6").at("ICNTRL10")->am_I_locking) && 
+    } else if( !(fields.at("line_6").at("ICNTRL10")->am_I_locking) &&
            !(regex_match(icntrl10_str,icntrl10_unlock) && icntrl10_val > 0) ){
 
         fields.at("line_6").at("ICNTRL10")->change_tile_background("purple_andy_tile.png");
@@ -742,7 +742,7 @@ void manager::ilv3_ilv5_locking(){
 
 
 
-    /*if the form button is locked, and 
+    /*if the form button is locked, and
      *ILV3 XOR ILV5 (one is true, one is false), then unlock it (by toggling)
      *or, if the form button is not locked, and ILV3 XOR ILV5 is false
      *(both are false, or both are true), then toggle */
@@ -841,7 +841,7 @@ void manager::icntrl6_locking(){
         if( (icntrl6_locked && !iter_lock_status && (!inm1_lock_status || !inm2_lock_status)) ||
             (!icntrl6_locked && iter_lock_status) ||
             (!icntrl6_locked && !iter_lock_status && (inm1_lock_status && inm2_lock_status))
-             
+
           ){
             button_access->get_icntrl_6().toggle_lock();
         }
@@ -894,7 +894,7 @@ void manager::inm2_locking(){
     } else if( !(fields.at("line_10").at("INM2")->am_I_locking) && !(inm2_val > 0) ){
         fields.at("line_10").at("INM2")->change_tile_background("purple_andy_tile.png");
         fields.at("line_10").at("INM2")->am_I_locking = true;;
-    }   
+    }
 
   } catch (out_of_range& map_error){
     error_logger.push_error("From: manager: inm2_locking| INM2 was not found in the parameter map",
@@ -919,7 +919,7 @@ void manager::iter_locking(){
     } else if( !(fields.at("line_10").at("ITER")->am_I_locking) && !(iter_val > 0) ){
         fields.at("line_10").at("ITER")->change_tile_background("purple_andy_tile.png");
         fields.at("line_10").at("ITER")->am_I_locking = true;;
-    }   
+    }
 
   } catch (out_of_range& map_error){
     error_logger.push_error("From: manager: iter_locking| ITER was not found in the parameter map",

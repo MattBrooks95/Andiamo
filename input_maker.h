@@ -130,8 +130,13 @@ class input_maker{
 
     //! saves a field's user-input values to this data structure
     /*!
-     *
+     * no attempt is made at ensuring that illegal values do not make it
+     *into the save file: it is like a snapshot of the current working
+     *environment.
      */
+    bool grab_values();
+
+    //! grab_values with error checking
     bool grab_values(vector<string>& bad_input_list);
 
     //##########################################################################

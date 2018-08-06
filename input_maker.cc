@@ -159,9 +159,6 @@ void input_maker::init(const string& alternate_config){
         //and their size
         } else if( regex_match(temp_string,re_string) ){
 
-            error_logger.push_msg("Is a string line!");
-            error_logger.push_msg("This is that line split along spaces:");
-
             process_string(temp_string,string_array_size_pattern,nad_flag);
 
         } else if( regex_match(temp_string,re_i4_array) ){
@@ -392,7 +389,7 @@ void input_maker::process_string(const string& line,
     //split across spaces, except for spaces within ""
     vector<string> tokens = split(line,' ');
     for(unsigned int c = 0; c < tokens.size() ;c++){
-        error_logger.push_msg("\t:"+ tokens[c]);
+        error_logger.push_msg("\t:" + tokens[c]);
     }
 
     string initial_string = tokens[tokens.size()-1];
@@ -418,7 +415,6 @@ void input_maker::process_string(const string& line,
 
         int size;
         size = str_to_integer(size_string.substr(1,size_string.length()-1));
-        cout << "parameter size: " << size << endl;
         if(size == numeric_limits<int>::min()){
 
             string bad_size_msg = "Error! Illegal string size value in";
@@ -950,25 +946,33 @@ void input_maker::give_string_defaults(){
 
 }
 //##############################################################################
-
 bool input_maker::grab_values(vector<string>& bad_input_list){
+    grab_values();
+}
+
+bool input_maker::grab_values(){
 
     bool success = true;
 
     for(INT4_MAP::iterator it = int4_params.begin(); it != int4_params.end();it++){
 
-        string field_value = tile_access->get_param(it->first)->my_text_box.text;
+        field* found_field = tile_access->get_param(it->first);
 
-            it->second.value = str_to_integer(field_value);
+        if( found_field != NULL ){
+            string field_value = found_field->my_text_box.text;
+            it->second.value   = str_to_integer(field_value);
+        }
 
     }
 
     for(REAL8_MAP::iterator it = real8_params.begin(); it != real8_params.end();it++){
 
-        string field_value = tile_access->get_param(it->first)->my_text_box.text;
+        field* found_field = tile_access->get_param(it->first);
 
-        it->second.value = str_to_double(field_value);
-
+        if( found_field != NULL ){
+            string field_value = found_field->my_text_box.text;
+            it->second.value   = str_to_double(field_value);
+        }
     }
 
     // for(INT4_ARR_MAP::iterator it = int4_array_params.begin(); it != int4_array_params.end();it++){
@@ -990,6 +994,7 @@ bool input_maker::grab_values(vector<string>& bad_input_list){
 //################# CONTEXT SAVING     #########################################
 void input_maker::save_context(ofstream& outs){
 
+    grab_values();
     save_fields(outs);
     save_forms(outs);
 
@@ -997,21 +1002,34 @@ void input_maker::save_context(ofstream& outs){
 
 void input_maker::save_fields(ofstream& context_out){
 
+    for(map<string,param_int4>::iterator it = int4_params.begin();
+        it != int4_params.end();
+        it++){
 
-// void save_context_button::save_fields(ofstream& context_out){
+        context_out << it->second.get_string() << endl;
+    }
+
+    for(map<string,param_real8>::iterator it =  real8_params.begin();
+        it != real8_params.end();
+        it++){
+
+        context_out << it->second.get_string() << endl;
+    }
+
+    for(map<string,param_string>::iterator it = string_params.begin();
+        it != string_params.end();
+        it++){
+
+        context_out << it->second.get_string() << endl;
+    }
+
+    //may need to do r8 and i4 arrays if we decide those 2 params are needed
+
+
 //     cout << "In save_context's save_fields() helper function" << endl;
-//     FIELDS_VEC* fields_ref = &tile_access->fields_order;
-//     for(uint line = 0; line < fields_ref->size();line++){
-//         for(uint param = 0; param < (*fields_ref)[line].size(); param++){
-//             if(((*fields_ref)[line][param])->int4_hook != NULL){
-//                 context_out << "I4 ";
-//             } else if(((*fields_ref)[line][param])->real8_hook != NULL){
-//                 context_out << "R8 ";
-//             } else if(((*fields_ref)[line][param])->string_hook != NULL){
-//                 context_out << "C* ";
-//             } else {
-//                 context_out << "Tile arrays should be removed" << endl;
-//             }
+    // FIELDS_VEC* fields_ref = &tile_access->fields_order;
+    // for(uint line = 0; line < fields_ref->size();line++){
+    //     for(uint param = 0; param < (*fields_ref)[line].size(); param++){
 //             context_out << ((*fields_ref)[line][param])->tile_name;
 //             if(((*fields_ref)[line][param])->string_hook != NULL){
 //                 context_out << "|"
@@ -1023,8 +1041,8 @@ void input_maker::save_fields(ofstream& context_out){
 //                         << endl;
 //         }
 
-//      }
-// }
+    //  }
+    // }
 }
 
 void input_maker::save_forms(ofstream& context_out){
