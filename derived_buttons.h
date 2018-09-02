@@ -27,8 +27,8 @@ using std::string;
 class exit_button : public button{
   public:
 	//! this doesn't do anything special for now
-	exit_button();	
-	//! has different logic than the base class's version 
+	exit_button();
+	//! has different logic than the base class's version
 	/*! it places the exit dialogue in the exact center of the screen.
 	 *It is not shown until the user sends an SDL_QUIT,
 	 *and the button manager makes this button shown */
@@ -59,7 +59,7 @@ class exit_button : public button{
 	//! does work according to return value of my_click
 	/*! has logic for yes or no being hit
 	 *\param which is used to control logic
-	 *\param satisfied is used to stop the loop in exit_button::handle_click */ 
+	 *\param satisfied is used to stop the loop in exit_button::handle_click */
 	void my_click_helper(int which,bool& satisfied);
 
 	//! set up active areas and corner location using set_corner_loc
@@ -138,9 +138,7 @@ class fop_handler_button : public button{
 class save_context_button : public text_box_button{
   public:
 
-    //! sets up the "pop up" that allows the user to set save file name
-    void entry_init();
-
+    void init_confirmation(const string& image_name, const string& image_path);
 
     //! overloaded click_helper to call overloaded work
     void click_helper(SDL_Event& mouse_event);
@@ -148,17 +146,28 @@ class save_context_button : public text_box_button{
     //! saves parameter tiles & form's current values to a custom config file
     int work();
 
+    // //! calls base class draw function, & draws the confirmation message if needed
+    // void draw_me();
+
+    //! shows a message indicating success of save, and spins until the user does something
+    void handle_confirmation();
+
     //! helper for work(), saves field info to info_file string
     void save_fields(ofstream& context_out);
 
-    
+
     // helper for work(), saves form info to info_file string
     void save_forms(ofstream& context_out);
 
   private:
 
-    //! starts off empty, filled in with Andiamo's current parameters 
+    //! starts off empty, filled in with Andiamo's current parameters
     string info_file;
+
+    //! stores the texture for the confirmation message
+    SDL_Texture* confirmation_message;
+    //! stores the location and dimensions this message needs drawn too
+    SDL_Rect confirmation_dimensions;
 };
 
 

@@ -43,7 +43,7 @@ button_manager::~button_manager(){
 void button_manager::init_tray(){
 
     button_tray_texture = asset_access->get_texture(button_image_p+
-                                                    tray_image_name);   
+                                                    tray_image_name);
 
     if(button_tray_texture == NULL){
         error_logger.push_error(string(SDL_GetError()));
@@ -72,7 +72,7 @@ void button_manager::init_form_tray(){
     //start on the left edge of the screen, with some space
     form_tray_rect.x = 5;
 
-    //should be right on top of the button tray 
+    //should be right on top of the button tray
     form_tray_rect.y = tray_rect.y - form_tray_rect.h;
 
     init_form_buttons();
@@ -143,6 +143,7 @@ void button_manager::init_buttons(){
     //graphing_options.init("graphing_options.png",button_image_p);
     lets_go.init("lets_go.png",button_image_p);
     save_context.init("save_context.png",button_image_p);
+    save_context.init_confirmation("save_context_confirm.png",button_image_p);
 
     //exit dialogue is a special snowflake, handles its own location
     exit_dialogue.init("exit_button.png",button_image_p);
@@ -153,9 +154,9 @@ void button_manager::init_buttons(){
     fop_button.force_corner_loc( tray_rect.x+5,tray_rect.y+7 );
 
     //keep track of where the next button placement should start
-    end_of_last_button = end_of_last_button + tray_rect.x + 5 + 
+    end_of_last_button = end_of_last_button + tray_rect.x + 5 +
                          fop_button.get_width();
-    
+
     //these two are thin enough to occupy the same horizontal space,
     //with one above and one below
     output_fname.force_corner_loc( end_of_last_button+5, tray_rect.y + 7);
@@ -278,7 +279,7 @@ void button_manager::fill_regex_vectors(vector<regex>& icntrl_6_patterns,
     icntrl_4_patterns.push_back(f5_1);
     //#####################################################################
 
-    //set up ilv3_ilv5 tests 
+    //set up ilv3_ilv5 tests
     ilv3_ilv5_patterns.push_back(int5);
     ilv3_ilv5_patterns.push_back(int5);
     ilv3_ilv5_patterns.push_back(f7_3);
@@ -334,7 +335,7 @@ void button_manager::draw_form_tray(){
     icntrl_10.draw_lock();
     icntrl_4.draw_lock();
     ilv3_ilv5.draw_lock();
-    
+
 }
 
 void button_manager::draw_form_buttons(){
@@ -350,7 +351,7 @@ void button_manager::draw_buttons(){
     draw_tray();
     draw_form_tray();
     fop_button.draw_me();
-    output_fname.draw_me(); 
+    output_fname.draw_me();
     tc_dir.draw_me();
     //graphing_options.draw_me();
     lets_go.draw_me();
@@ -407,7 +408,7 @@ bool button_manager::click_handling(SDL_Event& mouse_event){
                     bad_input_list.size() != 0 ){
                     //if something went wrong, this code is executed
                     bad_tile_input_warnings(bad_input_list);
-                } else { 
+                } else {
                     //if there were no errors, this is ran
                     //have input_maker output to the file
                     vector<string> form_bad_inputs;
@@ -415,7 +416,7 @@ bool button_manager::click_handling(SDL_Event& mouse_event){
                     if(!io_access->output(form_bad_inputs)){
                         //set up the texture to draw the error message
                         SDL_Texture* error_message = NULL;
-                        SDL_Rect destination;                                               
+                        SDL_Rect destination;
                         make_form_error_message(form_bad_inputs,
                                                 error_message,destination);
                         if(error_message == NULL){
@@ -773,7 +774,7 @@ int button_manager::clean_up(SDL_Event& big_event){
     if(tc_not_ready){
         return -1;//return with error, TC input file must be given
     }*/
-    
+
     //elsewise, exit normally
     return 0;//successful exit
 }
@@ -791,7 +792,7 @@ void button_manager::bad_tile_input_warnings(vector<string>& bad_input_list){
     msg_dest.x = (sdl_access->get_win_size()->width / 2 ) - (.5 * msg_dest.w);
     msg_dest.y = (sdl_access->get_win_size()->height / 2) - (.5 * msg_dest.h);
     SDL_RenderCopy(sdl_access->renderer,bad_input_msg_texture,NULL,&msg_dest);
-    
+
     //update the screen to show the message
     sdl_access->present();
 
@@ -823,11 +824,11 @@ void button_manager::clean_up_warnings(SDL_Event& big_event,
         SDL_Rect dest = {0,0,0,0};
         //get image dimensions
         SDL_QueryTexture(output_fname_error_texture,NULL,NULL,&dest.w,&dest.h);
-        
+
         //yloc should stay the same
         dest.y = sdl_access->get_win_size()->height/2 - dest.h/2;
 
-        //if we are also going to make an error message box for the 
+        //if we are also going to make an error message box for the
         //transmission coefficient input file we will have to draw to the right
         // of the center of the window
         if(bad_tc_input_fname){
@@ -881,7 +882,7 @@ void button_manager::clean_up_warnings(SDL_Event& big_event,
     sdl_access->present();
 
     //spin until they hit a key, or click somewhere on the screen
-    while(SDL_PollEvent(&big_event) == 0 || big_event.type == SDL_MOUSEBUTTONUP);               
+    while(SDL_PollEvent(&big_event) == 0 || big_event.type == SDL_MOUSEBUTTONUP);
 }
 
 

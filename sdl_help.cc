@@ -45,7 +45,7 @@ sdl_help::sdl_help(string name_in,string HF_input_file_in,
 	SDL_Init(SDL_INIT_TIMER | SDL_INIT_EVENTS|SDL_INIT_VIDEO);
 	IMG_Init(IMG_INIT_PNG);//allows use of .png files
 	//allows sdl to print text to the screen using .ttf files
-	if(TTF_Init() != 0){ 
+	if(TTF_Init() != 0){
 		error_logger.push_error("Error in TTF_Init()!");
 	}
 
@@ -94,7 +94,7 @@ sdl_help::sdl_help(string name_in,string HF_input_file_in,
 		error_logger.push_error(SDL_GetError());
 	}
         error_logger.push_msg("Enacting tile_bag update with values: " +
-							  to_string(display.w / 2) + " " + 
+							  to_string(display.w / 2) + " " +
                               to_string(display.h) );
 
 	//this call updates sdl_help and manager's  dimension window fields
@@ -181,9 +181,9 @@ void sdl_help::draw(){
     //draw the background image to the screen
     SDL_RenderCopy(renderer,bg_texture,NULL,NULL);
 
-    if(show_line_guides) draw_labels();
 
     //if parameter line backdrops are enabled, draw them
+    if(show_line_guides) draw_labels();
     if(show_line_guides) draw_guides();
 
     tile_access->draw();
@@ -195,7 +195,7 @@ void sdl_help::draw(){
     frame_count++;
 }
 
-//prints area window size and display 
+//prints area window size and display
 void sdl_help::print_size_info(){
 
 	error_logger.push_msg("Printing window size: ");
@@ -244,7 +244,7 @@ void sdl_help::most(int& rightmost,int& leftmost,int& upmost,int& downmost){
 
 			int yloc   = fields_order[line][param]->yloc;
 			int height = fields_order[line][param]->get_size().height;
-			
+
 			int xloc  = fields_order[line][param]->xloc;
 			int width = fields_order[line][param]->get_size().width;
 
@@ -256,7 +256,7 @@ void sdl_help::most(int& rightmost,int& leftmost,int& upmost,int& downmost){
 
 			//highest Y value means it is the lowest corner
 			if(yloc + y_scroll + height > downmost){
-				downmost = yloc + y_scroll + height; 
+				downmost = yloc + y_scroll + height;
 			}
 
 			//lowest X value means that it is the left most corner
@@ -315,7 +315,7 @@ void sdl_help::update_scroll(int x_scroll_in, int y_scroll_in){
 	//let the scroll bars know what is going on
 	vert_bar.update();
 	horiz_bar.update();
-	
+
 }
 //return user to the top of the page - currently called from a spacebar press
 void sdl_help::reset_scroll(){
@@ -392,7 +392,7 @@ void sdl_help::click_detection(SDL_Event& event,int click_x, int click_y){
 
         }//end parameter for
 
-    }//end line for 
+    }//end line for
 
 }//end function
 
@@ -429,18 +429,18 @@ void sdl_help::calc_corners(){
 		error_logger.push_msg("USING WIDEST TILE TO LIMIT ROWS");
 		//if a single tile is bigger than the window, use it for logic
 		//because the window is likely so small that the normal
-		//row placement logic won't work				
+		//row placement logic won't work
 		row_limit = widest_tile;
 
 	} else {
 
 		error_logger.push_msg("USING WINDOW SIZE TO LIMIT ROWS");
 		//else wise, fill up the window as best it can
-		row_limit = window_s.width; 
+		row_limit = window_s.width;
 	}
 
 	for(uint c = 0; c < tile_access->line_names_read_order.size();c++){
-		
+
         make_line_label(tile_access->line_names_read_order[c],row_height);
 		calc_corners_helper(tile_access->fields_order[c],
 							row_height,row_limit);
@@ -463,7 +463,7 @@ void sdl_help::calc_corners_helper(vector<field*>& line_in,
 	//coordinates for fields but this variable can be changed if the current
 	//line map takes up more than one row in the window
 	int y_corner = start_height;
-	
+
     //update this to keep track of how big to make the backdrop
     //for this line of HF parameters. At this point we know  only the top right
     //corner
@@ -481,7 +481,7 @@ void sdl_help::calc_corners_helper(vector<field*>& line_in,
 
 	for(uint c = 0; c < line_in.size();c++){
 
-		//this is the case where the tile can stay in the current row 
+		//this is the case where the tile can stay in the current row
 		if(x_corner + line_in[c]->get_size().width < row_limit){
 
 			line_in[c]->xloc = x_corner;
@@ -494,8 +494,8 @@ void sdl_help::calc_corners_helper(vector<field*>& line_in,
 			line_in[c]->my_text_box.make_rect();
 
 			x_corner = line_in[c]->xloc + line_in[c]->get_size().width + x_buffer;
-            if(x_corner > rightmost_edge) rightmost_edge = x_corner; 
-			
+            if(x_corner > rightmost_edge) rightmost_edge = x_corner;
+
 			if(line_in[c]->yloc + line_in[c]->get_size().height + 5 > lowest_point){
 				error_logger.push_msg("OLD lowest_point:"+to_string(lowest_point));
 				lowest_point = line_in[c]->yloc + line_in[c]->get_size().height + 5;
@@ -511,7 +511,7 @@ void sdl_help::calc_corners_helper(vector<field*>& line_in,
 
 			//save it's leftmost edge + padding
 			//to be used to place the next tile
-			x_corner = line_in[c]->xloc + 
+			x_corner = line_in[c]->xloc +
 						line_in[c]->get_size().width + x_buffer;
 
 			//place it just below the previous row
@@ -531,7 +531,7 @@ void sdl_help::calc_corners_helper(vector<field*>& line_in,
 			lowest_point = line_in[c]->yloc +
 							line_in[c]->get_size().height + 5;
 
-		}		
+		}
 
 		//cout << "Parameter placement##################" << endl;
 		//cout << line_in[c]->xloc << ":" << line_in[c]->yloc << endl;
@@ -539,7 +539,7 @@ void sdl_help::calc_corners_helper(vector<field*>& line_in,
 
     //save the height variable for the line backdrop
     bd_dims.h = lowest_point + 2 - start_height;
-    bd_dims.w = rightmost_edge; 
+    bd_dims.w = rightmost_edge;
 
 	//save the the start location for the next row
 	//start_height = lowest_point + 5;
@@ -596,11 +596,11 @@ void sdl_help::make_line_label(const string& label,unsigned int& start_height){
     if(SDL_BlitSurface(text_surface,NULL,temp_surface,NULL) != 0){
         string error = SDL_GetError();
         error_logger.push_error("Error in label blit."+error);
-    } 
+    }
 
     //make sure that th rest of the calc_corners functions know
     //how much this title card will offset the drawing
-    start_height += label_loc.h;    
+    start_height += label_loc.h;
 
     //convert the surface to a renderable texture
     SDL_Texture* label_texture = SDL_CreateTextureFromSurface(renderer,temp_surface);

@@ -16,7 +16,7 @@ exit_button::exit_button(){
 
 void exit_button::set_corner_loc(){
 
-    //set center of tile in the exact center of the screen 
+    //set center of tile in the exact center of the screen
     xloc = (sdl_access->get_win_size()->width / 2) - (width / 2);
     yloc = (sdl_access->get_win_size()->height / 2) - (height / 2);
 
@@ -84,7 +84,7 @@ void exit_button::my_click_helper(int which,bool& satisfied){
         main_done = true;
         satisfied = true;
     } else {
-            
+
         //do no work until they hit yes or no
         return;
     }
@@ -130,7 +130,6 @@ void exit_button::init(string image_name_in, string image_p_in){
 //############################## text_box button ###############################
 void text_box_button::draw_me(){
     if(shown){
-
         SDL_RenderCopy(sdl_access->renderer,button_texture,NULL,&my_rect);
         my_text_box.draw_me();
     }
@@ -145,10 +144,9 @@ void text_box_button::print_me(){
     button::print_me();
     my_text_box.print_me();
 }
-    
-void text_box_button::init(const std::string& image_name_in,const std::string& image_p_in){
-    button::init(image_name_in,image_p_in/*,sdl_help_in*/);
 
+void text_box_button::init(const std::string& image_name_in,const std::string& image_p_in){
+    button::init(image_name_in,image_p_in);
     my_text_box.init(sdl_access->font,"",xloc,yloc+height-25,width,25);
 }
 
@@ -192,11 +190,56 @@ void fop_handler_button::work(){
 }
 //##############################################################################
 
+//###################### SAVE CONTEXT BUTTON ###################################
+
+void save_context_button::init_confirmation(const string& image_name,const string& image_path){
+
+    string target_image  =  image_path + image_name;
+    confirmation_message = asset_access->get_texture(target_image);
+
+    if(confirmation_message != NULL){
+
+        //set up the drawing info for the confirmation message;
+        int* width  = &confirmation_dimensions.w;
+        int* height = &confirmation_dimensions.h;
+
+        SDL_QueryTexture(confirmation_message,NULL,NULL,width,height);
+
+        win_size* win_dims = sdl_access->get_win_size();
+
+        confirmation_dimensions.x = (win_dims->width / 2.0) - ((*width) / 2.0);
+        confirmation_dimensions.y = (win_dims->height / 2.0) - ((*height) / 2.0);
+
+        cout << "Confirmation dimensions:" << confirmation_dimensions.x << ":"
+             << confirmation_dimensions.y  << " " << confirmation_dimensions.w << "x"
+             << confirmation_dimensions.h  << endl;
+
+    } else {
+        error_logger.push_error("Couldn't find the save_context's confirmation image!");
+    }
+
+}
+
+// void save_context_button::draw_me(){
+
+
+//     text_box_button::draw_me();
+
+// }
+
+void save_context_button::handle_confirmation(){
+    SDL_Event spin_event;
+// big_event.type == SDL_MOUSEBUTTONUP
+    while(SDL_PollEvent(&spin_event) == 0 || spin_event.type == SDL_MOUSEBUTTONUP){
+        sdl_access->draw();
+        SDL_RenderCopy(sdl_access->renderer,confirmation_message,NULL,&confirmation_dimensions);
+        sdl_access->present();
+    }
+
+}
+
 void save_context_button::click_helper(SDL_Event& mouse_event){
-
-    cout << "In save_context click_helper" << endl;
     work();
-
 }
 
 int save_context_button::work(){
@@ -205,9 +248,13 @@ int save_context_button::work(){
     context_out.open(HOME+"/Andiamo/config/custom_configs/"+my_text_box.text);
     if(!context_out.fail()){
          io_access->save_context(context_out);
+         handle_confirmation();
     }
     context_out.close();
 }
+//##############################################################################
+
+
 
 //########################## GRAPHING OPTIONS BUTTON ###########################
 

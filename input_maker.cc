@@ -1047,26 +1047,24 @@ void input_maker::save_fields(ofstream& context_out){
 
 void input_maker::save_forms(ofstream& context_out){
 
-    // cout << "In save_context's save_forms() helper function" << endl;
+    //save icntrl8's information to the new config file
+    button_access->get_icntrl_8().save_information(context_out);
+    //context_out << endl;
 
-    // //save icntrl8's information to the new config file
-    // button_access->get_icntrl_8().save_information(context_out);
-    // //context_out << endl;
+    //save icntrl6's information to the new config file
+    button_access->get_icntrl_6().save_information(context_out);
+    //context_out << endl;
 
-    // //save icntrl6's information to the new config file
-    // button_access->get_icntrl_6().save_information(context_out);
-    // //context_out << endl;
+    //save icntrl10's information to the new config file
+    button_access->get_icntrl_10().save_information(context_out);
 
-    // //save icntrl10's information to the new config file
-    // button_access->get_icntrl_10().save_information(context_out);
+    //save icntrl4's information to the new config file
+    button_access->get_icntrl_4().save_information(context_out);
+    //context_out << endl;
 
-    // //save icntrl4's information to the new config file
-    // button_access->get_icntrl_4().save_information(context_out);
-    // //context_out << endl;
-
-    // //save ilv3/ilv5's information to the new config file
-    // button_access->get_ilv3_ilv5().save_information(context_out);
-    // //context_out << endl;
+    //save ilv3/ilv5's information to the new config file
+    button_access->get_ilv3_ilv5().save_information(context_out);
+    //context_out << endl;
 
 }
 //##############################################################################
