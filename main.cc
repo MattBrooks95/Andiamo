@@ -85,10 +85,6 @@ int main(int argc, char *argv[]){
 
   }
 
-
-  //error_logger.push_msg("And where does the newborn go from here?"
-  //					  " The net is vast and infinite.");
-
   //set up the sdl wrapper
   sdl_help sdl_helper("Andiamo!");
   sdl_access = &sdl_helper;

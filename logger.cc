@@ -12,10 +12,11 @@ logger::logger(){
 
 	//build dynamic file name ##################################################
 	string path(HOME);
-	path       += "/Andiamo/error_logs/";
+	path += "/Andiamo/error_logs/";
+
 	string prefix = "andiamo_errors_";//constant first part
 	string suffix = ".txt";//constant file extension
-	
+
 	//store the date and time of day as a unique file name
 	//to minimize over-writing
 	string time_string;
@@ -47,7 +48,8 @@ logger::logger(){
 	if(errors_out.fail()){
 		string mkdir_target(HOME);
 		mkdir_target += "/Andiamo/error_logs";
-		system(mkdir_target.c_str());
+		string mkdir_command = "mkdir " + mkdir_target;
+		system(mkdir_command.c_str());
 		errors_out.open( unique_file_name.c_str() );
 	//it worked
 	} else {

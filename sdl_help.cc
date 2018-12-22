@@ -57,8 +57,6 @@ sdl_help::sdl_help(string name_in,string HF_input_file_in,
 
 	frame_count = 0;
 
-	error_logger.push_msg("this is merely a test of the logger");
-
 	bg_image_name = bg_image_name_in;
 
 
@@ -76,15 +74,14 @@ sdl_help::sdl_help(string name_in,string HF_input_file_in,
 	renderer = SDL_CreateRenderer(window,-1,SDL_RENDERER_PRESENTVSYNC);
 	if(renderer == NULL){
 		//put message in error logger
-		error_logger.push_error("MASSIVE ERROR, RENDERER",
-								"COULD NOT BE CREATED");
+		error_logger.push_error("RENDERER COULD NOT BE CREATED");
 		error_logger.make_error_file();//make the error logger output
 		exit(1984);//throw a tantrum and close program
 	}
 
 	//set up pointer to font from file
-	font_p       += "/LiberationSerif-Regular.ttf";
-	font = TTF_OpenFont( font_p.c_str(), 22);
+	font_p += "LiberationSerif-Regular.ttf";
+	font    = TTF_OpenFont( font_p.c_str(), 22);
 
     //set up the font for the line labels
     label_font = TTF_OpenFont( font_p.c_str(),32);
@@ -100,7 +97,7 @@ sdl_help::sdl_help(string name_in,string HF_input_file_in,
 	//this call updates sdl_help and manager's  dimension window fields
 	window_update(temp_window_w,temp_window_h);
 
-	x_scroll = 0; y_scroll = 0; //set scrolling variables to 0
+	x_scroll = 0; y_scroll = 0;
 
     show_line_guides = true;
 }

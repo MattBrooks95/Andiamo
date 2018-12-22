@@ -77,9 +77,8 @@ void asset_manager::pull_assets(){
 }
 
 void asset_manager::pull_helper(const string& subroot_path){
-
 	//cout << "From pull_helper, path to subroot: " << subroot_path << endl;
-	
+
 	DIR* current_root;
 	current_root = opendir(subroot_path.c_str());
 	dirent* current_file;
