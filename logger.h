@@ -96,6 +96,7 @@ class logger{
 
 //! this function is passed to std::sort, to allow it to sort file names by their recentness
 bool file_compare(std::string str_one, std::string str_two);
+
 //! this function is a helper for file_compare, which "tokenizes" the dates from the file name
 void quantify_file_name(const std::regex& regex_in, std::string string_in, int* numbers_in);
 

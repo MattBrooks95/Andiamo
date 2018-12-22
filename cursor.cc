@@ -1,10 +1,12 @@
 //! \file cursor.cc implements the class members found in cursor.h
 
+#include "system_wrapper.h"
 #include "cursor.h"
 #include "sdl_help.h"
 
 using namespace std;
 
+extern system_wrapper* system_access;
 extern asset_manager* asset_access;
 
 //#################### RULE OF THREE ######################################
@@ -26,7 +28,7 @@ cursor::~cursor(){
 }
 //#########################################################################
 void cursor::init(SDL_Rect* box_location_in){
-	string cursor_p(HOME);
+	string cursor_p(system_access->get_home());
 	cursor_p += "/Andiamo/Assets/Images/cursor.png";
 
 	my_texture = asset_access->get_texture(cursor_p);

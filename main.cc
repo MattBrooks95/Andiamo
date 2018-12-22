@@ -26,26 +26,25 @@ string HOME = getenv("HOME");
 system_wrapper* system_access;
 
 // global object used for error message output
-logger          error_logger;
+logger error_logger;
 
 // global reference to asset_manager
 asset_manager*  asset_access;
 
 // global reference to graphics library wrapper
-sdl_help*       sdl_access;
+sdl_help* sdl_access;
 
 // global reference to object that handles HF parameter entry
-manager*        tile_access;
+manager* tile_access;
 
 // global reference to object that makes HF file
-input_maker*    io_access;
+input_maker* io_access;
 
 // global reference to object that manages various buttons
 button_manager* button_access;
 
 // global reference to object that handles creating transmission coefficients
 fop_handler* FOP_access;
-
 
 //making this global and giving it a unique name,
 //so the exit button can change it
@@ -57,12 +56,12 @@ bool main_done = false;
  *in the same location relative to the button */
 void no_work_done_message(exit_button& exit_dialogue);
 
-
 /*! main() handles sdl events (keypress, mouse movements), instantiates
  *an sdl_help object, and calls its drawing functions per run
  *of the loop. */
 int main(int argc, char *argv[]){
-	//cout << HOME << endl;
+	system_wrapper system;
+	system_access = &system;
 
 	//this string starts off empty. If it remains empty by
 	//the time input_maker::init(string) is called, it defaults to
@@ -78,15 +77,10 @@ int main(int argc, char *argv[]){
 	bool line_guides = true;
 	if(!process_args(argc,argv,input_maker_config_file,
 	               manager_config_file,line_guides) ){
-
-	//if one of the arguments was malformed, or -help,
-	//don't continue execution
-	exit(0);
-
+		//if one of the arguments was malformed, or -help,
+		//don't continue execution
+		exit(0);
 	}
-
-	system_wrapper system;
-	system_access = &system;
 
 	//set up the sdl wrapper
 	sdl_help sdl_helper("Andiamo!");
@@ -135,7 +129,6 @@ int main(int argc, char *argv[]){
 	//FOP.print_file_list();
 	FOP_access = &FOP;
 
-
 	//pre-loop drawing commands, so screen comes up near instantly
 	sdl_access->draw();
 	sdl_access->present();
@@ -160,7 +153,6 @@ int main(int argc, char *argv[]){
 			//is this necessary?
 			SDL_FlushEvents(0,1000);
 
-
 		//if the horizontal scroll bar is in "scroll mode"
 		//do a mini loop until the left mouse button is released
 		} else if(sdl_access->get_h_bar().is_scrolling()){
@@ -180,6 +172,7 @@ int main(int argc, char *argv[]){
 		switch(big_event.type){
 
 			case SDL_QUIT:
+
 				//does a mini loop that implements exit_button's functionality
 				//where the user has to click yes or no for it to go away
 				if(io_access->output_was_made){
@@ -197,6 +190,7 @@ int main(int argc, char *argv[]){
 				break;
 
 			case SDL_KEYUP:
+
 				handle_key_up(big_event);
 				SDL_FlushEvent(SDL_KEYUP);
 				break;
@@ -221,11 +215,13 @@ int main(int argc, char *argv[]){
 				//error_logger.push_msg("WINDOW EVENT ##########################");
 				//error_logger.push_msg("EVENT Num:"+to_string(big_event.type));
 				if(big_event.window.event == SDL_WINDOWEVENT_SIZE_CHANGED){
+
 					error_logger.push_msg(to_string(big_event.window.data1)+":"+
-							       to_string(big_event.window.data2));
+									to_string(big_event.window.data2));
 					sdl_access->window_update(big_event.window.data1,
 												big_event.window.data2);
 					button_access->location_update();
+
 				}
 
 				break;

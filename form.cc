@@ -1,5 +1,5 @@
 //! \file form.cc implements the descriptions of the form class, which is found in form.h
-
+#include "system_wrapper.h"
 #include "form.h"
 //! message for when Andiamo prevents a double free error
 #define FORM_ERROR "Attempted double free in ~form"
@@ -12,7 +12,8 @@
 using namespace std;
 
 extern asset_manager* asset_access;
-extern string HOME;
+extern system_wrapper* system_access;
+
 //############### FORM CLASS ################################################
 form::form(){
 	form_title = "no title";
@@ -66,13 +67,15 @@ void form::init(string form_title_in,string help_msg_image_name,int xloc_in,
     //set up the patterns for user type checking
     my_patterns = pattern_tests;
 
+    string home_path = system_access->get_home();
+
 	//initialize the page number spritesheet
 	//these numbers are blitted onto the form surface,
 	//to indicate which page the user is on
-	string help_path(HOME);
+	string help_path(home_path);
     help_path += "/Andiamo/Assets/Images/form_assets/" + help_msg_image_name;
 
-    string number_path(HOME);
+    string number_path(home_path);
     number_path += "/Andiamo/Assets/Images/form_assets/number_sprites.png";
 	number_sprites = IMG_Load(number_path.c_str());
 	if(number_sprites == NULL) error_logger.push_error(SDL_GetError());
@@ -83,7 +86,7 @@ void form::init(string form_title_in,string help_msg_image_name,int xloc_in,
 	form_area.y = yloc_in;
 
 	//initialize the form texture from its asset file
-    string form_surf_path(HOME);
+    string form_surf_path(home_path);
     form_surf_path += "/Andiamo/Assets/Images/form_assets/form.png";
 	form_surface = IMG_Load(form_surf_path.c_str());
 
@@ -107,7 +110,7 @@ void form::init(string form_title_in,string help_msg_image_name,int xloc_in,
 		SDL_Color black = {0,0,0,0};
 
 		//make this font a little bit bigger than the others
-		string title_path(HOME);
+		string title_path(home_path);
 		title_path += "/Andiamo/Assets/fonts/LiberationSerif-Regular.ttf";
 		TTF_Font* title_font = TTF_OpenFont( title_path.c_str(), 28);
 		form_title_surface = TTF_RenderUTF8_Blended(title_font,form_title.c_str(),black);
@@ -133,7 +136,7 @@ void form::init(string form_title_in,string help_msg_image_name,int xloc_in,
 	//######################################################################
 
 	//initialize the help message that is shown upon the question mark being clicked
-	string help_target(HOME);
+	string help_target(home_path);
     help_target += "/Andiamo/Assets/Images/form_assets/"+help_msg_image_name;
 	help_texture = asset_access->get_texture(help_target);
 	if(help_texture == NULL) error_logger.push_error(SDL_GetError());
@@ -165,7 +168,7 @@ void form::set_form_title(string new_title){
 	form_title = new_title;
 
 	//make this font a little bit bigger than the others
-	string font_target(HOME);
+	string font_target(system_access->get_home());
 	font_target += "/Andiamo/Assets/fonts/LiberationSerif-Regular.ttf";
 	TTF_Font* title_font = TTF_OpenFont( font_target.c_str(), 28);
 

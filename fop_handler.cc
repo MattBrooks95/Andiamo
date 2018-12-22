@@ -62,9 +62,7 @@ void fop_handler::fop_main(){
 	for(unsigned int c = 0; c < 6; c++){
 
 		if(open_channels[c]){
-
 			prepare_deck(A_proj,Z_proj,A_targ,Z_targ,ecm_value);
-
 		}
 
 	}
@@ -78,8 +76,6 @@ void fop_handler::fop_main(){
     make_FOP_pair(A_proj,Z_proj,A_targ,Z_targ);
     cout << "File pair for this calculation is:\n"
          << fop_file_names.first << ":" << fop_file_names.second << endl;
-
-
 
 	/*ofstream FOP_input_file;
 	FOP_input_file.open(scratch_path + most_recent_FOP_out);

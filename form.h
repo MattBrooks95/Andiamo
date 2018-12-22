@@ -23,8 +23,6 @@ using std::regex;
 
 class page;
 
-extern string HOME;
-
 //! class that is housed by a form_button, allows for dynamic parameter entry
 /*! Forms are only used for the handful of parametes in the input manual
  *that enable extra features of HF, which typically require a significant
