@@ -23,6 +23,10 @@ system_wrapper::system_wrapper(){
 	cout << home_environment << endl;
 }
 
+string system_wrapper::get_home(){
+	return home_environment;
+}
+
 operating_system system_wrapper::get_os(){
 	return os;
 }

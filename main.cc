@@ -19,6 +19,8 @@
 
 using namespace std;
 
+string HOME = getenv("HOME");
+
 // handles program environment variables like current directory,
 // HOME environment and executable directory
 system_wrapper* system_access;
@@ -176,7 +178,6 @@ int main(int argc, char *argv[]){
 		//switch controlled by the 'type' of input given, like the mouse moving
 		//or key presses
 		switch(big_event.type){
-
 
 			case SDL_QUIT:
 				//does a mini loop that implements exit_button's functionality

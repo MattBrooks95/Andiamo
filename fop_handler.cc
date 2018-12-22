@@ -1,19 +1,24 @@
 //! \file fop_handler.cc implements the class defined in fop_handler.h
 
+#include "system_wrapper.h"
 #include "fop_handler.h"
 #include "sdl_help.h"
 #include "input_maker.h"
 #include "button_manager.h"
 #include "logger.h"
+
 using namespace std;
 
-fop_handler::fop_handler(){	
+extern system_wrapper* system_access;
 
-	omp_path     = HOME + OMP_PATH;
+fop_handler::fop_handler(){
 
-	trans_path   = HOME + TRANSMISSION_PATH;
+	string home_path = system_access->get_home();
+	omp_path     = home_path + OMP_PATH;
 
-	scratch_path = HOME + SCRATCH_PATH;
+	trans_path   = home_path + TRANSMISSION_PATH;
+
+	scratch_path = home_path + SCRATCH_PATH;
 
 	//start off assuming all channels are inactive
 	open_channels[0] = false;
@@ -36,7 +41,6 @@ fop_handler::~fop_handler(){
         it++){
 
         delete(*it);
-
     }
 
 }

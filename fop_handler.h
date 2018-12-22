@@ -33,7 +33,6 @@ extern sdl_help* sdl_access;
 extern manager* tile_access;
 extern button_manager* button_access;
 extern input_maker* io_access;
-extern string HOME;
 
 /*! \brief uses a data directory and Andiamo inputs
  *to use FOP to calculate the transmission coefficients */

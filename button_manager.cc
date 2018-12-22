@@ -1,5 +1,6 @@
 //! \file button_manager.cc implements the class described in button_manager.h
 
+#include "system_wrapper.h"
 #include "button_manager.h"
 #include "asset_manager.h"
 
@@ -10,11 +11,11 @@ using namespace std;
 
 extern asset_manager* asset_access;
 extern manager* tile_access;
-extern string HOME;
+extern system_wrapper* system_access;
 
 button_manager::button_manager(){
 
-    button_image_p = HOME;
+    button_image_p = system_access->get_home();
     button_image_p += "/Andiamo/Assets/Images/Buttons/";
     tray_image_name = "button_tray.png";
     form_tray_image_name = "form_tray.png";
@@ -780,7 +781,7 @@ int button_manager::clean_up(SDL_Event& big_event){
 }
 void button_manager::bad_tile_input_warnings(vector<string>& bad_input_list){
 
-    string msg_target(HOME);
+    string msg_target(system_access->get_home());
     msg_target += "/Andiamo/Assets/Images/bad_input_message.png";
     SDL_Texture* bad_input_msg_texture = asset_access->get_texture(msg_target);
     if(bad_input_msg_texture == NULL) error_logger.push_error(string(SDL_GetError()));
@@ -813,7 +814,7 @@ void button_manager::clean_up_warnings(SDL_Event& big_event,
     //make the error message for the output file name
     if(bad_output_fname){
 
-        string out_fname_err_target(HOME);
+        string out_fname_err_target(system_access->get_home());
         out_fname_err_target +=
             "/Andiamo/Assets/Images/Buttons/output_fname_err.png";
         output_fname_error_texture =
@@ -847,7 +848,7 @@ void button_manager::clean_up_warnings(SDL_Event& big_event,
     //make the error message for the transmission coefficient input file name
     if(bad_tc_input_fname){
 
-        string bad_tc_input_target(HOME);
+        string bad_tc_input_target(system_access->get_home());
         bad_tc_input_target +=
                             "/Andiamo/Assets/Images/Buttons/TC_input_err.png";
         tc_input_error_texture = asset_access->get_texture(bad_tc_input_target);
