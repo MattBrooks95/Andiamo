@@ -9,29 +9,26 @@ extern asset_manager* asset_access;
 //###################### BUTTON class ########################################
 button::button(){
 
-    width = 0;
+    width  = 0;
     height = 0;
-    xloc = 0;
-    yloc = 0;
+    xloc   = 0;
+    yloc   = 0;
 
     my_rect = {0,0,0,0};
 
     shown = true;
 
-    image_name = "No name.";
-    total_image_p = "illegal image path";
+    image_path = "Need to run button::init() on this object";
 
     button_texture = NULL;
 
 }
 
-void button::init(const string& image_name_in,const string& image_p_in){
+void button::init(const string& image_path_in){
 
-    image_name = image_name_in;
+    image_path = image_path_in;
 
-    total_image_p = image_p_in + image_name;
-
-    button_texture = asset_access->get_texture(total_image_p);
+    button_texture = asset_access->get_texture(image_path);
     if(button_texture == NULL) error_logger.push_error(string(SDL_GetError()));
 
     SDL_QueryTexture(button_texture,NULL,NULL,&width,&height);
@@ -42,12 +39,11 @@ void button::init(const string& image_name_in,const string& image_p_in){
 
 //virtual
 void button::print_me(){
-    error_logger.push_msg("IMAGE NAME: "+image_name+" TOTAL IMAGE PATH: "+total_image_p);
-    error_logger.push_msg("SDL_HELP HOOK: "+to_string(size_t(sdl_access))+" XLOC:YLOC = "+to_string(xloc)
-                              +":"+to_string(yloc));
-    error_logger.push_msg("WIDTH = "+to_string(width)+" HEIGHT = "+to_string(height));
-    error_logger.push_msg(" TEXTURE PTR: " +to_string(size_t(button_texture)));
-    error_logger.push_msg("SHOWN? = "+to_string(shown));
+    error_logger.push_msg("image path:"+image_path);
+    error_logger.push_msg("xlocation x ylocation:" + to_string(xloc) + "x" + to_string(yloc));
+    error_logger.push_msg("width:" + to_string(width) + " height:" + to_string(height));
+    error_logger.push_msg(" texture: " + to_string(size_t(button_texture)));
+    error_logger.push_msg("shown?:" + to_string(shown));
 }
 
 //virtual
@@ -69,7 +65,6 @@ void button::draw_me(){
 void button::set_corner_loc(){
     xloc = 0;
     //this puts the tile in a fixed position just above the horizonal scroll bar
-    //this is what the HUD style of buttons could look like
     yloc = sdl_access->get_h_bar().get_top() - height;
 }
 
@@ -78,8 +73,6 @@ void button::handle_resize(int yloc_in){
     yloc = yloc_in;
     make_rect();
 }
-
-
 
 //virtual
 void button::force_corner_loc(int xloc_in, int yloc_in){
@@ -98,8 +91,12 @@ bool button::handle_click(SDL_Event& mouse_event){
 }
 
 bool button::was_clicked(SDL_Event& mouse_event){
-    if( (mouse_event.button.x > xloc && mouse_event.button.x < xloc + width) &&
-        (mouse_event.button.y > yloc && mouse_event.button.y < yloc + height) ){
+
+    int mouse_x = mouse_event.button.x;
+    int mouse_y = mouse_event.button.y;
+
+    if( (mouse_x > xloc && mouse_x < xloc + width) &&
+        (mouse_y > yloc && mouse_y < yloc + height) ){
         return true;
     }
     return false;

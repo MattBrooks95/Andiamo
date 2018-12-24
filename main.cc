@@ -86,7 +86,7 @@ int main(int argc, char *argv[]){
 	sdl_help sdl_helper("Andiamo!");
 	sdl_access = &sdl_helper;
 	if(!line_guides){
-	sdl_access->show_line_guides = false;
+		sdl_access->show_line_guides = false;
 	}
 
 
@@ -100,8 +100,7 @@ int main(int argc, char *argv[]){
 	sdl_access->init();
 
 	//make the tiles
-	string man_path(HOME);
-	man_path += "/Andiamo/Assets/Images/";
+	string man_path = "Images/";
 	manager tile_bag(man_path);
 	tile_access = &tile_bag;
 	tile_access->init(manager_config_file);
@@ -212,8 +211,7 @@ int main(int argc, char *argv[]){
 				break;
 
 			case SDL_WINDOWEVENT:
-				//error_logger.push_msg("WINDOW EVENT ##########################");
-				//error_logger.push_msg("EVENT Num:"+to_string(big_event.type));
+
 				if(big_event.window.event == SDL_WINDOWEVENT_SIZE_CHANGED){
 
 					error_logger.push_msg(to_string(big_event.window.data1)+":"+
@@ -242,10 +240,6 @@ int main(int argc, char *argv[]){
 		SDL_Delay(50);
 
 	}//end of while loop
-
-  //sdl_access->print_size_info();
-
-  //SDL_Delay(5000);
 
   return 0;//Exit success
 }

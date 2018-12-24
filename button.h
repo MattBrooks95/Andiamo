@@ -20,8 +20,6 @@ extern logger error_logger;
 extern sdl_help* sdl_access;
 
 //! this is the base class for the static buttons that implement features
-/*! some possible features are going to include graphing options,
- * the exit dialogue opening, output file name entry*/
 class button{
   public:
     //! constructor for the base part of all inherited classes
@@ -31,10 +29,17 @@ class button{
     // default destructor is fine, no dynamic memory here
     //virtual ~button();
 
+    //! this virtual init function sets up the image name, path,
+    /*! \param image_name_in is what the name of the image will be set to,
+    *like "default_button.png"
+    *\param image_p_in is what the path to the button's asset directory
+    *will be set to */
+    virtual void init(const string& image_path_in);
+
     //! this is the virtual print_me() function
     /*! it prints the default variables contained in a button class.
     * If a class needs more printing, it needs to implement a print_me()
-    *function that first calls this one via button::print_me() 
+    *function that first calls this one via button::print_me()
     *(to print the base variables) and then does its special logic
     *that prints its own extra variables */
     virtual void print_me();
@@ -66,7 +71,7 @@ class button{
     //! update y location in response to the window getting taller or shorter
     virtual void handle_resize(int yloc_in);
 
-    //###########################################################
+    //##########################################################################
     //! this virtual function handles the button being clicked
     /*! it uses virtual was_clicked() to figure out if the user actually clicked
     *on it, and then it calls virtual click_helper() to implement the "work"
@@ -84,13 +89,7 @@ class button{
     *the click information */
     virtual void click_helper(SDL_Event& mouse_event);
 
-    //###########################################################
-    //! this virtual init function sets up the image name, path,
-    /*! \param image_name_in is what the name of the image will be set to,
-    *like "default_button.png"
-    *\param image_p_in is what the path to the button's asset directory 
-    *will be set to */
-    virtual void init(const string& image_name_in,const string& image_p_in);
+    //##########################################################################
 
     //##################### GETTERS AND SETTERS ################################
     int get_xloc()   { return xloc;}
@@ -106,11 +105,8 @@ class button{
 
     protected:
 
-    //! name of the image file
-    string image_name;
-
     //! image file directory's path
-    string total_image_p;
+    string image_path;
 
     //! horizontal location of the button's corner
     int xloc;
@@ -182,16 +178,3 @@ struct active_area{
     //! texture's height
 	int height;
 };
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -295,8 +295,6 @@ int manager::get_widest_tile_width(){
 
 void manager::init_fields_graphics(){
 
-
-
     for(uint line = 0; line < fields_order.size();line++){
 
         for(uint param = 0; param < fields_order[line].size();param++){

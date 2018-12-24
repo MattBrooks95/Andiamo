@@ -9,10 +9,8 @@ using namespace std;
 extern button_manager* button_access;
 //################################ EXIT BUTTON #################################
 
-exit_button::exit_button(){
-
-
-}
+// exit_button::exit_button(){
+// }
 
 void exit_button::set_corner_loc(){
 
@@ -99,9 +97,9 @@ void exit_button::print_me(){
 }
 
 
-void exit_button::init(string image_name_in, string image_p_in){
+void exit_button::init(const string& image_path_in){
     //run default procedure
-    button::init(image_name_in,image_p_in);
+    button::init(image_path_in);
 
     //change up corner info,exit button has special location
     set_corner_loc();
@@ -145,8 +143,8 @@ void text_box_button::print_me(){
     my_text_box.print_me();
 }
 
-void text_box_button::init(const std::string& image_name_in,const std::string& image_p_in){
-    button::init(image_name_in,image_p_in);
+void text_box_button::init(const std::string& image_path_in){
+    button::init(image_path_in);
     my_text_box.init(sdl_access->font,"",xloc,yloc+height-25,width,25);
 }
 
@@ -192,10 +190,9 @@ void fop_handler_button::work(){
 
 //###################### SAVE CONTEXT BUTTON ###################################
 
-void save_context_button::init_confirmation(const string& image_name,const string& image_path){
+void save_context_button::init_confirmation(const string& image_path_in){
 
-    string target_image  =  image_path + image_name;
-    confirmation_message = asset_access->get_texture(target_image);
+    confirmation_message = asset_access->get_texture(image_path_in);
 
     if(confirmation_message != NULL){
 

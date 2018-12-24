@@ -45,7 +45,7 @@ class asset_manager{
 		 *If it has been loaded, it just returns that texture.
 		 *elsewise, it loads the texture into the map, and then
 		 *returns it.
-		 *\param target is the path + name of the texture to be retrieved
+		 *\param target is the path FROM Andiamo/Assets + name of the texture to be retrieved
 		 *\return returns the sdl texture, or NULL on error */
 		SDL_Texture* get_texture(const std::string& target);
 

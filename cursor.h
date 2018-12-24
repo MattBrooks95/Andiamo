@@ -21,7 +21,7 @@ class cursor{
 
 	//! cursor sets up the surface and texture for the cursor
 	cursor();
-	////! copy constructor ensures no double frees 
+	////! copy constructor ensures no double frees
 	//cursor(const cursor& other);
 
 	//! clean up memory
@@ -70,5 +70,4 @@ class cursor{
 	/*! the height and width here will be figured out by using the size
 	 *of the character that the cursor is hovering over */
 	SDL_Rect cursor_dest;
-
 };

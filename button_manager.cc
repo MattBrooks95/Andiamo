@@ -13,10 +13,10 @@ extern asset_manager* asset_access;
 extern manager* tile_access;
 extern system_wrapper* system_access;
 
-button_manager::button_manager(){
+#define BUTTON_IMAGE_PATH "Images/Buttons/"
 
-    button_image_p = system_access->get_home();
-    button_image_p += "/Andiamo/Assets/Images/Buttons/";
+button_manager::button_manager(){
+    button_image_p = BUTTON_IMAGE_PATH;
     tray_image_name = "button_tray.png";
     form_tray_image_name = "form_tray.png";
 
@@ -42,8 +42,8 @@ button_manager::~button_manager(){
 }
 
 void button_manager::init_tray(){
-
-    button_tray_texture = asset_access->get_texture(button_image_p+
+    cout << button_image_p + tray_image_name << endl;
+    button_tray_texture = asset_access->get_texture(button_image_p +
                                                     tray_image_name);
 
     if(button_tray_texture == NULL){
@@ -138,16 +138,16 @@ void button_manager::location_update(){
 void button_manager::init_buttons(){
 
     //initialize the placeholder buttons
-    fop_button.init("fop_button.png",button_image_p);
-    output_fname.init("output_name_button.png",button_image_p);
-    tc_dir.init("tc_file_button.png",button_image_p);
+    fop_button.init(button_image_p + "fop_button.png");
+    output_fname.init(button_image_p + "output_name_button.png");
+    tc_dir.init(button_image_p + "tc_file_button.png");
     //graphing_options.init("graphing_options.png",button_image_p);
-    lets_go.init("lets_go.png",button_image_p);
-    save_context.init("save_context.png",button_image_p);
-    save_context.init_confirmation("save_context_confirm.png",button_image_p);
+    lets_go.init(button_image_p + "lets_go.png");
+    save_context.init(button_image_p + "save_context.png");
+    save_context.init_confirmation(button_image_p + "save_context_confirm.png");
 
     //exit dialogue is a special snowflake, handles its own location
-    exit_dialogue.init("exit_button.png",button_image_p);
+    exit_dialogue.init(button_image_p + "exit_button.png");
 
     int end_of_last_button = 0;//keep track of where the last button ended
 
@@ -885,17 +885,3 @@ void button_manager::clean_up_warnings(SDL_Event& big_event,
     //spin until they hit a key, or click somewhere on the screen
     while(SDL_PollEvent(&big_event) == 0 || big_event.type == SDL_MOUSEBUTTONUP);
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-

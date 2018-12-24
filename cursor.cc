@@ -13,14 +13,13 @@ extern asset_manager* asset_access;
 cursor::cursor(){
 	my_texture    = NULL;
 	box_location  = NULL;
-	cursor_dest   = {0,0,0,0};	
-
+	cursor_dest   = {0,0,0,0};
 }
 
- 
+
 /*cursor::cursor(const cursor& other){
 	cursor_dest = other.cursor_dest;
-	
+
 }*/
 
 cursor::~cursor(){
@@ -28,8 +27,7 @@ cursor::~cursor(){
 }
 //#########################################################################
 void cursor::init(SDL_Rect* box_location_in){
-	string cursor_p(system_access->get_home());
-	cursor_p += "/Andiamo/Assets/Images/cursor.png";
+	string cursor_p = "Images/cursor.png";
 
 	my_texture = asset_access->get_texture(cursor_p);
 	if(my_texture == NULL){
@@ -81,7 +79,7 @@ int cursor::calc_location(TTF_Font* font,const string& text,
 
 	//calculate the actual spot where the cursor will be drawn
 	cursor_dest.x += start_to_edit % box_location->w;
-	
+
 	//let text_box::draw_me determine which section of the text surface to use
 	return start_to_edit;
 

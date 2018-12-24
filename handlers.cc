@@ -6,10 +6,7 @@
 #define x_scroll_rate = 15
 #define y_scroll_rate = 30
 
-
 using namespace std;
-
-
 
 int filter_mouse_move(void* userdata, SDL_Event* big_event){
 	if(big_event->type == SDL_MOUSEMOTION) return 0;
@@ -27,7 +24,7 @@ void scrolling_mini_loop(SDL_Event& big_event,char which_bar){
 	bool exit = false;
 
 	//change the filter to disallow MOUSEBUTTONDOWN events and allow
-	//MOUSEMOTION events that we need to know in order to scroll 
+	//MOUSEMOTION events that we need to know in order to scroll
 	SDL_SetEventFilter(filter_mini,NULL);
 
     //this this necessary
@@ -58,7 +55,7 @@ void scrolling_mini_loop(SDL_Event& big_event,char which_bar){
 			case SDL_MOUSEMOTION:
 
                 //do stuff for the vertical scroll bar
-				if(which_bar == 'v'){ 
+				if(which_bar == 'v'){
 
 				    //only care about y scrolling
 				    if(big_event.motion.y > sdl_access->get_v_bar().get_bottom()){
@@ -147,7 +144,7 @@ void handle_mouseb_down( SDL_Event& big_event){
 				//should never hit this branch
 				} else {
 
-                    string err = 
+                    string err =
                         "V scroll bar already in scroll mode upon click!";
 					error_logger.push_error(err);
 				}
@@ -252,17 +249,20 @@ void handle_key_down(const SDL_Event& big_event){
 
 		case SDLK_LEFT:
 			sdl_access->update_scroll(60,0); //scroll down
-			break; 
+			break;
 
 		case SDLK_SPACE:
 			sdl_access->reset_scroll();
 			break;
 
-        case SDLK_ESCAPE:
-            SDL_Event push_me;
-            push_me.type = SDL_QUIT;
-            SDL_PushEvent(&push_me);
+		case SDLK_ESCAPE:
+			SDL_Event push_me;
+			push_me.type = SDL_QUIT;
+			SDL_PushEvent(&push_me);
 			break;
+		// case SDLK_ESCAPE:
+		// 	exit(-1);
+		// 	break;
 		default:
 			error_logger.push_msg("Unknown key pressed down.");
 			break;

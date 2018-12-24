@@ -929,7 +929,7 @@ void input_maker::give_string_defaults(){
     for(STR_MAP::iterator str_it = string_params.begin();
         str_it != string_params.end();
         str_it++){
-        cout << "string param" << str_it->first << " " << str_it->second.value << endl;
+
         field* this_params_field = tile_access->get_param(str_it->first);
 
         if(this_params_field != NULL){
