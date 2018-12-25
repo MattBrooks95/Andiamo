@@ -132,10 +132,13 @@ void asset_manager::pull_helper(const string& subroot_path){
 
 SDL_Texture* asset_manager::get_texture(const string& target){
 
+	static int x = 0;
+
 	SDL_Texture* temp_texture = NULL;
-
+	cout << "get_texture calls:" << x << endl;
+	x++;
 	string target_path = asset_home_path + target;
-
+	cout << "asset path from get_texture():" << asset_home_path + target << endl;
 	//try to get texture from map
 	try{
 
@@ -162,8 +165,8 @@ SDL_Texture* asset_manager::load_image(const string& load_me){
 												 temp_surface);
 
 	if (temp_texture == NULL){
-		cout << "path:" << target_path << " is scuffed, trying old path method" << endl;
-		cout << "old path:" << load_me << endl;
+		// cout << "path:" << target_path << " is scuffed, trying old path method" << endl;
+		// cout << "old path:" << load_me << endl;
 		temp_surface = IMG_Load(load_me.c_str());
 		temp_texture = SDL_CreateTextureFromSurface(sdl_access->renderer,
 												 temp_surface);

@@ -54,7 +54,7 @@ field::field(const field& other){
         descriptions.push_back(other.descriptions[c]);
     }
 
-    my_text_box.text = other.my_text_box.text; 
+    my_text_box.text = other.my_text_box.text;
 
     editing_location = other.editing_location;
 
@@ -73,7 +73,7 @@ field::field(const field& other){
     xloc = other.xloc;
     yloc = other.yloc;
 
-    image_p = other.image_p;
+    image_path = other.image_path;
 
     image_name = other.image_name;
 
@@ -106,22 +106,22 @@ SDL_Rect field::get_rect() const{
     return return_me;
 }
 
-void field::graphics_init(string image_p_in){
-    image_p = image_p_in;
+void field::graphics_init(string image_path_in){
 
-    //get asset directory from sdl_help, and change image name
-    //to the full path
-    image_name = image_p_in + image_name;
+    image_path = image_path_in;
 
+    string assets_image_path = image_path + image_name;
+
+    cout << "Image path used to get texture:" << assets_image_path << endl;
     //load in tile background
-    my_tex = asset_access->get_texture(image_name);
+    my_tex = asset_access->get_texture(assets_image_path);
     if(my_tex == NULL){
         string error = "Error in field.cc's graphics init() function: ";
         error       +=  SDL_GetError();
         error_logger.push_error(error);
     }
 
-    string lock_target = image_p+"lock.png";
+    string lock_target = image_path + "lock.png";
     lock_texture = asset_access->get_texture(lock_target);
     if(lock_texture == NULL) error_logger.push_error(string(SDL_GetError()));
 
@@ -131,7 +131,7 @@ void field::graphics_init(string image_p_in){
 
 void field::text_init(){
 
-    //thanks to 
+    //thanks to
     //http://headerphile.blogspot.com/2014/07/sdl2-part-10-text-rendering.html
     //for the tutorial I used. Also thanks to
     //http://gigi.nullneuron.net/gigilabs/displaying-text-in-sdl2-with-sdl_ttf/
@@ -162,7 +162,7 @@ void field::text_init(){
     if(my_text_tex == NULL){
         string error = "Error in field.cc's graphics init() function: ";
         error += SDL_GetError();
-        error_logger.push_error(error); 
+        error_logger.push_error(error);
     }
     //##########################################################################
 
@@ -192,7 +192,7 @@ void field::text_init(){
 
         //now have help box's height
         total_h = descriptions.size() * (word_h + vert_offset);
-        
+
         //set up the surface's pixel masks. I don't fully understand this
         //but it's from the sdl documentation
         //https://wiki.libsdl.org/SDL_CreateRGBSurface
@@ -209,7 +209,7 @@ void field::text_init(){
             alpha = 0xff000000;
         #endif
 
-        my_help_surf = 
+        my_help_surf =
             SDL_CreateRGBSurface(0,max_width,total_h,32,red,green,blue,alpha);
 
         if(my_help_surf == NULL){
@@ -242,7 +242,7 @@ void field::text_init(){
             if(SDL_BlitSurface(temp_line,NULL,my_help_surf,&word_dest) != 0){
                 string error = SDL_GetError();
                 error_logger.push_error("Error in help blit."+error);
-            } 
+            }
 
             //free memory, this pointer will be used again
             SDL_FreeSurface(temp_line);
@@ -340,7 +340,7 @@ void field::print(){
                                 to_string(size_t(sdl_access->renderer)));
     } else {
         string msg = "Couldn't print texture or renderer pointers,";
-        msg += " sdl_access is NULL."; 
+        msg += " sdl_access is NULL.";
         error_logger.push_msg(msg);
     }
     error_logger.push_msg("font hook: "+to_string(size_t(sdl_access->font)) );
@@ -360,24 +360,19 @@ void field::clicked(SDL_Event& event, const int& click_x,const int& click_y){
     help_toggle();
 }
 
-void field::change_tile_background(string image_name){
-    string full_path = image_p + image_name;
-
+void field::change_tile_background(string image_name_in){
     my_tex = NULL;
+    string assets_full_path = image_path + image_name_in;
 
-    my_tex = asset_access->get_texture(full_path);
+    my_tex = asset_access->get_texture(assets_full_path);
     if(my_tex == NULL) error_logger.push_error(SDL_GetError());
 }
 
 void field::go_red(){
     my_tex = NULL;
 
-    my_tex = asset_access->get_texture(image_p+"bad_tile.png");
-    if(my_tex == NULL){
-        string error = SDL_GetError();
-        error_logger.push_error("Error changing tile:"+display_name\
-                                +" to red."+error);
-    }
+    change_tile_background("bad_tile.png");
+
     is_red = true;
 }
 
@@ -385,9 +380,7 @@ void field::go_back(){
 
     my_tex = NULL;
 
-    my_tex = asset_access->get_texture(image_name);
-    if(my_tex == NULL){
-        string error = SDL_GetError();
-        error_logger.push_error("Error in field::go_back() function: "+error);
-    }
+    change_tile_background(image_name);
+
+    is_red = false;
 }

@@ -9,7 +9,7 @@
 #include<regex>
 
 //for sorting the tiles based on width
-#include<algorithm> 
+#include<algorithm>
 
 
 #include "field.h"
@@ -150,7 +150,7 @@ class manager{
 
 	//! This member updates the window's dimension values win_w and win_h
 	/*! This should usually only be called from a member of the sdl_help class,
-	 *probably whenever the user resizes the screen, and at startup of Andiamo 
+	 *probably whenever the user resizes the screen, and at startup of Andiamo
 	 *\param width_in is the desired new width
 	 *\param height_in is the desired new height */
 	void update_win(int width_in, int height_in);
@@ -175,7 +175,7 @@ class manager{
 
   private:
 	//! path to the image directory for the tiles
-	string image_p;
+	string image_path;
 
 	//! a path string to the tile input file folder
 	string tile_input_p;

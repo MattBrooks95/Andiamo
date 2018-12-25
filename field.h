@@ -79,7 +79,7 @@ class field{
     /*! this works using its known corner values offset by the current scrolling
      *values */
     void draw_me();
-    
+
     //! this member prints a message if the user clicks on this tile
     /*! this function prints to the error logger
      *\param click_x is the xlocation relative to the top left corner of the screen, where the user left clicked
@@ -154,7 +154,7 @@ class field{
     SDL_Rect text_dims;
 
     bool is_red;//!< is this tile in error mode or not
-    
+
     /*! allows locking of the tile, for situations in which they
      * are redundant or not necessary */
     bool is_locked;
@@ -171,8 +171,12 @@ class field{
 
   private:
 
-    //! string that corresponds to the path to the image resource directory.
-    string image_p;
+    //! string that corresponds to the path to the image directory in assets
+    string image_path;
+
+    //!< the name of the image
+    string image_name;
+
     /*! this boolean variable controls whether the field will draw
      *it's normal box or help box */
     bool help_mode;
@@ -193,8 +197,6 @@ class field{
 
 
     SDL_Texture* my_tex;//!< saves the texture
-
-    string image_name; //!< the name of the image
 
     /*! tile_size struct containing the dimensions for this
      *particular card/tile/block */
