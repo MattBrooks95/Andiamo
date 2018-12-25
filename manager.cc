@@ -437,7 +437,6 @@ void manager::iench_locking(){
 
 }*/
 
-
 void manager::ilv1_locking(){
 	try{
 		field* ilv1_field = fields.at("line_5").at("ILV1");
@@ -487,11 +486,17 @@ void manager::ilv1_locking(){
 
 void manager::icntrl4_locking(){
   try{
-	regex icntrl4_good(RE_ICNTRL4);
+	regex icntrl4_pattern(RE_ICNTRL4);
 
-	if( !regex_match(fields.at("line_6").at("ICNTRL4")->my_text_box.text,icntrl4_good) ){
+	field* icntrl4_field    = fields.at("line_6").at("ICNTRL4");
+	bool icntrl4_is_locking = icntrl4_field->am_I_locking;
+
+	bool icntrl4_good = regex_match(icntrl4_field->my_text_box.text,icntrl4_pattern);
+
+	if(!icntrl4_good && !icntrl4_is_locking){
 		//make it purple to indicate it is locking other variables
-		fields.at("line_6").at("ICNTRL4")->change_tile_background("purple_andy_tile.png");
+		icntrl4_field->change_tile_background("purple_andy_tile.png");
+		icntrl4_field->am_I_locking = true;
 
 		fields.at("line_8").at("ICH4")->is_locked  = true;
 		fields.at("line_8").at("NCH4")->is_locked  = true;
@@ -499,18 +504,16 @@ void manager::icntrl4_locking(){
 			button_access->get_icntrl_4().toggle_lock();
 		}
 
-
-	} else { //do the unlocking
+	} else if(icntrl4_good && icntrl4_is_locking){ //do the unlocking
 
 		//make it gray again, as it is no longer locking
-		fields.at("line_6").at("ICNTRL4")->change_tile_background("andy_tile.png");
+		icntrl4_field->change_tile_background("andy_tile.png");
+		icntrl4_field->am_I_locking = false;
 
 		fields.at("line_8").at("ICH4")->is_locked  = false;
 		fields.at("line_8").at("NCH4")->is_locked  = false;
 
-
 		ich4_nch4_locking();
-
 	}
 
   } catch( out_of_range& map_error){
@@ -518,9 +521,7 @@ void manager::icntrl4_locking(){
 	err       += " tiles associated with ICNTRL4, were not found";
 	err       += ", please check that the tile and HF config files match.";
 	error_logger.push_error(err);
-
   }
-
 }
 
 //this function is checked at the end of icntrl4 check lock, because the
@@ -582,36 +583,41 @@ void manager::ich4_nch4_locking(){
 	msg = " range for ICH4 is 0 <= ICH4 <= 6.";
 	error_logger.push_msg(msg);
   }
-
 }
 
 void manager::icntrl8_locking(){
   try{
 	regex icntrl8_unlock(RE_ICNTRL8_UNLOCK);
 
-	string icntrl_8_str = fields.at("line_6").at("ICNTRL8")->my_text_box.text;
-	int icntrl_8_val = stoi(fields.at("line_6").at("ICNTRL8")->my_text_box.text);
+	field* icntrl8_field = fields.at("line_6").at("ICNTRL8");
+
+	string icntrl8_str = icntrl8_field->my_text_box.text;
+	int icntrl8_val    = stoi(icntrl8_field->my_text_box.text);
+
+	bool icntrl8_in_range = (icntrl8_val > 0 && icntrl8_val < 332);
+
+	bool icntrl8_locking = icntrl8_field->am_I_locking;
+
 	//if it is currently in locking mode, and it shouldn't be, then change its mode
-	if( (regex_match(icntrl_8_str,icntrl8_unlock) && (icntrl_8_val > 0 && icntrl_8_val < 332) ) &&
-		fields.at("line_6").at("ICNTRL8")->am_I_locking ){
+	if( (regex_match(icntrl8_str,icntrl8_unlock) && icntrl8_in_range) &&
+		icntrl8_field->am_I_locking ){
 
 		//update background color
-		fields.at("line_6").at("ICNTRL8")->change_tile_background("andy_tile.png");
+		icntrl8_field->change_tile_background("andy_tile.png");
 
 		//make it stop locking
-		fields.at("line_6").at("ICNTRL8")->am_I_locking = false;
+		icntrl8_field->am_I_locking = false;
 
 	//if it failed the above check, and it's currently unlocked, then re-lock it
-	} else if( !(icntrl_8_val > 0 && icntrl_8_val < 332) ){
-		fields.at("line_6").at("ICNTRL8")->change_tile_background("purple_andy_tile.png");
-		fields.at("line_6").at("ICNTRL8")->am_I_locking = true;
-
+	} else if( !icntrl8_in_range && !icntrl8_locking){
+		icntrl8_field->change_tile_background("purple_andy_tile.png");
+		icntrl8_field->am_I_locking = true;
 	}
 
 	//toggle if the conditions are met for unlocking, and it is currently
 	//locked, or if the conditions are not met and it is unlocked
-	if( ( !(fields.at("line_6").at("ICNTRL8")->am_I_locking) && button_access->get_icntrl_8().get_is_locked() ) ||
-		(fields.at("line_6").at("ICNTRL8")->am_I_locking && !button_access->get_icntrl_8().get_is_locked()) ){
+	if( ( !(icntrl8_field->am_I_locking) && button_access->get_icntrl_8().get_is_locked() ) ||
+		(icntrl8_field->am_I_locking && !button_access->get_icntrl_8().get_is_locked()) ){
 		button_access->get_icntrl_8().toggle_lock();
 	}
 
@@ -626,10 +632,7 @@ void manager::icntrl8_locking(){
 	error_logger.push_msg(" 0 <= ICNTRL8 < 332");
 	fields.at("line_6").at("ICNTRL8")->change_tile_background("purple_andy_tile.png");
 	fields.at("line_6").at("ICNTRL8")->am_I_locking = true;
-
   }
-
-
 }
 
 void manager::icntrl10_locking(){
