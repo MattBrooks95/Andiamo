@@ -427,26 +427,12 @@ void manager::iench_locking(){
 		//make IENCH's tile appear purple to indicate it is the reason
 		//some parameters are locked
 		fields.at("line_2").at("IENCH").change_tile_background("purple_andy_tile.png");
-
-		fields.at("line_4A").at("APAR").is_locked  = true;
-		fields.at("line_4A").at("ZPAR").is_locked  = true;
-		fields.at("line_4A").at("QIN").is_locked   = true;
-		fields.at("line_4A").at("FJPAR").is_locked = true;
-		fields.at("line_4A").at("FPRPAR").is_locked= true;
-		fields.at("line_4A").at("NLIN").is_locked  = true;
-		fields.at("line_4B").at("TIN").is_locked   = true;
+		lock_line(fields.at("line_4A"));
 
 	} else {//do the unlocking
 		//switch the IENCH tile back to the default gray
 		fields.at("line_2").at("IENCH").change_tile_background("andy_tile.png");
-
-		fields.at("line_4A").at("APAR").is_locked  = false;
-		fields.at("line_4A").at("ZPAR").is_locked  = false;
-		fields.at("line_4A").at("QIN").is_locked   = false;
-		fields.at("line_4A").at("FJPAR").is_locked = false;
-		fields.at("line_4A").at("FPRPAR").is_locked= false;
-		fields.at("line_4A").at("NLIN").is_locked  = false;
-		fields.at("line_4B").at("TIN").is_locked   = false;
+		unlock_line(fields.at("line_4A"));
 	}
   } catch (out_of_range& map_error){
 	error_logger.push_error("From: manager::iench_locking| Critical tiles associated with IENCH were not found,",
@@ -470,14 +456,7 @@ void manager::ilv1_locking(){
 			ilv1_field->am_I_locking = true;
 
 			// need to loop over the map instead
-			fields.at("line_5A").at("ACON")->is_locked = true;
-			fields.at("line_5A").at("GAM")->is_locked  = true;
-			fields.at("line_5A").at("FCON")->is_locked = true;
-			fields.at("line_5A").at("C0")->is_locked   = true;
-			fields.at("line_5A").at("C10")->is_locked  = true;
-			fields.at("line_5A").at("C11")->is_locked  = true;
-			fields.at("line_5A").at("C12")->is_locked  = true;
-			fields.at("line_5A").at("C3")->is_locked   = true;
+			lock_line(fields.at("line_5A"));
 
 		//do the unlocking
 		} else if(regex_match(ilv1_text,ilv1_good) && ilv1_locking){
@@ -485,14 +464,7 @@ void manager::ilv1_locking(){
 			ilv1_field->change_tile_background("andy_tile.png");
 			ilv1_field->am_I_locking = false;
 
-			fields.at("line_5A").at("ACON")->is_locked = false;
-			fields.at("line_5A").at("GAM")->is_locked  = false;
-			fields.at("line_5A").at("FCON")->is_locked = false;
-			fields.at("line_5A").at("C0")->is_locked   = false;
-			fields.at("line_5A").at("C10")->is_locked  = false;
-			fields.at("line_5A").at("C11")->is_locked  = false;
-			fields.at("line_5A").at("C12")->is_locked  = false;
-			fields.at("line_5A").at("C3")->is_locked   = false;
+			unlock_line(fields.at("line_5A"));
 		}
 
 	} catch (out_of_range& map_error){
@@ -517,8 +489,8 @@ void manager::icntrl4_locking(){
 		icntrl4_field->change_tile_background("purple_andy_tile.png");
 		icntrl4_field->am_I_locking = true;
 
-		fields.at("line_8").at("ICH4")->is_locked  = true;
-		fields.at("line_8").at("NCH4")->is_locked  = true;
+		lock_line(fields.at("line_8"));
+
 		if( !(button_access->get_icntrl_4().get_is_locked()) ){
 			button_access->get_icntrl_4().toggle_lock();
 		}
@@ -529,8 +501,7 @@ void manager::icntrl4_locking(){
 		icntrl4_field->change_tile_background("andy_tile.png");
 		icntrl4_field->am_I_locking = false;
 
-		fields.at("line_8").at("ICH4")->is_locked  = false;
-		fields.at("line_8").at("NCH4")->is_locked  = false;
+		unlock_line(fields.at("line_8"));
 
 		ich4_nch4_locking();
 	}
