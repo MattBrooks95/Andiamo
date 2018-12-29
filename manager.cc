@@ -532,36 +532,39 @@ void manager::ich4_nch4_locking(){
 	regex ich4_unlock(RE_ICH4_UNLOCK);
 	//if both of it's params are correctly set up
 
-	string test_ich4 = fields.at("line_8").at("ICH4")->my_text_box.text;
-	if( fields.at("line_8").at("ICH4")->am_I_locking && regex_match(test_ich4,ich4_unlock) ){
-		fields.at("line_8").at("ICH4")->change_tile_background("andy_tile.png");
-		fields.at("line_8").at("ICH4")->am_I_locking = false;
+	field* ich4_field = fields.at("line_8").at("ICH4");
 
-	} else if( !regex_match(test_ich4,ich4_unlock) ){
-		fields.at("line_8").at("ICH4")->change_tile_background("purple_andy_tile.png");
-		fields.at("line_8").at("ICH4")->am_I_locking = true;
+	string test_ich4 = ich4_field->my_text_box.text;
+	if(ich4_field->am_I_locking && regex_match(test_ich4,ich4_unlock)){
+		ich4_field->change_tile_background("andy_tile.png");
+		ich4_field->am_I_locking = false;
+
+	} else if(!regex_match(test_ich4,ich4_unlock)){
+		ich4_field->change_tile_background("purple_andy_tile.png");
+		ich4_field->am_I_locking = true;
 	}
 
+	field* nch4_field = fields.at("line_8").at("NCH4");
 
-	int test_nch4 = stoi(fields.at("line_8").at("NCH4")->my_text_box.text);
+	int test_nch4 = stoi(nch4_field->my_text_box.text);
 	if( fields.at("line_8").at("NCH4")->am_I_locking && (test_nch4 > 0 && test_nch4 < 101 )){
 
-		fields.at("line_8").at("NCH4")->change_tile_background("andy_tile.png");
-		fields.at("line_8").at("NCH4")->am_I_locking = false;
+		nch4_field->change_tile_background("andy_tile.png");
+		nch4_field->am_I_locking = false;
 
 	} else if( !(test_nch4 > 0 && test_nch4 < 101) ){
 
-		fields.at("line_8").at("NCH4")->change_tile_background("purple_andy_tile.png");
-		fields.at("line_8").at("NCH4")->am_I_locking = true;
+		nch4_field->change_tile_background("purple_andy_tile.png");
+		nch4_field->am_I_locking = true;
 	}
 
 	if( button_access->get_icntrl_4().get_is_locked() &&
-		(!(fields.at("line_8").at("ICH4")->am_I_locking) && !(fields.at("line_8").at("NCH4")->am_I_locking)) ){
+		(!(ich4_field->am_I_locking) && !(nch4_field->am_I_locking) ){
 
 		//unlock the button, both are satisfied
 		button_access->get_icntrl_4().toggle_lock();
 
-	} else if( (fields.at("line_8").at("ICH4")->am_I_locking || fields.at("line_8").at("NCH4")->am_I_locking)
+	} else if( ich4_field->am_I_locking || nch4_field->am_I_locking)
 		   && !(button_access->get_icntrl_4().get_is_locked()) ){
 		//lock the button
 		button_access->get_icntrl_4().toggle_lock();
