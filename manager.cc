@@ -362,6 +362,25 @@ void manager::update_win(int width_in,int height_in){
 	win_h = height_in;
 }
 
+void manager::update_locks_in_line(map<string,field*>& target_line, bool lock_value){
+	for(map<string,field*>::iterator line_it = target_line.begin(); line_it != target_line.end(); line_it++){
+		field* this_field = line_it->second;
+		if(this_field == NULL){
+			continue;
+		} else {
+			this_field->is_locked = lock_value;
+		}
+	}
+}
+
+void manager::lock_line(map<string,field*>& target_line){
+	update_locks_in_line(target_line,true);
+}
+
+void manager::unlock_line(map<string,field*>& target_line){
+	update_locks_in_line(target_line,false);
+}
+
 
 void manager::print_all(){
 
@@ -710,22 +729,20 @@ void manager::icntrl10_locking(){
 void manager::ilv3_ilv5_locking(){
 
   try{
-
 	regex ilv3_ilv5_unlock(RE_ILV3_ILV5_UNLOCK);
 
+	field* ilv3_field = fields.at("line_5").at("ILV3");
+	field* ilv5_field = fields.at("line_5").at("ILV5");
+
 	//do checks for ILV3
-	ilv3_ilv5_locking_helper("ILV3",ilv3_ilv5_unlock);
-	ilv3_ilv5_locking_helper("ILV5",ilv3_ilv5_unlock);
-
-
+	ilv3_ilv5_locking_helper(ilv3_field,ilv3_ilv5_unlock);
+	ilv3_ilv5_locking_helper(ilv5_field,ilv3_ilv5_unlock);
 
 	//store the truth values that we care about in local variables,
 	//so the logic below is slightly more readable
-	bool i3_locking = fields.at("line_5").at("ILV3")->am_I_locking;
-	bool i5_locking = fields.at("line_5").at("ILV5")->am_I_locking;
+	bool i3_locking = ilv3_field->am_I_locking;
+	bool i5_locking = ilv5_field->am_I_locking;
 	bool i3_i5_locked = button_access->get_ilv3_ilv5().get_is_locked();
-
-
 
 	/*if the form button is locked, and
 	 *ILV3 XOR ILV5 (one is true, one is false), then unlock it (by toggling)
@@ -736,50 +753,51 @@ void manager::ilv3_ilv5_locking(){
 		button_access->get_ilv3_ilv5().toggle_lock();
 	}
 
-
-
   } catch (out_of_range& map_error){
-	error_logger.push_error("From: manager::ilv3_ilv5_locking()| ILV3 or ILV5was not found in the map of parameter"
-				 " tiles, please check that the tile and HF config files match");
+	error_logger.push_error("From: manager::ilv3_ilv5_locking()| ILV3 or ILV5was not found in the tiles map,",
+				 " ensure that the tile and HF config files match");
 
   } catch (invalid_argument& stoi_error){
 	error_logger.push_msg("ILV3 or ILV5 has an illegal string argument, it must be an integer in the range");
 	error_logger.push_msg(" 0 <= (ILV3 or ILV5)");
-	fields.at("line_5").at("ILV3")->change_tile_background("purple_andy_tile.png");
-	fields.at("line_5").at("ILV3")->am_I_locking = true;
-	fields.at("line_5").at("ILV5")->change_tile_background("purple_andy_tile.png");
-	fields.at("line_5").at("ILV5")->am_I_locking = true;
-
-
+	field* ilv3_field = fields.at("line_5").at("ILV3");
+	field* ilv5_field = fields.at("line_5").at("ILV5");
+	ilv3_field->change_tile_background("purple_andy_tile.png");
+	ilv3_field->am_I_locking = true;
+	ilv5_field->change_tile_background("purple_andy_tile.png");
+	ilv5_field->am_I_locking = true;
   }
 
 }
 
-void manager::ilv3_ilv5_locking_helper(const string& target_param,const regex& unlock_condition){
+void manager::ilv3_ilv5_locking_helper(field* this_field,const regex& unlock_condition){
+
+	if (this_field == NULL){
+		error_logger.push_error("ILV3/ILV5 helper given NULL pointer");
+	}
 
 	//nab raw string from field parameter
-	string target_str = fields.at("line_5").at(target_param)->my_text_box.text;
+	string field_text = this_field->my_text_box.text;
 
 	//cast the string to an int
-	int target_val = stoi(target_str);
+	int field_val = stoi(field_text);
 
 	//if the target tile is currently locking its button, and the conditions
 	//for unlocking it are true, then have it start unlocking
-	if( fields.at("line_5").at(target_param)->am_I_locking &&
-		(regex_match(target_str,unlock_condition) && target_val > 0) ){
+	if( this_field->am_I_locking &&
+		(regex_match(field_text,unlock_condition) && field_val > 0) ){
 
-		fields.at("line_5").at(target_param)->change_tile_background("andy_tile.png");
-		fields.at("line_5").at(target_param)->am_I_locking = false;
+		this_field->change_tile_background("andy_tile.png");
+		this_field->am_I_locking = false;
 
 	//if target_param is not currently locking it's form button,
 	//and the conditions for it being unlocked are not met,
 	//then make it start locking again
-	} else if( !fields.at("line_5").at(target_param)->am_I_locking &&
-		   !(regex_match(target_str,unlock_condition) && target_val > 0) ){
-		fields.at("line_5").at(target_param)->change_tile_background("purple_andy_tile.png");
-		fields.at("line_5").at(target_param)->am_I_locking = true;
+	} else if( !this_field->am_I_locking &&
+		   !(regex_match(field_text,unlock_condition) && field_val > 0) ){
+		this_field->change_tile_background("purple_andy_tile.png");
+		this_field->am_I_locking = true;
 	}
-
 }
 
 void manager::icntrl6_locking(){
@@ -791,16 +809,13 @@ void manager::icntrl6_locking(){
 		fields.at("line_6").at("ICNTRL6")->change_tile_background("andy_tile.png");
 		fields.at("line_6").at("ICNTRL6")->am_I_locking = false;
 
-		fields.at("line_10").at("ITER")->is_locked = false;
-		fields.at("line_10").at("INM1")->is_locked = false;
-		fields.at("line_10").at("INM2")->is_locked = false;
+		unlock_line(fields.at("line_10"));
 	} else {
 		//elsewise, lock them
 		fields.at("line_6").at("ICNTRL6")->change_tile_background("purple_andy_tile.png");
 		fields.at("line_6").at("ICNTRL6")->am_I_locking = true;
-		fields.at("line_10").at("ITER")->is_locked = true;
-		fields.at("line_10").at("INM1")->is_locked = true;
-		fields.at("line_10").at("INM2")->is_locked = true;
+
+		lock_line(fields.at("line_10"));
 	}
 
 	//######### block originally below the try/catch#################
@@ -811,7 +826,6 @@ void manager::icntrl6_locking(){
 		inm1_locking();
 		inm2_locking();
 		iter_locking();
-
 
 		//the sub states are saved to local variables here so it's not
 		//as long of a statement

@@ -86,6 +86,15 @@ class manager{
 	 *sdl_help's draw_tiles() function*/
 	void init(const string& graphical_config_file);
 
+	//! does the work of locking all the fields in the passed map
+	void update_locks_in_line(map<string,field*>& target_line, bool lock_value);
+
+	//! convenience method that wraps update_locks_in_line, for locking
+	void lock_line(map<string,field*>& target_line);
+
+	//! convenience method that wraps update_locks_in_line, for unlocking
+	void unlock_line(map<string,field*>& target_line);
+
 	//! runs through the 2d map, and prints all of the lines and their fields
 	/* \param outs is the output stream that will be printed to */
 	void print_all();
@@ -127,10 +136,8 @@ class manager{
 
 	/*! \brief helper  for ilv3_ilv5_locking(), determines lock/unlock
      *conditions of passed field */
-	/*! the field passed MUST be "ILV3" or "ILV5"
-	 *\param target_param is the name of the field to check the
-     *locking status of, MUST be "ILV3" or "ILV5" */
-	void ilv3_ilv5_locking_helper(const string& target_param,
+	/*! \param target_param pointer to a field (ILV3 or ILV5)*/
+	void ilv3_ilv5_locking_helper(field* this_field,
                                   const regex& unlock_condition);
 
 	//##### ICNTRL6 locking + helpers ######################################
