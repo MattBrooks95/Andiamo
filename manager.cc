@@ -774,17 +774,20 @@ void manager::ilv3_ilv5_locking_helper(field* this_field,const regex& unlock_con
 void manager::icntrl6_locking(){
   try{
 	regex icntrl6_unlock(RE_ICNTRL6_UNLOCK);
+
+	field* icntrl6_field = fields.at("line_6").at("ICNTRL6");
+
 	//if icntrl6 is 1 or 2, unlock
 	if( regex_match(fields.at("line_6").at("ICNTRL6")->my_text_box.text,icntrl6_unlock) ){
 		//unlock params now that icntrl6 > 0
-		fields.at("line_6").at("ICNTRL6")->change_tile_background("andy_tile.png");
-		fields.at("line_6").at("ICNTRL6")->am_I_locking = false;
+		icntrl6_field->change_tile_background("andy_tile.png");
+		icntrl6_field->am_I_locking = false;
 
 		unlock_line(fields.at("line_10"));
 	} else {
 		//elsewise, lock them
-		fields.at("line_6").at("ICNTRL6")->change_tile_background("purple_andy_tile.png");
-		fields.at("line_6").at("ICNTRL6")->am_I_locking = true;
+		icntrl6_field->change_tile_background("purple_andy_tile.png");
+		icntrl6_field->am_I_locking = true;
 
 		lock_line(fields.at("line_10"));
 	}
@@ -823,22 +826,24 @@ void manager::icntrl6_locking(){
 				" were not found, please check that tile and HF config files match.");
   }
 
-
 }
 
 void manager::inm1_locking(){
   try{
-	int inm1_val = stoi(fields.at("line_10").at("INM1")->my_text_box.text);
-	string inm1_str = fields.at("line_10").at("INM1")->my_text_box.text;
+
+	field* inm1_field = fields.at("line_10").at("INM1");
+
+	int inm1_val    = stoi(inm1_field->my_text_box.text);
+	string inm1_str = inm1_field->my_text_box.text;
 	regex inm1_good(RE_INM1_UNLOCK);
 
-	if( fields.at("line_10").at("INM1")->am_I_locking && (regex_match(inm1_str,inm1_good) && inm1_val > 0) ){
-		fields.at("line_10").at("INM1")->change_tile_background("andy_tile.png");
-		fields.at("line_10").at("INM1")->am_I_locking = false;
+	if( inm1_field->am_I_locking && (regex_match(inm1_str,inm1_good) && inm1_val > 0) ){
+		inm1_field->change_tile_background("andy_tile.png");
+		inm1_field->am_I_locking = false;
 
-	} else if( !(fields.at("line_10").at("INM1")->am_I_locking) && (!(inm1_val > 0) || !(regex_match(inm1_str,inm1_good))) ){
-		fields.at("line_10").at("INM1")->change_tile_background("purple_andy_tile.png");
-		fields.at("line_10").at("INM1")->am_I_locking = true;;
+	} else if( !(inm1_field->am_I_locking) && (!(inm1_val > 0) || !(regex_match(inm1_str,inm1_good))) ){
+		inm1_field->change_tile_background("purple_andy_tile.png");
+		inm1_field->am_I_locking = true;;
 	}
 
   } catch (out_of_range& map_error){
@@ -855,15 +860,17 @@ void manager::inm1_locking(){
 
 void manager::inm2_locking(){
   try{
-	int inm2_val = stoi(fields.at("line_10").at("INM2")->my_text_box.text);
 
-	if( fields.at("line_10").at("INM2")->am_I_locking && inm2_val > 0 ){
-		fields.at("line_10").at("INM2")->change_tile_background("andy_tile.png");
-		fields.at("line_10").at("INM2")->am_I_locking = false;
+  	field* inm2_field = fields.at("line_10").at("INM2"); 
+	int inm2_val      = stoi(inm2_field->my_text_box.text);
 
-	} else if( !(fields.at("line_10").at("INM2")->am_I_locking) && !(inm2_val > 0) ){
-		fields.at("line_10").at("INM2")->change_tile_background("purple_andy_tile.png");
-		fields.at("line_10").at("INM2")->am_I_locking = true;;
+	if( inm2_field->am_I_locking && inm2_val > 0 ){
+		inm2_field->change_tile_background("andy_tile.png");
+		inm2_field->am_I_locking = false;
+
+	} else if( !(inm2_field->am_I_locking) && !(inm2_val > 0) ){
+		inm2_field->change_tile_background("purple_andy_tile.png");
+		inm2_field->am_I_locking = true;;
 	}
 
   } catch (out_of_range& map_error){
@@ -880,15 +887,16 @@ void manager::inm2_locking(){
 
 void manager::iter_locking(){
   try{
-	int iter_val = stoi(fields.at("line_10").at("ITER")->my_text_box.text);
+	field* iter_field = fields.at("line_10").at("ITER");
+	int iter_val      = stoi(iter_field->my_text_box.text);
 
-	if( fields.at("line_10").at("ITER")->am_I_locking && iter_val > 0 ){
-		fields.at("line_10").at("ITER")->change_tile_background("andy_tile.png");
-		fields.at("line_10").at("ITER")->am_I_locking = false;
+	if( iter_field->am_I_locking && iter_val > 0 ){
+		iter_field->change_tile_background("andy_tile.png");
+		iter_field->am_I_locking = false;
 
-	} else if( !(fields.at("line_10").at("ITER")->am_I_locking) && !(iter_val > 0) ){
-		fields.at("line_10").at("ITER")->change_tile_background("purple_andy_tile.png");
-		fields.at("line_10").at("ITER")->am_I_locking = true;;
+	} else if( !(iter_field->am_I_locking) && !(iter_val > 0) ){
+		iter_field->change_tile_background("purple_andy_tile.png");
+		iter_field->am_I_locking = true;;
 	}
 
   } catch (out_of_range& map_error){
@@ -901,16 +909,4 @@ void manager::iter_locking(){
 	fields.at("line_10").at("ITER")->change_tile_background("purple_andy_tile.png");
 	fields.at("line_10").at("ITER")->am_I_locking = true;
   }
-
 }
-
-
-
-
-
-
-
-
-
-
-
