@@ -777,14 +777,20 @@ void manager::icntrl6_locking(){
 
 	field* icntrl6_field = fields.at("line_6").at("ICNTRL6");
 
+	bool icntrl6_locking = fields.at("line_6").at("ICNTRL6")->am_I_locking;
+
+	string icntrl6_str = icntrl6_field->my_text_box.text;
+
+	bool valid_input = regex_match(icntrl6_str,icntrl6_unlock);
+
 	//if icntrl6 is 1 or 2, unlock
-	if( regex_match(fields.at("line_6").at("ICNTRL6")->my_text_box.text,icntrl6_unlock) ){
+	if(valid_input && icntrl6_locking){
 		//unlock params now that icntrl6 > 0
 		icntrl6_field->change_tile_background("andy_tile.png");
 		icntrl6_field->am_I_locking = false;
 
 		unlock_line(fields.at("line_10"));
-	} else {
+	} else if(!valid_input && !icntrl6_locking){
 		//elsewise, lock them
 		icntrl6_field->change_tile_background("purple_andy_tile.png");
 		icntrl6_field->am_I_locking = true;
@@ -793,8 +799,8 @@ void manager::icntrl6_locking(){
 	}
 
 	//######### block originally below the try/catch#################
-	bool icntrl6_lock_status = fields.at("line_6").at("ICNTRL6")->am_I_locking;
-	if( !icntrl6_lock_status ){
+
+	if(!icntrl6_locking){
 		//these functions set the am_I_locking states for each
 		//of the sub-parameters of ICNTRL6
 		inm1_locking();
