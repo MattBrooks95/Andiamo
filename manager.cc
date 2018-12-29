@@ -635,50 +635,55 @@ void manager::icntrl10_locking(){
 
 	field * icntrl10_field = fields.at("line_6").at("ICNTRL10");
 
-	int icntrl10_val = stoi(icntrl10_field->my_text_box.text);
+	int icntrl10_val    = stoi(icntrl10_field->my_text_box.text);
 	string icntrl10_str = icntrl10_field->my_text_box.text;
 
 	field* nnsig_field = fields.at("line_11").at("NNSIG");
 
-	int nnsig_val = stoi(nnsig_field->my_text_box.text);
+	int nnsig_val      = stoi(nnsig_field->my_text_box.text);
+	bool nnsig_locking = nnsig_field->am_I_locking;
 
-	if( !nnsig_field->is_locked && nnsig_val > 0){
+	if(!nnsig_field->is_locked && nnsig_locking && nnsig_val > 0){
 		nnsig_field->am_I_locking = false;
 		nnsig_field->change_tile_background("andy_tile.png");
-	} else {
+	} else if((nnsig_field->is_locked || !nnsig_val > 0) && !nnsig_locking){
 		nnsig_field->am_I_locking = true;
 		nnsig_field->change_tile_background("purple_andy_tile.png");
 	}
 
+	bool icntrl10_locking     = icntrl10_field->am_I_locking;
+	bool icntrl10_valid_input = regex_match(icntrl10_str,icntrl10_unlock);
+
 	//if icntrl10 tile is currently locking its button, and the conditions
 	//for unlocking it are true, then have it start unlocking
-	if(icntrl10_field->am_I_locking &&
-		(regex_match(icntrl10_str,icntrl10_unlock) && icntrl10_val > 0) ){
+	if(icntrl10_locking && nnsig_field->is_locked &&
+	   icntrl10_valid_input && icntrl10_val > 0){
 
 		icntrl10_field->change_tile_background("andy_tile.png");
 		icntrl10_field->am_I_locking = false;
-
 		nnsig_field->is_locked = false;
 
 	//otherwise, if it is not locking, and it's conditions are not met,
 	//then have it start locking
-	} else if( !(icntrl10_field->am_I_locking) &&
-		   !(regex_match(icntrl10_str,icntrl10_unlock) && icntrl10_val > 0) ){
+	} else if(!icntrl10_locking && !nnsig_field->is_locked && 
+		   !(icntrl10_valid_input && icntrl10_val > 0)){
 
 		icntrl10_field->change_tile_background("purple_andy_tile.png");
 		icntrl10_field->am_I_locking = true;
-		nnsig_field->is_locked = true;
+		nnsig_field->is_locked       = true;
 
 	}
 
+	bool icntrl10_button_locked = button_access->get_icntrl_10().get_is_locked();
+
 	if( ( !(icntrl10_field->am_I_locking) &&
 		  !nnsig_field->am_I_locking &&
-		  button_access->get_icntrl_10().get_is_locked() ) ||
+		  icntrl10_button_locked) ||
 		  (icntrl10_field->am_I_locking &&
-		  !(button_access->get_icntrl_10().get_is_locked()) ) ){
+		  !(icntrl10_button_locked) ) ){
 			button_access->get_icntrl_10().toggle_lock();
 
-	} else if( !button_access->get_icntrl_10().get_is_locked() &&
+	} else if( !icntrl10_button_locked &&
 			   (nnsig_field->is_locked || nnsig_field->am_I_locking) ){
 
 		button_access->get_icntrl_10().toggle_lock();

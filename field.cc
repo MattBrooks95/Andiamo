@@ -340,7 +340,7 @@ void field::print(){
                                 to_string(size_t(sdl_access->renderer)));
     } else {
         string msg = "Couldn't print texture or renderer pointers,";
-        msg += " sdl_access is NULL.";
+        msg       += " sdl_access is NULL.";
         error_logger.push_msg(msg);
     }
     error_logger.push_msg("font hook: "+to_string(size_t(sdl_access->font)) );
@@ -363,7 +363,7 @@ void field::clicked(SDL_Event& event, const int& click_x,const int& click_y){
 void field::change_tile_background(string image_name_in){
     my_tex = NULL;
     string assets_full_path = image_path + image_name_in;
-
+    cout << "change tile background: " << display_name << endl;
     my_tex = asset_access->get_texture(assets_full_path);
     if(my_tex == NULL) error_logger.push_error(SDL_GetError());
 }

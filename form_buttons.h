@@ -306,8 +306,6 @@ class icntrl10_data{
 
 
 //! opens the form "Spin Cutoff Info"
-/*! this form hasn't been implemented yet, because it is a
- *special case */
 class icntrl10_button : public button{
 
   public:
@@ -505,10 +503,3 @@ class ilv3_ilv5_form_button : public form_button{
     void save_information(ofstream& context_out);
   private:
 };
-
-
-
-
-
-
-
