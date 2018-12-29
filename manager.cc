@@ -547,7 +547,7 @@ void manager::ich4_nch4_locking(){
 	field* nch4_field = fields.at("line_8").at("NCH4");
 
 	int test_nch4 = stoi(nch4_field->my_text_box.text);
-	if( fields.at("line_8").at("NCH4")->am_I_locking && (test_nch4 > 0 && test_nch4 < 101 )){
+	if( nch4_field->am_I_locking && (test_nch4 > 0 && test_nch4 < 101 )){
 
 		nch4_field->change_tile_background("andy_tile.png");
 		nch4_field->am_I_locking = false;
@@ -559,12 +559,12 @@ void manager::ich4_nch4_locking(){
 	}
 
 	if( button_access->get_icntrl_4().get_is_locked() &&
-		(!(ich4_field->am_I_locking) && !(nch4_field->am_I_locking) ){
+		(!(ich4_field->am_I_locking) && !(nch4_field->am_I_locking) )){
 
 		//unlock the button, both are satisfied
 		button_access->get_icntrl_4().toggle_lock();
 
-	} else if( ich4_field->am_I_locking || nch4_field->am_I_locking)
+	} else if( (ich4_field->am_I_locking || nch4_field->am_I_locking)
 		   && !(button_access->get_icntrl_4().get_is_locked()) ){
 		//lock the button
 		button_access->get_icntrl_4().toggle_lock();
@@ -642,79 +642,69 @@ void manager::icntrl10_locking(){
   try{
 
 	regex icntrl10_unlock(RE_ICNTRL10_UNLOCK);
-	int icntrl10_val = stoi(fields.at("line_6").at("ICNTRL10")->my_text_box.text);
-	string icntrl10_str = fields.at("line_6").at("ICNTRL10")->my_text_box.text;
 
+	field * icntrl10_field = fields.at("line_6").at("ICNTRL10");
 
-	int nnsig_val = stoi(fields.at("line_11").at("NNSIG")->my_text_box.text);
+	int icntrl10_val = stoi(icntrl10_field->my_text_box.text);
+	string icntrl10_str = icntrl10_field->my_text_box.text;
 
-	if( !fields.at("line_11").at("NNSIG")->is_locked &&
-		nnsig_val > 0){
+	field* nnsig_field = fields.at("line_11").at("NNSIG");
 
-		fields.at("line_11").at("NNSIG")->am_I_locking = false;
-		fields.at("line_11").at("NNSIG")->change_tile_background("andy_tile.png");
+	int nnsig_val = stoi(nnsig_field->my_text_box.text);
+
+	if( !nnsig_field->is_locked && nnsig_val > 0){
+		nnsig_field->am_I_locking = false;
+		nnsig_field->change_tile_background("andy_tile.png");
 	} else {
-
-		fields.at("line_11").at("NNSIG")->am_I_locking = true;
-		fields.at("line_11").at("NNSIG")->change_tile_background("purple_andy_tile.png");
+		nnsig_field->am_I_locking = true;
+		nnsig_field->change_tile_background("purple_andy_tile.png");
 	}
 
 	//if icntrl10 tile is currently locking its button, and the conditions
 	//for unlocking it are true, then have it start unlocking
-	if( fields.at("line_6").at("ICNTRL10")->am_I_locking &&
+	if(icntrl10_field->am_I_locking &&
 		(regex_match(icntrl10_str,icntrl10_unlock) && icntrl10_val > 0) ){
 
-		fields.at("line_6").at("ICNTRL10")->change_tile_background("andy_tile.png");
-		fields.at("line_6").at("ICNTRL10")->am_I_locking = false;
+		icntrl10_field->change_tile_background("andy_tile.png");
+		icntrl10_field->am_I_locking = false;
 
-		fields.at("line_11").at("NNSIG")->is_locked = false;
-
-
-
+		nnsig_field->is_locked = false;
 
 	//otherwise, if it is not locking, and it's conditions are not met,
 	//then have it start locking
-	} else if( !(fields.at("line_6").at("ICNTRL10")->am_I_locking) &&
+	} else if( !(icntrl10_field->am_I_locking) &&
 		   !(regex_match(icntrl10_str,icntrl10_unlock) && icntrl10_val > 0) ){
 
-		fields.at("line_6").at("ICNTRL10")->change_tile_background("purple_andy_tile.png");
-		fields.at("line_6").at("ICNTRL10")->am_I_locking = true;
-		fields.at("line_11").at("NNSIG")->is_locked = true;
+		icntrl10_field->change_tile_background("purple_andy_tile.png");
+		icntrl10_field->am_I_locking = true;
+		nnsig_field->is_locked = true;
 
 	}
 
-
-	if( ( !(fields.at("line_6").at("ICNTRL10")->am_I_locking) &&
-		  !fields.at("line_11").at("NNSIG")->am_I_locking &&
+	if( ( !(icntrl10_field->am_I_locking) &&
+		  !nnsig_field->am_I_locking &&
 		  button_access->get_icntrl_10().get_is_locked() ) ||
-		  (fields.at("line_6").at("ICNTRL10")->am_I_locking &&
+		  (icntrl10_field->am_I_locking &&
 		  !(button_access->get_icntrl_10().get_is_locked()) ) ){
 			button_access->get_icntrl_10().toggle_lock();
 
 	} else if( !button_access->get_icntrl_10().get_is_locked() &&
-			   (fields.at("line_11").at("NNSIG")->is_locked ||
-			   fields.at("line_11").at("NNSIG")->am_I_locking) ){
+			   (nnsig_field->is_locked || nnsig_field->am_I_locking) ){
 
 		button_access->get_icntrl_10().toggle_lock();
-
 	}
 
   } catch (out_of_range& map_error){
-	error_logger.push_error("From: manager::icntrl8_locking()| ICNTRL10 was not found in the map of parameter tiles,",
+	error_logger.push_error("From: manager::icntrl8_locking()| ICNTRL10 was not found in the tiles map,",
 				" please check that the tile and HF config files match");
 
   } catch (invalid_argument& stoi_error){
 	error_logger.push_msg("ICNTRL10 has an illegal string argument, it must be an integer in the range");
 	error_logger.push_msg(" 0 <= ICNTRL10");
-	fields.at("line_6").at("ICNTRL10")->change_tile_background("purple_andy_tile.png");
-	fields.at("line_6").at("ICNTRL10")->am_I_locking = true;
-
-
+	field * icntrl10_field = fields.at("line_6").at("ICNTRL10");
+	icntrl10_field->change_tile_background("purple_andy_tile.png");
+	icntrl10_field->am_I_locking = true;
   }
-
-
-
-
 }
 
 void manager::ilv3_ilv5_locking(){
