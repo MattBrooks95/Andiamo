@@ -75,7 +75,7 @@ bool process_args(int argc, char* argv[],string& input_maker_config_file,
 			if(argument.compare("-v") == 0){
 
 				cout << "Verbose mode on" << endl;
-				error_logger.verbose = true;
+				output_access->verbose = true;
 
 			} else if(argument.compare("-help") == 0){
 

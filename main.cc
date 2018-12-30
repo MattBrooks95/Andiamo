@@ -19,14 +19,12 @@
 
 using namespace std;
 
-string HOME = getenv("HOME");
-
 // handles program environment variables like current directory,
 // HOME environment and executable directory
 system_wrapper* system_access;
 
 // global object used for error message output
-logger error_logger;
+logger* output_access;
 
 // global reference to asset_manager
 asset_manager*  asset_access;
@@ -62,6 +60,10 @@ void no_work_done_message(exit_button& exit_dialogue);
 int main(int argc, char *argv[]){
 	system_wrapper system;
 	system_access = &system;
+
+	logger error_logger;
+	output_access = &error_logger;
+
 
 	//this string starts off empty. If it remains empty by
 	//the time input_maker::init(string) is called, it defaults to
@@ -212,7 +214,7 @@ int main(int argc, char *argv[]){
 
 				if(big_event.window.event == SDL_WINDOWEVENT_SIZE_CHANGED){
 
-					error_logger.push_msg(to_string(big_event.window.data1)+":"+
+					output_access->push_msg(to_string(big_event.window.data1)+":"+
 									to_string(big_event.window.data2));
 					sdl_access->window_update(big_event.window.data1,
 												big_event.window.data2);
@@ -246,7 +248,7 @@ void no_work_done_message(exit_button& exit_dialogue){
 	SDL_Texture* no_work_texture = NULL;
 
 	no_work_texture = asset_access->get_texture("Assets/Images/no_work_done_msg.png");
-	if(no_work_texture == NULL) error_logger.push_error(SDL_GetError());
+	if(no_work_texture == NULL) output_access->push_error(SDL_GetError());
 	//plan where to draw
 	SDL_Rect dest = {0,0,0,0};
 	//get size of image

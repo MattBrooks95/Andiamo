@@ -23,6 +23,10 @@
 //std::sort, to sort a vector of file names
 #include<algorithm>
 
+#include "system_wrapper.h"
+
+extern system_wrapper* system_access;
+
 using std::string;
 using std::vector;
 using std::ofstream;

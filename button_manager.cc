@@ -51,7 +51,7 @@ void button_manager::init_tray(){
                                                     tray_image_name);
 
     if(button_tray_texture == NULL){
-        error_logger.push_error(string(SDL_GetError()));
+        output_access->push_error(string(SDL_GetError()));
     }
 
     //use query texture to get the texture's height and width
@@ -69,7 +69,7 @@ void button_manager::init_form_tray(){
     string form_tray_arg;
     form_tray_arg = button_image_p+form_tray_image_name;
     form_tray_texture = asset_access->get_texture(form_tray_arg);
-    if(form_tray_texture == NULL) error_logger.push_error(SDL_GetError());
+    if(form_tray_texture == NULL) output_access->push_error(SDL_GetError());
 
     SDL_QueryTexture(form_tray_texture,NULL,NULL,
                      &form_tray_rect.w,&form_tray_rect.h);
@@ -296,7 +296,7 @@ void button_manager::print_buttons(){
 
     string print_msg;
     print_msg = "#################### PRINTING BUTTONS #####################";
-    error_logger.push_msg(print_msg);
+    output_access->push_msg(print_msg);
     fop_button.print_me();
 
     exit_dialogue.print_me();
@@ -312,7 +312,7 @@ void button_manager::print_buttons(){
     //graphing_options.print_me();
     string done_print_msg;
     done_print_msg = "############# DONE PRINTING BUTTONS ####################";
-    error_logger.push_msg(done_print_msg);
+    output_access->push_msg(done_print_msg);
 }
 
 void button_manager::draw_all(){
@@ -373,7 +373,7 @@ bool button_manager::click_handling(SDL_Event& mouse_event){
     //shouldn't be possible to click two at the same time
     bool done_something = false;
 
-    error_logger.push_msg("HANDLING BUTTON CLICKS");
+    output_access->push_msg("HANDLING BUTTON CLICKS");
     if(fop_button.shown){
         if( fop_button.handle_click(mouse_event)){
             done_something = true;
@@ -425,7 +425,7 @@ bool button_manager::click_handling(SDL_Event& mouse_event){
                         make_form_error_message(form_bad_inputs,
                                                 error_message,destination);
                         if(error_message == NULL){
-                            error_logger.push_error("Error message failure.");
+                            output_access->push_error("Error message failure.");
                         } else {
                             form_error_message_loop(mouse_event,error_message,
                                                     destination);
@@ -545,7 +545,7 @@ bool button_manager::click_handling(SDL_Event& mouse_event){
     //########################################################################
 
 
-    error_logger.push_msg("DONE HANDLING BUTTON CLICKS");
+    output_access->push_msg("DONE HANDLING BUTTON CLICKS");
     //let main know if it should check tiles or not
     return done_something;
 }
@@ -667,7 +667,7 @@ void button_manager::make_form_error_message(const vector<string>& form_bad_inpu
 
     if(form_bad_inputs.size() == 0){
         string err = "make_form_error_message was called with an empty list.";
-        error_logger.push_error(err);
+        output_access->push_error(err);
         return;
     }
 
@@ -788,7 +788,7 @@ void button_manager::bad_tile_input_warnings(vector<string>& bad_input_list){
     string msg_target(system_access->get_home());
     msg_target += "/Andiamo/Assets/Images/bad_input_message.png";
     SDL_Texture* bad_input_msg_texture = asset_access->get_texture(msg_target);
-    if(bad_input_msg_texture == NULL) error_logger.push_error(string(SDL_GetError()));
+    if(bad_input_msg_texture == NULL) output_access->push_error(string(SDL_GetError()));
 
     //calculate where to put the error message
     SDL_Rect msg_dest;
@@ -821,7 +821,7 @@ void button_manager::clean_up_warnings(SDL_Event& big_event,
         string out_fname_err_target = "Images/Buttons/output_fname_err.png";
         output_fname_error_texture =
             asset_access->get_texture(out_fname_err_target);
-        if(output_fname_error_texture == NULL) error_logger.push_error(string(SDL_GetError()));
+        if(output_fname_error_texture == NULL) output_access->push_error(string(SDL_GetError()));
 
         //plan where to draw image
         SDL_Rect dest = {0,0,0,0};
@@ -854,7 +854,7 @@ void button_manager::clean_up_warnings(SDL_Event& big_event,
         bad_tc_input_target +=
                             "/Andiamo/Assets/Images/Buttons/TC_input_err.png";
         tc_input_error_texture = asset_access->get_texture(bad_tc_input_target);
-        if(tc_input_error_texture == NULL) error_logger.push_error(SDL_GetError());
+        if(tc_input_error_texture == NULL) output_access->push_error(SDL_GetError());
 
         SDL_Rect dest = {0,0,0,0};
 

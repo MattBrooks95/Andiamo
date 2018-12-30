@@ -17,57 +17,57 @@
 using namespace std;
 
 extern button_manager* button_access;
-extern string HOME;
 
 input_maker::input_maker(string output_file_name_in,string config_file_name_in){
-    config_p  = HOME;
-    config_p += "/Andiamo/config/";
-    output_p  = HOME;
-    output_p += "/Andiamo/output/";
+
+    string home_path = system_access->get_home();
+
+    config_p  = home_path + "/Andiamo/config/";
+    output_p  = home_path + "/Andiamo/output/";
+
     output_file_name = output_file_name_in;
-    file_name = config_file_name_in;
+    file_name        = config_file_name_in;
 
     //start off false, become positive when output() is ran
     output_was_made = false;
-
 }
 
 
 void input_maker::check_map(){
-    error_logger.push_msg("####### INPUT MAKER INT4 PARAMS MAP ##############");
+    output_access->push_msg("####### INPUT MAKER INT4 PARAMS MAP ##############");
     for(INT4_MAP::iterator int_it = int4_params.begin();
         int_it != int4_params.end();
-        int_it++){
-        error_logger.push_msg_no_nl(int_it->second.get_string()+"  ");
+        ++int_it){
+        output_access->push_msg_no_nl(int_it->second.get_string()+"  ");
     }
-    error_logger.push_msg("\n######### INPUT MAKER R8 PARAMS MAP ##########\n");
+    output_access->push_msg("\n######### INPUT MAKER R8 PARAMS MAP ##########\n");
     for(REAL8_MAP::iterator r8_it = real8_params.begin();
         r8_it != real8_params.end();
-        r8_it++){
-        error_logger.push_msg_no_nl(r8_it->second.get_string()+":");
+        ++r8_it){
+        output_access->push_msg_no_nl(r8_it->second.get_string()+":");
     }
-    error_logger.push_msg("\n######### INPUT MAKER STRING PARAMS MAP ######\n");
+    output_access->push_msg("\n######### INPUT MAKER STRING PARAMS MAP ######\n");
     for(STR_MAP::iterator string_it = string_params.begin();
         string_it != string_params.end();
-        string_it++){
+        ++string_it){
         string msg = string_it->first + ":" + string_it->second.value+"   ";
-        error_logger.push_msg_no_nl(msg);
+        output_access->push_msg_no_nl(msg);
     }
-    error_logger.push_msg("\n####### INPUT MAKER INT4 ARRAY MAP ###########\n");
+    output_access->push_msg("\n####### INPUT MAKER INT4 ARRAY MAP ###########\n");
     for(INT4_ARR_MAP::iterator int4_array_it = int4_array_params.begin();
         int4_array_it != int4_array_params.end();
-        int4_array_it++){
+        ++int4_array_it){
         string msg = int4_array_it->first + ":"
                      + int4_array_it->second.get_string() + "  ";
-        error_logger.push_msg_no_nl(msg);
+        output_access->push_msg_no_nl(msg);
     }
-    error_logger.push_msg("\n####### INPUT MAKER R8_ARRAY MAP #############\n");
+    output_access->push_msg("\n####### INPUT MAKER R8_ARRAY MAP #############\n");
     for(R8_ARR_MAP::iterator r8_array_it = r8_array_params.begin();
         r8_array_it != r8_array_params.end();
         r8_array_it++){
         string msg = r8_array_it->first + ":"
                      + r8_array_it->second.get_string() + "  ";
-        error_logger.push_msg_no_nl(msg);
+        output_access->push_msg_no_nl(msg);
     }
 
 }
@@ -76,7 +76,7 @@ void input_maker::check_map(){
 
 void input_maker::init(const string& alternate_config){
 
-    error_logger.push_msg("############ INPUT_MAKER INIT ####################");
+    output_access->push_msg("############ INPUT_MAKER INIT ####################");
 
     ifstream ins;
     if(alternate_config.size() == 0){
@@ -93,7 +93,7 @@ void input_maker::init(const string& alternate_config){
 
         string err;
         err = "Error in input_maker::init(), couldn't find the input file!";
-        error_logger.push_error(err);
+        output_access->push_error(err);
         return;
 
     }
@@ -135,24 +135,24 @@ void input_maker::init(const string& alternate_config){
             } else break;
         }
 
-        error_logger.push_msg("LINE: |"+temp_string+"|");
+        output_access->push_msg("LINE: |"+temp_string+"|");
 
 
         if( regex_match(temp_string,re_comment) ){
 
             //comment line, don't do anything
-            error_logger.push_msg("Is a comment line!");
+            output_access->push_msg("Is a comment line!");
 
         //logics for reading in fortran integer 4s
         } else if( regex_match(temp_string,re_i4) ){
 
-            error_logger.push_msg("Is an int4 line!");
+            output_access->push_msg("Is an int4 line!");
             process_int4(temp_string,nad_flag);
 
         //logics for reading in fortran real 8s
         } else if( regex_match(temp_string,re_real8) ){
 
-            error_logger.push_msg("Is an R8 line!");
+            output_access->push_msg("Is an R8 line!");
             process_real8(temp_string,nad_flag);
 
         //logics for reading in fortran strings
@@ -165,12 +165,12 @@ void input_maker::init(const string& alternate_config){
 
             string int_arr_msg = "Is an array of integers! This is that";
             int_arr_msg += " line split along spaces:";
-            error_logger.push_msg(int_arr_msg);
+            output_access->push_msg(int_arr_msg);
 
             vector<string> tokens = split(temp_string,' ');
 
             for(unsigned int c = 0; c < tokens.size() ;c++){
-                error_logger.push_msg("\t"+tokens[c]);
+                output_access->push_msg("\t"+tokens[c]);
             }
 
             //store numerical result of grabbing the array's size
@@ -196,7 +196,7 @@ void input_maker::init(const string& alternate_config){
                   string i4_err = "Error in input_maker::init(), i4 array";
                   i4_err += " size given illegal value:";
                   i4_err += temp_size_string;
-                  error_logger.push_error(i4_err);
+                  output_access->push_error(i4_err);
                   array_size = 0;
                 }
 
@@ -209,9 +209,9 @@ void input_maker::init(const string& alternate_config){
                 param_int4_array i4_array_push_me(tokens[1],array_size,false);
 
                 handle_i4_array(tokens[3],i4_array_push_me.values);
-                error_logger.push_msg("VECTOR OF INTS AS FOLLOWS: ");
+                output_access->push_msg("VECTOR OF INTS AS FOLLOWS: ");
                 for(unsigned int c = 0; c < i4_array_push_me.values.size();c++){
-                    error_logger.push_msg("\t"+to_string(i4_array_push_me.values[c]));
+                    output_access->push_msg("\t"+to_string(i4_array_push_me.values[c]));
                 }
                 int4_array_params.insert(std::pair<string,param_int4_array>(i4_array_push_me.name,i4_array_push_me));
 
@@ -219,19 +219,19 @@ void input_maker::init(const string& alternate_config){
                 //if there was no match for some reason, print an error message
                 string err = "Error! Could not determine array size from";
                 err       += " int4 array declaration line.";
-                error_logger.push_error(err);
+                output_access->push_error(err);
             }
 
 
         } else if( regex_match(temp_string,r8_array) ){
 
-            error_logger.push_msg("LINE:"+temp_string+"is an E array!");
+            output_access->push_msg("LINE:"+temp_string+"is an E array!");
 
             //split across spaces
             vector<string> tokens = split(temp_string,' ');
             for(unsigned int c = 0; c < tokens.size(); c++){
 
-                error_logger.push_msg("\t"+tokens[c]);
+                output_access->push_msg("\t"+tokens[c]);
 
             }
 
@@ -256,7 +256,7 @@ void input_maker::init(const string& alternate_config){
                 try {
                   array_size = stoi(temp_size_string);
                 } catch (invalid_argument& error){
-                  error_logger.push_error("Error in input_maker::init, real 8",
+                  output_access->push_error("Error in input_maker::init, real 8",
                                 " array given illegal size:"+temp_size_string);
                 }
 
@@ -264,15 +264,15 @@ void input_maker::init(const string& alternate_config){
 
                 string bad_size_msg = "Error! Could not determine array size";
                 bad_size_msg += "of R8 array (TIN?) declaration line.";
-                error_logger.push_error(bad_size_msg);
+                output_access->push_error(bad_size_msg);
             }
 
             //create object to be shoved into the map for E arrays
             param_r8_array r8_array_push_me(name,array_size,false);
             handle_r8_array(tokens[3],r8_array_push_me.values);
-            error_logger.push_msg("Vector of R8 Doubles? As follows:");
+            output_access->push_msg("Vector of R8 Doubles? As follows:");
             for(unsigned int c = 0; c < r8_array_push_me.values.size();c++){
-                error_logger.push_msg(to_string(r8_array_push_me.values[c]));
+                output_access->push_msg(to_string(r8_array_push_me.values[c]));
             }
 
             //shove object into the map for E arrays
@@ -284,14 +284,14 @@ void input_maker::init(const string& alternate_config){
             process_form_init(temp_string);
 
         } else {
-            error_logger.push_error("Error! Line type wasn't determined:");
-            error_logger.push_error(temp_string);
+            output_access->push_error("Error! Line type wasn't determined:");
+            output_access->push_error(temp_string);
         }
 
         getline(ins,temp_string);
     }
     string im_end_msg = "########## END INPUT MAKER INIT() ##################";
-    error_logger.push_error(im_end_msg);
+    output_access->push_error(im_end_msg);
     ins.close();
 }
 
@@ -301,7 +301,7 @@ void input_maker::process_int4(const string& line,const regex& nad_flag){
 
     //if there aren't exactly 4 strings in the array, something is amiss
     if(tokens.size() != 4){
-        error_logger.push_error("Faulty int4 line:"+line);
+        output_access->push_error("Faulty int4 line:"+line);
         return;
     }
 
@@ -312,7 +312,7 @@ void input_maker::process_int4(const string& line,const regex& nad_flag){
 
     if(tokens[2] != "="){
 
-        error_logger.push_msg("Missing '=' in I4 param declaration!");
+        output_access->push_msg("Missing '=' in I4 param declaration!");
         return;
 
     } else if( !regex_search(line,nad_flag) ){
@@ -323,7 +323,7 @@ void input_maker::process_int4(const string& line,const regex& nad_flag){
 
             string err = "Error in input_maker::init() int4 declaration!:";
             err       += tokens[3];
-            error_logger.push_error(err);
+            output_access->push_error(err);
 
         }
 
@@ -331,7 +331,7 @@ void input_maker::process_int4(const string& line,const regex& nad_flag){
 
         string err = "String" + line;
         err       += " has no default set. This is likely intentional.";
-        error_logger.push_error(err);
+        output_access->push_error(err);
 
     }
 
@@ -346,7 +346,7 @@ void input_maker::process_real8(const string& line,const regex& nad_flag){
 
     //if there aren't exactly 4 strings in the array, something is amiss
     if(tokens.size() != 4){
-        error_logger.push_error("Faulty real8 line:"+line);
+        output_access->push_error("Faulty real8 line:"+line);
         return;
     }
 
@@ -356,7 +356,7 @@ void input_maker::process_real8(const string& line,const regex& nad_flag){
 
     if(tokens[2] != "="){
 
-        error_logger.push_error("Missing '=' in R8 param declaration!");
+        output_access->push_error("Missing '=' in R8 param declaration!");
         return;
 
     } else if( !regex_search(line,nad_flag) ){
@@ -366,14 +366,14 @@ void input_maker::process_real8(const string& line,const regex& nad_flag){
         if(value == numeric_limits<double>::min()){
             string err = "Error in input_maker::init()! Illegal value";
             err += " in real8 declaration!:"+tokens[3];
-            error_logger.push_error(err);
+            output_access->push_error(err);
         }
 
     } else {
 
         string msg = "String:" + line;
         msg       += " has no default set. This is likely intentional.";
-        error_logger.push_msg(msg);
+        output_access->push_msg(msg);
 
     }
 
@@ -389,7 +389,7 @@ void input_maker::process_string(const string& line,
     //split across spaces, except for spaces within ""
     vector<string> tokens = split(line,' ');
     for(unsigned int c = 0; c < tokens.size() ;c++){
-        error_logger.push_msg("\t:" + tokens[c]);
+        output_access->push_msg("\t:" + tokens[c]);
     }
 
     string initial_string = tokens[tokens.size()-1];
@@ -397,7 +397,7 @@ void input_maker::process_string(const string& line,
     if(tokens[2] != "="){
 
         string err = "Error! Missing '=' in string declaration!";
-        error_logger.push_error(err);
+        output_access->push_error(err);
 
         initial_string = "Failed to initialize string argument.";
 
@@ -420,7 +420,7 @@ void input_maker::process_string(const string& line,
             string bad_size_msg = "Error! Illegal string size value in";
             bad_size_msg       += " input_maker::init() :";
             bad_size_msg       += line.substr(1,size_string.length()-1);
-            error_logger.push_error(bad_size_msg);
+            output_access->push_error(bad_size_msg);
 
             initial_string = "Failed to initialize string, invalid size value.";
         }
@@ -459,7 +459,7 @@ void input_maker::process_form_init(const string& line){
     try{
 
         form_init_arrays.at(form_name);
-        error_logger.push_error("Error while parsing config file,",
+        output_access->push_error("Error while parsing config file,",
             " redundant form button initializer list. Exiting.");
         exit(-1);
 
@@ -555,13 +555,13 @@ bool input_maker::output(vector<string>& form_bad_inputs){
     ofstream outs;
     outs.open( (output_p+output_file_name).c_str(),std::fstream::trunc );
     if(outs.fail()) {
-        error_logger.push_error("Error! Can not open/create output file: |"+
+        output_access->push_error("Error! Can not open/create output file: |"+
                                 output_p+output_file_name+
                                 "| Attempting output directory creation.");
         system("mkdir output");
         outs.open( (output_p+output_file_name).c_str(),std::fstream::trunc);
         if(outs.fail()){
-            error_logger.push_error("Opening output stream failed again.");
+            output_access->push_error("Opening output stream failed again.");
             return false;
         }
 
@@ -799,7 +799,7 @@ void input_maker::give_int4_defaults(){
         } else {
 
             string err = get_string_init_error_message(i4_it->first);
-            error_logger.push_error(err);
+            output_access->push_error(err);
 
         }
     }
@@ -837,7 +837,7 @@ void input_maker::give_int4_defaults(){
 //             err += "tile_Input/tiles.txt and HF_Config/config.txt";
 //             err += "\n have matching names.";
 
-//             error_logger.push_error(err);
+//             output_access->push_error(err);
 //         }
 //     }
 
@@ -873,7 +873,7 @@ void input_maker::give_r8_defaults(){
         } else {
 
             string err = get_string_init_error_message(r8_it->first);
-            error_logger.push_error(err);
+            output_access->push_error(err);
 
         }
     }
@@ -913,7 +913,7 @@ void input_maker::give_r8_defaults(){
 //             err += "\nPlease make sure that its entries in";
 //             err += " tile_Input/tiles.txt and HF_Config/config.txt";
 //             err += "\n have matching names.";
-//             error_logger.push_error(err);
+//             output_access->push_error(err);
 //         }
 
 //     }
@@ -939,7 +939,7 @@ void input_maker::give_string_defaults(){
         } else {
             cout << "Null string pointer" << endl;
             string err = get_string_init_error_message(str_it->first);
-            error_logger.push_error(err);
+            output_access->push_error(err);
 
         }
     }
@@ -1103,7 +1103,7 @@ void do_line1(ofstream& outs,const map<string,param_string>& string_params){
 
         string err = "Error in input_maker, 'label' parameter not found";
         err       += " in vector string_params as it should be.";
-        error_logger.push_error(err);
+        output_access->push_error(err);
     }
 
 }
@@ -1156,7 +1156,7 @@ void do_TC_coefficients(const map<string,param_real8>& real8_params,
     if(ins.fail()){
         string err = "Error! File:~/Andiamo/TC_files/" + alt_TC_dir;
         err       += " could not be found.";
-        error_logger.push_error(err);
+        output_access->push_error(err);
     }
 
     vector<string> lines_in;
@@ -1179,10 +1179,10 @@ void do_TC_coefficients(const map<string,param_real8>& real8_params,
     }
 
     //this will be the case where the exact TC file was given, just mirror it
-    error_logger.push_msg("############# PRINTING TC ########################");
+    output_access->push_msg("############# PRINTING TC ########################");
     outs << right;
     for(unsigned int c = 0; c < lines_in.size();c++){
-        error_logger.push_msg(lines_in[c]);
+        output_access->push_msg(lines_in[c]);
         outs << lines_in[c];
 
         if(c < lines_in.size() - 1){
@@ -1190,7 +1190,7 @@ void do_TC_coefficients(const map<string,param_real8>& real8_params,
         }
 
     }
-    error_logger.push_msg("############ DONE PRINTING TC ####################");
+    output_access->push_msg("############ DONE PRINTING TC ####################");
 
     //this is the case where the FOP wrapper has been run
 
@@ -1210,7 +1210,7 @@ void do_line4(ofstream& outs,const map<string,param_real8>& real8_params,
 
   } catch (out_of_range& not_found){
     string err_msg = "Error in do_line4: parameter not found in the map!";
-    error_logger.push_error(err_msg);
+    output_access->push_error(err_msg);
   }
 
 
@@ -1225,7 +1225,7 @@ void do_line4A(ofstream& outs,const map<string,param_real8>& real8_params,
          F5 real8_params.at("FJPAR").value F5 real8_params.at("FPRPAR").value;
     outs I int4_params.at("NLIN").value << endl;
   } catch (out_of_range& not_found){
-    error_logger.push_error("Error in do_line4A: parameter not found in the map!");
+    output_access->push_error("Error in do_line4A: parameter not found in the map!");
   }
 }
 void do_line4B(ofstream& outs,const map<string, param_r8_array>& r8_array_params){
@@ -1240,7 +1240,7 @@ void do_line4B(ofstream& outs,const map<string, param_r8_array>& r8_array_params
 
     }
   } catch (out_of_range& not_found){
-    error_logger.push_error("Error! Parameter in do_line4B not found in the map!");
+    output_access->push_error("Error! Parameter in do_line4B not found in the map!");
   }
 }
 
@@ -1293,7 +1293,7 @@ void do_line6(ofstream& outs,const map<string,param_int4>& int4_params){
          I int4_params.at("ICNTRL9").value I int4_params.at("ICNTRL10").value
          << endl;
   } catch (out_of_range& not_found){
-    error_logger.push_error("Error! Parameter in do_line6 not found in the map!");
+    output_access->push_error("Error! Parameter in do_line6 not found in the map!");
   }
 }
 
@@ -1309,7 +1309,7 @@ void do_line7(ofstream& outs,const map<string,param_real8>& real8_params){
     outs F5 real8_params.at("FMU").value F5 real8_params.at("FCON_").value
          << endl;
   } catch (out_of_range& not_found){
-    error_logger.push_error("Error! Parameter in do_line7 not found in the map!");
+    output_access->push_error("Error! Parameter in do_line7 not found in the map!");
   }
 
 }
@@ -1321,7 +1321,7 @@ void do_line8(ofstream& outs,const map<string,param_int4>& int4_params){
 
     outs I int4_params.at("ICH4").value I int4_params.at("NCH4").value << endl;
   } catch(out_of_range& not_found){
-    error_logger.push_error("Error! Parameter in do_line8 not found in the map!");
+    output_access->push_error("Error! Parameter in do_line8 not found in the map!");
   }
 }
 
@@ -1340,7 +1340,7 @@ void do_line9(ofstream& outs,const map<string,param_int4>& int4_params,
     //no spaces afterwards, end this line
     outs F5 real8_params.at("FIS4").value << endl;
   } catch(out_of_range& not_found){
-    error_logger.push_error("Error! Parameter in do_line9 not found in the map!");
+    output_access->push_error("Error! Parameter in do_line9 not found in the map!");
   }
 }
 

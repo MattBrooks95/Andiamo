@@ -16,7 +16,7 @@
 
 using std::string;
 
-extern logger error_logger;
+extern logger* output_access;;
 extern sdl_help* sdl_access;
 
 //! this is the base class for the static buttons that implement features
@@ -165,8 +165,8 @@ struct active_area{
         string msg = std::to_string(xloc) + ":" + std::to_string(yloc)
                      +"     "+ std::to_string(width) + ":"
 				      + std::to_string(height);
-		error_logger.push_msg("Printing active area");
-		error_logger.push_msg(msg);
+		output_access->push_msg("Printing active area");
+		output_access->push_msg(msg);
 	}
 
     //! corner'ss horizontal location

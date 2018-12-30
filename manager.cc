@@ -14,11 +14,11 @@ manager::manager(string image_path_in){
 }
 
 void manager::init(const string& graphical_config_file){
-	tile_input_p = HOME + "/Andiamo/tile_Input/";
+	tile_input_p = system_access->get_home() + "/Andiamo/tile_Input/";
 
 	//ins will refer to the stream to the input file for tile information
 	fstream ins;
-
+	
 	//open the file
 
 	if(graphical_config_file.size() == 0){
@@ -31,7 +31,7 @@ void manager::init(const string& graphical_config_file){
 	if(ins.fail()){
 		string err = "Fatal error: Failed to open tile input file: ";
 		err       += tile_input_p+"tiles.txt";
-		error_logger.push_error(err);
+		output_access->push_error(err);
 	}
 
 	//used to store unidentified line
@@ -91,7 +91,7 @@ void manager::init(const string& graphical_config_file){
 
 		strip_char(temp_string,'#');
 		//cout << "Found a line name:"+temp_string << endl;
-		error_logger.push_msg("Found a line name:"+temp_string);
+		output_access->push_msg("Found a line name:"+temp_string);
 		line_names_read_order.push_back(temp_string);
 
 		//save line name for later
@@ -128,19 +128,19 @@ void manager::init(const string& graphical_config_file){
 
 			//loop until separator 'andy' is found
 			while(temp_string != "andy" && !ins.fail()){
-				error_logger.push_msg("LINE:"+temp_string+"|");
+				output_access->push_msg("LINE:"+temp_string+"|");
 
 
 				//if this line has '.png' in it,
 				if( regex_match(temp_string,img_pattern) ){
 
 					//process it as an input picture name
-					error_logger.push_msg("Found an image name!: "+temp_string);
+					output_access->push_msg("Found an image name!: "+temp_string);
 					img_name = temp_string;
 
 				} else if( regex_match(temp_string,desc_pattern)){
 
-					error_logger.push_msg("Found a description line.: "+
+					output_access->push_msg("Found a description line.: "+
 										  temp_string);
 
 					//remove 'c ' at start of desc lines
@@ -150,7 +150,7 @@ void manager::init(const string& graphical_config_file){
 
 				} else if( regex_match(temp_string,field_size_pattern) ){
 
-					error_logger.push_msg("Found field size specification!: "+
+					output_access->push_msg("Found field size specification!: "+
 										  temp_string);
 
 					//remove spaces
@@ -168,10 +168,10 @@ void manager::init(const string& graphical_config_file){
 						string err = "Error in manager::init(), tile given:";
 						err       +=    "illegal size parameters: ";
 						err       += dimensions[0]+"x"+dimensions[1];
-						error_logger.push_error(err);
+						output_access->push_error(err);
 					}
 				}  else if( regex_match(temp_string,name_pattern) ){
-					 error_logger.push_msg("Found a tile name!: "+temp_string);
+					 output_access->push_msg("Found a tile name!: "+temp_string);
 					if( regex_search(temp_string,semi_pattern) ){
 						vector<string> tokens = split(temp_string,':');
 						tile_name = tokens[0];
@@ -187,7 +187,7 @@ void manager::init(const string& graphical_config_file){
 					err       += " regex checks:"+temp_string;
 					err       += "\nIt may be a missing 'Andy' separator";
 					err       += " in the tiles.txt config file.";
-					error_logger.push_error(err);
+					output_access->push_error(err);
 
 				}
 
@@ -208,10 +208,10 @@ void manager::init(const string& graphical_config_file){
 				temp_field->descriptions.push_back(temp_descriptions[c]);
 			}
 
-			error_logger.push_msg("##########PUSHING FIELD###################");
+			output_access->push_msg("##########PUSHING FIELD###################");
 			temp_field->print();
 			//cout << temp_field->tile_name << endl;
-			error_logger.push_msg("##########################################");
+			output_access->push_msg("##########################################");
 
 			//push the field into the lookup map for that parameter's line
 			new_line.emplace(tile_name,temp_field);
@@ -239,9 +239,9 @@ void manager::init(const string& graphical_config_file){
 	//close the file
 	ins.close();
 
-	error_logger.push_msg("FIELD MAP AFTER MANAGER.init():");
+	output_access->push_msg("FIELD MAP AFTER MANAGER.init():");
 	print_all();
-	error_logger.push_msg("##############################################");
+	output_access->push_msg("##############################################");
 }
 
 manager::~manager(){
@@ -340,7 +340,7 @@ field* manager::get_param(const string& target_param){
 			return this_field;
 		}
 	}
-	error_logger.push_error("Couldn't find param:"+target_param+" in the fields map.");
+	output_access->push_error("Couldn't find param:"+target_param+" in the fields map.");
 	return NULL;
 }
 
@@ -384,10 +384,10 @@ void manager::unlock_line(map<string,field*>& target_line){
 
 void manager::print_all(){
 
-	error_logger.push_msg("\n Printing parameters in order #################");
+	output_access->push_msg("\n Printing parameters in order #################");
 
 	for(uint line = 0; line < fields_order.size();line++){
-		error_logger.push_msg("LINE VECTOR INDEX: "+to_string(line));
+		output_access->push_msg("LINE VECTOR INDEX: "+to_string(line));
 		uint num_params = fields_order[line].size();
 		for(uint param = 0; param < num_params; param++){
 
@@ -397,7 +397,7 @@ void manager::print_all(){
 
 	}
 
-	error_logger.push_msg("\n End params order print #######################");
+	output_access->push_msg("\n End params order print #######################");
 
 }
 
@@ -435,7 +435,7 @@ void manager::iench_locking(){
 		unlock_line(fields.at("line_4A"));
 	}
   } catch (out_of_range& map_error){
-	error_logger.push_error("From: manager::iench_locking| Critical tiles associated with IENCH were not found,",
+	output_access->push_error("From: manager::iench_locking| Critical tiles associated with IENCH were not found,",
 				"please check the tile and HF config files.");
   }
 
@@ -471,7 +471,7 @@ void manager::ilv1_locking(){
 	string err = "From: manager::iench_locking| One of the critical";
 	err       += " tiles associated with ILV1 were not found,";
 	err       += " please check the tile and HF config files.";
-	error_logger.push_error(err);
+	output_access->push_error(err);
   }
 }
 
@@ -510,7 +510,7 @@ void manager::icntrl4_locking(){
 	string err = "From: manager::icntrl4_locking| One of the critical";
 	err       += " tiles associated with ICNTRL4, were not found";
 	err       += ", please check that the tile and HF config files match.";
-	error_logger.push_error(err);
+	output_access->push_error(err);
   }
 }
 
@@ -565,16 +565,16 @@ void manager::ich4_nch4_locking(){
 	string msg = "From: manager::ich4_nch4_locking| One of the critical tiles";
 	msg       += "associated with ICH4/NCH4, were not found,";
 	msg       +=  " please check that the tile and HF config files match.";
-	error_logger.push_msg(msg);
+	output_access->push_msg(msg);
 
   } catch( invalid_argument& bad_arg){
 	string msg = "From manager::ich4_nch4_locking| NCH4 or ICH4 has a number";
 	msg       += " in an illegal range";
-	error_logger.push_msg(msg);
+	output_access->push_msg(msg);
 
 	msg = ". The acceptable range for NCH4 is 0<=x<=100. The acceptable";
 	msg = " range for ICH4 is 0 <= ICH4 <= 6.";
-	error_logger.push_msg(msg);
+	output_access->push_msg(msg);
   }
 }
 
@@ -618,11 +618,11 @@ void manager::icntrl8_locking(){
 	string err = "From: manager::icntrl8_locking()| ICNTRL8 was not found";
 	err       += " in the map of parameter tiles, please check that";
 	err       += "the tile and HF config files match.";
-	error_logger.push_error(err);
+	output_access->push_error(err);
 
   } catch (invalid_argument& stoi_error){
-	error_logger.push_msg("ICNTRL8 has an illegal string argument, it must be an integer in the range");
-	error_logger.push_msg(" 0 <= ICNTRL8 < 332");
+	output_access->push_msg("ICNTRL8 has an illegal string argument, it must be an integer in the range");
+	output_access->push_msg(" 0 <= ICNTRL8 < 332");
 	fields.at("line_6").at("ICNTRL8")->change_tile_background("purple_andy_tile.png");
 	fields.at("line_6").at("ICNTRL8")->am_I_locking = true;
   }
@@ -690,12 +690,12 @@ void manager::icntrl10_locking(){
 	}
 
   } catch (out_of_range& map_error){
-	error_logger.push_error("From: manager::icntrl8_locking()| ICNTRL10 was not found in the tiles map,",
+	output_access->push_error("From: manager::icntrl8_locking()| ICNTRL10 was not found in the tiles map,",
 				" please check that the tile and HF config files match");
 
   } catch (invalid_argument& stoi_error){
-	error_logger.push_msg("ICNTRL10 has an illegal string argument, it must be an integer in the range");
-	error_logger.push_msg(" 0 <= ICNTRL10");
+	output_access->push_msg("ICNTRL10 has an illegal string argument, it must be an integer in the range");
+	output_access->push_msg(" 0 <= ICNTRL10");
 	field * icntrl10_field = fields.at("line_6").at("ICNTRL10");
 	icntrl10_field->change_tile_background("purple_andy_tile.png");
 	icntrl10_field->am_I_locking = true;
@@ -730,12 +730,12 @@ void manager::ilv3_ilv5_locking(){
 	}
 
   } catch (out_of_range& map_error){
-	error_logger.push_error("From: manager::ilv3_ilv5_locking()| ILV3 or ILV5was not found in the tiles map,",
+	output_access->push_error("From: manager::ilv3_ilv5_locking()| ILV3 or ILV5was not found in the tiles map,",
 				 " ensure that the tile and HF config files match");
 
   } catch (invalid_argument& stoi_error){
-	error_logger.push_msg("ILV3 or ILV5 has an illegal string argument, it must be an integer in the range");
-	error_logger.push_msg(" 0 <= (ILV3 or ILV5)");
+	output_access->push_msg("ILV3 or ILV5 has an illegal string argument, it must be an integer in the range");
+	output_access->push_msg(" 0 <= (ILV3 or ILV5)");
 	field* ilv3_field = fields.at("line_5").at("ILV3");
 	field* ilv5_field = fields.at("line_5").at("ILV5");
 	ilv3_field->change_tile_background("purple_andy_tile.png");
@@ -749,7 +749,7 @@ void manager::ilv3_ilv5_locking(){
 void manager::ilv3_ilv5_locking_helper(field* this_field,const regex& unlock_condition){
 
 	if (this_field == NULL){
-		error_logger.push_error("ILV3/ILV5 helper given NULL pointer");
+		output_access->push_error("ILV3/ILV5 helper given NULL pointer");
 	}
 
 	//nab raw string from field parameter
@@ -833,7 +833,7 @@ void manager::icntrl6_locking(){
 	//######### block originally below the try/catch#################
 
   } catch (out_of_range& map_error){
-	error_logger.push_error("From: manager::icntrl6_locking| One of the critical tiles associated with ICNTRL4",
+	output_access->push_error("From: manager::icntrl6_locking| One of the critical tiles associated with ICNTRL4",
 				" were not found, please check that tile and HF config files match.");
   }
 
@@ -858,11 +858,11 @@ void manager::inm1_locking(){
 	}
 
   } catch (out_of_range& map_error){
-	error_logger.push_error("From: manager: inm1_locking| INM1 was not found in the parameter map",
+	output_access->push_error("From: manager: inm1_locking| INM1 was not found in the parameter map",
 				", please check that the tile and HF config files match");
   } catch (invalid_argument& stoi_error){
-	error_logger.push_msg("INM1 has an illegal string argument, it must be an integer in the range ");
-	error_logger.push_msg(" 0 <= INM1");
+	output_access->push_msg("INM1 has an illegal string argument, it must be an integer in the range ");
+	output_access->push_msg(" 0 <= INM1");
 	fields.at("line_10").at("INM1")->change_tile_background("purple_andy_tile.png");
 	fields.at("line_10").at("INM1")->am_I_locking = true;
   }
@@ -885,11 +885,11 @@ void manager::inm2_locking(){
 	}
 
   } catch (out_of_range& map_error){
-	error_logger.push_error("From: manager: inm2_locking| INM2 was not found in the parameter map",
+	output_access->push_error("From: manager: inm2_locking| INM2 was not found in the parameter map",
 				", please check that the tile and HF config files match");
   } catch (invalid_argument& stoi_error){
-	error_logger.push_msg("INM2 has an illegal string argument, it must be an integer in the range ");
-	error_logger.push_msg(" 0 <= INM2");
+	output_access->push_msg("INM2 has an illegal string argument, it must be an integer in the range ");
+	output_access->push_msg(" 0 <= INM2");
 	fields.at("line_10").at("INM2")->change_tile_background("purple_andy_tile.png");
 	fields.at("line_10").at("INM2")->am_I_locking = true;
   }
@@ -911,11 +911,11 @@ void manager::iter_locking(){
 	}
 
   } catch (out_of_range& map_error){
-	error_logger.push_error("From: manager: iter_locking| ITER was not found in the parameter map",
+	output_access->push_error("From: manager: iter_locking| ITER was not found in the parameter map",
 				", please check that the tile and HF config files match");
   } catch (invalid_argument& stoi_error){
-	error_logger.push_msg("ITER has an illegal string argument, it must be an integer in the range ");
-	error_logger.push_msg(" 0 <= ITER");
+	output_access->push_msg("ITER has an illegal string argument, it must be an integer in the range ");
+	output_access->push_msg(" 0 <= ITER");
 
 	fields.at("line_10").at("ITER")->change_tile_background("purple_andy_tile.png");
 	fields.at("line_10").at("ITER")->am_I_locking = true;

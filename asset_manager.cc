@@ -10,7 +10,7 @@ using namespace std;
 
 extern system_wrapper* system_access;
 
-extern logger error_logger;
+extern logger* output_access;;
 extern sdl_help* sdl_access;
 
 #define ASSET_FOLDER_NAME "Assets/"
@@ -52,7 +52,7 @@ void asset_manager::pull_assets(){
 
 			//regular files should not appear in top level of Assets tree
 			if( file_in_dir->d_type == DT_REG){
-				error_logger.push_error("Not loading file in Assets folder.",
+				output_access->push_error("Not loading file in Assets folder.",
 										" Files should be in subdirectories.");
 			//if it is another dir, call the helper on it
 			} else if(file_in_dir->d_type == DT_DIR){
@@ -74,7 +74,7 @@ void asset_manager::pull_assets(){
 		}
 
 	} else {
-		error_logger.push_error("Couldn't open Assets folder from",
+		output_access->push_error("Couldn't open Assets folder from",
 								" asset_manager::pull_assets().");
 	}
 
@@ -125,7 +125,7 @@ void asset_manager::pull_helper(const string& subroot_path){
 		}
 
 	} else {
-		error_logger.push_error("From pull_helper, could not open: ",
+		output_access->push_error("From pull_helper, could not open: ",
 								subroot_path);
 	}
 }
@@ -168,7 +168,7 @@ SDL_Texture* asset_manager::load_image(const string& load_path){
 		textures.insert(pair<string,SDL_Texture*>(load_path,temp_texture));
 	} else {
 		string error = "File "+ load_path + " not found in load_image!.";
-		error_logger.push_error(error);
+		output_access->push_error(error);
 	}
 
 	return temp_texture;

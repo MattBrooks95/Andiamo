@@ -16,13 +16,15 @@
 #include "manager.h"
 #include "input_maker.h"
 #include "asset_manager.h"
+#include "system_wrapper.h"
 #include "logger.h"
 
 using std::string;
 using std::vector;
 
-extern logger error_logger;
+extern logger* output_access;;
 extern string HOME;
+extern system_wrapper* system_access;
 
 //the distance between two adjacent tiles
 #define HORIZ_TILE_PADDING 5

@@ -29,7 +29,7 @@ win_size::win_size(){
 	height = -1;
 }
 void win_size::print(){
-	error_logger.push_msg(to_string(width)+"x"+to_string(height));
+	output_access->push_msg(to_string(width)+"x"+to_string(height));
 }
 
 win_size* sdl_help::get_win_size(){
@@ -46,14 +46,16 @@ sdl_help::sdl_help(string name_in,string HF_input_file_in,
 	IMG_Init(IMG_INIT_PNG);//allows use of .png files
 	//allows sdl to print text to the screen using .ttf files
 	if(TTF_Init() != 0){
-		error_logger.push_error("Error in TTF_Init()!");
+		output_access->push_error("Error in TTF_Init()!");
 	}
 
 	//set window name
 	window_name = name_in;
 
-	font_p = HOME + "/Andiamo/Assets/fonts/";
-	hf_input_p = HOME + "/Andiamo/HF_Input/";
+	string home_path = system_access->get_home();
+
+	font_p     = home_path + "/Andiamo/Assets/fonts/";
+	hf_input_p = home_path + "/Andiamo/HF_Input/";
 
 	frame_count = 0;
 
@@ -61,21 +63,21 @@ sdl_help::sdl_help(string name_in,string HF_input_file_in,
 
 
 	if(SDL_GetCurrentDisplayMode(0,&display) < 0){
-		error_logger.push_error("Get current display mode error:");
-		error_logger.push_error(SDL_GetError());
+		output_access->push_error("Get current display mode error:");
+		output_access->push_error(SDL_GetError());
     }
 
 	int temp_window_w = display.w * .9;
 	int temp_window_h = display.h * .9;
-	error_logger.push_msg("display width: " + to_string(display.w) +
+	output_access->push_msg("display width: " + to_string(display.w) +
 						  "display height:" + to_string(display.h));
 	window = SDL_CreateWindow(window_name.c_str(), 0, 0,temp_window_w,
 							  temp_window_h, SDL_WINDOW_RESIZABLE);
 	renderer = SDL_CreateRenderer(window,-1,SDL_RENDERER_PRESENTVSYNC);
 	if(renderer == NULL){
 		//put message in error logger
-		error_logger.push_error("RENDERER COULD NOT BE CREATED");
-		error_logger.make_error_file();//make the error logger output
+		output_access->push_error("RENDERER COULD NOT BE CREATED");
+		output_access->make_error_file();//make the error logger output
 		exit(1984);//throw a tantrum and close program
 	}
 
@@ -88,9 +90,9 @@ sdl_help::sdl_help(string name_in,string HF_input_file_in,
 
 	if(font == NULL) {
 		cout << SDL_GetError() << endl;
-		error_logger.push_error(SDL_GetError());
+		output_access->push_error(SDL_GetError());
 	}
-        error_logger.push_msg("Enacting tile_bag update with values: " +
+        output_access->push_msg("Enacting tile_bag update with values: " +
 							  to_string(display.w / 2) + " " +
                               to_string(display.h) );
 
@@ -112,7 +114,7 @@ sdl_help::~sdl_help(){
 		SDL_DestroyWindow(window);
         //give back memory from the font pointer
 		TTF_CloseFont(font);
-	} else error_logger.push_error(SDL_HELP_ERROR);
+	} else output_access->push_error(SDL_HELP_ERROR);
 
     //SDL clean up calls
 	TTF_Quit();
@@ -128,7 +130,7 @@ void sdl_help::init(){
 	string bg_loc = "Images/Backgrounds/" + bg_image_name;
 	bg_texture    = asset_access->get_texture(bg_loc);
 
-	if(bg_texture == NULL) error_logger.push_error(SDL_GetError());
+	if(bg_texture == NULL) output_access->push_error(SDL_GetError());
 	SDL_RenderCopy(renderer,bg_texture,NULL,NULL);
 
 	//give vertical scroll bar the addresses of the info it needs from the sdl_help object
@@ -142,11 +144,11 @@ void sdl_help::init(){
     //note that the asset manager is not used here because we
     //need an SDL_Surface*, not an SDL_Texture*
     //asset manager should get you what you want, surface or texture - Brooks
-    string icon_location = HOME + "/Andiamo/Assets/Images/" + APP_ICON;
+    string icon_location = system_access->get_home() + "/Andiamo/Assets/Images/" + APP_ICON;
     SDL_Surface* icon_surf = IMG_Load(icon_location.c_str());
     //cout << "Icon should be located at:" << icon_location << endl;
     if(icon_surf == NULL){
-        error_logger.push_error("Couldn't find the Andiamo window icon at: ",
+        output_access->push_error("Couldn't find the Andiamo window icon at: ",
                               icon_location);
         //cout << "Setting iwndow icon didn't work." << endl;
     } else {
@@ -197,9 +199,9 @@ void sdl_help::draw(){
 //prints area window size and display
 void sdl_help::print_size_info(){
 
-	error_logger.push_msg("Printing window size: ");
+	output_access->push_msg("Printing window size: ");
 	window_s.print();
-	error_logger.push_msg("Printing display info: "+to_string(display.w)+"x"+to_string(display.h));
+	output_access->push_msg("Printing display info: "+to_string(display.w)+"x"+to_string(display.h));
 }
 
 void sdl_help::present(){
@@ -280,34 +282,34 @@ void sdl_help::update_scroll(int x_scroll_in, int y_scroll_in){
 
 	if( (rightmost + x_scroll_in) <= 0){
 		x_scroll = x_scroll + abs(0-rightmost);
-		error_logger.push_msg("Hit right scrolling barrier.");
+		output_access->push_msg("Hit right scrolling barrier.");
 	}
 
 	if( (leftmost + x_scroll_in) >= window_s.width){
 		x_scroll = x_scroll - (leftmost-window_s.width);
-		error_logger.push_msg("Hit left scrolling barrier.");
+		output_access->push_msg("Hit left scrolling barrier.");
 	}
 
 	if( (upmost + y_scroll_in) >= window_s.height){
 		y_scroll = y_scroll - (upmost-window_s.height);
-		error_logger.push_msg("Hit up scrolling barrier.");
+		output_access->push_msg("Hit up scrolling barrier.");
 	}
 
 	if( (downmost + y_scroll_in) <= 0){
 		y_scroll = y_scroll + abs(0-downmost);
-		error_logger.push_msg("Hit down scrolling barrier.");
+		output_access->push_msg("Hit down scrolling barrier.");
 	}
 
 	//it would make sense to be able to scroll like this
 	string msg = "x_scroll increased by " + to_string(x_scroll_in);
 	msg       += "| " + to_string(x_scroll) + "-> ";
 	msg       += to_string(x_scroll + x_scroll_in);
-	error_logger.push_msg(msg);
+	output_access->push_msg(msg);
 
 	msg  = "y_scroll increased by " + to_string(y_scroll_in);
 	msg += "| " + to_string(y_scroll) + "-> " +to_string(y_scroll+y_scroll_in);
 
-	error_logger.push_msg(msg);
+	output_access->push_msg(msg);
 	x_scroll = x_scroll + x_scroll_in;
 	y_scroll = y_scroll + y_scroll_in;
 
@@ -411,7 +413,7 @@ bool sdl_help::in(int click_x, int click_y,const SDL_Rect& rect) const{
 
 
 void sdl_help::calc_corners(){
-	error_logger.push_msg("######### IN CALC CORNERS ########################");
+	output_access->push_msg("######### IN CALC CORNERS ########################");
 	//this variable keeps track of where the next line should
 	//start being placed. The helper function should set it to be just
 	//below the newly created section of tiles, and some padding value
@@ -423,9 +425,9 @@ void sdl_help::calc_corners(){
 	int row_limit;
 
 	int widest_tile = tile_access->get_widest_tile_width();
-	error_logger.push_msg("WIDEST TILE: "+to_string(widest_tile));
+	output_access->push_msg("WIDEST TILE: "+to_string(widest_tile));
 	if(widest_tile > window_s.width){
-		error_logger.push_msg("USING WIDEST TILE TO LIMIT ROWS");
+		output_access->push_msg("USING WIDEST TILE TO LIMIT ROWS");
 		//if a single tile is bigger than the window, use it for logic
 		//because the window is likely so small that the normal
 		//row placement logic won't work
@@ -433,7 +435,7 @@ void sdl_help::calc_corners(){
 
 	} else {
 
-		error_logger.push_msg("USING WINDOW SIZE TO LIMIT ROWS");
+		output_access->push_msg("USING WINDOW SIZE TO LIMIT ROWS");
 		//else wise, fill up the window as best it can
 		row_limit = window_s.width;
 	}
@@ -445,7 +447,7 @@ void sdl_help::calc_corners(){
 							row_height,row_limit);
 	}
 
-	error_logger.push_msg("############# END CALC CORNERS #################");
+	output_access->push_msg("############# END CALC CORNERS #################");
 
 }
 
@@ -496,9 +498,9 @@ void sdl_help::calc_corners_helper(vector<field*>& line_in,
             if(x_corner > rightmost_edge) rightmost_edge = x_corner;
 
 			if(line_in[c]->yloc + line_in[c]->get_size().height + 5 > lowest_point){
-				error_logger.push_msg("OLD lowest_point:"+to_string(lowest_point));
+				output_access->push_msg("OLD lowest_point:"+to_string(lowest_point));
 				lowest_point = line_in[c]->yloc + line_in[c]->get_size().height + 5;
-				error_logger.push_msg(" NEW lowest_point:"+to_string(lowest_point));
+				output_access->push_msg(" NEW lowest_point:"+to_string(lowest_point));
 			}
 
 
@@ -580,7 +582,7 @@ void sdl_help::make_line_label(const string& label,unsigned int& start_height){
     SDL_Surface* temp_surface =
         SDL_CreateRGBSurface(0,label_loc.w,label_loc.h,32,red,green,blue,alpha);
     if(temp_surface == NULL){
-        error_logger.push_error("Couldn't make title card:"+label);
+        output_access->push_error("Couldn't make title card:"+label);
     }
 
     //fill in the label with the same color as the line guide
@@ -594,7 +596,7 @@ void sdl_help::make_line_label(const string& label,unsigned int& start_height){
     //draw words on the label
     if(SDL_BlitSurface(text_surface,NULL,temp_surface,NULL) != 0){
         string error = SDL_GetError();
-        error_logger.push_error("Error in label blit."+error);
+        output_access->push_error("Error in label blit."+error);
     }
 
     //make sure that th rest of the calc_corners functions know
@@ -604,7 +606,7 @@ void sdl_help::make_line_label(const string& label,unsigned int& start_height){
     //convert the surface to a renderable texture
     SDL_Texture* label_texture = SDL_CreateTextureFromSurface(renderer,temp_surface);
     if(label_texture == NULL){
-        error_logger.push_error("Error in creating line label texture.");
+        output_access->push_error("Error in creating line label texture.");
 
     }
 

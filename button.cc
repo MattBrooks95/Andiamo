@@ -29,7 +29,7 @@ void button::init(const string& image_path_in){
     image_path = image_path_in;
 
     button_texture = asset_access->get_texture(image_path);
-    if(button_texture == NULL) error_logger.push_error(string(SDL_GetError()));
+    if(button_texture == NULL) output_access->push_error(string(SDL_GetError()));
 
     SDL_QueryTexture(button_texture,NULL,NULL,&width,&height);
 
@@ -39,11 +39,11 @@ void button::init(const string& image_path_in){
 
 //virtual
 void button::print_me(){
-    error_logger.push_msg("image path:"+image_path);
-    error_logger.push_msg("xlocation x ylocation:" + to_string(xloc) + "x" + to_string(yloc));
-    error_logger.push_msg("width:" + to_string(width) + " height:" + to_string(height));
-    error_logger.push_msg(" texture: " + to_string(size_t(button_texture)));
-    error_logger.push_msg("shown?:" + to_string(shown));
+    output_access->push_msg("image path:"+image_path);
+    output_access->push_msg("xlocation x ylocation:" + to_string(xloc) + "x" + to_string(yloc));
+    output_access->push_msg("width:" + to_string(width) + " height:" + to_string(height));
+    output_access->push_msg(" texture: " + to_string(size_t(button_texture)));
+    output_access->push_msg("shown?:" + to_string(shown));
 }
 
 //virtual
@@ -103,7 +103,7 @@ bool button::was_clicked(SDL_Event& mouse_event){
 }
 
 void button::click_helper(SDL_Event& mouse_event){
-    error_logger.push_msg("default button click_helper");
+    output_access->push_msg("default button click_helper");
 }
 //################# virtual click members ###############
 

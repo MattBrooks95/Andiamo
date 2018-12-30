@@ -11,22 +11,22 @@
 //for sorting the tiles based on width
 #include<algorithm>
 
-
-#include "field.h"
-#include "input_maker.h"
-
 #include<SDL2/SDL.h>
 #include<SDL2/SDL_image.h>
 
+#include "field.h"
+#include "input_maker.h"
+#include "system_wrapper.h"
 #include "logger.h"
+
 
 using std::string;
 using std::regex;
 using std::map;
 
-extern logger error_logger;
+extern logger* output_access;;
 extern button_manager* button_access;
-extern string HOME;
+extern system_wrapper* system_access;
 
 class button_manager;
 

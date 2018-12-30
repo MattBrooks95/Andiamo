@@ -18,6 +18,7 @@
 //items are accessed by name (key)
 #include<map>
 
+#include "system_wrapper.h"
 #include "ftran_structs.h"
 #include "string+.h"
 #include "logger.h"
@@ -32,7 +33,9 @@ using std::map;
 using std::ostream;
 using std::regex;
 
-extern logger error_logger;
+extern logger* output_access;;
+extern system_wrapper* system_access;
+
 class button_manager;
 
 //! input_maker makes the HF input and loads in the default values

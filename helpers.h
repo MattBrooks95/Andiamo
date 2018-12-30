@@ -10,7 +10,7 @@
 
 using std::string;
 
-extern logger error_logger;
+extern logger* output_access;;
 
 //! stoi, with exception handling
 /*! \param convert_me is the string to be casted to an integer

@@ -3,16 +3,13 @@
 #include "logger.h"
 using namespace std;
 
-extern string HOME;
-
 logger::logger(){
 
 	//default to not worrying about operational messages
 	verbose = false;
 
 	//build dynamic file name ##################################################
-	string path(HOME);
-	path += "/Andiamo/error_logs/";
+	string path = system_access->get_home() + "/Andiamo/error_logs/";
 
 	string prefix = "andiamo_errors_";//constant first part
 	string suffix = ".txt";//constant file extension
@@ -46,8 +43,7 @@ logger::logger(){
 	errors_out.open( unique_file_name.c_str() );
 	//it didn't work, make the dir and try again
 	if(errors_out.fail()){
-		string mkdir_target(HOME);
-		mkdir_target += "/Andiamo/error_logs";
+		string mkdir_target  = system_access->get_home() + "/Andiamo/error_logs";
 		string mkdir_command = "mkdir " + mkdir_target;
 		system(mkdir_command.c_str());
 		errors_out.open( unique_file_name.c_str() );
@@ -88,8 +84,7 @@ void logger::cleaning_check(){
 	//this allows the opening of a directory as if it were a file
 	DIR* dir_point;
 	struct dirent *file_in_dir;
-	string assets_path = HOME;
-	assets_path       += "/Andiamo/error_logs";
+	string assets_path = system_access->get_home() + "/Andiamo/error_logs";
 	dir_point = opendir(assets_path.c_str());
 	if(dir_point != NULL){
 
@@ -133,8 +128,7 @@ void logger::cleaning_check(){
 
 		while(file_names.size() > 19){
 			//grab file name to complete path
-			string doomed_one(HOME);
-			doomed_one       += "/Andiamo/error_logs/" + file_names.back();
+			string doomed_one = system_access->get_home() + "/Andiamo/error_logs/" + file_names.back();
 			//bash arg goes here
 			string sys_command = "rm ";
 

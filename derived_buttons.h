@@ -7,6 +7,7 @@
 #include "text_box.h"
 #include "input_maker.h"
 #include "fop_handler.h"
+#include "system_wrapper.h"
 
 extern input_maker* io_access;
 extern fop_handler* FOP_access;
@@ -14,7 +15,8 @@ extern asset_manager* asset_access;
 
 
 extern bool main_done;
-extern logger error_logger;
+extern logger* output_access;;
+extern system_wrapper* system_access;
 //################## EXIT BUTTON ###############################################
 
 using std::string;
