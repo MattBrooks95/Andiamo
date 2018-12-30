@@ -17,7 +17,9 @@ extern sdl_help* sdl_access;
 
 asset_manager::asset_manager(){
 	asset_home_path = system_access->get_home() + "/Andiamo/"+ ASSET_FOLDER_NAME;
-	num_textures    = 0;
+
+	num_textures      = 0;
+	get_texture_calls = 0;
 }
 
 asset_manager::asset_manager(const asset_manager& other){
@@ -28,7 +30,7 @@ asset_manager::~asset_manager(){
 
 	for(map<string,SDL_Texture*>::iterator it = textures.begin();
 		it != textures.end();
-		it++){
+		++it){
 
 		if(it->second != NULL){
 			SDL_DestroyTexture(it->second);
@@ -130,11 +132,10 @@ void asset_manager::pull_helper(const string& subroot_path){
 
 SDL_Texture* asset_manager::get_texture(const string& target){
 
-	static int x = 0;
-
 	SDL_Texture* temp_texture = NULL;
-	// cout << "get_texture calls:" << x << endl;
-	x++;
+
+	get_texture_calls++;
+
 	string target_path = asset_home_path + target;
 
 	//try to get texture from map
@@ -144,37 +145,29 @@ SDL_Texture* asset_manager::get_texture(const string& target){
 		return temp_texture;
 	} catch (out_of_range& not_found){
 		//if it wasn't found in the map, load it instead
-		return load_image(target);
+		return load_image(target_path);
 	}
 
 }
-// consider not doing this and lazy-load everything -Brooks
-SDL_Texture* asset_manager::load_image(const string& load_me){
-	string target_path = asset_home_path + load_me;
+
+SDL_Texture* asset_manager::get_absolute_path_texture(const std::string& target){
+	return load_image(target);
+}
+
+SDL_Texture* asset_manager::load_image(const string& load_path){
 
 	SDL_Surface* temp_surface;
-	temp_surface = IMG_Load(target_path.c_str());
+	temp_surface = IMG_Load(load_path.c_str());
 
 	SDL_Texture* temp_texture;
 	temp_texture = SDL_CreateTextureFromSurface(sdl_access->renderer,
 												 temp_surface);
 
-	if (temp_texture == NULL){
-		cout << "path:" << target_path << " is scuffed, trying old path method" << endl;
-		cout << "old path:" << load_me << endl;
-		temp_surface = IMG_Load(load_me.c_str());
-		temp_texture = SDL_CreateTextureFromSurface(sdl_access->renderer,
-												 temp_surface);
-	}
-
 	if(temp_surface != NULL){
-
 		SDL_FreeSurface(temp_surface);
-		// textures.insert(pair<string,SDL_Texture*>(load_me,temp_texture));
-		textures.insert(pair<string,SDL_Texture*>(target_path,temp_texture));
-
+		textures.insert(pair<string,SDL_Texture*>(load_path,temp_texture));
 	} else {
-		string error = "File "+ load_me + " not found in load_image!.";
+		string error = "File "+ load_path + " not found in load_image!.";
 		error_logger.push_error(error);
 	}
 
@@ -186,7 +179,7 @@ void asset_manager::list_images(ostream& outs){
 	outs << "Printing map of textures. Size: " << textures.size() << endl;
 	for(map<string,SDL_Texture*>::iterator it = textures.begin();
 		it != textures.end();
-		it++){
+		++it){
 		outs << it->first << " " << it->second << endl;
 	}
 }

@@ -40,6 +40,12 @@ button_manager::~button_manager(){
 
 }
 
+void button_manager::init_everything(){
+    init_tray();
+    init_buttons();
+    init_form_tray();
+}
+
 void button_manager::init_tray(){
     button_tray_texture = asset_access->get_texture(button_image_p +
                                                     tray_image_name);

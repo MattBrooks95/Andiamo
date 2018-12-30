@@ -35,14 +35,17 @@ class button_manager{
 
 	//################### BUTTON TRAY STUFF ##################################//
 
-	//! this member sets up the tray in which the buttons are placed
+	//! calls init_tray, init_form_tray, init_buttons
+	void init_everything();
+
+	//! sets up the tray in which the buttons are placed
 	void init_tray();
 
-	/*! this member sets up the buttons that open and close forms
+	/*! sets up the buttons that open and close forms
 	 * for extensive parameter entry */
 	void init_form_tray();
 
-	/*! this member updates the lock graphics after a resize.
+	/*! updates the lock graphics after a resize.
 	 *  it is a helper function for location_update */
 	void redo_locks();
 
@@ -231,18 +234,3 @@ class button_manager{
 	exit_button exit_dialogue; 
 
 };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -93,8 +93,8 @@ int main(int argc, char *argv[]){
 	//import all of the assets
 	asset_manager assets;
 	asset_access = &assets;
-	asset_access->pull_assets();
-	//asset_access->list_images(cout);
+
+	asset_access->list_images(cout);
 
 	//sets up the background pictures and scroll bars
 	sdl_access->init();
@@ -117,9 +117,7 @@ int main(int argc, char *argv[]){
 
 	//set up the manager for the functional buttons
 	button_manager b_manager;
-	b_manager.init_tray();
-	b_manager.init_buttons();
-	b_manager.init_form_tray();
+	b_manager.init_everything();
 	button_access = &b_manager;
 
 	//set up the FOP handling object
@@ -243,8 +241,6 @@ int main(int argc, char *argv[]){
 
   return 0;//Exit success
 }
-
-
 
 void no_work_done_message(exit_button& exit_dialogue){
 	SDL_Texture* no_work_texture = NULL;
