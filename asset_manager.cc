@@ -41,7 +41,6 @@ void asset_manager::pull_assets(){
 	struct dirent* file_in_dir;
 
 	DIR* assets_home;
-	cout << "asset_home_path:" << asset_home_path << endl;
 	assets_home = opendir(asset_home_path.c_str());
 
 	if(assets_home != NULL){
@@ -84,7 +83,7 @@ void asset_manager::pull_helper(const string& subroot_path){
 
 	DIR* current_root;
 	current_root = opendir(subroot_path.c_str());
-	dirent* current_file;
+	dirent* current_file = NULL;
 	if(current_root != NULL){
 
 		while( (current_file = readdir(current_root)) ){
@@ -127,7 +126,6 @@ void asset_manager::pull_helper(const string& subroot_path){
 		error_logger.push_error("From pull_helper, could not open: ",
 								subroot_path);
 	}
-
 }
 
 SDL_Texture* asset_manager::get_texture(const string& target){
@@ -135,10 +133,10 @@ SDL_Texture* asset_manager::get_texture(const string& target){
 	static int x = 0;
 
 	SDL_Texture* temp_texture = NULL;
-	cout << "get_texture calls:" << x << endl;
+	// cout << "get_texture calls:" << x << endl;
 	x++;
 	string target_path = asset_home_path + target;
-	cout << "asset path from get_texture():" << asset_home_path + target << endl;
+
 	//try to get texture from map
 	try{
 
@@ -150,11 +148,8 @@ SDL_Texture* asset_manager::get_texture(const string& target){
 	}
 
 }
-
+// consider not doing this and lazy-load everything -Brooks
 SDL_Texture* asset_manager::load_image(const string& load_me){
-	// cout << "asset path:" << asset_home_path << endl;
-	// cout << "load asset path:" << load_me << endl;
-
 	string target_path = asset_home_path + load_me;
 
 	SDL_Surface* temp_surface;
@@ -165,8 +160,8 @@ SDL_Texture* asset_manager::load_image(const string& load_me){
 												 temp_surface);
 
 	if (temp_texture == NULL){
-		// cout << "path:" << target_path << " is scuffed, trying old path method" << endl;
-		// cout << "old path:" << load_me << endl;
+		cout << "path:" << target_path << " is scuffed, trying old path method" << endl;
+		cout << "old path:" << load_me << endl;
 		temp_surface = IMG_Load(load_me.c_str());
 		temp_texture = SDL_CreateTextureFromSurface(sdl_access->renderer,
 												 temp_surface);
@@ -175,11 +170,12 @@ SDL_Texture* asset_manager::load_image(const string& load_me){
 	if(temp_surface != NULL){
 
 		SDL_FreeSurface(temp_surface);
-		textures.insert(pair<string,SDL_Texture*>(load_me,temp_texture));
+		// textures.insert(pair<string,SDL_Texture*>(load_me,temp_texture));
+		textures.insert(pair<string,SDL_Texture*>(target_path,temp_texture));
 
 	} else {
-		error_logger.push_error("File "+ load_me + " not found in",
-								"load_image!.");
+		string error = "File "+ load_me + " not found in load_image!.";
+		error_logger.push_error(error);
 	}
 
 	return temp_texture;
@@ -194,9 +190,3 @@ void asset_manager::list_images(ostream& outs){
 		outs << it->first << " " << it->second << endl;
 	}
 }
-
-
-
-
-
-

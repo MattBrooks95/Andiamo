@@ -6,7 +6,6 @@
 using namespace std;
 
 extern asset_manager* asset_access;
-extern string HOME;
 
 //###################### CONSTRUCTORS/DESTRUCTORS ##############################
 scroll_bar::scroll_bar(){
@@ -17,7 +16,9 @@ scroll_bar::scroll_bar(){
 	yloc = -1;
 	width = 0;
 	height = 0;
+
 	image_p = "notset";
+
 	my_tex = NULL;
 
 	//do not start out in scrolling mode
@@ -26,8 +27,10 @@ scroll_bar::scroll_bar(){
 	//null out references to sdl_help members until the init function is ran
 	x_scroll = NULL;
 	y_scroll = NULL;
-	window_width = NULL;
+
+	window_width  = NULL;
 	window_height = NULL;
+
 	renderer = NULL;
 }
 //#############################################################################
@@ -88,21 +91,23 @@ void scroll_bar::init_corner_texture(){
 		yloc = 0;
 	}
 }
+
 void scroll_bar::init(int* x_scroll_in, int* y_scroll_in,
 				const int* window_width_in, const int* window_height_in,
-				SDL_Renderer* renderer_in,string image_p_in){
+				SDL_Renderer* renderer_in,string image_name_in){
 
 	//initialize members that point to sdl_help object's members
 	x_scroll = x_scroll_in;
 	y_scroll = y_scroll_in;
-	window_width = window_width_in;
+
+	window_width  = window_width_in;
 	window_height = window_height_in;
+
 	renderer = renderer_in;
 
-	image_p  = HOME;
-	image_p += "/Andiamo/Assets/scroll_bars/" + image_p_in;
-	init_corner_texture();
+	image_p = "scroll_bars/" + image_name_in;
 
+	init_corner_texture();
 }
 
 void scroll_bar::draw_me(){
@@ -171,21 +176,3 @@ void scroll_bar::handle_resize(){
 	}
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

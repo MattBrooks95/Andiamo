@@ -112,7 +112,6 @@ void field::graphics_init(string image_path_in){
 
     string assets_image_path = image_path + image_name;
 
-    cout << "Image path used to get texture:" << assets_image_path << endl;
     //load in tile background
     my_tex = asset_access->get_texture(assets_image_path);
     if(my_tex == NULL){
@@ -363,7 +362,7 @@ void field::clicked(SDL_Event& event, const int& click_x,const int& click_y){
 void field::change_tile_background(string image_name_in){
     my_tex = NULL;
     string assets_full_path = image_path + image_name_in;
-    cout << "change tile background: " << display_name << endl;
+    // cout << "change tile background: " << display_name << endl;
     my_tex = asset_access->get_texture(assets_full_path);
     if(my_tex == NULL) error_logger.push_error(SDL_GetError());
 }

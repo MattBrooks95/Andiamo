@@ -67,16 +67,13 @@ void form::init(string form_title_in,string help_msg_image_name,int xloc_in,
     //set up the patterns for user type checking
     my_patterns = pattern_tests;
 
-    string home_path = system_access->get_home();
+    string form_assets_path = "Images/form_assets/";
 
 	//initialize the page number spritesheet
 	//these numbers are blitted onto the form surface,
 	//to indicate which page the user is on
-	string help_path(home_path);
-    help_path += "/Andiamo/Assets/Images/form_assets/" + help_msg_image_name;
 
-    string number_path(home_path);
-    number_path += "/Andiamo/Assets/Images/form_assets/number_sprites.png";
+    string number_path = form_assets_path + "number_sprites.png";
 	number_sprites = IMG_Load(number_path.c_str());
 	if(number_sprites == NULL) error_logger.push_error(SDL_GetError());
 	//##########################################################################
@@ -86,8 +83,7 @@ void form::init(string form_title_in,string help_msg_image_name,int xloc_in,
 	form_area.y = yloc_in;
 
 	//initialize the form texture from its asset file
-    string form_surf_path(home_path);
-    form_surf_path += "/Andiamo/Assets/Images/form_assets/form.png";
+	string form_surf_path = "Images/form_assets/form.png";
 	form_surface = IMG_Load(form_surf_path.c_str());
 
 	if(form_surface == NULL){
@@ -110,7 +106,7 @@ void form::init(string form_title_in,string help_msg_image_name,int xloc_in,
 		SDL_Color black = {0,0,0,0};
 
 		//make this font a little bit bigger than the others
-		string title_path(home_path);
+		string title_path(system_access->get_home());
 		title_path += "/Andiamo/Assets/fonts/LiberationSerif-Regular.ttf";
 		TTF_Font* title_font = TTF_OpenFont( title_path.c_str(), 28);
 		form_title_surface = TTF_RenderUTF8_Blended(title_font,form_title.c_str(),black);
@@ -136,9 +132,8 @@ void form::init(string form_title_in,string help_msg_image_name,int xloc_in,
 	//######################################################################
 
 	//initialize the help message that is shown upon the question mark being clicked
-	string help_target(home_path);
-    help_target += "/Andiamo/Assets/Images/form_assets/"+help_msg_image_name;
-	help_texture = asset_access->get_texture(help_target);
+    string help_target = "Images/form_assets/" + help_msg_image_name;
+	help_texture       = asset_access->get_texture(help_target);
 	if(help_texture == NULL) error_logger.push_error(SDL_GetError());
 	//######################################################################
 

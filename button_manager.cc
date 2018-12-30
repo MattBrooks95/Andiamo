@@ -16,8 +16,8 @@ extern system_wrapper* system_access;
 #define BUTTON_IMAGE_PATH "Images/Buttons/"
 
 button_manager::button_manager(){
-    button_image_p = BUTTON_IMAGE_PATH;
-    tray_image_name = "button_tray.png";
+    button_image_p       = BUTTON_IMAGE_PATH;
+    tray_image_name      = "button_tray.png";
     form_tray_image_name = "form_tray.png";
 
     tray_shown = true;
@@ -33,8 +33,7 @@ button_manager::button_manager(){
     form_tray_rect.h = 0;
 
     button_tray_texture = NULL;
-
-    form_tray_texture = NULL;
+    form_tray_texture   = NULL;
 }
 
 button_manager::~button_manager(){
@@ -42,7 +41,6 @@ button_manager::~button_manager(){
 }
 
 void button_manager::init_tray(){
-    cout << button_image_p + tray_image_name << endl;
     button_tray_texture = asset_access->get_texture(button_image_p +
                                                     tray_image_name);
 
@@ -370,7 +368,7 @@ bool button_manager::click_handling(SDL_Event& mouse_event){
     bool done_something = false;
 
     error_logger.push_msg("HANDLING BUTTON CLICKS");
-    if(!done_something && fop_button.shown){
+    if(fop_button.shown){
         if( fop_button.handle_click(mouse_event)){
             done_something = true;
         }
@@ -797,7 +795,7 @@ void button_manager::bad_tile_input_warnings(vector<string>& bad_input_list){
     //update the screen to show the message
     sdl_access->present();
 
-    //delay for 3 seconds so they can read the message
+    //delay for 5 seconds so they can read the message
     SDL_Delay(5000);
 
     //free memory
@@ -814,9 +812,7 @@ void button_manager::clean_up_warnings(SDL_Event& big_event,
     //make the error message for the output file name
     if(bad_output_fname){
 
-        string out_fname_err_target(system_access->get_home());
-        out_fname_err_target +=
-            "/Andiamo/Assets/Images/Buttons/output_fname_err.png";
+        string out_fname_err_target = "Images/Buttons/output_fname_err.png";
         output_fname_error_texture =
             asset_access->get_texture(out_fname_err_target);
         if(output_fname_error_texture == NULL) error_logger.push_error(string(SDL_GetError()));

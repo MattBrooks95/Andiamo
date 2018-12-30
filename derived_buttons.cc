@@ -108,19 +108,18 @@ void exit_button::init(const string& image_path_in){
     shown = false;
 
     //configure active areas
-    no_area.xloc = xloc + 30;
-    no_area.yloc = yloc + 30;
-    no_area.width = 70;
+    no_area.xloc   = xloc + 30;
+    no_area.yloc   = yloc + 30;
+    no_area.width  = 70;
     no_area.height = 50;
 
     //this 195 number was determined by trial and error,
     //to get the box's actual dimensions to line up with the image's.
     //I suppose measuring the pixel distance in a photo editor would have been more efficient
-    yes_area.xloc = xloc + 195;
-    yes_area.yloc = yloc + 30;
-    yes_area.width = 70;
+    yes_area.xloc   = xloc + 195;
+    yes_area.yloc   = yloc + 30;
+    yes_area.width  = 70;
     yes_area.height = 50;
-
 }
 //##############################################################################
 
@@ -179,11 +178,9 @@ int output_file_button::work(/*input_maker& io_handler*/){
 //################## FOP HANDLER BUTTON ########################################
 void fop_handler_button::click_helper(SDL_Event& mouse_event){
     work();
-
 }
 
 void fop_handler_button::work(){
-    cout << "Message from the fop_button." << endl;
     FOP_access->fop_main();
 }
 //##############################################################################

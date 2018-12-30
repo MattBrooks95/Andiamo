@@ -125,8 +125,9 @@ sdl_help::~sdl_help(){
 void sdl_help::init(){
 
 	//############## background image initialization #########################//
-	string bg_loc = HOME + "/Andiamo/Assets/Images/Backgrounds/"+bg_image_name;
-	bg_texture = asset_access->get_texture(bg_loc);
+	string bg_loc = "Images/Backgrounds/" + bg_image_name;
+	bg_texture    = asset_access->get_texture(bg_loc);
+
 	if(bg_texture == NULL) error_logger.push_error(SDL_GetError());
 	SDL_RenderCopy(renderer,bg_texture,NULL,NULL);
 
@@ -140,6 +141,7 @@ void sdl_help::init(){
     //start/task bar or dash, and while alt-tabbing
     //note that the asset manager is not used here because we
     //need an SDL_Surface*, not an SDL_Texture*
+    //asset manager should get you what you want, surface or texture - Brooks
     string icon_location = HOME + "/Andiamo/Assets/Images/" + APP_ICON;
     SDL_Surface* icon_surf = IMG_Load(icon_location.c_str());
     //cout << "Icon should be located at:" << icon_location << endl;

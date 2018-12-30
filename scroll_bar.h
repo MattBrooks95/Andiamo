@@ -43,7 +43,7 @@ class scroll_bar{
 	 *\param renderer_in SDL_Renderer pointer to the containing sdl_help object's renderer pointer
 	 *\param image_p_in string that contains the desired image name */ 
 	void init(int* x_scroll_in, int* y_scroll_in, const int* window_width_in,
-		  const int* window_height_in,SDL_Renderer* renderer_in, string image_p_in);
+		  const int* window_height_in,SDL_Renderer* renderer_in, string image_name_in);
 
 	//! draw_me uses it's own information to draw itself to the renderer used by the sdl_help object
 	void draw_me();

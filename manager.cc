@@ -646,7 +646,7 @@ void manager::icntrl10_locking(){
 	if(!nnsig_field->is_locked && nnsig_locking && nnsig_val > 0){
 		nnsig_field->am_I_locking = false;
 		nnsig_field->change_tile_background("andy_tile.png");
-	} else if((nnsig_field->is_locked || !nnsig_val > 0) && !nnsig_locking){
+	} else if((nnsig_field->is_locked || !(nnsig_val > 0)) && !nnsig_locking){
 		nnsig_field->am_I_locking = true;
 		nnsig_field->change_tile_background("purple_andy_tile.png");
 	}

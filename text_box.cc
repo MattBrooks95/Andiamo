@@ -5,7 +5,6 @@
 using namespace std;
 
 extern asset_manager* asset_access;
-extern string HOME;
 
 text_box::text_box(TTF_Font* font_in, string text_in, int xloc_in, int
                     yloc_in,int width_in, int height_in){
@@ -71,18 +70,11 @@ text_box::text_box(const text_box& other){
     //and may cause a seg fault
     my_cursor.init(&my_rect);
 
-    string text_b_target(HOME);
-    text_b_target += "/Andiamo/Assets/Images/text_box.png";
-    text_box_texture = asset_access->get_texture(text_b_target);
+    string text_b_target = "Images/text_box.png";
+    text_box_texture     = asset_access->get_texture(text_b_target);
 
-    string bad_target(HOME);
-    bad_target += "/Andiamo/Assets/Images/bad_tile.png";
+    string bad_target = "Images/bad_tile.png";
     bad_texture = asset_access->get_texture(bad_target);
-
-    text_surface = TTF_RenderUTF8_Blended(font,text.c_str(),text_color);
-
-    text_texture = SDL_CreateTextureFromSurface(sdl_access->renderer,
-                                                    text_surface);
 
     if(sdl_access != NULL && font != NULL){
         text_surface = TTF_RenderUTF8_Blended(font,text.c_str(),text_color);
@@ -117,13 +109,11 @@ void text_box::init(TTF_Font* font_in, string text_in, int xloc_in, int yloc_in,
     my_cursor.init(&my_rect);
 
     //load the same text box image used by the tiles
-    string texture_path(HOME);
-    texture_path += "/Andiamo/Assets/Images/text_box.png";
+    string texture_path = "Images/text_box.png";
     text_box_texture = asset_access->get_texture(texture_path);
     if(text_box_texture == NULL) error_logger.push_error(SDL_GetError());
 
-    string bad_path(HOME);
-    bad_path += "/Andiamo/Assets/Images/bad_tile.png";
+    string bad_path = "Images/bad_tile.png";
     bad_texture = asset_access->get_texture(bad_path);
     if(bad_texture == NULL) error_logger.push_error(SDL_GetError());
 

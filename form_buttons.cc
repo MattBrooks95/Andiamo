@@ -41,9 +41,8 @@ form_button::~form_button(){
 }
 
 void form_button::init(){
-
-    string lock_target = HOME+"/Andiamo/Assets/Images/lock.png";
-    lock_texture = asset_access->get_texture(lock_target);
+    string lock_target = "Images/lock.png";
+    lock_texture       = asset_access->get_texture(lock_target);
     if(lock_texture == NULL) error_logger.push_error(SDL_GetError());
     is_locked  = true;
     init_array = NULL;
@@ -81,8 +80,8 @@ void form_button::setup_lock(){
 
 void form_button::setup_help_msg(){
 
-    string unlock_target = "Assets/Images/form_assets/general_form_locked_msg.png";
-    unlock_help_texture = asset_access->get_texture(unlock_target);
+    string unlock_target = "Images/form_assets/general_form_locked_msg.png";
+    unlock_help_texture  = asset_access->get_texture(unlock_target);
     if(unlock_help_texture == NULL) error_logger.push_error(SDL_GetError());
 }
 
@@ -295,8 +294,8 @@ void form_button::save_information(ofstream& context_out,form& this_form){
 
 void icntrl8_form_button::setup_help_msg(){
 
-    string unlock_target = "Assets/Images/form_assets/icntrl8_form_locked_msg.png";
-    unlock_help_texture = asset_access->get_texture(unlock_target);	
+    string unlock_target = "Images/form_assets/icntrl8_form_locked_msg.png";
+    unlock_help_texture  = asset_access->get_texture(unlock_target);	
     if(unlock_help_texture == NULL) error_logger.push_error(SDL_GetError());
 }
 
@@ -984,8 +983,7 @@ void icntrl6_form_button::cross_sections_helper(){
 void icntrl6_form_button::setup_landing(){
 
     //setup the graphics pointers
-    string landing_target(HOME);
-    landing_target += "/Andiamo/Assets/Images/form_assets/icntrl6_landing.png";
+    string landing_target = "Images/form_assets/icntrl6_landing.png";
     landing_texture = asset_access->get_texture(landing_target);
     if(landing_texture == NULL){
         error_logger.push_error("Could not init the the icntrl6 form selection texture.",
@@ -1215,15 +1213,14 @@ icntrl10_button::icntrl10_button(){
 void icntrl10_button::init(){
 
 
-    string lock_target = HOME+"/Andiamo/Assets/Images/lock.png";
+    string lock_target = "Images/lock.png";
     lock_texture = asset_access->get_texture(lock_target);
     if(lock_texture == NULL) error_logger.push_error(SDL_GetError());
     is_locked         = true;
     active            = false;
     current_context   = 0;
 
-    string back_target = HOME + "/Andiamo/Assets/Images/";
-    back_target       += "form_assets/icntrl10_backdrop.png";
+    string back_target = "Images/form_assets/icntrl10_backdrop.png";
     icntrl10_backdrop = asset_access->get_texture(back_target);
     if(icntrl10_backdrop == NULL){
         error_logger.push_error("Couldn't create texture for icntrl10 'form' ",
@@ -1256,8 +1253,7 @@ void icntrl10_button::init(){
 
 
     //set up the context number indicator in the top right
-    string number_path(HOME);
-    number_path += "/Andiamo/Assets/Images/form_assets/number_sprites.png";
+    string number_path = "Images/form_assets/number_sprites.png";
     number_sprites = IMG_Load(number_path.c_str());
     if(number_sprites == NULL) error_logger.push_error(SDL_GetError());
 
@@ -1285,9 +1281,7 @@ void icntrl10_button::init(){
     //pattern for sub-line 3 of line 11
     my_patterns.emplace_back(regex(RE_ICNTRL10_3));
 
-    string unlock_path(HOME);
-    unlock_path +=
-        "/Andiamo/Assets/Images/form_assets/general_form_locked_msg.png";
+    string unlock_path  = "Images/form_assets/general_form_locked_msg.png";
     unlock_help_texture = asset_access->get_texture(unlock_path);
 
     //init_array = NULL;

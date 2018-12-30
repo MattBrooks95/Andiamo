@@ -295,7 +295,6 @@ c 2 = search with more intermediate output
 andy
 ICNTRL7:Point Level Density
 c Variable name in HF: ICNTRL7
-andy_tile.png
 c 0 = do not echo level densities or change
 c     file of reduced levels
 c 1 = echo level densities
