@@ -8,43 +8,17 @@ logger::logger(){
 	//default to not worrying about operational messages
 	verbose = false;
 
-	//build dynamic file name ##################################################
-	string path = system_access->get_home() + "/Andiamo/error_logs/";
+	string home_path = system_access->get_home();
+	string path_to_logs = "/Andiamo/error_logs/";
 
-	string prefix = "andiamo_errors_";//constant first part
-	string suffix = ".txt";//constant file extension
+	error_logs_root_directory = home_path + path_to_logs;
 
-	//store the date and time of day as a unique file name
-	//to minimize over-writing
-	string time_string;
-
-	//unique_file_name will be comprised of a message and the date
-
-	//http://www.cplusplus.com/reference/ctime/localtime/ 
-	time_t unix_time;
-	struct tm* time_info;
-	time(&unix_time);
-	time_info = localtime(&unix_time);
-	
-	string time_text = asctime(time_info);
-
-	time_string = to_string(time_info->tm_hour) + "h_" 
-					+ to_string(time_info->tm_min) + "m_" 
-					+ to_string(time_info->tm_mon + 1) + "_" 
-					+ to_string(time_info->tm_mday) + "_" 
-					+ to_string(time_info->tm_year - 100);
-
-
-	unique_file_name = path + prefix + time_string + suffix;
-
-	//cout << unique_file_name << endl;
-	//#########################################################################
+	unique_file_name = get_unique_log_name();
 
 	errors_out.open( unique_file_name.c_str() );
 	//it didn't work, make the dir and try again
 	if(errors_out.fail()){
-		string mkdir_target  = system_access->get_home() + "/Andiamo/error_logs";
-		string mkdir_command = "mkdir " + mkdir_target;
+		string mkdir_command = "mkdir " + error_logs_root_directory;
 		system(mkdir_command.c_str());
 		errors_out.open( unique_file_name.c_str() );
 	//it worked
@@ -52,28 +26,49 @@ logger::logger(){
 		//close the file for now
 		errors_out.close();
 	}
-	
+
+	string local_time = system_access->get_local_startup_time_string();
+	string time_message = "Local time at start:" + local_time;
+	push_msg(time_message);
 }
 
 logger::~logger(){
 	//remove old files if there's too many files in the /error_logs directory
 	cleaning_check();
 	//output the error messages to the file
-	make_error_file();
+	make_log_file();
 }
 
+string logger::get_unique_log_name(){
+
+	string path = error_logs_root_directory;
+
+	string prefix = "andiamo_errors_";
+	//constant file extension
+	string extension = ".txt";
+
+	tm* time_info = system_access->get_local_startup_time();
+
+	string hours   = to_string(time_info->tm_hour) + "h_";
+	string minutes = to_string(time_info->tm_min) + "m_";
+	string day     = to_string(time_info->tm_mon + 1) + "_"; 
+	string month   = to_string(time_info->tm_mday) + "_";
+	string year    = to_string(time_info->tm_year - 100);
+
+	string time_string = hours + minutes + day + month + year;
+
+	return path + prefix + time_string + extension;
+}
 
 void logger::push_error(const std::string& push_me){
-	errors_vector.push_back(push_me);//put message in the vector
-	error_msg_num++;//increment the error counter
-
+	errors_vector.push_back(push_me);
+	error_msg_num++;
 }
 
 void logger::push_error(const string& push_1,const string& push_2){
 	errors_vector.push_back(push_1);
 	errors_vector.push_back(push_2);
-	//the two strings are likely describing the same error,
-	//so only increment once
+	//the two strings are likely describing the same error, so only increment once
 	error_msg_num++;
 }
 
@@ -106,9 +101,8 @@ void logger::cleaning_check(){
 		closedir(dir_point);
 
 	} else {
-		string err;
-		err  = "Failure to open the /error_logs file,";
-		err += " for cleaning by cleaning_check()";
+		string err = "Failure to open the /error_logs file,";
+		err       += " for cleaning by cleaning_check()";
 		push_error(err);
 	}
 
@@ -159,22 +153,23 @@ void logger::push_msg_no_nl(const std::string& push_me){
 	message_vector.back().append(push_me);
 }
 
-void logger::make_error_file(){
+void logger::make_log_file(){
+	string bars = "#############";
 
 	errors_out.open(unique_file_name);
-	errors_out << "#############Verbose messages###################" << endl;
-	if(verbose){
-		for(unsigned int c = 0; c < message_vector.size();c++){
-			errors_out << message_vector[c] << "\n";
+	if (verbose) {
+		errors_out << bars << " Messages " << bars << endl;
+		print_log_vector(errors_out,message_vector);
+	}
 
+	errors_out << "\n" << bars << " Errors " << bars << endl;
+	print_log_vector(errors_out,errors_vector);
+}
+
+void logger::print_log_vector(ofstream& output_stream, vector<string>& print_me){
+		for(unsigned int c = 0; c < print_me.size();c++){
+			output_stream << print_me[c] << "\n";
 		}
-	}
-
-	errors_out << "\n##################Error messages##############" << endl;
-	for(unsigned int c = 0; c < errors_vector.size();c++){
-		errors_out << errors_vector[c] << "\n";
-	}
-
 }
 
 //############# non-class functions #############################//

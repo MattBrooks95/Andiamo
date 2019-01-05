@@ -20,6 +20,8 @@ system_wrapper::system_wrapper(){
 	cout << "APPLE" << endl;
 	#endif
 
+	save_start_time();
+
 	cout << home_environment << endl;
 }
 
@@ -45,4 +47,20 @@ string system_wrapper::get_os_string(){
 
 void system_wrapper::print_os(){
 	cout << "User operating system is: " << get_os_string() << endl;
+}
+
+void system_wrapper::save_start_time(){
+	//unique_file_name will be comprised of a message and the date
+	//http://www.cplusplus.com/reference/ctime/localtime/ 
+	time_t unix_time;
+	time(&unix_time);
+	local_time_at_startup = localtime(&unix_time);
+}
+
+tm* system_wrapper::get_local_startup_time(){
+	return local_time_at_startup;
+}
+
+std::string system_wrapper::get_local_startup_time_string(){
+	return asctime(local_time_at_startup);
 }

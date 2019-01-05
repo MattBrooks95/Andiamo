@@ -69,16 +69,19 @@ sdl_help::sdl_help(string name_in,string HF_input_file_in,
 
 	int temp_window_w = display.w * .9;
 	int temp_window_h = display.h * .9;
-	output_access->push_msg("display width: " + to_string(display.w) +
-						  "display height:" + to_string(display.h));
+
+	string width_string  = "display width: " + to_string(display.w);
+	string height_string = "display height:" + to_string(display.h);
+	output_access->push_msg(width_string + height_string);
+
 	window = SDL_CreateWindow(window_name.c_str(), 0, 0,temp_window_w,
 							  temp_window_h, SDL_WINDOW_RESIZABLE);
 	renderer = SDL_CreateRenderer(window,-1,SDL_RENDERER_PRESENTVSYNC);
 	if(renderer == NULL){
 		//put message in error logger
 		output_access->push_error("RENDERER COULD NOT BE CREATED");
-		output_access->make_error_file();//make the error logger output
-		exit(1984);//throw a tantrum and close program
+		output_access->make_log_file(); //make the error logger output
+		exit(1984); //throw a tantrum and close program
 	}
 
 	//set up pointer to font from file
@@ -114,8 +117,9 @@ sdl_help::~sdl_help(){
 		SDL_DestroyWindow(window);
         //give back memory from the font pointer
 		TTF_CloseFont(font);
-	} else output_access->push_error(SDL_HELP_ERROR);
-
+	} else {
+		output_access->push_error(SDL_HELP_ERROR);
+	}
     //SDL clean up calls
 	TTF_Quit();
 	IMG_Quit();
@@ -152,13 +156,11 @@ void sdl_help::init(){
                               icon_location);
         //cout << "Setting iwndow icon didn't work." << endl;
     } else {
-
         //setting the window icon does not work unless the image
         //is 64x64 I guess, it wouldn't work for 600x600
         //or 128x128
         SDL_SetWindowIcon(window, icon_surf);
         SDL_FreeSurface(icon_surf);
-
     }
 }
 

@@ -11,9 +11,6 @@
 //for breaking file names up into integers
 #include<regex>
 
-//for system calls
-#include<cstdlib>
-
 //for time functions used to name files
 #include<time.h>
 
@@ -45,8 +42,14 @@ class logger{
 	 *Also, if the 'logs' directory
 	 *does not exist, it creates it with system calls */
 	logger();
-	//! the destructor calls make_error_file()
+
+	//! the destructor calls make_log_file()
 	~logger();
+
+	//! builds a unique file name for this run's log
+	/*! uses the date and time to ensure that these are unique, assuming they
+	 *don't open multiple andiamo instances at the same time */
+	string get_unique_log_name();
 
 	//! puts a new error message into the vector
 	/* these messages are accumulated and then printed to a file at the end of this object's life.
@@ -73,7 +76,9 @@ class logger{
 
 	//! this function creates the error file from the errors_vector
 	/*! it is called in this class's destructor, so that it doesn't have to be called in main */
-	void make_error_file();
+	void make_log_file();
+
+	void print_log_vector(std::ofstream& outs, std::vector<string>& print_me);
 
 	//! controls how much output the error logger will make
 	bool verbose;
@@ -87,6 +92,9 @@ class logger{
 
 	//! save the file name that is based on the time in which Andiamo was ran
 	string unique_file_name;
+
+	//! points to the error logs folder within Andiamo
+	string error_logs_root_directory;
 
 	//! keep track of process outputs
 	vector<string> message_vector;

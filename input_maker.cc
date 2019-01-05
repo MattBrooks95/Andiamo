@@ -762,9 +762,9 @@ void input_maker::initialize_fields(){
 string input_maker::get_string_init_error_message(const string& param_name){
 
     string err;
-    err  = "Error! Failed to find parameter:"+param_name;
+    err  = "Error! Failed to find parameter:" + param_name;
     err += "'s tile in the fields map.\nPlease make sure that";
-    err += " its entries in tile_Input/tiles.txt";
+    err += " its entries in tile_Input/tiles.txt ";
     err += "and HF_Config/config.txt \n have matching names.";
     return err;
 }
