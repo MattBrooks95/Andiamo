@@ -25,7 +25,7 @@ field::field(string tile_name_in,string display_name_in,string image_name_in,
     help_mode = false;
 
     //not in error mode at default
-    is_red = false;
+    is_in_error = false;
 
     //not in locking mode at Default
     am_I_locking = false;
@@ -64,7 +64,7 @@ field::field(const field& other){
     text_dims.x = other.text_dims.x;
     text_dims.y = other.text_dims.y;
 
-    is_red = other.is_red;
+    is_in_error = other.is_in_error;
 
     is_locked = other.is_locked;
 
@@ -367,19 +367,19 @@ void field::change_tile_background(string image_name_in){
     if(my_tex == NULL) output_access->push_error(SDL_GetError());
 }
 
-void field::go_red(){
+void field::set_error_state(){
     my_tex = NULL;
 
     change_tile_background("bad_tile.png");
 
-    is_red = true;
+    is_in_error = true;
 }
 
-void field::go_back(){
+void field::cancel_error_state(){
 
     my_tex = NULL;
 
     change_tile_background(image_name);
 
-    is_red = false;
+    is_in_error = false;
 }

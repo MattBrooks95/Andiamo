@@ -33,7 +33,7 @@ fop_handler::~fop_handler(){
 
     for(vector<deck*>::iterator it = fop_decks.begin();
         it != fop_decks.end();
-        it++){
+        ++it){
 
         delete(*it);
     }

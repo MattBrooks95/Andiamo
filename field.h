@@ -98,11 +98,11 @@ class field{
     //! this function is used to swap the box background texture to red
     /*! this is enacted by the manager when this tile fails to convert the user's information
      *with stoi or stod. It serves as an error indicator for the fields that failed the test. */
-    void go_red();
+    void set_error_state();
 
     //! this function returns a tile to normal after it is given proper input and "Let's Go" has been clicked
     /*! basically undos field::go_red(), which is used to signal errors */
-    void go_back();
+    void cancel_error_state();
 
     //! this function updates the texture for the text box
     /*! this means that the information's changes by update_temp_input or back_space are reflected graphically
@@ -153,7 +153,7 @@ class field{
     /* useful when drawing the text editing cursor */
     SDL_Rect text_dims;
 
-    bool is_red;//!< is this tile in error mode or not
+    bool is_in_error;//!< is this tile in error mode or not
 
     /*! allows locking of the tile, for situations in which they
      * are redundant or not necessary */
