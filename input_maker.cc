@@ -777,7 +777,7 @@ void input_maker::give_int4_defaults(){
     //name for that int4 param.
     for(INT4_MAP::iterator i4_it = int4_params.begin();
         i4_it != int4_params.end();
-        i4_it++){
+        ++i4_it){
 
 
         field* this_params_field = tile_access->get_param(i4_it->first);

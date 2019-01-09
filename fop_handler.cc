@@ -1,6 +1,5 @@
 //! \file fop_handler.cc implements the class defined in fop_handler.h
 
-#include "system_wrapper.h"
 #include "fop_handler.h"
 #include "sdl_help.h"
 #include "input_maker.h"
@@ -21,13 +20,9 @@ fop_handler::fop_handler(){
 	scratch_path = home_path + SCRATCH_PATH;
 
 	//start off assuming all channels are inactive
-	open_channels[0] = false;
-	open_channels[1] = false;
-	open_channels[2] = false;
-	open_channels[3] = false;
-	open_channels[4] = false;
-	open_channels[5] = false;
-	open_channels[6] = false;
+	for (uint c = 0; c < NUM_INPUT_CHANNELS; c++){
+		open_channels[c] = false;
+	}
 
     //no transmission coefficients are ready in between the fop_handler
     //instantiation and fop_main being ran

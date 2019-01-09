@@ -8,6 +8,7 @@
 //allows use of std::pair, for storing FOP in -> FOP out file names
 #include <utility>
 
+#include "system_wrapper.h"
 #include "deck.h"
 #include "sdl_help.h"
 #include "manager.h"
@@ -33,6 +34,8 @@ extern sdl_help* sdl_access;
 extern manager* tile_access;
 extern button_manager* button_access;
 extern input_maker* io_access;
+
+#define NUM_INPUT_CHANNELS 6
 
 /*! \brief uses a data directory and Andiamo inputs
  *to use FOP to calculate the transmission coefficients */
@@ -125,7 +128,7 @@ class fop_handler{
 	 *[3] = deuteron
 	 *[4] = triton
 	 *[5] = 3He */
-	bool open_channels[6];
+	bool open_channels[NUM_INPUT_CHANNELS];
 
     //! stores the most FOP file names for each open channel
     std::pair<string,string> fop_file_names;
