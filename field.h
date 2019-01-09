@@ -109,9 +109,6 @@ class field{
      *on the next frame that occurs */
     void update_texture();
 
-    //! this function deletes the last character, unless the string is empty
-    void back_space();
-
     //! this void member prints the field's info to the error_logger
     void print();
 
