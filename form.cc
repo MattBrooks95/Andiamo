@@ -74,7 +74,8 @@ void form::init(string form_title_in,string help_msg_image_name,int xloc_in,
 	//to indicate which page the user is on
 
     string number_path = form_assets_path + "number_sprites.png";
-	number_sprites = IMG_Load(number_path.c_str());
+	number_sprites = asset_access->get_surface(number_path);
+	//number_sprites = IMG_Load(number_path.c_str());
 	if(number_sprites == NULL) output_access->push_error(SDL_GetError());
 	//##########################################################################
 
@@ -83,50 +84,53 @@ void form::init(string form_title_in,string help_msg_image_name,int xloc_in,
 	form_area.y = yloc_in;
 
 	//initialize the form texture from its asset file
-	string form_surf_path = "Images/form_assets/form.png";
-	// form_surface = IMG_Load(form_surf_path.c_str());
+	string form_surface_path = "Images/form_assets/form.png";
 
-	form_surface = asset_access->get_surface(form_surf_path);
+	form_surface = asset_access->get_surface(form_surface_path);
 
 	if(form_surface == NULL){
+		cout << "Form surface null!" << endl;
+		output_access->push_error(SDL_GetError());
+		return;
+	}
+
+	int offset = SPRITE_OFFSET;
+	SDL_Rect source = {offset+page_count*offset,0,offset,offset};
+	SDL_Rect destination = {750,26,20,20};
+
+	//draw max page # in top right
+	SDL_BlitSurface(number_sprites,&source,form_surface,&destination);
+
+	source = {offset+current_page*offset,0,offset,offset};
+	destination = {725,0,20,20};
+
+	//draw current page # (0) in rop right
+	SDL_BlitSurface(number_sprites,&source,form_surface,&destination);
+
+	//make the form title surface
+	SDL_Color black = {0,0,0,0};
+
+	//make this font a little bit bigger than the others
+	string title_path(system_access->get_home());
+	title_path += "/Andiamo/Assets/fonts/LiberationSerif-Regular.ttf";
+	TTF_Font* title_font = TTF_OpenFont( title_path.c_str(), 28);
+	form_title_surface = TTF_RenderUTF8_Blended(title_font,form_title.c_str(),black);
+	if(form_title_surface == NULL){
 		output_access->push_error(SDL_GetError());
 	} else {
-		int offset = SPRITE_OFFSET;
-		SDL_Rect source = {offset+page_count*offset,0,offset,offset};
-		SDL_Rect destination = {750,26,20,20};
-
-		//draw max page # in top right
-		SDL_BlitSurface(number_sprites,&source,form_surface,&destination);
-
-		source = {offset+current_page*offset,0,offset,offset};
-		destination = {725,0,20,20};
-
-		//draw current page # (0) in rop right
-		SDL_BlitSurface(number_sprites,&source,form_surface,&destination);
-
-		//make the form title surface
-		SDL_Color black = {0,0,0,0};
-
-		//make this font a little bit bigger than the others
-		string title_path(system_access->get_home());
-		title_path += "/Andiamo/Assets/fonts/LiberationSerif-Regular.ttf";
-		TTF_Font* title_font = TTF_OpenFont( title_path.c_str(), 28);
-		form_title_surface = TTF_RenderUTF8_Blended(title_font,form_title.c_str(),black);
-		if(form_title_surface == NULL){
+		TTF_SizeText(title_font,form_title.c_str(),&source.w,&source.h);
+		source.x = 0; source.y = 0;
+		destination.w = source.w; destination.h = source.h;
+		destination.x = form_area.x + 400 - (source.w / 2);
+		destination.y = form_area.y + 25 - (source.h / 2);
+		if(SDL_BlitSurface(form_title_surface,&source,form_surface,&destination) != 0){
 			output_access->push_error(SDL_GetError());
-		} else {
-			TTF_SizeText(title_font,form_title.c_str(),&source.w,&source.h);
-			source.x = 0; source.y = 0;
-			destination.w = source.w; destination.h = source.h;
-			destination.x = form_area.x + 400 - (source.w / 2);
-			destination.y = form_area.y + 25 - (source.h / 2);
-			if(SDL_BlitSurface(form_title_surface,&source,form_surface,&destination) != 0){
-				output_access->push_error(SDL_GetError());
-			}
-
 		}
-		TTF_CloseFont(title_font);
+
 	}
+
+	TTF_CloseFont(title_font);
+
 
 	form_texture =
 		SDL_CreateTextureFromSurface(sdl_access->renderer,form_surface);

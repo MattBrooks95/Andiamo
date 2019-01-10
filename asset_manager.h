@@ -80,7 +80,6 @@ class asset_manager{
 		uint get_texture_calls;
 		uint get_surface_calls;
 		string asset_home_path;
-		std::map<std::string,SDL_Surface*> surfaces;
 		std::map<std::string,SDL_Texture*> textures;
 		unsigned int num_textures;
 };

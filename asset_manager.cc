@@ -157,24 +157,17 @@ SDL_Surface* asset_manager::get_surface(const string& target){
 
 	string target_path = asset_home_path + target;
 
-	try {
-		temp_surface = surfaces.at(target_path);
-		//dereference the pointer so that the calling code gets a copy
-		SDL_Surface* pointer_to_a_copy = new SDL_Surface(*temp_surface);
-		return pointer_to_a_copy;
-
-	} catch(out_of_range& not_found){
-		return load_image_return_surface(target);
-	}
-
+	return load_surface(target_path);
 }
 
 SDL_Texture* asset_manager::load_image_return_texture(const string& load_path){
+
 	SDL_Surface* temp_surface = load_surface(load_path);
 
 	SDL_Texture* temp_texture = make_texture_from_surface(temp_surface,load_path);
 
 	return temp_texture;
+
 }
 
 SDL_Surface* asset_manager::load_image_return_surface(const string& load_path){
@@ -188,7 +181,8 @@ SDL_Surface* asset_manager::load_image_return_surface(const string& load_path){
 }
 
 SDL_Surface* asset_manager::load_surface(const string& load_path){
-	return IMG_Load(load_path.c_str());
+	SDL_Surface* temp_surface = IMG_Load(load_path.c_str());
+	return temp_surface;
 }
 
 SDL_Texture* asset_manager::make_texture_from_surface(SDL_Surface* surface,
