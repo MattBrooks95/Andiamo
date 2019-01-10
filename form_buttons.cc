@@ -418,8 +418,9 @@ void icntrl8_form_button::page_creation_helper(){
         pages_made++;
     }
     if(pages_made != vector_size) {
-        output_access->push_error("Error in icntrl8 page_creation_helper, # of created pages does not match",
-                       "expected value.");
+        string error = "Error in icntrl8 page_creation_helper, # of created";
+        error       += " pages does not match expected value.";
+        output_access->push_error(error);
     }
 
     my_form.set_page_count(pages_made);

@@ -84,7 +84,9 @@ void form::init(string form_title_in,string help_msg_image_name,int xloc_in,
 
 	//initialize the form texture from its asset file
 	string form_surf_path = "Images/form_assets/form.png";
-	form_surface = IMG_Load(form_surf_path.c_str());
+	// form_surface = IMG_Load(form_surf_path.c_str());
+
+	form_surface = asset_access->get_surface(form_surf_path);
 
 	if(form_surface == NULL){
 		output_access->push_error(SDL_GetError());
@@ -110,8 +112,9 @@ void form::init(string form_title_in,string help_msg_image_name,int xloc_in,
 		title_path += "/Andiamo/Assets/fonts/LiberationSerif-Regular.ttf";
 		TTF_Font* title_font = TTF_OpenFont( title_path.c_str(), 28);
 		form_title_surface = TTF_RenderUTF8_Blended(title_font,form_title.c_str(),black);
-		if(form_title_surface == NULL) output_access->push_error(SDL_GetError());
-		else {
+		if(form_title_surface == NULL){
+			output_access->push_error(SDL_GetError());
+		} else {
 			TTF_SizeText(title_font,form_title.c_str(),&source.w,&source.h);
 			source.x = 0; source.y = 0;
 			destination.w = source.w; destination.h = source.h;
@@ -463,7 +466,7 @@ void form::set_page_count(int page_count_in){
 	page_count = page_count_in - 1;
 	if(page_count > 10){
         string err = "page count greater than 10, form construction";
-        err += " may not work properly";
+        err       += " may not work properly";
 		output_access->push_error(err);
 	}
 
@@ -472,6 +475,14 @@ void form::set_page_count(int page_count_in){
 	//destination is shifted right and down a bit, so fill doesn't
 	//mess with "/" in page display
 	SDL_Rect destination = {751,27,20,20};
+
+
+	//write over old number, kind of like erasing just that part of the surface
+	if(form_surface == NULL){
+		string error = "form_surface is null in set_page_count!";
+		output_access->push_error(error);
+		return;
+	}
 
 	//"erase" previous page # by filling with white
     SDL_PixelFormat* format = form_surface->format;
@@ -505,6 +516,12 @@ void form::update_page_indicator(){
 	SDL_Rect destination = {725,0,20,20};
 
 	//write over old number, kind of like erasing just that part of the surface
+	if(form_surface == NULL){
+		string error = "form_surface is null in update page indicator!";
+		output_access->push_error(error);
+		return;
+	}
+
     SDL_PixelFormat* format = form_surface->format;
 	if(SDL_FillRect(form_surface,&destination,SDL_MapRGBA(format,WHITE)) != 0){
 		output_access->push_error(SDL_GetError());
@@ -524,8 +541,6 @@ void form::update_page_indicator(){
         err += " previous form texture was NULL";
 		output_access->push_error(err);
 	}
-
-
 }
 
 void form::flush_pages(){

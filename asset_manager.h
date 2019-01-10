@@ -34,7 +34,7 @@ class asset_manager{
 		//! clean up memory by walking the map of texture pointers
 		~asset_manager();
 
-		//! this function crawls through the assets folder, loading all png files
+		//! crawls through the assets folder, loading all png files
 		/*! I've moved away from using this, because it does work on potentially
 		 * unneeded files in the Assets folder */
 		void pull_assets();
@@ -42,7 +42,7 @@ class asset_manager{
 		//! recursive helper for pull_assets
 		void pull_helper(const string& subroot_path);
 
-		//! this function retrieves the texture for a string argument
+		//! retrieves the texture for a string argument
 		/*! it first checks the map to see if it has already been loaded.
 		 *If it has been loaded, it just returns that texture.
 		 *elsewise, it loads the texture into the map, and then returns it.
@@ -50,27 +50,37 @@ class asset_manager{
 		 *\return returns the sdl texture, or NULL on error */
 		SDL_Texture* get_texture(const std::string& target);
 
-		//! this function attempts to load a png, but from an absolute path
-		/*! you want get_texture() most of the time, because it searches
-		 * relative to the assets folder */
-		SDL_Texture* get_absolute_path_texture(const std::string& target);
+		//! retrieves the surface that was used to make the texture
+		/*! you need surfaces for dynamically drawing with
+		 * SDL_BlitSurface. Instead of getting a pointer to the form in the map,
+		 * this function returns a copy of it, because multiple objects
+		 * can't be blitting to the same surface pointer or they'd overlap and
+		 * they'd all have eachother's drawings */
+		SDL_Surface* get_surface(const std::string& target);
 
-		uint get_number_of_texture_calls(){ return get_texture_calls;}
+		uint get_number_of_texture_calls(){return get_texture_calls;}
+		uint get_number_of_surface_calls(){return get_surface_calls;}
 
-		//! this function loads images
-		/*! it creates a temporary surface for the requested image,
-		 *and then converts it to a texture and puts it in the texture
-		 *map. You can use this, but you probably want get_texture();
-		 *\param load_me name of image to be loaded - must be full path
-		 *\return returns the loaded sdl texture, or NULL on error */
-		SDL_Texture* load_image(const std::string& load_me);
-
-		//! this function prints the map of textures
+		//! prints the map of textures
 		void list_images(std::ostream& outs);
 
 	private:
+
+		SDL_Surface* load_surface(const std::string& load_me);
+
+		//! used by get_texture and get_surface
+		SDL_Texture* load_image_return_texture(const std::string& load_me);
+
+		//! used by get_texture and get_surface
+		SDL_Surface* load_image_return_surface(const std::string& load_me);
+
+		//! used by the load_image_return functions
+		SDL_Texture* make_texture_from_surface(SDL_Surface* surface, const string& map_key);
+
 		uint get_texture_calls;
+		uint get_surface_calls;
 		string asset_home_path;
+		std::map<std::string,SDL_Surface*> surfaces;
 		std::map<std::string,SDL_Texture*> textures;
 		unsigned int num_textures;
 };

@@ -119,6 +119,7 @@ class form{
 
 	//! save the form's surface
 	SDL_Surface* form_surface;
+
 	//! save the form's texture
 	SDL_Texture* form_texture;
 
@@ -217,15 +218,15 @@ class page{
 
 		//! sets up the row labels, if they exist
 		void set_row_labels(const vector<string>& row_labels_in,
-		int& x_start_point);
+								int& x_start_point);
 
 		//! helper for page_init that sets up the text boxes
 		void set_text_boxes(int& x_start_point, const vector<int>& column_spacings,
-							bool& row_labels_exist);
+								bool& row_labels_exist);
 
 		//! helper for page_init that sets up the column labels/headers
 		void init_column_labels(const vector<int>& column_spacings,
-								int& x_start_point,bool& row_labels_exist);
+									int& x_start_point,bool& row_labels_exist);
 		//##########################################################################
 
 		//! this function draws the pages headers, labels and text boxes
@@ -250,7 +251,6 @@ class page{
 		vector<string>& get_const_row_labels(){
 			return row_labels;
 		}
-
 
 		//! this function is a getter for the # of columns on the page
 		unsigned int get_columns(){ return num_columns;}

@@ -132,45 +132,77 @@ void asset_manager::pull_helper(const string& subroot_path){
 
 SDL_Texture* asset_manager::get_texture(const string& target){
 
-	SDL_Texture* temp_texture = NULL;
-
 	get_texture_calls++;
+
+	SDL_Texture* temp_texture = NULL;
 
 	string target_path = asset_home_path + target;
 
 	//try to get texture from map
-	try{
-
+	try {
 		temp_texture = textures.at(target_path);
 		return temp_texture;
-	} catch (out_of_range& not_found){
+	} catch(out_of_range& not_found){
 		//if it wasn't found in the map, load it instead
-		return load_image(target_path);
+		return load_image_return_texture(target_path);
 	}
 
 }
 
-SDL_Texture* asset_manager::get_absolute_path_texture(const std::string& target){
-	return load_image(target);
+SDL_Surface* asset_manager::get_surface(const string& target){
+
+	get_surface_calls++;
+
+	SDL_Surface* temp_surface = NULL;
+
+	string target_path = asset_home_path + target;
+
+	try {
+		temp_surface = surfaces.at(target_path);
+		//dereference the pointer so that the calling code gets a copy
+		SDL_Surface* pointer_to_a_copy = new SDL_Surface(*temp_surface);
+		return pointer_to_a_copy;
+
+	} catch(out_of_range& not_found){
+		return load_image_return_surface(target);
+	}
+
 }
 
-SDL_Texture* asset_manager::load_image(const string& load_path){
+SDL_Texture* asset_manager::load_image_return_texture(const string& load_path){
+	SDL_Surface* temp_surface = load_surface(load_path);
 
-	SDL_Surface* temp_surface;
-	temp_surface = IMG_Load(load_path.c_str());
+	SDL_Texture* temp_texture = make_texture_from_surface(temp_surface,load_path);
+
+	return temp_texture;
+}
+
+SDL_Surface* asset_manager::load_image_return_surface(const string& load_path){
+
+	SDL_Surface* temp_surface = load_surface(load_path);
+
+	SDL_Texture* temp_texture = make_texture_from_surface(temp_surface,load_path);
+
+	return temp_surface;
+
+}
+
+SDL_Surface* asset_manager::load_surface(const string& load_path){
+	return IMG_Load(load_path.c_str());
+}
+
+SDL_Texture* asset_manager::make_texture_from_surface(SDL_Surface* surface,
+														const string& map_key){
+
+	if(surface == NULL){
+		string error = "NULL surface given to make_texture_from_surface";
+		output_access->push_error(error);
+		return NULL;
+	}
 
 	SDL_Texture* temp_texture;
-	temp_texture = SDL_CreateTextureFromSurface(sdl_access->renderer,
-												 temp_surface);
-
-	if(temp_surface != NULL){
-		SDL_FreeSurface(temp_surface);
-		textures.insert(pair<string,SDL_Texture*>(load_path,temp_texture));
-	} else {
-		string error = "File "+ load_path + " not found in load_image!.";
-		output_access->push_error(error);
-	}
-
+	temp_texture = SDL_CreateTextureFromSurface(sdl_access->renderer,surface);
+	textures.insert(pair<string,SDL_Texture*>(map_key,temp_texture));
 	return temp_texture;
 
 }
