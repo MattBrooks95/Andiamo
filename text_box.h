@@ -115,18 +115,19 @@ class text_box{
 
 		string get_text() const {return text;}
 		void set_text(const string& new_text){text = new_text;}
-	private:
-		//! location information stored in an SDL_Rect for rendering
-		SDL_Rect my_rect;
-
-		//! contains the color of the text in the box
-		SDL_Color text_color;
 
 		//! the horizontal coordinate of the upper left corner
 		int xloc;
 
 		//! the vertical coordinate of the upper left corner
 		int yloc;
+
+	private:
+		//! location information stored in an SDL_Rect for rendering
+		SDL_Rect my_rect;
+
+		//! contains the color of the text in the box
+		SDL_Color text_color;
 
 		//! the width should be set by the init function or the constructor
 		int width;

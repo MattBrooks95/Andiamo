@@ -959,7 +959,7 @@ bool input_maker::grab_values(){
         field* found_field = tile_access->get_param(it->first);
 
         if( found_field != NULL ){
-            string field_value = found_field->my_text_box.text;
+            string field_value = found_field->my_text_box.get_text();
             it->second.value   = str_to_integer(field_value);
         }
 
@@ -970,7 +970,7 @@ bool input_maker::grab_values(){
         field* found_field = tile_access->get_param(it->first);
 
         if( found_field != NULL ){
-            string field_value = found_field->my_text_box.text;
+            string field_value = found_field->my_text_box.get_text();
             it->second.value   = str_to_double(field_value);
         }
     }
