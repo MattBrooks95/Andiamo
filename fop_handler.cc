@@ -255,7 +255,7 @@ double fop_handler::find_elab(){
 
 		//get ELAB string value from field, then convert to int
 		string elab_str;
-		elab_str = tile_access->fields.at("line_2").at("ELAB")->my_text_box.text;
+		elab_str = tile_access->fields.at("line_2").at("ELAB")->my_text_box.get_text();
 		elab_val = stod(elab_str);
 
 	} catch(out_of_range& map_error){
@@ -280,7 +280,7 @@ int fop_handler::find_icm(){
 
 		//get icm string value, convert to int
 		string icm_str;
-		icm_str   = tile_access->fields.at("line_2").at("ICM")->my_text_box.text;
+		icm_str   = tile_access->fields.at("line_2").at("ICM")->my_text_box.get_text();
 		icm_val = stoi(icm_str);
 
 	} catch(out_of_range& map_error){
@@ -314,8 +314,8 @@ void fop_handler::find_compound_A_Z(unsigned int& compound_A,
 
 	try{
 
-		compound_A = stoi(tile_access->fields.at("line_2").at("A")->my_text_box.text);
-		compound_Z = stoi(tile_access->fields.at("line_2").at("Z")->my_text_box.text);
+		compound_A = stoi(tile_access->fields.at("line_2").at("A")->my_text_box.get_text());
+		compound_Z = stoi(tile_access->fields.at("line_2").at("Z")->my_text_box.get_text());
 
 	} catch(out_of_range& map_error){
 		output_access->push_error("Couldn't find A or Z in field map.");
@@ -335,7 +335,7 @@ int fop_handler::find_IENCH(){
 	string iench_str;
 
 	try{
-		iench_str = tile_access->fields.at("line_2").at("IENCH")->my_text_box.text;
+		iench_str = tile_access->fields.at("line_2").at("IENCH")->my_text_box.get_text();
 		return_me = stoi(iench_str);
 	} catch(out_of_range& map_error){
 		output_access->push_error("Couldn't find IENCH in field map.");
@@ -429,7 +429,7 @@ void fop_handler::prepare_deck(int A_proj,int Z_proj,int A_targ,int Z_targ,
     //use that instead. Note that a full path must be provided here.
     //The alternate directory must also have the same file structure
     //as the provided default one.
-    string alt_tc_dir = button_access->get_tc_dir_button().my_text_box.text;
+    string alt_tc_dir = button_access->get_tc_dir_button().my_text_box.get_text();
     if(alt_tc_dir.size() != 0){
         cout << "using alternate TC dir:" + alt_tc_dir << endl; 
         transmission_dir = alt_tc_dir;
