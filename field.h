@@ -90,19 +90,14 @@ class field{
     /*! this helper will also update the text's surface dimensions, to be used when the text is drawn to the screen */
     void init_temp_input(string data);
 
+    void set_error_state();
+    void cancel_error_state();
+
+
     //! this function takes the file name of a different tile background in the images folder, and uses it instead
     /*! The tiles that have logical control over other parameters (cause locking), will be made purple
      *to indicate that they are the reason some tiles are unavailable.*/
     void change_tile_background(string image_name);
-
-    //! this function is used to swap the box background texture to red
-    /*! this is enacted by the manager when this tile fails to convert the user's information
-     *with stoi or stod. It serves as an error indicator for the fields that failed the test. */
-    void set_error_state();
-
-    //! this function returns a tile to normal after it is given proper input and "Let's Go" has been clicked
-    /*! basically undos field::go_red(), which is used to signal errors */
-    void cancel_error_state();
 
     //! this function updates the texture for the text box
     /*! this means that the information's changes by update_temp_input or back_space are reflected graphically

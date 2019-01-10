@@ -54,7 +54,7 @@ field::field(const field& other){
         descriptions.push_back(other.descriptions[c]);
     }
 
-    my_text_box.text = other.my_text_box.text;
+    my_text_box.set_text(other.my_text_box.get_text());
 
     editing_location = other.editing_location;
 

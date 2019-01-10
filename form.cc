@@ -451,9 +451,12 @@ bool form::check_values(vector<index_value>& error_details){
 		//go through and check each text box against the appropriate
         //regular expression using the mod operator
 		for(unsigned int d = 0; d < box_ref.size(); d++){
-			if(!regex_match(box_ref[d].text,my_patterns[d % num_columns]) ||
-				box_ref[d].text.compare(" ") || box_ref[d].text.length() == 0){
-				index_value temp_tuple(box_ref[d].text,d);
+
+			string box_ref_text = box_ref[d].get_text();
+
+			if(!regex_match(box_ref_text,my_patterns[d % num_columns]) ||
+				box_ref_text.compare(" ") || box_ref[d].get_text().length() == 0){
+				index_value temp_tuple(box_ref_text,d);
 				error_details.push_back(temp_tuple);
 				return_me = false;
 			}

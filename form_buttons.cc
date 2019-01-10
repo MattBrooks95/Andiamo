@@ -257,8 +257,8 @@ void form_button::save_information(ofstream& context_out){
         //loop over all of the text boxes, saving their current
         //information to the new config file
         for(uint text_box = 0; text_box < tb_array.size(); text_box++){
-            context_out << tb_array[text_box].text;
-            if(text_box != tb_array.size()-1 || page != pages_ref.size() - 1) context_out << " ";     
+            context_out << tb_array[text_box].get_text();
+            if(text_box != tb_array.size()-1 || page != pages_ref.size() - 1) context_out << " ";
         }
 
     }
@@ -279,7 +279,7 @@ void form_button::save_information(ofstream& context_out,form& this_form){
         //loop over all of the text boxes, saving their current
         //information to the new config file
         for(uint text_box = 0; text_box < tb_array.size(); text_box++){
-            context_out << tb_array[text_box].text;
+            context_out << tb_array[text_box].get_text();
             if(text_box != tb_array.size()-1 || page != pages_ref.size() - 1) context_out << " ";     
         }
 
@@ -313,7 +313,7 @@ void icntrl8_form_button::click_helper(SDL_Event& mouse_event){
 
     //grab the value for icntrl8 as it exists with the GUI right now
     int curr_val =
-        stoi(tile_access->fields.at("line_6").at("ICNTRL8")->my_text_box.text);
+        stoi(tile_access->fields.at("line_6").at("ICNTRL8")->my_text_box.get_text());
 
     //don't consider doing anything if the form is locked
     if(!is_locked){
@@ -361,7 +361,7 @@ void icntrl8_form_button::page_creation_helper(){
     //grab val from parameter field, so the pages can be set up
     try{
 
-      icntrl8_val = stoi(tile_access->fields.at("line_6").at("ICNTRL8")->my_text_box.text);
+      icntrl8_val = stoi(tile_access->fields.at("line_6").at("ICNTRL8")->my_text_box.get_text());
 
     } catch (out_of_range& range_error){
 
@@ -473,11 +473,11 @@ bool icntrl8_form_button::make_output(ofstream& outs,
         //loop over each row
         for(uint d = 0; d < pages_ptr->at(c).get_text_boxes().size() ;d += columns){
 
-            outs I pages_ptr->at(c).get_text_boxes().at(d).text
-                 I pages_ptr->at(c).get_text_boxes().at(d+1).text;
+            outs I pages_ptr->at(c).get_text_boxes().at(d).get_text()
+                 I pages_ptr->at(c).get_text_boxes().at(d+1).get_text();
             outs << setw(10);
             outs << setprecision(3);
-            outs << pages_ptr->at(c).get_text_boxes()[d+2].text << endl;
+            outs << pages_ptr->at(c).get_text_boxes()[d+2].get_text() << endl;
         }
 
     }
@@ -763,7 +763,7 @@ void icntrl6_form_button::search_spectra_page_creation(){
     int current_INM1_val;
     try{
 
-        current_INM1_val = stoi(tile_access->fields.at("line_10").at("INM1")->my_text_box.text); 
+        current_INM1_val = stoi(tile_access->fields.at("line_10").at("INM1")->my_text_box.get_text()); 
     } catch(invalid_argument& arg_error){
         output_access->push_error("Error reading current INM1/#Search Spectra value for page creation",
                     " logics.");
@@ -796,7 +796,7 @@ void icntrl6_form_button::search_spectra_page_helper(){
 
     try{
 
-      INM1_val = stoi(tile_access->fields.at("line_10").at("INM1")->my_text_box.text);
+      INM1_val = stoi(tile_access->fields.at("line_10").at("INM1")->my_text_box.get_text());
 
     } catch ( out_of_range& range_error ){
       output_access->push_error("ICNTRL6-INM1 could not be found in the field map.",
@@ -887,7 +887,7 @@ void icntrl6_form_button::cross_sections_page_creation(){
 
     int current_INM2_val;
     try{
-        current_INM2_val = stoi(tile_access->fields.at("line_10").at("INM2")->my_text_box.text); 
+        current_INM2_val = stoi(tile_access->fields.at("line_10").at("INM2")->my_text_box.get_text()); 
     } catch(invalid_argument& arg_error){
         output_access->push_error("Error reading current INM2/cross sections value for page creation",
                     " logics.");
@@ -918,7 +918,7 @@ void icntrl6_form_button::cross_sections_page_creation(){
 void icntrl6_form_button::cross_sections_helper(){
 
     try{
-      INM2_val = stoi(tile_access->fields.at("line_10").at("INM2")->my_text_box.text);
+      INM2_val = stoi(tile_access->fields.at("line_10").at("INM2")->my_text_box.get_text());
 
     } catch ( out_of_range& range_error ){
       output_access->push_error("ICNTRL6-INM2 could not be found in the field map.",
@@ -1074,13 +1074,14 @@ bool icntrl6_form_button::make_output(ofstream& outs,vector<index_value>& bad_in
             outs << "PAGE " << c << endl;
             //loop over each row
             for(uint d = 0; d < search_ref.at(c).get_text_boxes().size(); d += columns){
-                outs I search_ref[c].get_text_boxes()[d].text;
-                outs << setprecision(4);  //set precision for float numbers
-                outs F search_ref[c].get_text_boxes()[d+1].text F search_ref[c].get_text_boxes()[d+2].text;
-                outs F search_ref[c].get_text_boxes()[d+3].text F search_ref[c].get_text_boxes()[d+4].text;
-                outs F search_ref[c].get_text_boxes()[d+5].text F search_ref[c].get_text_boxes()[d+6].text;
-                outs F search_ref[c].get_text_boxes()[d+7].text F search_ref[c].get_text_boxes()[d+8].text;
-                outs F search_ref[c].get_text_boxes()[d+9].text << endl;
+                outs I search_ref[c].get_text_boxes()[d].get_text();
+                outs << setprecision(4);
+                // make this a loop - Brooks    
+                outs F search_ref[c].get_text_boxes()[d+1].get_text() F search_ref[c].get_text_boxes()[d+2].get_text();
+                outs F search_ref[c].get_text_boxes()[d+3].get_text() F search_ref[c].get_text_boxes()[d+4].get_text();
+                outs F search_ref[c].get_text_boxes()[d+5].get_text() F search_ref[c].get_text_boxes()[d+6].get_text();
+                outs F search_ref[c].get_text_boxes()[d+7].get_text() F search_ref[c].get_text_boxes()[d+8].get_text();
+                outs F search_ref[c].get_text_boxes()[d+9].get_text() << endl;
 
             }
         }
@@ -1092,9 +1093,9 @@ bool icntrl6_form_button::make_output(ofstream& outs,vector<index_value>& bad_in
             outs << "PAGE " << c << endl;
             //loop over each row
             for(uint d = 0; c < cross_ref.size();c++){
-                outs I cross_ref[c].get_text_boxes()[d].text I cross_ref[c].get_text_boxes()[d+1].text;
+                outs I cross_ref[c].get_text_boxes()[d].get_text() I cross_ref[c].get_text_boxes()[d+1].get_text();
                 outs << setprecision(4);
-                outs F10 cross_ref[c].get_text_boxes()[d+2].text F10 cross_ref[c].get_text_boxes()[d+3].text << endl;
+                outs F10 cross_ref[c].get_text_boxes()[d+2].get_text() F10 cross_ref[c].get_text_boxes()[d+3].get_text() << endl;
 
             }
         }
@@ -1104,8 +1105,8 @@ bool icntrl6_form_button::make_output(ofstream& outs,vector<index_value>& bad_in
     if(parity_ref.size() != 0){
         for(uint c = 0; c < parity_ref[0].get_text_boxes().size();c += 2){
             outs << setprecision(4);
-            outs F8 parity_ref[0].get_text_boxes()[c].text
-                 I parity_ref[0].get_text_boxes()[c+1].text << endl;
+            outs F8 parity_ref[0].get_text_boxes()[c].get_text()
+                 I parity_ref[0].get_text_boxes()[c+1].get_text() << endl;
         }
     }
 
@@ -1364,7 +1365,7 @@ void icntrl10_button::click_helper(SDL_Event& mouse_event){
         active = true;
 
         string NNSIG_str;
-        NNSIG_str = tile_access->fields.at("line_11").at("NNSIG")->my_text_box.text;
+        NNSIG_str = tile_access->fields.at("line_11").at("NNSIG")->my_text_box.get_text();
 
         unsigned int current_NNSIG;
         current_NNSIG = stoi(NNSIG_str);
@@ -1573,9 +1574,9 @@ void icntrl10_button::save_information(ofstream& context_out){
             for(UINT text_b = 0; text_b < box_array.size();text_b++){
 
                 if(text_b == 0){
-                    output_line << box_array[text_b].text;
+                    output_line << box_array[text_b].get_text();
                 } else {
-                    output_line  << "," << box_array[text_b].text;
+                    output_line  << "," << box_array[text_b].get_text();
                 }
             }
             if(data_obj+1 != data.size()){
@@ -1723,14 +1724,14 @@ bool icntrl10_button::make_output(ofstream& outs,vector<index_value>& icntrl10_e
     for(unsigned int c = 0; c < data.size();c++){
 
         for(unsigned int d = 0; d < 3;d++){
-            if(data[c].line_entries[d].bad_input ){
+            if(data[c].line_entries[d].is_input_bad()){
 
-                index_value temp_bag(data[c].line_entries[d].text,c*3 + d);                
+                index_value temp_bag(data[c].line_entries[d].get_text(),c*3 + d);
                 icntrl10_errors.push_back(temp_bag);
                 return_value = false;
             } else {
 
-                outs << data[c].line_entries[d].text << endl;
+                outs << data[c].line_entries[d].get_text() << endl;
 
             }
         }
@@ -1799,7 +1800,7 @@ void icntrl4_form_button::click_helper(SDL_Event& mouse_event){
             my_form.form_event_loop(mouse_event);
 
         //in this case the form has been previously created, but the icntrl8 value has not changed, so nothing needs to be done
-        } else if(my_form.prev_init_value == stoi(tile_access->fields.at("line_8").at("NCH4")->my_text_box.text) ){
+        } else if(my_form.prev_init_value == stoi(tile_access->fields.at("line_8").at("NCH4")->my_text_box.get_text()) ){
         //let the form know that it is now active
         my_form.toggle_active();
         //enter the mini loop for form entry
@@ -1827,7 +1828,7 @@ void icntrl4_form_button::page_creation_helper(){
 
     //grab val from parameter field, so the pages can be set up
     try{
-      nch4_val = stoi(tile_access->fields.at("line_8").at("NCH4")->my_text_box.text);
+      nch4_val = stoi(tile_access->fields.at("line_8").at("NCH4")->my_text_box.get_text());
     } catch (out_of_range& range_error){
       output_access->push_error("NCH4 could not be found in the field map",
                   range_error.what());
@@ -1913,9 +1914,8 @@ bool icntrl4_form_button::make_output(ostream& outs,vector<index_value>& bad_inp
         //output the line as declared by the input manual and as expected by HF
         //note here that I'm using the string 'spaces' to
         // approximate the fortran 5x formatting tag
-        outs << setprecision(2) F5 boxes->at(c).text << spaces;
-        outs << setprecision(1) F5 boxes->at(c+1).text << spaces I boxes->at(c+2).text F5 boxes->at(c+3).text << endl; 
-
+        outs << setprecision(2) F5 boxes->at(c).get_text() << spaces;
+        outs << setprecision(1) F5 boxes->at(c+1).get_text() << spaces I boxes->at(c+2).get_text() F5 boxes->at(c+3).get_text() << endl; 
     }
     return true;
 }
@@ -1965,8 +1965,8 @@ void ilv3_ilv5_form_button::click_helper(SDL_Event& mouse_event){
 
     output_access->push_msg("clicked the icntrl4/resolved levels info button ");
 
-        int curr_ilv3 = stoi(tile_access->fields.at("line_5").at("ILV3")->my_text_box.text);
-        int curr_ilv5 = stoi(tile_access->fields.at("line_5").at("ILV5")->my_text_box.text);
+        int curr_ilv3 = stoi(tile_access->fields.at("line_5").at("ILV3")->my_text_box.get_text());
+        int curr_ilv5 = stoi(tile_access->fields.at("line_5").at("ILV5")->my_text_box.get_text());
 
     //don't consider doing anything if the form is locked
     if(!is_locked){
@@ -2044,8 +2044,8 @@ void ilv3_ilv5_form_button::page_creation_helper(){
     int ilv5_val;
     try{
 
-        ilv3_val = stoi(tile_access->fields.at("line_5").at("ILV3")->my_text_box.text);
-        ilv5_val = stoi(tile_access->fields.at("line_5").at("ILV5")->my_text_box.text);
+        ilv3_val = stoi(tile_access->fields.at("line_5").at("ILV3")->my_text_box.get_text());
+        ilv5_val = stoi(tile_access->fields.at("line_5").at("ILV5")->my_text_box.get_text());
 
     } catch(invalid_argument& bad_arg){
         output_access->push_error("Ilv3 or ilv5's value failed to conver to int in page_creation_helper.",
@@ -2140,8 +2140,8 @@ bool ilv3_ilv5_form_button::make_output(ofstream& outs,vector<index_value>& bad_
 
     for(uint c = 0; c < pages.size(); c++){
         for(uint d = 0; d < pages[c].get_text_boxes().size(); d += 4){
-            outs I pages[c].get_text_boxes()[d].text I pages[c].get_text_boxes()[d+1].text;
-            outs F7 pages[c].get_text_boxes()[d+2].text F7 pages[c].get_text_boxes()[d+3].text;
+            outs I pages[c].get_text_boxes()[d].get_text() I pages[c].get_text_boxes()[d+1].get_text();
+            outs F7 pages[c].get_text_boxes()[d+2].get_text() F7 pages[c].get_text_boxes()[d+3].get_text();
             outs << endl;
         }
     }
