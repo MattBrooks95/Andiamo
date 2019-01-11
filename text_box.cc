@@ -28,6 +28,8 @@ text_box::text_box(TTF_Font* font_in, string text_in, int xloc_in, int
 	x_scroll = NULL;
 	y_scroll = NULL;
 
+	input_test_regex = NULL;
+
 	bad_input = false;
 	editing_location = 0;
 	shown_area       = {0,0,0,0};
@@ -132,6 +134,15 @@ void text_box::init(TTF_Font* font_in, string text_in, int xloc_in, int yloc_in,
 	shown_area.w = my_rect.w;
 	shown_area.h = my_rect.h;
 
+}
+
+void text_box::set_regular_expression(regex* test_regex){
+
+	if(test_regex == NULL){
+		output_access->push_msg("Textbox set_regular_expression given a NULL pointer.");
+	}
+
+	input_test_regex = test_regex;
 }
 
 void text_box::set_scrolling(){
@@ -268,11 +279,11 @@ void text_box::make_rect(){
 	my_rect.h = height;
 }
 
-void text_box::update_text(const string& new_text,regex* test){
+void text_box::update_text(const string& new_text){
 
 	text.insert(editing_location,new_text);
-	if(test != NULL){
-		check_text(*test);
+	if(input_test_regex != NULL){
+		check_text();
 	}
 
 	editing_location += strlen(new_text.c_str());
@@ -283,22 +294,19 @@ void text_box::update_text(const string& new_text,regex* test){
 	update_texture();
 }
 
-void text_box::check_text(const regex& test){
+void text_box::check_text(){
 
-	bool test_result = regex_match(text,test);
+	bool test_result = regex_match(text,*input_test_regex);
 	if(!bad_input){
-
 		if(text != " " && !test_result){
 			set_error_state();
 		}
-
 	} else{
-
 		if(text == " " || test_result){
 			cancel_error_state();
 		}
-
 	}
+
 }
 
 void text_box::set_error_state(){
@@ -372,30 +380,14 @@ void text_box::back_space(){
 
 	//erase from current editing location
 	text.erase(editing_location-1,1);
+	check_text();
 
 	//decrement editing location
 	editing_location--;
 
 	//update text size information
 	TTF_SizeText(font,text.c_str(),&text_dims.w,&text_dims.h);
-	update_texture();
 
-}
-
-void text_box::back_space(const regex& test){
-
-	if(editing_location <= 0) return;
-
-	//erase from current editing location
-	text.erase(editing_location-1,1);
-	check_text(test);
-	//decrement editing location
-	editing_location--;
-
-	//update text size information
-	TTF_SizeText(font,text.c_str(),&text_dims.w,&text_dims.h);
-
-	check_text(test);
 	update_texture();
 
 }
@@ -469,7 +461,7 @@ void text_box::edit_loop(SDL_Event& event,string& command,regex* pattern){
 
 			case SDL_TEXTINPUT:
 				pass_me = event.text.text;
-				update_text(pass_me,pattern);
+				update_text(pass_me);
 				text_was_changed = true;
 				//here event flooding is necessary, don't flush
 				break;

@@ -787,12 +787,12 @@ void input_maker::give_int4_defaults(){
 
             if(i4_it->second.value == numeric_limits<int>::min()){
 
-                this_params_field->my_text_box.update_text("no default", NULL);
+                this_params_field->my_text_box.update_text("no default");
 
             } else {
 
                 string set_string = to_string(i4_it->second.value);
-                this_params_field->my_text_box.update_text(set_string,NULL);
+                this_params_field->my_text_box.update_text(set_string);
 
             }
 
@@ -861,12 +861,12 @@ void input_maker::give_r8_defaults(){
 
             if(r8_it->second.value == numeric_limits<double>::min()){
 
-                this_params_field->my_text_box.update_text("no default", NULL);
+                this_params_field->my_text_box.update_text("no default");
 
             } else {
 
                 string set_string = to_string(r8_it->second.value);
-                this_params_field->my_text_box.update_text(set_string,NULL);
+                this_params_field->my_text_box.update_text(set_string);
 
             }
 
@@ -934,7 +934,7 @@ void input_maker::give_string_defaults(){
 
         if(this_params_field != NULL){
 
-            this_params_field->my_text_box.update_text(str_it->second.value,NULL);
+            this_params_field->my_text_box.update_text(str_it->second.value);
 
         } else {
             cout << "Null string pointer" << endl;

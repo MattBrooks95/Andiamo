@@ -7,6 +7,7 @@
 
 #include<iostream>
 #include<string>
+#include<regex>
 
 //#include "sdl_help.h"
 #include "cursor.h"
@@ -42,6 +43,10 @@ class text_box{
 		void init(TTF_Font* font_in,string text_in,int xloc_in,
 					int yloc_in,int width_in, int height_in);
 
+		//! set a pointer to a test pattern for this box's input
+		/*! this will enable live input checking */
+		void set_regular_expression(regex* regular_expression_object);
+
 		//! sets pointers to the sdl class's scrolling values
 		/*! this is another initialization step for text boxes
 		 *being used in a context that allows scrolling */
@@ -73,7 +78,7 @@ class text_box{
 		/*! \param new_text is the test to be added
 		 *\param test is a pointer to the regex pattern to use.
 		 *NULL if not needed. */ 
-		void update_text(const string& new_text,regex* test);
+		void update_text(const string& new_text);
 
 		//! update the texture when the text is changed
 		void update_texture();
@@ -82,12 +87,7 @@ class text_box{
 
 		/*! decides whether or not the input is bad,
 		 *and changes the color of the text box accordingly */
-		void check_text(const regex& test);
-
-		//! this function turns the textbox red
-		/*! this is usually to indicate that the input is not consistent with
-		 *what is expected by the Fortran code */
-		// void toggle_red();
+		void check_text();
 
 		//! this function is used to swap the box background texture to red
 		/*! this is enacted by the manager when this tile fails to convert the user's information
@@ -104,14 +104,9 @@ class text_box{
 		//! this function calls cursor's left member
 		void dec_cursor(bool& text_was_changed);
 
-		//! this removes one character in the string if it is not empty
-		/*! this deletion is made at the editing location, if the cursor
-		 *is not at the very beginning of the string */
-		void back_space();
-
 		//! this version of back space tests the text string
 		/*! \param the regular expression which indicates good input */
-		void back_space(const regex& test);
+		void back_space();
 
 		string get_text() const {return text;}
 		void set_text(const string& new_text){text = new_text;}
@@ -155,6 +150,8 @@ class text_box{
 
 		//! the text that is rendered to the screen and changed by the user
 		string text;
+
+		regex* input_test_regex;
 
 		//! keep track of whether this box has been given bad input or not
 		/*! true: input is not properly formatted

@@ -90,9 +90,6 @@ class field{
     /*! this helper will also update the text's surface dimensions, to be used when the text is drawn to the screen */
     void init_temp_input(string data);
 
-    void set_error_state();
-    void cancel_error_state();
-
 
     //! this function takes the file name of a different tile background in the images folder, and uses it instead
     /*! The tiles that have logical control over other parameters (cause locking), will be made purple
@@ -138,14 +135,9 @@ class field{
     /*! this controls the cursor when the user is typing */
     unsigned int editing_location;
 
-    //! draws the indicator as to where the current editing location is
-    void draw_cursor();
-
     //! save the dimensions of the text in the box
     /* useful when drawing the text editing cursor */
     SDL_Rect text_dims;
-
-    bool is_in_error;//!< is this tile in error mode or not
 
     /*! allows locking of the tile, for situations in which they
      * are redundant or not necessary */
@@ -166,7 +158,7 @@ class field{
     //! string that corresponds to the path to the image directory in assets
     string image_path;
 
-    //!< the name of the image
+    //! the name of the image
     string image_name;
 
     /*! this boolean variable controls whether the field will draw
@@ -184,11 +176,11 @@ class field{
 
     //! surface for the parameter explanation
     SDL_Surface* my_help_surf;
-    //! saves the texture for this tile's 'help' mode
+    //! texture for this tile's 'help' mode
     SDL_Texture* my_help_tex;
 
-
-    SDL_Texture* my_tex;//!< saves the texture
+    //! texture for the tile
+    SDL_Texture* my_tex;
 
     /*! tile_size struct containing the dimensions for this
      *particular card/tile/block */
