@@ -57,7 +57,7 @@ class text_box{
 		//##########################################################################
 
 		//! loop that modifies the text box's contents based on user input
-		void edit_loop(SDL_Event& event,string& command,regex* pattern);
+		void edit_loop(SDL_Event& event,string& command);
 
 		//! helper for edit_loop, processes keystrokes
 		void edit_key_helper(SDL_Keysym& key,bool& text_was_changed,string& command);

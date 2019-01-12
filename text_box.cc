@@ -9,7 +9,6 @@ extern asset_manager* asset_access;
 text_box::text_box(TTF_Font* font_in, string text_in, int xloc_in, int
 					yloc_in,int width_in, int height_in){
 
-
 	font = font_in;
 
 	//set up the text to be black
@@ -295,6 +294,9 @@ void text_box::update_text(const string& new_text){
 }
 
 void text_box::check_text(){
+	if (input_test_regex == NULL){
+		return;
+	}
 
 	bool test_result = regex_match(text,*input_test_regex);
 	if(!bad_input){
@@ -306,7 +308,6 @@ void text_box::check_text(){
 			cancel_error_state();
 		}
 	}
-
 }
 
 void text_box::set_error_state(){
@@ -416,7 +417,7 @@ bool text_box::was_clicked(SDL_Event& event){
 /*thanks to
 *http://lazyfoo.net/tutorials/SDL/32_text_input_and_clipboard_handling/index.php
 which was used as a reference */
-void text_box::edit_loop(SDL_Event& event,string& command,regex* pattern){
+void text_box::edit_loop(SDL_Event& event,string& command){
 
 	//turn on the text input background functions
 	SDL_StartTextInput();

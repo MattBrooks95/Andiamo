@@ -6,6 +6,7 @@
 #include<iostream>
 
 #include "system_wrapper.h"
+#include "regex_manager.h"
 #include "sdl_help.h"
 #include "asset_manager.h"
 #include "handlers.h"
@@ -22,6 +23,10 @@ using namespace std;
 // handles program environment variables like current directory,
 // HOME environment and executable directory
 system_wrapper* system_access;
+
+// lazy-loads regular expressions, ensuring that unique regular expression
+// patterns are only instantiated once, and used as many times as necessary
+regex_manager* regex_access;
 
 // global object used for error message output
 logger* output_access;
@@ -61,6 +66,9 @@ int main(int argc, char *argv[]){
 	system_wrapper system;
 	system_access = &system;
 
+	regex_manager regex_vendor;
+	regex_access = &regex_vendor;
+
 	logger error_logger;
 	output_access = &error_logger;
 
@@ -90,7 +98,6 @@ int main(int argc, char *argv[]){
 	if(!line_guides){
 		sdl_access->show_line_guides = false;
 	}
-
 
 	//import all of the assets
 	asset_manager assets;
@@ -245,9 +252,7 @@ int main(int argc, char *argv[]){
 }
 
 void no_work_done_message(exit_button& exit_dialogue){
-	SDL_Texture* no_work_texture = NULL;
-
-	no_work_texture = asset_access->get_texture("Assets/Images/no_work_done_msg.png");
+	SDL_Texture* no_work_texture = asset_access->get_texture("Assets/Images/no_work_done_msg.png");
 	if(no_work_texture == NULL) output_access->push_error(SDL_GetError());
 	//plan where to draw
 	SDL_Rect dest = {0,0,0,0};

@@ -605,8 +605,6 @@ bool input_maker::output(vector<string>& form_bad_inputs){
         do_4a_4b = true;
     }
 
-
-
     //only do the following lines if IENCH == 7, per the input manual
     if(do_4a_4b){
         //SET UP LINE 4#########################################################
@@ -704,7 +702,6 @@ bool input_maker::output(vector<string>& form_bad_inputs){
         do_line10(outs,int4_params);
     }
     if(console_test) outs << "#########################################" << endl;
-
 
     //#########MAKE OUTPUTS FROM FORM_BUTTONS ################################//
     if(console_test) outs << "ICNTRL6_FORM#############################" << endl;
@@ -851,8 +848,7 @@ void input_maker::give_r8_defaults(){
     //name for that int4 param.
     for(REAL8_MAP::iterator r8_it = real8_params.begin();
         r8_it != real8_params.end();
-        r8_it++){
-
+        ++r8_it){
 
         field* this_params_field = tile_access->get_param(r8_it->first);
 

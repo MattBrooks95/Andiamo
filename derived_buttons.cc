@@ -164,12 +164,12 @@ void text_box_button::force_corner_loc(int xloc_in, int yloc_in){
 //######################## CREATED HF FILE OUTPUT BUTTON #######################
 
 int output_file_button::work(/*input_maker& io_handler*/){
-    if(my_text_box.text.size() == 0 || my_text_box.text == " "){
+    if(my_text_box.get_text().size() == 0 || my_text_box.get_text() == " "){
         output_access->push_error("Output file name was not supplied, using the default \"output.txt\".");
         return -1;
     } else {
         //set up the output file name var in input maker
-        io_access->output_file_name = my_text_box.text;
+        io_access->output_file_name = my_text_box.get_text();
 
     }
     return 0;
@@ -240,7 +240,15 @@ void save_context_button::click_helper(SDL_Event& mouse_event){
 int save_context_button::work(){
 
     ofstream context_out;
-    context_out.open(system_access->get_home() + "/Andiamo/config/custom_configs/" + my_text_box.text);
+
+    string home = system_access->get_home();
+    string user_file_name = my_text_box.get_text();
+
+    string config_path = "/Andiamo/config/custom_configs/";
+
+    string context_save_path =  home + config_path + user_file_name;
+
+    context_out.open(context_save_path);
     if(!context_out.fail()){
          io_access->save_context(context_out);
          handle_confirmation();

@@ -51,7 +51,7 @@ class form_button : public button{
 
     //! this function initializes this buttons form object
     /*! must be overloaded by the derived form_buttons to have any meaning */
-    virtual void init_form(const vector<regex>& pattern_tests);
+    virtual void init_form(const vector<regex*>& pattern_tests);
 
     /*! this function resizes the window if it is too small when
      *the user tries to open a form */
@@ -149,7 +149,7 @@ class icntrl8_form_button : public form_button{
 
     /*! sets up a form that suits the needs of icntrl8's logics
      *per the input manual */
-    void init_form(const vector<regex>& pattern_tests);
+    void init_form(const vector<regex*>& pattern_tests);
 
     //! this function opens the icntrl8 form on click
     void click_helper(SDL_Event& mouse_event);
@@ -187,7 +187,7 @@ class icntrl6_form_button : public form_button{
     void setup_lock();
 
     //! sets up a form for icntrl6's logics per the input manual
-    void init_form(const vector<regex>& pattern_tests);
+    void init_form(const vector<regex*>& pattern_tests);
 
     //############## PAGE CREATION HELPERS ###################################
     //! this member sets up the parity form's pages
@@ -433,7 +433,7 @@ class icntrl10_button : public button{
     bool active;
 
     //! store the 3 patterns necesary for checking these lines
-    vector<regex> my_patterns;
+    vector<regex*> my_patterns;
 };
 
 //! opens the form "Resolved Levels"
@@ -445,7 +445,7 @@ class icntrl4_form_button : public form_button{
     void setup_lock();
 
     //! sets up a form that suits the needs of icntrl4's logics
-    void init_form(const vector<regex>& pattern_tests);
+    void init_form(const vector<regex*>& pattern_tests);
 
     //! helper function for form creation
     void page_creation_helper();
@@ -481,7 +481,7 @@ class ilv3_ilv5_form_button : public form_button{
   public:
 
     //! sets up a form that suits the needs of icntrl4's logics
-    void init_form(const vector<regex>& pattern_tests);
+    void init_form(const vector<regex*>& pattern_tests);
 
     //! implements the special logic for this class
     bool handle_click(SDL_Event& mouse_event);

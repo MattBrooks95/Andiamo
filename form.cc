@@ -59,7 +59,7 @@ form::~form(){
 }
 
 void form::init(string form_title_in,string help_msg_image_name,int xloc_in,
-				 int yloc_in, const vector<regex>& pattern_tests){
+				 int yloc_in, const vector<regex*>& pattern_tests){
 
 	//set up state variables
 	form_title = form_title_in;
@@ -341,8 +341,9 @@ void form::handle_click(SDL_Event& mouse_event,bool& done,bool& click_lock){
 							pattern_index  = c % (current.get_columns() - 1);
 						}
 
-						boxes[c].edit_loop(mouse_event,command,
-											&my_patterns[pattern_index]);
+						boxes[c].edit_loop(mouse_event,command);
+						/*boxes[c].edit_loop(mouse_event,command,
+											my_patterns[pattern_index]);*/
 
 						if(command == "TAB" &&  c < boxes.size()){
 							//redo this step, but act on the next text box
@@ -454,7 +455,7 @@ bool form::check_values(vector<index_value>& error_details){
 
 			string box_ref_text = box_ref[d].get_text();
 
-			if(!regex_match(box_ref_text,my_patterns[d % num_columns]) ||
+			if(!regex_match(box_ref_text,*my_patterns[d % num_columns]) ||
 				box_ref_text.compare(" ") || box_ref[d].get_text().length() == 0){
 				index_value temp_tuple(box_ref_text,d);
 				error_details.push_back(temp_tuple);
@@ -586,13 +587,12 @@ page::~page(){
 }
 
 void page::page_init(unsigned int num_columns_in, unsigned int rows_needed,
-						const vector<string>& column_labels_in
-                        ,vector<string>& row_labels_in,
+						const vector<string>& column_labels_in,
+                        const vector<string>& row_labels_in,
 						const vector<int>& column_spacings){
 
 	//abstracts some of the assignments to save space here
-	init_local_var(num_columns_in, rows_needed,
-                            column_labels_in, row_labels_in);
+	init_local_var(num_columns_in, rows_needed, column_labels_in, row_labels_in);
 
 	//turn true to make room for row labels
 	bool row_labels_exist = false;
@@ -625,23 +625,18 @@ void page::page_init(unsigned int num_columns_in, unsigned int rows_needed,
 
 void init_from_config(unsigned int num_columns_in, unsigned int rows_needed,
                       const vector<string>& column_labels_in,
-                      vector<string>& row_labels_in,
+                      const vector<string>& row_labels_in,
                       const vector<int>& column_spacings,
                       const vector<string>& init_values){
-
-
-
-
-
 }
 
 void page::init_local_var(uint num_columns_in, uint rows_needed,
                         const vector<string>& column_labels_in,
-                        vector<string>& row_labels_in){
-	num_columns = num_columns_in;
-	num_rows = rows_needed;
+                        const vector<string>& row_labels_in){
+	num_columns   = num_columns_in;
+	num_rows      = rows_needed;
 	column_labels = column_labels_in;
-	row_labels = row_labels_in;
+	row_labels    = row_labels_in;
 }
 
 void page::set_row_labels(const vector<string>& row_labels_in,
@@ -812,8 +807,3 @@ void page::draw_me(){
         text_boxes[c].draw_me();
     }
 }
-
-
-
-
-

@@ -16,6 +16,10 @@
 #include<SDL2/SDL_image.h>
 #include<SDL2/SDL_ttf.h>
 
+#include "regex_manager.h"
+
+extern regex_manager* regex_access;
+
 class sdl_help;
 
 using std::string;

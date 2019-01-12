@@ -46,7 +46,7 @@ class form{
 	*\param xloc_in sets the horizontal coordinate of the corner of the form
 	*\param yloc_in sets the vertical coordinate of the corner of the form */
 	void init(string form_title_in,string help_msg_image_name, int xloc_in,
-				int yloc_in, const vector<regex>& pattern_tests);
+				int yloc_in, const vector<regex*>& pattern_tests);
 
 	//! this function changes the form's title
 	/*! this is useful, for example, when a form can serve one or
@@ -168,7 +168,7 @@ class form{
 
 	//! store the regular expressions for real time error checking
 	/*! text box indicates if an invalid input has been typed */
-	vector<regex> my_patterns;
+	vector<regex*> my_patterns;
 
 	//! pointer to the font in use in the graphic's class
 	TTF_Font* sdl_font;
@@ -179,17 +179,8 @@ class form{
  *Only the one being edited is displayed and interactable */
 class page{
 	public:
-
 		//! default page constructor
 		page();
-
-		//! page constructor allows for the setting of important variables
-		/*!
-		*\param num_columns_in is the # of columns of text boxes to create
-		*\param num_rows_in is the # of rows of text boxes to create
-		*\param row_labels_in is the row labels, which is not always used
-		*\param column_labels_in is the column labels,
-		*which should almost always be specified */
 
 		//! copy constructer here prevents double free errors
 		page(const page& other);
@@ -198,23 +189,23 @@ class page{
 		~page();
 
 		//##########################################################################
-		//! sets up this page's variables and graphics
+		//! sets up this page's text boxes and graphics
 		void page_init(unsigned int num_columns_in, unsigned int rows_needed,
 							const vector<string>& column_labels_in,
-							vector<string>& row_labels_in,
+							const vector<string>& row_labels_in,
 							const vector<int>& column_spacings);
 
 		/*! \brief sets up this page's variables and graphics, with info
 		*coming from a config file */
 		void init_from_config(unsigned int num_columns_in, unsigned int rows_needed,
 								const vector<string>& column_labels_in,
-								vector<string>& row_labels_in,
+								const vector<string>& row_labels_in,
 								const vector<int>& column_spacings,
 								const vector<string>& init_values);
 
 		//! helper for page_init, does the mundane pass-through assignments
 		void init_local_var(uint num_columns_in, uint rows_needed,
-		const vector<string>& column_labels_in, vector<string>& row_labels_in);
+		const vector<string>& column_labels_in,const vector<string>& row_labels_in);
 
 		//! sets up the row labels, if they exist
 		void set_row_labels(const vector<string>& row_labels_in,

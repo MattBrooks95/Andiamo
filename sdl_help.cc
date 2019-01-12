@@ -373,7 +373,7 @@ void sdl_help::click_detection(SDL_Event& event,int click_x, int click_y){
                     if(!field_ptr->is_locked){
                         user_tabbed = false;
                         command     = "";
-                        field_ptr->my_text_box.edit_loop(event,command, NULL);
+                        field_ptr->my_text_box.edit_loop(event,command);
                     } else if(user_tabbed){
                         continue;
                     }
