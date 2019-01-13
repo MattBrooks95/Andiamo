@@ -12,6 +12,7 @@ regex_manager::~regex_manager(){
 		++it){
 		delete(it->second);
 	}
+
 }
 
 regex* regex_manager::get_regular_expression(const string& regex_pattern){

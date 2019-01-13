@@ -86,10 +86,7 @@ class field{
      *\param click_y is the ylocation relative to the top left corner of the screen, where the user left clicked*/
     void clicked(SDL_Event& event, const int& click_x,const int& click_y);
 
-    //! this function is used by manager::give_fields_defaults to set the text as read in from the HF config file
-    /*! this helper will also update the text's surface dimensions, to be used when the text is drawn to the screen */
-    void init_temp_input(string data);
-
+    string get_text(){ return my_text_box.get_text();}
 
     //! this function takes the file name of a different tile background in the images folder, and uses it instead
     /*! The tiles that have logical control over other parameters (cause locking), will be made purple
@@ -150,10 +147,10 @@ class field{
     int xloc; //!< keeps track of the xcoordinate of its upper left corner
     int yloc; //!< keeps track of the ycoordinate of its upper left corner
 
+  private:
+
     //! text box object for user info entry
     text_box my_text_box;
-
-  private:
 
     //! string that corresponds to the path to the image directory in assets
     string image_path;

@@ -83,7 +83,7 @@ class text_box{
 		//! update the texture when the text is changed
 		void update_texture();
 
-		bool is_input_bad(){return bad_input;}
+		bool is_input_bad(){ return bad_input;}
 
 		/*! decides whether or not the input is bad,
 		 *and changes the color of the text box accordingly */

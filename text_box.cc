@@ -272,10 +272,12 @@ void text_box::draw_me(){
 }
 
 void text_box::make_rect(){
+
 	my_rect.x = xloc;
 	my_rect.y = yloc;
 	my_rect.w = width;
 	my_rect.h = height;
+
 }
 
 void text_box::update_text(const string& new_text){
@@ -294,6 +296,7 @@ void text_box::update_text(const string& new_text){
 }
 
 void text_box::check_text(){
+
 	if (input_test_regex == NULL){
 		return;
 	}
@@ -308,6 +311,7 @@ void text_box::check_text(){
 			cancel_error_state();
 		}
 	}
+
 }
 
 void text_box::set_error_state(){
