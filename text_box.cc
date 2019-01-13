@@ -175,7 +175,6 @@ void text_box::print_me(){
 
 void text_box::draw_me(){
 
-
 	SDL_Rect modified_rect = my_rect;
 	if(x_scroll != NULL && y_scroll != NULL){
 		modified_rect.x += *x_scroll;
@@ -216,13 +215,13 @@ void text_box::draw_me(){
 		//text box's width this is the simplest case
 		if(text_dims.w < my_rect.w){
 
-		SDL_Rect mod_text_rect;
-		//half of the info will be the same
-		mod_text_rect   = modified_rect;
-		//width and height should match text exactly
-		mod_text_rect.w = text_dims.w;
-		mod_text_rect.h = text_dims.h;
-		SDL_RenderCopy(sdl_access->renderer,text_texture,NULL,&mod_text_rect);
+			SDL_Rect mod_text_rect;
+			//half of the info will be the same
+			mod_text_rect   = modified_rect;
+			//width and height should match text exactly
+			mod_text_rect.w = text_dims.w;
+			mod_text_rect.h = text_dims.h;
+			SDL_RenderCopy(sdl_access->renderer,text_texture,NULL,&mod_text_rect);
 
 		//if the text is bigger than the text box, use the shown_area as
 		//source info things get a bit more complicated here
@@ -363,14 +362,6 @@ void text_box::update_texture(){
 	}
 
 }
-
-/*void text_box::toggle_red(){
-	if(bad_input){
-		bad_input = false;
-	} else {
-		bad_input = true;
-	}
-}*/
 
 void set_error_state(){
 }

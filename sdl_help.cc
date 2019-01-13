@@ -368,12 +368,12 @@ void sdl_help::click_detection(SDL_Event& event,int click_x, int click_y){
 
                 //if they clicked the text box, allow them to
                 //edit the parameter
-                if(user_tabbed || field_ptr->my_text_box.was_clicked(event)){
+                if(user_tabbed || field_ptr->get_text_box().was_clicked(event)){
 
                     if(!field_ptr->is_locked){
                         user_tabbed = false;
                         command     = "";
-                        field_ptr->my_text_box.edit_loop(event,command);
+                        field_ptr->get_text_box().edit_loop(event,command);
                     } else if(user_tabbed){
                         continue;
                     }
@@ -489,12 +489,12 @@ void sdl_help::calc_corners_helper(vector<field*>& line_in,
 
 			line_in[c]->xloc = x_corner;
 			line_in[c]->yloc = y_corner;
-			line_in[c]->my_text_box.xloc += x_corner;
-			line_in[c]->my_text_box.yloc += y_corner;
+			line_in[c]->get_text_box().xloc += x_corner;
+			line_in[c]->get_text_box().yloc += y_corner;
 			//the text boxes used in the main context need to have their
 			//scrolling pointers set for click detection & drawing
-			line_in[c]->my_text_box.set_scrolling();
-			line_in[c]->my_text_box.make_rect();
+			line_in[c]->get_text_box().set_scrolling();
+			line_in[c]->get_text_box().make_rect();
 
 			x_corner = line_in[c]->xloc + line_in[c]->get_size().width + x_buffer;
             if(x_corner > rightmost_edge) rightmost_edge = x_corner;
@@ -524,11 +524,11 @@ void sdl_help::calc_corners_helper(vector<field*>& line_in,
 			//fields in this row
 			y_corner = lowest_point;
 
-			line_in[c]->my_text_box.xloc += x_buffer;
-			line_in[c]->my_text_box.yloc += y_corner;
+			line_in[c]->get_text_box().xloc += x_buffer;
+			line_in[c]->get_text_box().yloc += y_corner;
 
-			line_in[c]->my_text_box.set_scrolling();
-			line_in[c]->my_text_box.make_rect();
+			line_in[c]->get_text_box().set_scrolling();
+			line_in[c]->get_text_box().make_rect();
 
 			//save new lowest point
 			lowest_point = line_in[c]->yloc +

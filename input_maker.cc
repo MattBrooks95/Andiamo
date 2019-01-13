@@ -784,12 +784,12 @@ void input_maker::give_int4_defaults(){
 
             if(i4_it->second.value == numeric_limits<int>::min()){
 
-                this_params_field->my_text_box.update_text("no default");
+                this_params_field->update_text("no default");
 
             } else {
 
                 string set_string = to_string(i4_it->second.value);
-                this_params_field->my_text_box.update_text(set_string);
+                this_params_field->update_text(set_string);
 
             }
 
@@ -817,7 +817,7 @@ void input_maker::give_int4_defaults(){
 //             default_val = big_it->second.get_string();
 
 //             line_it->second.at(big_it->first)->int4_array_hook = &big_it->second;
-//             line_it->second.at(big_it->first)->my_text_box.update_text(default_val,NULL);
+//             line_it->second.at(big_it->first)->update_text(default_val,NULL);
 //             found = true;
 //             break;
 //           } catch (out_of_range& not_found){
@@ -857,12 +857,12 @@ void input_maker::give_r8_defaults(){
 
             if(r8_it->second.value == numeric_limits<double>::min()){
 
-                this_params_field->my_text_box.update_text("no default");
+                this_params_field->update_text("no default");
 
             } else {
 
                 string set_string = to_string(r8_it->second.value);
-                this_params_field->my_text_box.update_text(set_string);
+                this_params_field->update_text(set_string);
 
             }
 
@@ -892,7 +892,7 @@ void input_maker::give_r8_defaults(){
 
 //             //set pointer to parameter in input maker
 //             lines_it->second.at(big_it->first)->r8_array_hook = &big_it->second;
-//             lines_it->second.at(big_it->first)->my_text_box.update_text(temp_str,NULL);
+//             lines_it->second.at(big_it->first)->update_text(temp_str,NULL);
 //             found = true;
 
 //             //stop checking lines
@@ -930,7 +930,7 @@ void input_maker::give_string_defaults(){
 
         if(this_params_field != NULL){
 
-            this_params_field->my_text_box.update_text(str_it->second.value);
+            this_params_field->update_text(str_it->second.value);
 
         } else {
             cout << "Null string pointer" << endl;
@@ -955,7 +955,7 @@ bool input_maker::grab_values(){
         field* found_field = tile_access->get_param(it->first);
 
         if( found_field != NULL ){
-            string field_value = found_field->my_text_box.get_text();
+            string field_value = found_field->get_text();
             it->second.value   = str_to_integer(field_value);
         }
 
@@ -966,7 +966,7 @@ bool input_maker::grab_values(){
         field* found_field = tile_access->get_param(it->first);
 
         if( found_field != NULL ){
-            string field_value = found_field->my_text_box.get_text();
+            string field_value = found_field->get_text();
             it->second.value   = str_to_double(field_value);
         }
     }

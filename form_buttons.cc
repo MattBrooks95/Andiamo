@@ -295,7 +295,7 @@ void form_button::save_information(ofstream& context_out,form& this_form){
 void icntrl8_form_button::setup_help_msg(){
 
 	string unlock_target = "Images/form_assets/icntrl8_form_locked_msg.png";
-	unlock_help_texture  = asset_access->get_texture(unlock_target);	
+	unlock_help_texture  = asset_access->get_texture(unlock_target);
 	if(unlock_help_texture == NULL) output_access->push_error(SDL_GetError());
 }
 

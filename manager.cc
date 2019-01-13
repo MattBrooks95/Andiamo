@@ -423,7 +423,7 @@ void manager::iench_locking(){
   try{
 	//do locking that pertains to IENCH
 	regex iench_good("\\s*7\\s*");
-	if(!regex_match(fields.at("line_2").at("IENCH").my_text_box.get_text(),iench_good)){
+	if(!regex_match(fields.at("line_2").at("IENCH").get_text(),iench_good)){
 		//make IENCH's tile appear purple to indicate it is the reason
 		//some parameters are locked
 		fields.at("line_2").at("IENCH").change_tile_background("purple_andy_tile.png");
@@ -445,7 +445,7 @@ void manager::iench_locking(){
 void manager::ilv1_locking(){
 	try{
 		field* ilv1_field = fields.at("line_5").at("ILV1");
-		string ilv1_text  = ilv1_field->my_text_box.get_text();
+		string ilv1_text  = ilv1_field->get_text();
 		bool ilv1_locking = ilv1_field->am_I_locking;
 
 		//do locking that pertains to ILV1
@@ -482,7 +482,7 @@ void manager::icntrl4_locking(){
 	field* icntrl4_field    = fields.at("line_6").at("ICNTRL4");
 	bool icntrl4_is_locking = icntrl4_field->am_I_locking;
 
-	bool icntrl4_good = regex_match(icntrl4_field->my_text_box.get_text(),icntrl4_pattern);
+	bool icntrl4_good = regex_match(icntrl4_field->get_text(),icntrl4_pattern);
 
 	if(!icntrl4_good && !icntrl4_is_locking){
 		//make it purple to indicate it is locking other variables
@@ -524,7 +524,7 @@ void manager::ich4_nch4_locking(){
 
 	field* ich4_field = fields.at("line_8").at("ICH4");
 
-	string test_ich4 = ich4_field->my_text_box.get_text();
+	string test_ich4 = ich4_field->get_text();
 	if(ich4_field->am_I_locking && regex_match(test_ich4,ich4_unlock)){
 		ich4_field->change_tile_background("andy_tile.png");
 		ich4_field->am_I_locking = false;
@@ -536,7 +536,7 @@ void manager::ich4_nch4_locking(){
 
 	field* nch4_field = fields.at("line_8").at("NCH4");
 
-	int test_nch4 = stoi(nch4_field->my_text_box.get_text());
+	int test_nch4 = stoi(nch4_field->get_text());
 	if( nch4_field->am_I_locking && (test_nch4 > 0 && test_nch4 < 101 )){
 
 		nch4_field->change_tile_background("andy_tile.png");
@@ -584,8 +584,8 @@ void manager::icntrl8_locking(){
 
 	field* icntrl8_field = fields.at("line_6").at("ICNTRL8");
 
-	string icntrl8_str = icntrl8_field->my_text_box.get_text();
-	int icntrl8_val    = stoi(icntrl8_field->my_text_box.get_text());
+	string icntrl8_str = icntrl8_field->get_text();
+	int icntrl8_val    = stoi(icntrl8_field->get_text());
 
 	bool icntrl8_in_range = (icntrl8_val > 0 && icntrl8_val < 332);
 
@@ -635,12 +635,12 @@ void manager::icntrl10_locking(){
 
 	field * icntrl10_field = fields.at("line_6").at("ICNTRL10");
 
-	int icntrl10_val    = stoi(icntrl10_field->my_text_box.get_text());
-	string icntrl10_str = icntrl10_field->my_text_box.get_text();
+	int icntrl10_val    = stoi(icntrl10_field->get_text());
+	string icntrl10_str = icntrl10_field->get_text();
 
 	field* nnsig_field = fields.at("line_11").at("NNSIG");
 
-	int nnsig_val      = stoi(nnsig_field->my_text_box.get_text());
+	int nnsig_val      = stoi(nnsig_field->get_text());
 	bool nnsig_locking = nnsig_field->am_I_locking;
 
 	if(!nnsig_field->is_locked && nnsig_locking && nnsig_val > 0){
@@ -753,7 +753,7 @@ void manager::ilv3_ilv5_locking_helper(field* this_field,const regex& unlock_con
 	}
 
 	//nab raw string from field parameter
-	string field_text = this_field->my_text_box.get_text();
+	string field_text = this_field->get_text();
 
 	//cast the string to an int
 	int field_val = stoi(field_text);
@@ -784,7 +784,7 @@ void manager::icntrl6_locking(){
 
 	bool icntrl6_locking = fields.at("line_6").at("ICNTRL6")->am_I_locking;
 
-	string icntrl6_str = icntrl6_field->my_text_box.get_text();
+	string icntrl6_str = icntrl6_field->get_text();
 
 	bool valid_input = regex_match(icntrl6_str,icntrl6_unlock);
 
@@ -844,8 +844,8 @@ void manager::inm1_locking(){
 
 	field* inm1_field = fields.at("line_10").at("INM1");
 
-	int inm1_val    = stoi(inm1_field->my_text_box.get_text());
-	string inm1_str = inm1_field->my_text_box.get_text();
+	int inm1_val    = stoi(inm1_field->get_text());
+	string inm1_str = inm1_field->get_text();
 	regex inm1_good(RE_INM1_UNLOCK);
 
 	if( inm1_field->am_I_locking && (regex_match(inm1_str,inm1_good) && inm1_val > 0) ){
@@ -873,7 +873,7 @@ void manager::inm2_locking(){
   try{
 
   	field* inm2_field = fields.at("line_10").at("INM2"); 
-	int inm2_val      = stoi(inm2_field->my_text_box.get_text());
+	int inm2_val      = stoi(inm2_field->get_text());
 
 	if( inm2_field->am_I_locking && inm2_val > 0 ){
 		inm2_field->change_tile_background("andy_tile.png");
@@ -899,7 +899,7 @@ void manager::inm2_locking(){
 void manager::iter_locking(){
   try{
 	field* iter_field = fields.at("line_10").at("ITER");
-	int iter_val      = stoi(iter_field->my_text_box.get_text());
+	int iter_val      = stoi(iter_field->get_text());
 
 	if( iter_field->am_I_locking && iter_val > 0 ){
 		iter_field->change_tile_background("andy_tile.png");
