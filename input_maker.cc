@@ -1023,7 +1023,7 @@ void input_maker::save_fields(ofstream& context_out){
 		context_out << it->second.get_string() << endl;
 	}
 
-	for(map<string,param_real8>::iterator it =  real8_params.begin();
+	for(map<string,param_real8>::iterator it =  reacd l8_params.begin();
 		it != real8_params.end();
 		it++){
 

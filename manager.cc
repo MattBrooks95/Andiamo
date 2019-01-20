@@ -9,8 +9,25 @@ using namespace std;
 //prototype for sorting function passed to algorithm::sort
 bool compare_width(field& left, field& right);
 
-manager::manager(string image_path_in){
+manager::manager(const string& image_path_in, const string& config_folder_path){
 	image_path = image_path_in;
+
+	init_regular_expressions(config_folder_path);
+	init_parameter_configurations(config_folder_path);
+	init_parameter_graphics(config_folder_path);
+}
+
+
+void manager::init_regular_expressions(const string& config_folder_path){
+
+}
+
+void manager::init_parameter_configurations(const string& config_folder_path){
+
+}
+
+void manager::init_parameter_graphics(const string& config_folder_path){
+
 }
 
 void manager::init(const string& graphical_config_file){

@@ -13,13 +13,16 @@ enum operating_system{
 
 #ifdef __linux__
 #define LINUX
+#elif __WIN32
+#define WINDOWS
+#elif __OSX__
+#define APPLE
+#endif
+
+
 class system_wrapper{
 
 	public:
-		system_wrapper();
-		// ~system_wrapper();
-
-		void save_start_time();
 
 		std::string get_home();
 
@@ -27,16 +30,22 @@ class system_wrapper{
 		std::string get_os_string(); 
 		void print_os();
 
-		tm* get_local_startup_time();
-		std::string get_local_startup_time_string();
 
+		#ifdef LINUX
+			system_wrapper();
+			// ~system_wrapper();
+
+			void save_start_time();
+
+			tm* get_local_startup_time();
+			std::string get_local_startup_time_string();
+		#endif
+		#ifdef WINDOWS
+		#endif
+		#ifdef APPLE
+		#endif
 	private:
 		std::string home_environment;
 		struct tm* local_time_at_startup;
 		operating_system os;
 };
-#elif __WIN32
-#define WINDOWS
-#elif __OSX__
-#define APPLE
-#endif

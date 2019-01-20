@@ -37,10 +37,15 @@ class manager{
 	//! this is the constructor for the manager class
 	/*! the manager constructor doesn't do anything right now, as set up
      * must occur after sdl_help's constructor */
-	manager(string image_p_in);
+	manager(const string& image_p_in, const string& config_folder);
 
 	//! destructor deletes the objects that the map & vector of tiles point to
 	~manager();
+
+
+	void init_regular_expressions(const string& config_folder_path);
+	void init_parameter_configurations(const string& config_folder_path);
+	void init_parameter_graphics(const string& config_folder_path);
 
 	//! this function walks the map, and returns the width of the widest tile
 	int get_widest_tile_width();
@@ -58,32 +63,29 @@ class manager{
     field* get_param_from_line(const string& target_param,map<string,field*>& target_line);
 
 	//############# GIVE_FIELDS_DEFAULTS() HELPERS ########################################################//
-	void give_int4_fields_defaults();
+	// void give_int4_fields_defaults();
 
-	void give_int4_array_fields_defaults();
+	// void give_int4_array_fields_defaults();
 
-	void give_real8_fields_defaults();
+	// void give_real8_fields_defaults();
 
-	void give_string_fields_defaults();
+	// void give_string_fields_defaults();
 
-	void give_r8_array_fields_defaults();
+	// void give_r8_array_fields_defaults();
 	//####################################################################################################//
 
 	//! updates input_maker's vectors with the field's new values (from user)
 	/*\return true means that there was no errors in string->data conversion
 	 *\return false means that an stoi/stod function failed,
      *and the file wasn't created */
-	bool update_io_maker(vector<string>& bad_input_list);
+	// bool update_io_maker(vector<string>& bad_input_list);
 
 	//! loads in tiles from the tile input file using regular expressions and file i/o
 	/*! this init member uses fstream and regex to open and process a text file,
      *which for now defaults to tiles.txt, in the folder tile_Input,
      *so that information on what parameter tiles/cards need
 	 *can be loaded into the program, and new tiles can be loaded without
-     *rebuilding - this work is not done in the constructor because it needs
-     *information from the sdl class, whose constructor is called after
-     *manager's apparently. It also sorts the tiles by descending width for
-	 *sdl_help's draw_tiles() function*/
+     *rebuilding */
 	void init(const string& graphical_config_file);
 
 	//! does the work of locking all the fields in the passed map

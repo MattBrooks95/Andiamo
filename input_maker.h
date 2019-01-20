@@ -54,18 +54,18 @@ class input_maker{
     void init(const string& alternate_config);
 
     //! attempts to parse a real8 declaration and put it in the real 8 map
-    void process_real8(const string& line,regex* nad_flag);
+    // void process_real8(const string& line,regex* nad_flag);
 
     //! attempts to parse an int4 declaration and put it in the int4 map
-    void process_int4(const string& line,regex* nad_flag);
+    // void process_int4(const string& line,regex* nad_flag);
 
     //! attempts to parse a string declaration and put it in the string map
-    void process_string(const string& line,
-                        regex* string_array_size_pattern,
-                        regex* nad_flag);
+    // void process_string(const string& line,
+    //                     regex* string_array_size_pattern,
+    //                     regex* nad_flag);
 
     //! attempts to parse a list of form parameter initialization values
-    void process_form_init(const string& line);
+    // void process_form_init(const string& line);
 
     //! prints out the information needed to be used by HF
     /*! for now it defaults to printing to ./output/output.txt,
@@ -75,26 +75,26 @@ class input_maker{
 
     //! prints all of the maps in this object to the error logger
     /* needs to be ran with the -v option */
-    void check_map();
+    // void check_map();
 
     //################ GETTERS AND SETTERS #####################################
 
     //! return int4_params BY REFERENCE
-    map<string,param_int4>& get_int4_params(){ return int4_params;}
+    // map<string,param_int4>& get_int4_params(){ return int4_params;}
 
     //! return real8_params BY REFERENCE
-    map<string,param_real8>& get_real8_params(){ return real8_params;}
+    // map<string,param_real8>& get_real8_params(){ return real8_params;}
 
     //! return string_params BY REFERENCE
-    map<string,param_string>& get_string_params(){ return string_params;}
+    // map<string,param_string>& get_string_params(){ return string_params;}
 
     //! return int4_array_params BY REFERENCE
-    map<string,param_int4_array>& get_i4_array_params(){
-        return int4_array_params;
-    }
+    // map<string,param_int4_array>& get_i4_array_params(){
+    //     return int4_array_params;
+    // }
 
     //! return r8_params map BY REFERENCE
-    map<string,param_r8_array>& get_r8_array_params(){ return r8_array_params;}
+    // map<string,param_r8_array>& get_r8_array_params(){ return r8_array_params;}
     //##########################################################################
 
     //! name of the file in config_p's folder where output will be printed
