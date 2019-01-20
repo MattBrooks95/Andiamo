@@ -36,10 +36,17 @@
 //######################################################
 
 //####### patterns used by text boxes to check inputs ##########
+//integer
 #define RE_INT5  "\\s*-?\\s*[0-9]{1,5}\\s*"
+
+//reals
 #define RE_F10_3 "\\s*-?\\s*[0-9]{1,6}\\s*\\.\\s*[0-9]{0,3}\\s*"
 #define RE_F8_4  "\\s*-?\\s*[0-9]{1,4}\\s*\\.\\s*[0-9]{0,4}\\s*"
+#define RE_F8_2  "\\s*-?\\s*[0-9]{1,6}\\s*\\.\\s*[0-9]{0,2}\\s*"
 #define RE_F10_4 "\\s*-?\\s*[0-9]{1,5}\\s*\\.\\s*[0-9]{0,4}\\s*"
+//not sure about this one, a floating point number with no digits
+//after the decimal?
+#define RE_F10_0 "\\s*-?\\s*[0-9]{1,10}\\s*\\.\\s*"
 #define RE_F5_2  "\\s*-?\\s*[0-9]{1,3}\\s*\\.\\s*[0-9]{0,2}\\s*"
 #define RE_F5_1  "\\s*-?\\s*[0-9]{1,3}\\s*\\.\\s*[0-9]{0,1}\\s*"
 #define RE_F7_3  "\\s*-?\\s*[0-9]{1,4}\\s*\\.\\s*[0-9]{0,3}\\s*"
