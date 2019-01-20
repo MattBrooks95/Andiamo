@@ -72,7 +72,6 @@ int main(int argc, char *argv[]){
 	logger error_logger;
 	output_access = &error_logger;
 
-
 	//this string starts off empty. If it remains empty by
 	//the time input_maker::init(string) is called, it defaults to
 	//HF_Config.txt. However, if a new one is specified via the command line

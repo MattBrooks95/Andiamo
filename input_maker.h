@@ -37,7 +37,7 @@ extern logger* output_access;;
 extern system_wrapper* system_access;
 
 class button_manager;
-
+class field;
 //! input_maker makes the HF input and loads in the default values
 /*!reads a config file to configure itself, and then creates the outputs to
  *be used with HF it exists within sdl_help, and interacts heavily
@@ -114,6 +114,9 @@ class input_maker{
 
     //! returns a message about not being able to find a parameter
     string get_string_init_error_message(const string& param_name);
+
+    //! sets the text and regular expression pointer of a field's text box
+    void set_field_text_and_regex(field* field, std::string text, regex* pattern);
 
     //! give all int4 values to the parameters in the manager's field map
     void give_int4_defaults();
