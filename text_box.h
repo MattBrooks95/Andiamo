@@ -89,13 +89,12 @@ class text_box{
 		 *and changes the color of the text box accordingly */
 		void check_text();
 
-		//! this function is used to swap the box background texture to red
+		//! is used to swap the box background texture to red
 		/*! this is enacted by the manager when this tile fails to convert the user's information
 		 *with stoi or stod. It serves as an error indicator for the fields that failed the test. */
 		void set_error_state();
 
-		//! this function returns a tile to normal after it is given proper input and "Let's Go" has been clicked
-		/*! basically undos field::go_red(), which is used to signal errors */
+		//! returns a tile to normal after it is given proper input and "Let's Go" has been clicked
 		void cancel_error_state();
 
 		//! this function calls cursor's right member
@@ -168,4 +167,5 @@ class text_box{
 
 		//! texture for text box to indicate bad input
 		SDL_Texture* bad_texture;
+
 };

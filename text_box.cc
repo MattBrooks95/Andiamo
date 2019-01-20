@@ -142,6 +142,7 @@ void text_box::set_regular_expression(regex* test_regex){
 	}
 
 	input_test_regex = test_regex;
+
 }
 
 void text_box::set_scrolling(){
@@ -169,8 +170,7 @@ void text_box::print_me(){
 	output_access->push_msg("Text surface: "+to_string(size_t(text_surface))+" text texture "
 				  +to_string(size_t(text_texture)));
 
-	output_access->push_msg("bad box texture "
-							  +to_string(size_t(bad_texture)));
+	output_access->push_msg("bad box texture " + to_string(size_t(bad_texture)));
 }
 
 void text_box::draw_me(){
@@ -363,16 +363,9 @@ void text_box::update_texture(){
 
 }
 
-void set_error_state(){
-}
-
-void cancel_error_state(){
-
-}
-
 void text_box::back_space(){
 
-	if(editing_location <= 0) return;
+	if(editing_location == 0) return;
 
 	//erase from current editing location
 	text.erase(editing_location-1,1);

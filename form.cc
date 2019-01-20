@@ -132,8 +132,7 @@ void form::init(string form_title_in,string help_msg_image_name,int xloc_in,
 	TTF_CloseFont(title_font);
 
 
-	form_texture =
-		SDL_CreateTextureFromSurface(sdl_access->renderer,form_surface);
+	form_texture = SDL_CreateTextureFromSurface(sdl_access->renderer,form_surface);
 
 	if(form_texture == NULL) output_access->push_error(SDL_GetError());
 	//######################################################################
@@ -273,9 +272,6 @@ void form::form_event_loop(SDL_Event& big_event){
 
 }
 
-
-
-
 void form::handle_click(SDL_Event& mouse_event,bool& done,bool& click_lock){
 
 	if(!click_lock){
@@ -298,12 +294,10 @@ void form::handle_click(SDL_Event& mouse_event,bool& done,bool& click_lock){
 		} else if(right_arrow.clicked(mouse_event) ){
 			output_access->push_msg("clicked the page right button");
 			next_page();
-
 		//consider if the left arrow was clicked
 		} else if(left_arrow.clicked(mouse_event) ){
 			output_access->push_msg("clicked the page left button");
 			prev_page();
-
 		//consider the text boxes on the currently displayed page,
         //so long as it is not currently displaying the help message
 		} else if(!help_shown){
@@ -384,10 +378,8 @@ void form::draw_me(){
 void form::toggle_active(){
 	if(active){
 		active = false;
-
 	} else {
 		active = true;
-
 	}
 }
 

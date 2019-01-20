@@ -182,6 +182,7 @@ void button_manager::init_buttons(){
 }
 
 void button_manager::init_form_buttons(){
+
 	icntrl_6.init();
 
 	icntrl_8.init();
@@ -218,13 +219,14 @@ void button_manager::init_form_buttons(){
 	// vector<regex> ilv_2_patterns;
 	vector<regex*> icntrl_4_patterns;
 	vector<regex*> ilv3_ilv5_patterns;
-	fill_regex_vectors(icntrl_6_patterns,icntrl_8_patterns,
-					   icntrl_4_patterns, ilv3_ilv5_patterns);
+	fill_regex_vectors(icntrl_6_patterns,icntrl_8_patterns, 
+						icntrl_4_patterns, ilv3_ilv5_patterns);
 
 	icntrl_6.init_form(icntrl_6_patterns);
 	icntrl_8.init_form(icntrl_8_patterns);
 	icntrl_4.init_form(icntrl_4_patterns);
 	ilv3_ilv5.init_form(ilv3_ilv5_patterns);
+
 }
 
 void button_manager::fill_regex_vectors(vector<regex*>& icntrl_6_patterns,

@@ -387,8 +387,8 @@ void icntrl8_form_button::page_creation_helper(){
 	int rows_per_page = floor(725.0 / 35);
 	int rows_needed   = icntrl8_val;
 	//calculate how many pages are needed
-	uint vector_size = ceil((icntrl8_val * 35) / 725.0);
-	uint pages_made = 0;
+	uint vector_size  = ceil((icntrl8_val * 35) / 725.0);
+	uint pages_made   = 0;
 
 	//saves space later
 	vector<page>& pages = my_form.get_pages();
@@ -401,7 +401,6 @@ void icntrl8_form_button::page_creation_helper(){
 
 
 	for(uint c = 0; c < pages.size();c++){
-
 		if(rows_per_page >= rows_needed){
 			pages[c].page_init(3,rows_needed,pass_column_titles,pass_row_titles,
 									  column_spaces);
@@ -432,8 +431,7 @@ void icntrl8_form_button::page_creation_helper(){
 }
 
 void icntrl8_form_button::init_form(const vector<regex*>& pattern_tests){
-	my_form.init("Cutoff Nuclei (ICNTRL8)","icntrl8_form_help.png",0,0,
-				 pattern_tests);
+	my_form.init("Cutoff Nuclei (ICNTRL8)","icntrl8_form_help.png",0,0,pattern_tests);
 
 	try{
 		init_array = &io_access->form_init_arrays.at("ICNTRL8");

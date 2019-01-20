@@ -261,6 +261,9 @@ class icntrl6_form_button : public form_button{
     *like normal, but the 2 extras are what needs the special attention */
     vector<vector<string>> form_init_values;
 
+    //! vector of regex pointers to initialize the form with
+    vector<regex*> pattern_tests;
+
     //! track of what conditions caused the current pages to be made
     int INM1_val;
 
@@ -287,6 +290,7 @@ class icntrl6_form_button : public form_button{
 
     //! extra form # 2 for making INM2 line in input manual
     form cross_sections;
+
 };
 
 //! special object for icntrl10_button
@@ -471,6 +475,9 @@ class icntrl4_form_button : public form_button{
     /*! not called icntrl4_val because derivative parameter
      *nch4 controls # of text boxes needed */
     unsigned int nch4_val;
+
+    //! vector of regex pointers to initialize the form with
+    vector<regex*> pattern_tests;
 };
 
 //! opens the ILV3 or ILV5 form
@@ -502,4 +509,7 @@ class ilv3_ilv5_form_button : public form_button{
     /*! calls form_button::save_information */
     void save_information(ofstream& context_out);
   private:
+
+    //! vector of regex pointers to initialize the form with
+    vector<regex*> pattern_tests;
 };

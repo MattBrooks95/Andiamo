@@ -54,15 +54,15 @@ class input_maker{
     void init(const string& alternate_config);
 
     //! attempts to parse a real8 declaration and put it in the real 8 map
-    void process_real8(const string& line,const regex& nad_flag);
+    void process_real8(const string& line,regex* nad_flag);
 
     //! attempts to parse an int4 declaration and put it in the int4 map
-    void process_int4(const string& line,const regex& nad_flag);
+    void process_int4(const string& line,regex* nad_flag);
 
     //! attempts to parse a string declaration and put it in the string map
     void process_string(const string& line,
-                        const regex& string_array_size_pattern,
-                        const regex& nad_flag);
+                        regex* string_array_size_pattern,
+                        regex* nad_flag);
 
     //! attempts to parse a list of form parameter initialization values
     void process_form_init(const string& line);

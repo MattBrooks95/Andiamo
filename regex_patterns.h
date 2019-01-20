@@ -2,17 +2,17 @@
  *in one place */
 #pragma once
 
-//######### patterns used by input_maker ################
-#define RE_COMMENT "\\s*?#.*"
-#define RE_INT4 "\\s*?I4\\s+?[A-Za-z0-9_]+?\\s+?=.*"
+//######### patterns used by input_maker for init()################
+#define RE_COMMENT_LINE "\\s*?#.*"
+#define RE_INT4_LINE "\\s*?I4\\s+?[A-Za-z0-9_]+?\\s+?=.*"
 #define RE_INT4_ARRAY "\\s*?I4\\(\\s*?[0-9]+?\\s*?\\)\\s*?[A-Za-z0-9_]+?\\s*?=\\s*?\"(\\s*?-?[0-9]*?\\s*?,?)+?\"\\s*"
-#define RE_STRING "\\s*?C\\*\\s*?[A-Za-z_]+?\\|[0-9]+?\\|\\s*?=\\s*?\".+?\"\\s*"
+#define RE_STRING_LINE "\\s*?C\\*\\s*?[A-Za-z_]+?\\|[0-9]+?\\|\\s*?=\\s*?\".+?\"\\s*"
 // #define RE_REAL8 "\\s*?R8\\s+?[A-Za-z0-9_]+?\\s+?=\\s+?((-?[0-9]*?\\.[0-9]*?)|(nodef))\\s*"
-#define RE_REAL8 "\\s*?R8\\s+?[A-Za-z0-9_]+?\\s+?=.*"
-#define RE_FORM_INIT "FORM:[A-Za-z0-9_]*?\\s+?(-?[0-9]+?\\.?[0-9]*?[, |]?)*"
+#define RE_REAL8_LINE "\\s*?R8\\s+?[A-Za-z0-9_]+?\\s+?=.*"
+#define RE_FORM_INIT_LINE "FORM:[A-Za-z0-9_]*?\\s+?(-?[0-9]+?\\.?[0-9]*?[, |]?)*"
 #define RE_STRING_ARRAY_SIZE "\\|\\d+?\\|"
 #define RE_INT_ARRAY_SIZE "\\([0-9]+?\\)"
-#define RE_R8_ARRAY "\\s*?R8\\(\\s*[0-9]+?\\s*?\\)\\s*?[A-Za-z0-9_]+?\\s*?=\\s*?\"(\\s*?[0-9]+?\\.[0-9]+?,?)+?\""
+#define RE_R8_ARRAY_LINE "\\s*?R8\\(\\s*[0-9]+?\\s*?\\)\\s*?[A-Za-z0-9_]+?\\s*?=\\s*?\"(\\s*?[0-9]+?\\.[0-9]+?,?)+?\""
 #define RE_NAD_FLAG "nodef"
 //######################################################
 

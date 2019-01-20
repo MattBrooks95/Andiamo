@@ -98,19 +98,19 @@ void input_maker::init(const string& alternate_config){
 	}
 
 	//set up regex matches
-	regex re_comment(RE_COMMENT);
-	regex re_i4(RE_INT4);
-	regex re_i4_array(RE_INT4_ARRAY);
-	regex re_string(RE_STRING);
-	regex re_real8(RE_REAL8);
+	regex* re_comment  = regex_access->get_regular_expression(RE_COMMENT_LINE);
+	regex* re_i4       = regex_access->get_regular_expression(RE_INT4_LINE);
+	regex* re_i4_array = regex_access->get_regular_expression(RE_INT4_ARRAY);
+	regex* re_string   = regex_access->get_regular_expression(RE_STRING_LINE);
+	regex* re_real8    = regex_access->get_regular_expression(RE_REAL8_LINE);
 
-	regex form_init(RE_FORM_INIT);
+	regex* form_init = regex_access->get_regular_expression(RE_FORM_INIT_LINE);
 
-	regex string_array_size_pattern(RE_STRING_ARRAY_SIZE);
-	regex int_array_size_pattern(RE_INT_ARRAY_SIZE);
+	regex* string_array_size_pattern = regex_access->get_regular_expression(RE_STRING_ARRAY_SIZE);
+	regex* int_array_size_pattern    = regex_access->get_regular_expression(RE_INT_ARRAY_SIZE);
 
-	regex r8_array(RE_R8_ARRAY);
-	regex nad_flag(RE_NAD_FLAG);
+	regex* r8_array = regex_access->get_regular_expression(RE_R8_ARRAY_LINE);
+	regex* nad_flag = regex_access->get_regular_expression(RE_NAD_FLAG);
 
 	string temp_string;
 	string temp_name;
@@ -137,30 +137,30 @@ void input_maker::init(const string& alternate_config){
 		output_access->push_msg("LINE: |"+temp_string+"|");
 
 
-		if( regex_match(temp_string,re_comment) ){
+		if( regex_match(temp_string,*re_comment) ){
 
 			//comment line, don't do anything
 			output_access->push_msg("Is a comment line!");
 
 		//logics for reading in fortran integer 4s
-		} else if( regex_match(temp_string,re_i4) ){
+		} else if( regex_match(temp_string,*re_i4) ){
 
 			output_access->push_msg("Is an int4 line!");
 			process_int4(temp_string,nad_flag);
 
 		//logics for reading in fortran real 8s
-		} else if( regex_match(temp_string,re_real8) ){
+		} else if( regex_match(temp_string,*re_real8) ){
 
 			output_access->push_msg("Is an R8 line!");
 			process_real8(temp_string,nad_flag);
 
 		//logics for reading in fortran strings
 		//and their size
-		} else if( regex_match(temp_string,re_string) ){
+		} else if( regex_match(temp_string,*re_string) ){
 
 			process_string(temp_string,string_array_size_pattern,nad_flag);
 
-		} else if( regex_match(temp_string,re_i4_array) ){
+		} else if( regex_match(temp_string,*re_i4_array) ){
 
 			string int_arr_msg = "Is an array of integers! This is that";
 			int_arr_msg += " line split along spaces:";
@@ -176,7 +176,7 @@ void input_maker::init(const string& alternate_config){
 			smatch size_match;
 
 			//have regex search out the integer size value
-			regex_search(tokens[0],size_match,int_array_size_pattern);
+			regex_search(tokens[0],size_match,*int_array_size_pattern);
 
 			//if a match was found
 			if( size_match.ready() ){
@@ -222,7 +222,7 @@ void input_maker::init(const string& alternate_config){
 			}
 
 
-		} else if( regex_match(temp_string,r8_array) ){
+		} else if(regex_match(temp_string,*r8_array)){
 
 			output_access->push_msg("LINE:"+temp_string+"is an E array!");
 
@@ -246,7 +246,7 @@ void input_maker::init(const string& alternate_config){
 			//"E(8) some array name = " " "
 			//contain result of regex search for size
 			smatch size_match;
-			regex_search(tokens[0],size_match,int_array_size_pattern);
+			regex_search(tokens[0],size_match,*int_array_size_pattern);
 			if(size_match.ready()){
 
 				string first_match      = size_match[0].str();
@@ -278,7 +278,7 @@ void input_maker::init(const string& alternate_config){
 			std::pair<string,param_r8_array> insert_pair(name,r8_array_push_me);
 			r8_array_params.insert(insert_pair);
 
-		} else if( regex_match(temp_string,form_init) ){
+		} else if( regex_match(temp_string,*form_init) ){
 
 			process_form_init(temp_string);
 
@@ -294,7 +294,7 @@ void input_maker::init(const string& alternate_config){
 	ins.close();
 }
 
-void input_maker::process_int4(const string& line,const regex& nad_flag){
+void input_maker::process_int4(const string& line,regex* nad_flag){
 
 	vector<string> tokens = split(line,' ');
 
@@ -314,7 +314,7 @@ void input_maker::process_int4(const string& line,const regex& nad_flag){
 		output_access->push_msg("Missing '=' in I4 param declaration!");
 		return;
 
-	} else if( !regex_search(line,nad_flag) ){
+	} else if( !regex_search(line,*nad_flag) ){
 
 		value = str_to_integer(tokens[3]);
 
@@ -339,7 +339,7 @@ void input_maker::process_int4(const string& line,const regex& nad_flag){
 
 }
 
-void input_maker::process_real8(const string& line,const regex& nad_flag){
+void input_maker::process_real8(const string& line,regex* nad_flag){
 
 	vector<string> tokens = split(line,' ');
 
@@ -358,7 +358,7 @@ void input_maker::process_real8(const string& line,const regex& nad_flag){
 		output_access->push_error("Missing '=' in R8 param declaration!");
 		return;
 
-	} else if( !regex_search(line,nad_flag) ){
+	} else if( !regex_search(line,*nad_flag) ){
 
 		value = str_to_double(tokens[3]);
 
@@ -382,8 +382,8 @@ void input_maker::process_real8(const string& line,const regex& nad_flag){
 }
 
 void input_maker::process_string(const string& line,
-								 const regex& string_array_size_pattern,
-								 const regex& nad_flag){
+								 regex* string_array_size_pattern,
+								 regex* nad_flag){
 
 	//split across spaces, except for spaces within ""
 	vector<string> tokens = split(line,' ');
@@ -407,7 +407,7 @@ void input_maker::process_string(const string& line,
 		smatch number_matches;
 
 		//match with SIZE number
-		regex_search(tokens[1],number_matches, string_array_size_pattern);
+		regex_search(tokens[1],number_matches, *string_array_size_pattern);
 
 		//put it into a string convert the string to an integer
 		string size_string = number_matches[0].str();
@@ -776,14 +776,13 @@ void input_maker::set_field_text_and_regex(field* field,string default_text,rege
 	field->update_text(default_text);
 
 	if (input_test != NULL){
-		cout << "setting text box regex" << endl;
 		field->get_text_box().set_regular_expression(input_test);
 	}
 
 }
 
 void input_maker::give_int4_defaults(){
-	cout << "in give defaults" << endl;
+
 	//the outer loop just runs over every integer in the integer map
 	//that needs output to the HF file, and then runs through each line's
 	//map in the manager::fields map looking for the correct parameter
@@ -804,7 +803,7 @@ void input_maker::give_int4_defaults(){
 			} else {
 
 				string set_string = to_string(i4_it->second.value);
-				regex* int4_regex = regex_access->get_regular_expression(RE_INT4);
+				regex* int4_regex = regex_access->get_regular_expression(RE_INT4_LINE);
 
 				set_field_text_and_regex(this_params_field, set_string, int4_regex);
 
@@ -879,7 +878,7 @@ void input_maker::give_r8_defaults(){
 			} else {
 
 				string set_string = to_string(r8_it->second.value);
-				regex* real8_regex = regex_access->get_regular_expression(RE_REAL8);
+				regex* real8_regex = regex_access->get_regular_expression(RE_REAL8_LINE);
 
 				set_field_text_and_regex(this_params_field,set_string,real8_regex);
 
