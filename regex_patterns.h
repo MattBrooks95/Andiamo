@@ -35,7 +35,7 @@
 #define RE_INM1_UNLOCK "\\s*[0-9]+\\s*"
 //######################################################
 
-//####### patterns used by the button manager ##########
+//####### patterns used by text boxes to check inputs ##########
 #define RE_INT5  "\\s*-?\\s*[0-9]{1,5}\\s*"
 #define RE_F10_3 "\\s*-?\\s*[0-9]{1,6}\\s*\\.\\s*[0-9]{0,3}\\s*"
 #define RE_F8_4  "\\s*-?\\s*[0-9]{1,4}\\s*\\.\\s*[0-9]{0,4}\\s*"
