@@ -1,0 +1,399 @@
+line_1#########################################################################
+label
+c label that will be echoed on output
+andy_tile.png
+550x50
+andy
+line_2#########################################################################
+ELAB:Projectile Energy
+c Variable name in HF: ELAB
+c energy of projectile in MeV in the lab
+andy_tile.png
+160x50
+andy
+A:Compound Nuclear A
+c Variable name in HF:A
+c mass number of first compound nucleus
+andy_tile.png
+200x50
+andy
+Z:Compound Nuclear Z
+c Variable name in HF:Z
+c atomic number of first compound in nucleus
+andy_tile.png
+200x50
+andy
+FNRME1:E1 Strength Normalization
+c Variable name in HF: FNRME1 
+c normalization factors for E1
+c gamma ray decay
+andy_tile.png
+240x50
+andy
+FNRMM1:M1 Strength Normalization
+c Variable name in HF:FNRMM1
+c M1 strength functions for gamma ray decay
+andy_tile.png
+240x50
+andy
+IENCH:Entrance Channel
+c Variable name in HF: IENCH
+c entrance channel:
+c 1 = neutron
+c 2 = proton
+c 3 = deuteron
+c 4 = triton
+c 5 = helium-3
+c 6 = alpha 
+c 7 = Andiamo does not support incident
+c particles with A > 4
+andy_tile.png
+160x50
+andy
+ICM:TC Reference Frame
+c Variable name in HF: ICM
+c 0 = energies given in lab
+c 1 = energies given in center-of-mass
+andy_tile.png
+200x50
+andy
+NZ3:Exclude A=2,3 Exit Channels
+c Variable name in HF: NZ3
+c include or exclude d, t, 3He: 0 = include 2H, 3H, and 3He 
+c 1 = exclude 2H, 3H, and 3HE
+andy_tile.png
+260x50
+andy
+TCPR:TC Printing Options
+c Variable name in HF: TCPR
+c 0 = do not print transmission coefficients,
+c 1 = print transmission coefficients (title only) 
+c >1 print complete transmission of coefficients
+andy_tile.png
+180x50
+andy
+FNRME2:E2 Strength Normalization
+c Variable name in HF: FNRME2
+c normalization factor for E2 strength
+andy_tile.png
+240x50
+andy
+NGF:Functional Form
+c Variable name in HF: NGF
+c 0 = use original (Caltech) values
+c 1 = use original (Caltech) values
+c 2 = use Kopecky-Uhl values for gamma ray strength, 
+c 3 = Read in tabulated values for E1, M1, and E2 transmission coefficients.
+c E1 values are read in as if L = 0 
+c M1 values as if L = 1
+c and E2 as if L = 2
+c Thus, LMAX = 2 if all three are read in.
+andy_tile.png
+150x50
+andy
+line_3A#######################################################################
+NENT
+c NENT needs a comma-separated list of integer
+c energies in table for each kind of particle
+c (7 <= NENT <= 20)
+c NENT's values need to be in the same order as
+c those in LMAX for example:20,20,0,0,0,20
+c no spaces are permitted, and special characters
+c will cause undefined behavior
+andy_tile.png
+300x50
+andy
+LMAX
+c maximum value for transmission coefficients of each particle
+c LMAX needs a comma-separated list of integer values
+c they should be in the same order as NENT
+c for example:10,20,0,0,10
+c no spaces are permitted, and special characters
+c will cause undefined behavior
+andy_tile.png
+300x50
+andy
+TCTITLE
+c label for these transmission coefficients
+c (optional per NENT and LMAX values)
+c you may be prompted to enter another label if you like,
+c while Andiamo is running
+andy_tile.png
+300x50
+andy
+line_4########################################################################
+FJTAR:Target Spin
+c Variable name in HF: FJTAR
+c FJTAR is the spin of the target
+andy_tile.png
+150x50
+andy
+FCMJMAX:Compound Nuclear Spin Limit
+c Variable name in HF: FCMJMAX
+c FCMJMAX is the maximum compound nuclear
+c spin to include. Should be
+c LMAX in entrance channel
+c plus FJTAR plus FJPAR
+andy_tile.png
+280x50
+andy
+FRESIDMAX:Residual Nuclear Spin Limit
+c Variable name in HF: FRESIDMAX
+c The the maximum residual
+c nuclear spin allowed. This
+c should be about 10 for A,
+c about 30 and about 20 A
+c about 200?
+andy_tile.png
+200x50
+andy
+ITARPR:Ground State Parity
+c ITARPR is the parity (+1) or (-1)
+c of the target ground state
+andy_tile.png
+180x50
+andy
+NG:Gamma Emission
+c Variable in HF:NG
+c = 0 allow gamma emmission, where
+c energy allows
+c = 1 suppress gamma emmission when EX is
+c greater than 10MeV
+andy_tile.png
+160x50
+andy
+line_5#########################################################################
+ILV1:Level Density Options
+c Variable name in HF: ILV1
+c 1 = used ROHR parameters
+c 2 = used Po-lin Huang A parameters
+c 3 = used Po-lin Huang B parameters
+c 4 = S. Al-Quraishi paper 1
+c 5 = S. Al-Quraishi paper 2
+c 6 = input parameters by formula 
+c 7 = search on level density parameters
+andy_tile.png
+200x50
+andy
+ILV3:Distinct Residual Level Density?
+c Variable name in HF: ILV3
+c input parameters for level density of particular nculei
+c 0 = do not change level density from values specified by ILVL1
+c 1 <= change level density parameters for nuclei specified later
+andy_tile.png
+295x50
+andy
+ILV4:Normalize LD to resolve levels?
+c Variable name in HF: ILV4
+c select renormalization
+c 0 = no renormalization
+c 1 = renormalize each level density so it
+c     matches the level density produced
+c     by the resolved levels at the 
+c     transition energy
+andy_tile.png
+290x50
+andy
+ILV5:Distinct Level Density Model
+c ILV5 = number of nuclei for which temperatures are read in
+c 0 = use Fermi gas
+c 1 <= use constant temperature model (no search can be done if
+c     ILV5 >= 0 
+c talk to Tom about this one, isn't present in example input
+andy_tile.png
+265x50
+andy
+line_5A########################################################################
+ACON:Level Density a/A
+c small a = ACON x A
+andy_tile.png
+170x50
+andy
+GAM:Al-Quraishi Gamma
+c small a = ACON x A x EXPF (-GAM x(Z-Z0)^2)
+andy_tile.png
+180x50
+andy
+FCON:Spin Cutoff Multiplier
+c FCON x SIG from Al-Quraishi (#2) is spin cutoff
+c     (1E FCON multiplies normal 𝜎 by FCON)
+andy_tile.png
+200x50
+andy
+C0:Parity Ratio 
+c for parity ratio
+andy_tile.png
+150x50
+andy
+C10:Parity Ratio 10
+c for parity ratio
+andy_tile.png
+150x50
+andy
+C11:Parity Ratio 11
+c for parity ratio
+andy_tile.png
+150x50
+andy
+C12:Parity Ratio 12
+c for parity ratio
+c Odd-odd: DELP = C10 + C0/A - 0.89
+c Even-odd or odd-even: DELP = C11 + C0/A - 0.89
+c Even-even DELP = C12 + C0/(A ^(0.89))
+andy_tile.png
+150x50
+andy
+C3:Parity Ratio 3
+c used in parity ratio
+c P.R. = 0.5 ? (1 (+/-) 1/(1 + EXP (C3 ? (E - DELP)))
+andy_tile.png
+150x50
+andy
+line_6###################################################
+ICNTRL1:Output Per Decay
+c Variable name in HF: ICNTRL1
+c 0 = print output only after last stage is complete
+c 1 = print output after each stage as
+c     specified by ICNTRL2
+andy_tile.png
+170x50
+andy
+ICNTRL2
+c 0 = print total formation cross section for
+c     each residual nucleus
+c 1 = print information under ICNTRL2 = 0 plus neutron,
+c     proton, etc. cross sections for each stage
+andy_tile.png
+150x50
+andy
+ICNTRL4:Resolved Level + Continuum
+c Variable name in HF: ICNTRL4
+c 0 = do not separately calculate cross sections for
+c     resolved levels (bins only)
+c 1 = calculate cross sections for resolved levels
+andy_tile.png
+260x50
+andy
+ICNTRL5:Angular Distributions Options
+c Variable name in HF: ICNTRL5
+c 0 = no angular distributions calculated
+c 1 = neutron angular distributions calculated
+c 2 = proton angular distributions calculated
+c 3 = deuteron angular distributions calculated
+c 4 = triton angular distributions calculated
+c 5 = helium-3 angular distributions calculated
+c 6 = alpha angular distrubtions calculated
+andy_tile.png
+270x50
+andy
+ICNTRL6:Parameter Search
+c Varibale name in HF: ICNTRL6
+c 0 = no search
+c 1 = search
+c 2 = search with more intermediate output
+160x50
+andy
+ICNTRL7:Point Level Density
+c Variable name in HF: ICNTRL7
+c 0 = do not echo level densities or change
+c     file of reduced levels
+c 1 = echo level densities
+c 2 = read new cutoff values for resolved levels
+c 3 = read new cutoff values and echo level densities
+andy_tile.png
+200x50
+andy
+ICNTRL8:Resolved Level Threshold Count
+c Variable name in HF: ICNTRL8
+c the number of final nuclei for which cutoff on 
+c energy values of levels should change
+c Normally code uses all known levels up to 25 before
+c continuum starts. If you believe a nucleus with, for
+c example, 20 known levels appears to be missing levels
+c above 4Mev, you can put in this cutoff, and levels
+c above the energy will be omitted and replaced with the
+c continuum form
+andy_tile.png
+300x50
+andy
+ICNTRL9:Fitting
+c Variable name in HF: ICNTRL9
+c 0 = use normal x^2
+c 1 = use relative x^2 in fit
+c     (find normalization factor for calculation
+c     which minimalizes x^2)
+andy_tile.png
+150x50
+andy
+ICNTRL10:Specify Spin Cutoff?
+c Variable name in HF: ICNTRL10
+c 0 < read individual sigma information
+c 0 = don't read individual sigma information
+andy_tile.png
+210x50
+andy
+line_7#########################################################################
+FMU:Isospin Mixing Fraction
+c 0 <= FMU <= 1.0
+c FMU is the fraction of strength in the upper
+c isospin states that is mixed into lower
+c states before decay
+andy_tile.png
+210x50
+andy
+FCON_:Spin Cutoff Multiplier (duplicate?)
+c FCON is the multiplier on the spin cutoff parameter.
+c FCON = 1 uses the rigid body value for
+c R = R0  A^(1/3), where R0 = 1.2.
+c Values of FCON != 1 will result in multiplying
+c the above rigid body value by FCON
+andy_tile.png
+200x50
+andy
+line_8#########################################
+ICH4:Resolved Cross-Section Channel
+c 1 = neutron channel
+c 2 = proton
+c 3 = deuteron
+c 4 = triton
+c 5 = helium-3
+c 6 = alpha
+andy_tile.png
+290x50
+andy
+NCH4:# of Resolved Levels
+c NCH4 = number of separate levels
+andy_tile.png
+225x50
+andy
+line_10#######################################################################
+ITER:# of Search Iterations
+c HF variable name:ITER
+c number of iterations in search
+andy_tile.png
+190x50
+andy
+INM1:# of Search Spectra
+c HF variable name:INM1
+c number of spectra to fit (n,p, , etc)
+andy_tile.png
+170x50
+andy
+INM2:# of Cross Sections
+c HF variable name:INM2
+c number of integrated cross sections
+c to fit(n,p), (n, 2n) etc. These are
+c what are usually termed activation
+c cross sections, i.e., (n,𝜶) is added
+c to (n,np) and (n,pn), for example
+andy_tile.png
+175x50
+andy
+line_11#######################################################################
+NNSIG: Special Sigma
+c NNSIG in HF manual
+c Number of nuclei with special
+c sigma values
+andy_tile.png
+200x50
+andy

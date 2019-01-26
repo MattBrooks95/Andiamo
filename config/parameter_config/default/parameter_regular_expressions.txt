@@ -1,0 +1,44 @@
+label
+ELAB:Projectile Energy
+A:Compound Nuclear A
+Z:Compound Nuclear Z
+FNRME1:E1 Strength Normalization
+FNRMM1:M1 Strength Normalization
+IENCH:Entrance Channel
+ICM:TC Reference Frame
+NZ3:Exclude A=2,3 Exit Channels
+TCPR:TC Printing Options
+FNRME2:E2 Strength Normalization
+NGF:Functional Form
+NENT
+LMAX
+TCTITLE
+FJTAR:Target Spin
+FCMJMAX:Compound Nuclear Spin Limit
+FRESIDMAX:Residual Nuclear Spin Limit
+ITARPR:Ground State Parity
+NG:Gamma Emission
+ILV1:Level Density Options
+ILV3:Distinct Residual Level Density?
+ILV4:Normalize LD to resolve levels?
+ILV5:Distinct Level Density Model
+ACON:Level Density a/A
+GAM:Al-Quraishi Gamma
+FCON:Spin Cutoff Multiplier
+ICNTRL1:Output Per Decay
+ICNTRL2
+ICNTRL4:Resolved Level + Continuum
+ICNTRL5:Angular Distributions Options
+ICNTRL6:Parameter Search
+ICNTRL7:Point Level Density
+ICNTRL8:Resolved Level Threshold Count
+ICNTRL9:Fitting
+ICNTRL10:Specify Spin Cutoff?
+FMU:Isospin Mixing Fraction
+FCON_:Spin Cutoff Multiplier (duplicate?)
+ICH4:Resolved Cross-Section Channel
+NCH4:# of Resolved Levels
+ITER:# of Search Iterations
+INM1:# of Search Spectra
+INM2:# of Cross Sections
+NNSIG: Special Sigma

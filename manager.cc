@@ -30,7 +30,8 @@ void manager::init_regular_expressions(){
 
 	string regular_expression_file_name = REGEX_FILE_NAME;
 
-	string regular_expression_file_path = configuration_folder_path + regular_expression_file_name; 
+	string configuration_total_path = configuration_folder_path + configuration_folder_name + '/';
+	string regular_expression_file_path = configuration_total_path + regular_expression_file_name; 
 	cout << "path to file:" << regular_expression_file_path << endl;
 
 	vector<string> file_lines;

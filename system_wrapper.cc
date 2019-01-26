@@ -69,8 +69,8 @@ std::string system_wrapper::get_local_startup_time_string(){
 	return asctime(local_time_at_startup);
 }
 
-void system_wrapper::get_file_as_lines(const string& file_path, vector<string>& file_lines){
-
+void system_wrapper::get_file_as_lines(const string& file_path,vector<string>& file_lines){
+	cout << "in get file as lines, path:" << file_path << endl;
 	fstream file_input_stream;
 	file_input_stream.open(file_path.c_str());
 
