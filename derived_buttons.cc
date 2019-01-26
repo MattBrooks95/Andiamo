@@ -165,7 +165,7 @@ void text_box_button::force_corner_loc(int xloc_in, int yloc_in){
 
 int output_file_button::work(/*input_maker& io_handler*/){
     if(my_text_box.get_text().size() == 0 || my_text_box.get_text() == " "){
-        output_access->push_error("Output file name was not supplied, using the default \"output.txt\".");
+        logger_access->push_error("Output file name was not supplied, using the default \"output.txt\".");
         return -1;
     } else {
         //set up the output file name var in input maker
@@ -210,7 +210,7 @@ void save_context_button::init_confirmation(const string& image_path_in){
              << confirmation_dimensions.h  << endl;
 
     } else {
-        output_access->push_error("Couldn't find the save_context's confirmation image!");
+        logger_access->push_error("Couldn't find the save_context's confirmation image!");
     }
 
 }
@@ -238,22 +238,22 @@ void save_context_button::click_helper(SDL_Event& mouse_event){
 }
 
 int save_context_button::work(){
-
+    cout << "saving the context!" << endl;
     ofstream context_out;
 
     string home = system_access->get_home();
     string user_file_name = my_text_box.get_text();
 
-    string config_path = "/Andiamo/config/custom_configs/";
+    // string config_path = "/Andiamo/config/custom_configs/";
 
-    string context_save_path =  home + config_path + user_file_name;
+    // string context_save_path =  home + config_path + user_file_name;
 
-    context_out.open(context_save_path);
-    if(!context_out.fail()){
-         io_access->save_context(context_out);
-         handle_confirmation();
-    }
-    context_out.close();
+    // context_out.open(context_save_path);
+    // if(!context_out.fail()){
+    //      io_access->save_context(context_out);
+    //      handle_confirmation();
+    // }
+    // context_out.close();
 }
 //##############################################################################
 
@@ -288,9 +288,9 @@ void graphing_button::draw_me(){
 
 void graphing_button::print_me(){
     text_box_button::print_me();
-    output_access->push_msg("CHECK SURFACE: "+to_string(size_t(checked_surface))+" CHECK TEXTURE: "
+    logger_access->push_msg("CHECK SURFACE: "+to_string(size_t(checked_surface))+" CHECK TEXTURE: "
                               +to_string(size_t(checked_texture)));
-    output_access->push_msg("SHOW CHECK BOOLEAN: "+to_string(show_check_version));
+    logger_access->push_msg("SHOW CHECK BOOLEAN: "+to_string(show_check_version));
     check_box.print_me();
 }
 
@@ -304,11 +304,11 @@ bool graphing_button::handle_click(SDL_Event& mouse_event){
 
         //if already showing check, hide it
         if(show_check_version){
-            output_access->push_msg("Toggling show_check to false");
+            logger_access->push_msg("Toggling show_check to false");
             show_check_version = false;
 
         } else {//if not already showing check, show it
-            output_access->push_msg("Toggling show_check to true");
+            logger_access->push_msg("Toggling show_check to true");
             show_check_version = true;
         }
         return true;
@@ -342,9 +342,9 @@ void graphing_button::init(const std::string& image_name_in,const std::string& i
 
     //set up the checked version texture
     checked_surface = IMG_Load( (image_p_in+"graphing_options_checked.png").c_str() );
-    if(checked_surface == NULL) output_access->push_error(string(SDL_GetError()));
+    if(checked_surface == NULL) logger_access->push_error(string(SDL_GetError()));
     checked_texture = SDL_CreateTextureFromSurface(sdl_access->renderer,checked_surface);
-    if(checked_texture == NULL) output_access->push_error(string(SDL_GetError()));
+    if(checked_texture == NULL) logger_access->push_error(string(SDL_GetError()));
 }
 */
 //##############################################################################

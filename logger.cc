@@ -1,6 +1,9 @@
 //! \file logger.cc describes the functions and objects declared in logger.h
 
 #include "logger.h"
+
+#include "system_wrapper.h"
+
 using namespace std;
 
 logger::logger(){

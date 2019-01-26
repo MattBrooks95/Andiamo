@@ -42,20 +42,20 @@ form::form(){
 form::~form(){
 	if(form_title_surface != NULL){
 		SDL_FreeSurface(form_title_surface);
-	} else output_access->push_error(FORM_ERROR);
+	} else logger_access->push_error(FORM_ERROR);
 
 	if(form_surface != NULL && form_texture != NULL){
 		SDL_FreeSurface(form_surface);
 		SDL_DestroyTexture(form_texture);
-	} else output_access->push_error(FORM_ERROR);
+	} else logger_access->push_error(FORM_ERROR);
 
 	if(help_texture != NULL){
 		SDL_DestroyTexture(help_texture);
-	} else output_access->push_error(FORM_ERROR);
+	} else logger_access->push_error(FORM_ERROR);
 
 	if(number_sprites != NULL){
 		SDL_FreeSurface(number_sprites);
-	} else output_access->push_error(FORM_ERROR);
+	} else logger_access->push_error(FORM_ERROR);
 }
 
 void form::init(string form_title_in,string help_msg_image_name,int xloc_in,
@@ -76,7 +76,7 @@ void form::init(string form_title_in,string help_msg_image_name,int xloc_in,
     string number_path = form_assets_path + "number_sprites.png";
 	number_sprites = asset_access->get_surface(number_path);
 	//number_sprites = IMG_Load(number_path.c_str());
-	if(number_sprites == NULL) output_access->push_error(SDL_GetError());
+	if(number_sprites == NULL) logger_access->push_error(SDL_GetError());
 	//##########################################################################
 
 	//set up the corner
@@ -90,7 +90,7 @@ void form::init(string form_title_in,string help_msg_image_name,int xloc_in,
 
 	if(form_surface == NULL){
 		cout << "Form surface null!" << endl;
-		output_access->push_error(SDL_GetError());
+		logger_access->push_error(SDL_GetError());
 		return;
 	}
 
@@ -116,7 +116,7 @@ void form::init(string form_title_in,string help_msg_image_name,int xloc_in,
 	TTF_Font* title_font = TTF_OpenFont( title_path.c_str(), 28);
 	form_title_surface = TTF_RenderUTF8_Blended(title_font,form_title.c_str(),black);
 	if(form_title_surface == NULL){
-		output_access->push_error(SDL_GetError());
+		logger_access->push_error(SDL_GetError());
 	} else {
 		TTF_SizeText(title_font,form_title.c_str(),&source.w,&source.h);
 		source.x = 0; source.y = 0;
@@ -124,7 +124,7 @@ void form::init(string form_title_in,string help_msg_image_name,int xloc_in,
 		destination.x = form_area.x + 400 - (source.w / 2);
 		destination.y = form_area.y + 25 - (source.h / 2);
 		if(SDL_BlitSurface(form_title_surface,&source,form_surface,&destination) != 0){
-			output_access->push_error(SDL_GetError());
+			logger_access->push_error(SDL_GetError());
 		}
 
 	}
@@ -134,13 +134,13 @@ void form::init(string form_title_in,string help_msg_image_name,int xloc_in,
 
 	form_texture = SDL_CreateTextureFromSurface(sdl_access->renderer,form_surface);
 
-	if(form_texture == NULL) output_access->push_error(SDL_GetError());
+	if(form_texture == NULL) logger_access->push_error(SDL_GetError());
 	//######################################################################
 
 	//initialize the help message that is shown upon the question mark being clicked
     string help_target = "Images/form_assets/" + help_msg_image_name;
 	help_texture       = asset_access->get_texture(help_target);
-	if(help_texture == NULL) output_access->push_error(SDL_GetError());
+	if(help_texture == NULL) logger_access->push_error(SDL_GetError());
 	//######################################################################
 
 
@@ -160,7 +160,7 @@ void form::set_form_title(string new_title){
 	if(form_title_surface == NULL){
         string err;
         err = "Couldn't switch the form's title, it was previously null.";
-		output_access->push_error(err);
+		logger_access->push_error(err);
 	}
 	//destroy the old form title surface
 	SDL_FreeSurface(form_title_surface);
@@ -204,7 +204,7 @@ void form::set_form_title(string new_title){
 
     //blit the new title surface to the form's surface
 	if(SDL_BlitSurface(form_title_surface,&source,form_surface,&destination) != 0){
-		output_access->push_error(SDL_GetError());
+		logger_access->push_error(SDL_GetError());
 	}
 	//close the font
 	TTF_CloseFont(title_font);
@@ -278,13 +278,13 @@ void form::handle_click(SDL_Event& mouse_event,bool& done,bool& click_lock){
 
 		//consider if the exit button was clicked
 		if(exit.clicked(mouse_event)){
-			output_access->push_msg("Clicked the exit button.");
+			logger_access->push_msg("Clicked the exit button.");
 			toggle_active();
 			done = true;//end mini loop
 
 		//consider if the help button was clicked
 		} else if(help.clicked(mouse_event) ){
-			output_access->push_msg("clicked the help button.");
+			logger_access->push_msg("clicked the help button.");
 			if(!help_shown){
 				help_shown = true;
 			} else {
@@ -292,11 +292,11 @@ void form::handle_click(SDL_Event& mouse_event,bool& done,bool& click_lock){
 			}
 		//consider if the right arrow was clicked
 		} else if(right_arrow.clicked(mouse_event) ){
-			output_access->push_msg("clicked the page right button");
+			logger_access->push_msg("clicked the page right button");
 			next_page();
 		//consider if the left arrow was clicked
 		} else if(left_arrow.clicked(mouse_event) ){
-			output_access->push_msg("clicked the page left button");
+			logger_access->push_msg("clicked the page left button");
 			prev_page();
 		//consider the text boxes on the currently displayed page,
         //so long as it is not currently displaying the help message
@@ -434,7 +434,7 @@ bool form::check_values(vector<index_value>& error_details){
             string err = "From form::check_values() A form doesn't";
             err += " have a regular expression to check each";
             err += "of its column's inputs against to ensure input integrity.";
-			output_access->push_error(err);
+			logger_access->push_error(err);
 		}
 
 		//save a reference to this page's vector in a temporary variable
@@ -467,7 +467,7 @@ void form::set_page_count(int page_count_in){
 	if(page_count > 10){
         string err = "page count greater than 10, form construction";
         err       += " may not work properly";
-		output_access->push_error(err);
+		logger_access->push_error(err);
 	}
 
 	SDL_Rect source = {20+page_count*20,0,20,20};
@@ -480,14 +480,14 @@ void form::set_page_count(int page_count_in){
 	//write over old number, kind of like erasing just that part of the surface
 	if(form_surface == NULL){
 		string error = "form_surface is null in set_page_count!";
-		output_access->push_error(error);
+		logger_access->push_error(error);
 		return;
 	}
 
 	//"erase" previous page # by filling with white
     SDL_PixelFormat* format = form_surface->format;
 	if(SDL_FillRect(form_surface,&destination,SDL_MapRGBA(format,WHITE)) != 0){
-		output_access->push_error(SDL_GetError());
+		logger_access->push_error(SDL_GetError());
 	}
 
 	//put the destination back how it was, so numbers are drawn
@@ -505,7 +505,7 @@ void form::set_page_count(int page_count_in){
 
 	} else {
 
-		output_access->push_error("Error in set_page_count, previous form texture was NULL");
+		logger_access->push_error("Error in set_page_count, previous form texture was NULL");
 
 	}
 }
@@ -518,13 +518,13 @@ void form::update_page_indicator(){
 	//write over old number, kind of like erasing just that part of the surface
 	if(form_surface == NULL){
 		string error = "form_surface is null in update page indicator!";
-		output_access->push_error(error);
+		logger_access->push_error(error);
 		return;
 	}
 
     SDL_PixelFormat* format = form_surface->format;
 	if(SDL_FillRect(form_surface,&destination,SDL_MapRGBA(format,WHITE)) != 0){
-		output_access->push_error(SDL_GetError());
+		logger_access->push_error(SDL_GetError());
 	}
 
 	//draw in new number
@@ -539,7 +539,7 @@ void form::update_page_indicator(){
 	} else {
         string err = "Error in update_page_indicator,";
         err += " previous form texture was NULL";
-		output_access->push_error(err);
+		logger_access->push_error(err);
 	}
 }
 
@@ -594,9 +594,9 @@ void page::page_init(unsigned int num_columns_in, unsigned int rows_needed,
 
 
 	if(num_columns_in != column_spacings.size()){
-		output_access->push_msg("Not been enough spacing values supplied to page init.");
-		output_access->push_msg("Column_spacings should have one less element than num_columns_in.");
-		output_access->push_msg("This could be by design, as is the case with ICNTRL6's parity form.");
+		logger_access->push_msg("Not been enough spacing values supplied to page init.");
+		logger_access->push_msg("Column_spacings should have one less element than num_columns_in.");
+		logger_access->push_msg("This could be by design, as is the case with ICNTRL6's parity form.");
 	}
 
 
@@ -656,7 +656,7 @@ void page::set_row_labels(const vector<string>& row_labels_in,
 		if(TTF_SizeText(sdl_access->font,row_labels[c].c_str(),&width,&height) != 0){
             string err = "Error while making row labels in page,";
             err += " TTF_SizeText failure." + string(TTF_GetError());
-			output_access->push_error(err);
+			logger_access->push_error(err);
         }
 
 
@@ -768,14 +768,14 @@ void page::draw_me(){
         string err = "The vector that saves drawing location for page";
         err += " column labels does not have the same size as";
         err += " the vector that contains the textures. Aborting drawing.";
-        output_access->push_error(err);
+        logger_access->push_error(err);
         return;
     }
 
     for(unsigned int c = 0; c < column_label_textures.size();c++){
 
         if(SDL_RenderCopy(renderer,column_label_textures[c],NULL,&column_label_rects[c]) != 0){
-            output_access->push_error("Could not draw column title.");
+            logger_access->push_error("Could not draw column title.");
         }
     }
 
@@ -783,7 +783,7 @@ void page::draw_me(){
         string err = "The vector that saves the drawing location for";
         err += " the page row labels does not have the same size";
         err += " as the vector that contains the textures. Aborting drawing.";
-        output_access->push_error(err);
+        logger_access->push_error(err);
     return;
     }
 

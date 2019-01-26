@@ -89,7 +89,7 @@ field::~field(){
         SDL_DestroyTexture(my_help_tex);
         my_help_tex = NULL;
     } else {
-        output_access->push_error("Attempted double free in ~field!");
+        logger_access->push_error("Attempted double free in ~field!");
     }
 
 }
@@ -112,12 +112,12 @@ void field::graphics_init(string image_path_in){
     if(my_tex == NULL){
         string error = "Error in field.cc's graphics init() function: ";
         error       +=  SDL_GetError();
-        output_access->push_error(error);
+        logger_access->push_error(error);
     }
 
     string lock_target = image_path + "lock.png";
     lock_texture = asset_access->get_texture(lock_target);
-    if(lock_texture == NULL) output_access->push_error(string(SDL_GetError()));
+    if(lock_texture == NULL) logger_access->push_error(string(SDL_GetError()));
 
     text_init();
     my_text_box.init(sdl_access->font,"",xloc,yloc+25,size.width,25);
@@ -133,12 +133,12 @@ void field::text_init(){
     //get a more shorthand reference to the SDL class's font pointer
     TTF_Font* font = sdl_access->font;
     if(font == NULL){
-        output_access->push_msg("NULL font in text init()!");
+        logger_access->push_msg("NULL font in text init()!");
     }
 
     SDL_Renderer* renderer = sdl_access->renderer;
     if(renderer == NULL){
-        output_access->push_msg("NULL renderer in text init()!");
+        logger_access->push_msg("NULL renderer in text init()!");
     }
 
     //this part sets up the tile title surface #################################
@@ -148,7 +148,7 @@ void field::text_init(){
     if(my_text_surf == NULL){
         string error = "Error in field.cc's graphics init() function: ";
         error       += SDL_GetError();
-        output_access->push_error(error);
+        logger_access->push_error(error);
     }
 
     my_text_tex = SDL_CreateTextureFromSurface(renderer,my_text_surf);
@@ -156,7 +156,7 @@ void field::text_init(){
     if(my_text_tex == NULL){
         string error = "Error in field.cc's graphics init() function: ";
         error += SDL_GetError();
-        output_access->push_error(error);
+        logger_access->push_error(error);
     }
     //##########################################################################
 
@@ -210,7 +210,7 @@ void field::text_init(){
             string error = "Error making ";
             error       += tile_name + "'s help box.";
             error       += SDL_GetError();
-            output_access->push_error(error);
+            logger_access->push_error(error);
 
         }
         //color in the help background
@@ -235,7 +235,7 @@ void field::text_init(){
             //draw words atop the help surface
             if(SDL_BlitSurface(temp_line,NULL,my_help_surf,&word_dest) != 0){
                 string error = SDL_GetError();
-                output_access->push_error("Error in help blit."+error);
+                logger_access->push_error("Error in help blit."+error);
             }
 
             //free memory, this pointer will be used again
@@ -246,7 +246,7 @@ void field::text_init(){
         if(my_help_tex == NULL){
             string error = "Error in creating help box texture. ";
             error += SDL_GetError();
-            output_access->push_error(error);
+            logger_access->push_error(error);
         }
     }
 }
@@ -324,29 +324,29 @@ void field::help_toggle(){
 }
 void field::print(){
 
-    output_access->push_msg("Tile name: "+tile_name+
+    logger_access->push_msg("Tile name: "+tile_name+
                           " Tile Image Name: "+image_name);
-    output_access->push_msg("CORNER x:y = "+to_string(xloc)+":"+to_string(yloc));
+    logger_access->push_msg("CORNER x:y = "+to_string(xloc)+":"+to_string(yloc));
 
     if(sdl_access != NULL){
-        output_access->push_msg("SDL pointers texture:renderer = "+
+        logger_access->push_msg("SDL pointers texture:renderer = "+
                                 to_string(size_t(&my_tex))+":"+
                                 to_string(size_t(sdl_access->renderer)));
     } else {
         string msg = "Couldn't print texture or renderer pointers,";
         msg       += " sdl_access is NULL.";
-        output_access->push_msg(msg);
+        logger_access->push_msg(msg);
     }
-    output_access->push_msg("font hook: "+to_string(size_t(sdl_access->font)) );
-    output_access->push_msg("Description lines:");
+    logger_access->push_msg("font hook: "+to_string(size_t(sdl_access->font)) );
+    logger_access->push_msg("Description lines:");
 
     for(unsigned int c = 0; c < descriptions.size();c++){
-        output_access->push_msg(descriptions[c]);
+        logger_access->push_msg(descriptions[c]);
     }
     string yay_or_nay;
     if(help_mode) yay_or_nay = "Yes";
     else yay_or_nay = "No";
-    output_access->push_msg("Help mode: "+yay_or_nay);
+    logger_access->push_msg("Help mode: "+yay_or_nay);
     size.print();
 }
 
@@ -359,5 +359,5 @@ void field::change_tile_background(string image_name_in){
     string assets_full_path = image_path + image_name_in;
     // cout << "change tile background: " << display_name << endl;
     my_tex = asset_access->get_texture(assets_full_path);
-    if(my_tex == NULL) output_access->push_error(SDL_GetError());
+    if(my_tex == NULL) logger_access->push_error(SDL_GetError());
 }

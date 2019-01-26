@@ -22,7 +22,7 @@
 using std::string;
 using std::vector;
 
-extern logger* output_access;;
+extern logger* logger_access;;
 extern string HOME;
 extern system_wrapper* system_access;
 

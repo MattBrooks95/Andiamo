@@ -112,17 +112,17 @@ void text_box::init(TTF_Font* font_in, string text_in, int xloc_in, int yloc_in,
 	//load the same text box image used by the tiles
 	string texture_path = "Images/text_box.png";
 	text_box_texture = asset_access->get_texture(texture_path);
-	if(text_box_texture == NULL) output_access->push_error(SDL_GetError());
+	if(text_box_texture == NULL) logger_access->push_error(SDL_GetError());
 
 	string bad_path = "Images/bad_tile.png";
 	bad_texture = asset_access->get_texture(bad_path);
-	if(bad_texture == NULL) output_access->push_error(SDL_GetError());
+	if(bad_texture == NULL) logger_access->push_error(SDL_GetError());
 
 	text_surface = TTF_RenderUTF8_Blended(font,text.c_str(),text_color);
 
-	if(text_surface == NULL) output_access->push_error(SDL_GetError());
+	if(text_surface == NULL) logger_access->push_error(SDL_GetError());
 	text_texture = SDL_CreateTextureFromSurface(sdl_access->renderer,text_surface);
-	if(text_texture == NULL) output_access->push_error(SDL_GetError());
+	if(text_texture == NULL) logger_access->push_error(SDL_GetError());
 
 	TTF_SizeText(font,text.c_str(),&text_dims.w,&text_dims.h);
 
@@ -138,7 +138,7 @@ void text_box::init(TTF_Font* font_in, string text_in, int xloc_in, int yloc_in,
 void text_box::set_regular_expression(regex* test_regex){
 
 	if(test_regex == NULL){
-		output_access->push_msg("Textbox set_regular_expression given a NULL pointer.");
+		logger_access->push_msg("Textbox set_regular_expression given a NULL pointer.");
 	}
 
 	input_test_regex = test_regex;
@@ -154,23 +154,23 @@ void text_box::set_scrolling(){
 
 void text_box::print_me(){
 
-	output_access->push_msg("Printing text box.");
-	output_access->push_msg("My location: "+to_string(xloc)+":"+to_string(yloc)+" "+to_string(width)+":"+to_string(height));
-	output_access->push_msg("My_rect:"+to_string(my_rect.x)+":"+to_string(my_rect.y)+" "+to_string(my_rect.w)+":"
+	logger_access->push_msg("Printing text box.");
+	logger_access->push_msg("My location: "+to_string(xloc)+":"+to_string(yloc)+" "+to_string(width)+":"+to_string(height));
+	logger_access->push_msg("My_rect:"+to_string(my_rect.x)+":"+to_string(my_rect.y)+" "+to_string(my_rect.w)+":"
 						  +to_string(my_rect.h));
-	output_access->push_msg("Color: "+to_string(text_color.r)+":"+to_string(text_color.g)+":"+to_string(text_color.b)
+	logger_access->push_msg("Color: "+to_string(text_color.r)+":"+to_string(text_color.g)+":"+to_string(text_color.b)
 							  +":"+to_string(text_color.a));
-	output_access->push_msg("Text: "+text);
-	output_access->push_msg("sdl_access ptr: "+to_string(size_t(sdl_access)));
-	output_access->push_msg("font: "+to_string(size_t(font)));
+	logger_access->push_msg("Text: "+text);
+	logger_access->push_msg("sdl_access ptr: "+to_string(size_t(sdl_access)));
+	logger_access->push_msg("font: "+to_string(size_t(font)));
 
-	output_access->push_msg("text box texture "+
+	logger_access->push_msg("text box texture "+
 							to_string(size_t(text_box_texture)));
 
-	output_access->push_msg("Text surface: "+to_string(size_t(text_surface))+" text texture "
+	logger_access->push_msg("Text surface: "+to_string(size_t(text_surface))+" text texture "
 				  +to_string(size_t(text_texture)));
 
-	output_access->push_msg("bad box texture " + to_string(size_t(bad_texture)));
+	logger_access->push_msg("bad box texture " + to_string(size_t(bad_texture)));
 }
 
 void text_box::draw_me(){
@@ -347,18 +347,18 @@ void text_box::update_texture(){
 		text_surface = TTF_RenderUTF8_Blended(font,text.c_str(),text_color);
 
 		if(text_surface == NULL){
-			output_access->push_error(SDL_GetError());
+			logger_access->push_error(SDL_GetError());
 			text_surface = TTF_RenderUTF8_Blended(font," ",text_color);
 		}
 
 		text_texture = SDL_CreateTextureFromSurface(sdl_access->renderer,text_surface);
 
 		if(text_texture == NULL){
-			output_access->push_error(SDL_GetError());
+			logger_access->push_error(SDL_GetError());
 		}
 
 	} else {
-		output_access->push_error("In text_box::update_texture, font is NULL.");
+		logger_access->push_error("In text_box::update_texture, font is NULL.");
 	}
 
 }
@@ -437,7 +437,7 @@ void text_box::edit_loop(SDL_Event& event,string& command){
 				if( was_clicked(event) ){
 					string msg = "Text box click at " + to_string(event.button.x);
 					msg       += ":" + to_string(event.button.y);
-					output_access->push_msg(msg);
+					logger_access->push_msg(msg);
 
 					//elsewise exit text input mode, user clicked off the text box
 				} else {
@@ -475,7 +475,7 @@ void text_box::edit_loop(SDL_Event& event,string& command){
 			break;
 
 			default:
-			output_access->push_msg("Error finding case in text entry mini-loop");
+			logger_access->push_msg("Error finding case in text entry mini-loop");
 			break;
 		}
 

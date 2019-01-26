@@ -44,9 +44,9 @@ bool scroll_bar::is_scrolling(){
 void scroll_bar::scroll_mode_change(bool bool_in){
 	scrolling_mode = bool_in;
 	if(scrolling_mode){
-		output_access->push_msg("Scrolling mode changed to: true");
+		logger_access->push_msg("Scrolling mode changed to: true");
 	} else {
-		output_access->push_msg("Scrolling mode changed to: false");
+		logger_access->push_msg("Scrolling mode changed to: false");
 	}
 }
 //#############################################################################
@@ -57,7 +57,7 @@ void scroll_bar::init_corner_texture(){
 	my_tex = asset_access->get_texture(image_p);
 	if(my_tex == NULL){
 		//something went wrong, print error to the screen
-		output_access->push_error(string(SDL_GetError()));
+		logger_access->push_error(string(SDL_GetError()));
 		return;
 	}
 	//fills in width and height fields
@@ -68,7 +68,7 @@ void scroll_bar::init_corner_texture(){
 		//start off on the left of the screen 
 		xloc = 0;
 		if(window_height == NULL){
-			output_access->push_error("ERROR in init, null ptr window_height!");
+			logger_access->push_error("ERROR in init, null ptr window_height!");
 			return;
 		}
 		//texture's bottom needs to be inline with window's bottom,
@@ -79,7 +79,7 @@ void scroll_bar::init_corner_texture(){
 	//we are dealing with a vertical scroll bar
 	} else {
 		if(window_width == NULL){
-			output_access->push_error("ERROR in init, null ptr window_width!");
+			logger_access->push_error("ERROR in init, null ptr window_width!");
 			return;
 		}
 
@@ -119,7 +119,7 @@ void scroll_bar::update(){
 	if( x_scroll == NULL      || y_scroll == NULL || 
 		window_height == NULL || window_width == NULL){
 
-		output_access->push_error("Error in scroll_bar::update(), x_scroll, y_scroll, window_width, or window_height pointers are null");
+		logger_access->push_error("Error in scroll_bar::update(), x_scroll, y_scroll, window_width, or window_height pointers are null");
 		return;
 	}
 	if(width > height){//logic for horizontal bar

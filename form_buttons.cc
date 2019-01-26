@@ -43,7 +43,7 @@ form_button::~form_button(){
 void form_button::init(){
 	string lock_target = "Images/lock.png";
 	lock_texture       = asset_access->get_texture(lock_target);
-	if(lock_texture == NULL) output_access->push_error(SDL_GetError());
+	if(lock_texture == NULL) logger_access->push_error(SDL_GetError());
 	is_locked  = true;
 	init_array = NULL;
 	pre_config = false;
@@ -82,7 +82,7 @@ void form_button::setup_help_msg(){
 
 	string unlock_target = "Images/form_assets/general_form_locked_msg.png";
 	unlock_help_texture  = asset_access->get_texture(unlock_target);
-	if(unlock_help_texture == NULL) output_access->push_error(SDL_GetError());
+	if(unlock_help_texture == NULL) logger_access->push_error(SDL_GetError());
 }
 
 void form_button::init_form(const vector<regex*>& pattern_tests){
@@ -110,7 +110,7 @@ void form_button::screen_size(){
 		SDL_SetWindowSize(sdl_access->get_window(),old_width,old_height);
 		sdl_access->window_update(old_width,old_height);
 
-		output_access->push_msg("Updated screen size upon opening a form.");
+		logger_access->push_msg("Updated screen size upon opening a form.");
 	}
 }
 
@@ -150,7 +150,7 @@ bool form_button::make_output(ofstream& outs,
 	string err = "A form button has called the base classes output creation ";
 	err       += "member. Each form button is likely to have a special format,";
 	err       += "so you should customize this function in the derived class.";
-	output_access->push_error(err);
+	logger_access->push_error(err);
 	return false;
 }
 
@@ -159,7 +159,7 @@ bool form_button::check_values(vector<index_value>& error_details){
 	string err = "A form button has had check_values() called upon it, but";
 	err       += " it hasn't been overloaded to fit a form. This could be";
 	err       += " unintended behavior";
-	output_access->push_error(err);
+	logger_access->push_error(err);
 	return false;
 }
 
@@ -296,7 +296,7 @@ void icntrl8_form_button::setup_help_msg(){
 
 	string unlock_target = "Images/form_assets/icntrl8_form_locked_msg.png";
 	unlock_help_texture  = asset_access->get_texture(unlock_target);
-	if(unlock_help_texture == NULL) output_access->push_error(SDL_GetError());
+	if(unlock_help_texture == NULL) logger_access->push_error(SDL_GetError());
 }
 
 bool icntrl8_form_button::handle_click(SDL_Event& mouse_event){
@@ -309,7 +309,7 @@ bool icntrl8_form_button::handle_click(SDL_Event& mouse_event){
 }
 
 void icntrl8_form_button::click_helper(SDL_Event& mouse_event){
-	output_access->push_msg("Clicked icntrl8/cutoff nuclei button");
+	logger_access->push_msg("Clicked icntrl8/cutoff nuclei button");
 
 	//grab the value for icntrl8 as it exists with the GUI right now
 	int curr_val =
@@ -366,17 +366,17 @@ void icntrl8_form_button::page_creation_helper(){
 
 		string literal_error = "ICNTRL8 could not be found in the field map";
 		string error_message = literal_error + range_error.what();
-		output_access->push_error(error_message);
+		logger_access->push_error(error_message);
 		icntrl8_val = 0;
 
 	} catch (invalid_argument& arg_error){
 
-	  output_access->push_error("ICNTRL8 has been given an invalid (non-numerical?) argument.",
+	  logger_access->push_error("ICNTRL8 has been given an invalid (non-numerical?) argument.",
 				  arg_error.what());
 	  icntrl8_val = 0;
 	}
 
-	output_access->push_msg("ICNTRL8 val:" + to_string(icntrl8_val)+" when form opened");
+	logger_access->push_msg("ICNTRL8 val:" + to_string(icntrl8_val)+" when form opened");
 	vector<string> pass_column_titles,pass_row_titles;
 	//for icntrl 8, the labels shouldn't change
 	pass_column_titles.push_back("A to Drop");
@@ -417,7 +417,7 @@ void icntrl8_form_button::page_creation_helper(){
 	if(pages_made != vector_size) {
 		string error = "Error in icntrl8 page_creation_helper, # of created";
 		error       += " pages does not match expected value.";
-		output_access->push_error(error);
+		logger_access->push_error(error);
 	}
 
 	my_form.set_page_count(pages_made);
@@ -445,7 +445,7 @@ bool icntrl8_form_button::make_output(ofstream& outs,
 		vector<index_value>& bad_input_list){
 
 	if(outs.fail()){
-		output_access->push_error("icntrl8_form_button::make_output was not given a ",
+		logger_access->push_error("icntrl8_form_button::make_output was not given a ",
 					"valid output file stream. exiting.");
 		return false;
 	}
@@ -540,7 +540,7 @@ bool icntrl6_form_button::handle_click(SDL_Event& mouse_event){
 
 void icntrl6_form_button::click_helper(SDL_Event& mouse_event){
 
-	output_access->push_msg("clicked the icntrl6/parameter search button");
+	logger_access->push_msg("clicked the icntrl6/parameter search button");
 
 	if(!is_locked){
 
@@ -761,7 +761,7 @@ void icntrl6_form_button::search_spectra_page_creation(){
 
 		current_INM1_val = stoi(tile_access->fields.at("line_10").at("INM1")->get_text()); 
 	} catch(invalid_argument& arg_error){
-		output_access->push_error("Error reading current INM1/#Search Spectra value for page creation",
+		logger_access->push_error("Error reading current INM1/#Search Spectra value for page creation",
 					" logics.");
 	}
 
@@ -795,11 +795,11 @@ void icntrl6_form_button::search_spectra_page_helper(){
 	  INM1_val = stoi(tile_access->fields.at("line_10").at("INM1")->get_text());
 
 	} catch ( out_of_range& range_error ){
-	  output_access->push_error("ICNTRL6-INM1 could not be found in the field map.",
+	  logger_access->push_error("ICNTRL6-INM1 could not be found in the field map.",
 					  range_error.what());
 	  INM1_val = 0;
 	} catch ( invalid_argument& arg_error ){
-	  output_access->push_error("ICNTRL6-INM1 has been supplied an illegal (non-numerical?) argument.",
+	  logger_access->push_error("ICNTRL6-INM1 has been supplied an illegal (non-numerical?) argument.",
 				  arg_error.what());
 	  INM1_val = 0;
 	}
@@ -841,7 +841,7 @@ void icntrl6_form_button::search_spectra_page_helper(){
 	if(pages_made != vector_size) {
 		string err = "Error in icntrl6/search spectra page_creation_helper, ";
 		err       += "# of created pages does not match, expected value.";
-		output_access->push_error(err);
+		logger_access->push_error(err);
 	}
 
 	search_spectra.set_page_count(pages_made);
@@ -885,7 +885,7 @@ void icntrl6_form_button::cross_sections_page_creation(){
 	try{
 		current_INM2_val = stoi(tile_access->fields.at("line_10").at("INM2")->get_text()); 
 	} catch(invalid_argument& arg_error){
-		output_access->push_error("Error reading current INM2/cross sections value for page creation",
+		logger_access->push_error("Error reading current INM2/cross sections value for page creation",
 					" logics.");
 	}
 
@@ -917,11 +917,11 @@ void icntrl6_form_button::cross_sections_helper(){
 	  INM2_val = stoi(tile_access->fields.at("line_10").at("INM2")->get_text());
 
 	} catch ( out_of_range& range_error ){
-	  output_access->push_error("ICNTRL6-INM2 could not be found in the field map.",
+	  logger_access->push_error("ICNTRL6-INM2 could not be found in the field map.",
 					  range_error.what());
 	  INM2_val = 0;
 	} catch ( invalid_argument& arg_error ){
-	  output_access->push_error("ICNTRL6-INM2 has been supplied an illegal (non-numerical?) argument.",
+	  logger_access->push_error("ICNTRL6-INM2 has been supplied an illegal (non-numerical?) argument.",
 				  arg_error.what());
 	  INM2_val = 0;
 	}
@@ -964,7 +964,7 @@ void icntrl6_form_button::cross_sections_helper(){
 		pages_made++;
 	}
 	if(pages_made != vector_size) {
-		output_access->push_error("Error in icntrl6/cross sections page creation_helper, # of created pages does not match",
+		logger_access->push_error("Error in icntrl6/cross sections page creation_helper, # of created pages does not match",
 					   "expected value.");
 	}
 
@@ -983,7 +983,7 @@ void icntrl6_form_button::setup_landing(){
 	string landing_target = "Images/form_assets/icntrl6_landing.png";
 	landing_texture = asset_access->get_texture(landing_target);
 	if(landing_texture == NULL){
-		output_access->push_error("Could not init the the icntrl6 form selection texture.",
+		logger_access->push_error("Could not init the the icntrl6 form selection texture.",
 					SDL_GetError());
 	}
 
@@ -1041,7 +1041,7 @@ void icntrl6_form_button::draw_me(){
 bool icntrl6_form_button::make_output(ofstream& outs,vector<index_value>& bad_input_list){
 
 	if(outs.fail()){
-		output_access->push_error("Icntrl6_form_button::make_output was not given a valid output file stream.",
+		logger_access->push_error("Icntrl6_form_button::make_output was not given a valid output file stream.",
 					"exiting.");
 		return false;
 	}   
@@ -1213,7 +1213,7 @@ void icntrl10_button::init(){
 
 	string lock_target = "Images/lock.png";
 	lock_texture = asset_access->get_texture(lock_target);
-	if(lock_texture == NULL) output_access->push_error(SDL_GetError());
+	if(lock_texture == NULL) logger_access->push_error(SDL_GetError());
 	is_locked         = true;
 	active            = false;
 	current_context   = 0;
@@ -1221,7 +1221,7 @@ void icntrl10_button::init(){
 	string back_target = "Images/form_assets/icntrl10_backdrop.png";
 	icntrl10_backdrop = asset_access->get_texture(back_target);
 	if(icntrl10_backdrop == NULL){
-		output_access->push_error("Couldn't create texture for icntrl10 'form' ",
+		logger_access->push_error("Couldn't create texture for icntrl10 'form' ",
 								SDL_GetError());
 		cout << SDL_GetError() << endl;
 	}
@@ -1253,7 +1253,7 @@ void icntrl10_button::init(){
 	//set up the context number indicator in the top right
 	string number_path = "Images/form_assets/number_sprites.png";
 	number_sprites = IMG_Load(number_path.c_str());
-	if(number_sprites == NULL) output_access->push_error(SDL_GetError());
+	if(number_sprites == NULL) logger_access->push_error(SDL_GetError());
 
 
 
@@ -1354,7 +1354,7 @@ bool icntrl10_button::handle_click(SDL_Event& mouse_event){
 
 void icntrl10_button::click_helper(SDL_Event& mouse_event){
 
-	output_access->push_msg("clicked the icntrl10/sigma info button ");
+	logger_access->push_msg("clicked the icntrl10/sigma info button ");
 
 	if(!is_locked){
 
@@ -1452,19 +1452,19 @@ void icntrl10_button::event_loop_click(SDL_Event& mouse_event,bool& done,
 
 		//consider if the exit button was clicked
 		if(exit.clicked(mouse_event)){
-			output_access->push_msg("Clicked the exit button.");
+			logger_access->push_msg("Clicked the exit button.");
 			toggle_active();
 			done = true;//end mini loop
 
 		//consider if the right arrow was clicked
 		} else if(right_arrow.clicked(mouse_event) ){
-			output_access->push_msg("clicked the page right button");
+			logger_access->push_msg("clicked the page right button");
 			page_right();      
 			//current_context++;
 
 		//consider if the left arrow was clicked
 		} else if(left_arrow.clicked(mouse_event) ){
-			output_access->push_msg("clicked the page left button");
+			logger_access->push_msg("clicked the page left button");
 			page_left();
 			//current_context--;
 
@@ -1534,14 +1534,14 @@ void icntrl10_button::update_page_indicator(){
 	//overwrite the old number with white
 	SDL_PixelFormat* format = over_surface->format;
 	if(SDL_FillRect(over_surface,&destination,SDL_MapRGBA(format,WHITE)) != 0){
-		output_access->push_error(SDL_GetError());
+		logger_access->push_error(SDL_GetError());
 	}
 
 	//draw the new number over it
 	SDL_Rect source = {20+current_context*20,0,20,20};
 	if(SDL_BlitSurface(number_sprites,&source,over_surface,&destination) != 0){
 		cout << "COULDNT CHANGE NUMBER" << endl;
-		output_access->push_error(SDL_GetError());
+		logger_access->push_error(SDL_GetError());
 	}
 
 	over_texture = SDL_CreateTextureFromSurface(sdl_access->renderer,over_surface);
@@ -1677,14 +1677,14 @@ void icntrl10_button::init_data(unsigned int num_contexts){
 	//overwrite the old number with white
 	SDL_PixelFormat* format = over_surface->format;
 	if(SDL_FillRect(over_surface,&destination,SDL_MapRGBA(format,WHITE)) != 0){
-		output_access->push_error(SDL_GetError());
+		logger_access->push_error(SDL_GetError());
 	}
 
 	//draw the new number over it
 	SDL_Rect source = {20+((int)num_contexts-1)*20,0,20,20};
 	if(SDL_BlitSurface(number_sprites,&source,over_surface,&destination) != 0){
 		cout << "COULDNT CHANGE NUMBER" << endl;
-		output_access->push_error(SDL_GetError());
+		logger_access->push_error(SDL_GetError());
 	}
 
 
@@ -1776,8 +1776,8 @@ bool icntrl4_form_button::handle_click(SDL_Event& mouse_event){
 }
 
 void icntrl4_form_button::click_helper(SDL_Event& mouse_event){
-	output_access->push_msg("clicked the icntrl4/resolved levels info button ");
-	output_access->push_msg("Clicked icntrl8/cutoff nuclei button");
+	logger_access->push_msg("clicked the icntrl4/resolved levels info button ");
+	logger_access->push_msg("Clicked icntrl8/cutoff nuclei button");
 
 	//don't consider doing anything if the form is locked
 	if(!is_locked){
@@ -1827,18 +1827,18 @@ void icntrl4_form_button::page_creation_helper(){
 	try{
 	  nch4_val = stoi(tile_access->fields.at("line_8").at("NCH4")->get_text());
 	} catch (out_of_range& range_error){
-	  output_access->push_error("NCH4 could not be found in the field map",
+	  logger_access->push_error("NCH4 could not be found in the field map",
 				  range_error.what());
 	  nch4_val = 0;
 	} catch (invalid_argument& arg_error){
-	  output_access->push_error("NCH4 has been given an invalid (non-numerical?) argument.",
+	  logger_access->push_error("NCH4 has been given an invalid (non-numerical?) argument.",
 				  arg_error.what());
 	  nch4_val = 0;
 	}
 
 
 
-	output_access->push_msg("NCH4 val:" + to_string(nch4_val)+" when form opened");
+	logger_access->push_msg("NCH4 val:" + to_string(nch4_val)+" when form opened");
 	vector<string> pass_column_titles,pass_row_titles;
 	//for icntrl 4, the labels shouldn't change
 	pass_column_titles.push_back("RL Energy");
@@ -1879,7 +1879,7 @@ void icntrl4_form_button::page_creation_helper(){
 		pages_made++;
 	}
 	if(pages_made != vector_size) {
-		output_access->push_error("Error in icntrl8 page_creation_helper, # of created pages does not match",
+		logger_access->push_error("Error in icntrl8 page_creation_helper, # of created pages does not match",
 					   "expected value.");
 	}
 
@@ -1960,7 +1960,7 @@ bool ilv3_ilv5_form_button::handle_click(SDL_Event& mouse_event){
 
 void ilv3_ilv5_form_button::click_helper(SDL_Event& mouse_event){
 
-	output_access->push_msg("clicked the icntrl4/resolved levels info button ");
+	logger_access->push_msg("clicked the icntrl4/resolved levels info button ");
 
 		int curr_ilv3 = stoi(tile_access->fields.at("line_5").at("ILV3")->get_text());
 		int curr_ilv5 = stoi(tile_access->fields.at("line_5").at("ILV5")->get_text());
@@ -2045,7 +2045,7 @@ void ilv3_ilv5_form_button::page_creation_helper(){
 		ilv5_val = stoi(tile_access->fields.at("line_5").at("ILV5")->get_text());
 
 	} catch(invalid_argument& bad_arg){
-		output_access->push_error("Ilv3 or ilv5's value failed to conver to int in page_creation_helper.",
+		logger_access->push_error("Ilv3 or ilv5's value failed to conver to int in page_creation_helper.",
 	bad_arg.what());
 	}
 
@@ -2111,7 +2111,7 @@ void ilv3_ilv5_form_button::page_creation_helper(){
 		pages_made++;
 	}
 	if(pages_made != vector_size) {
-	output_access->push_error("Error in icntrl8 page_creation_helper, # of created pages does not match",
+	logger_access->push_error("Error in icntrl8 page_creation_helper, # of created pages does not match",
 							"expected value.");
 	}
 
@@ -2122,7 +2122,7 @@ void ilv3_ilv5_form_button::page_creation_helper(){
 
 bool ilv3_ilv5_form_button::make_output(ofstream& outs,vector<index_value>& bad_input_list){
 	if(outs.fail()){
-		output_access->push_error("ilv3_ilv5_form_button::make_output was not given a valid output file stream.",
+		logger_access->push_error("ilv3_ilv5_form_button::make_output was not given a valid output file stream.",
 					"exiting.");
 		return false;
 	}

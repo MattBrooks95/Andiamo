@@ -9,256 +9,275 @@ using namespace std;
 //prototype for sorting function passed to algorithm::sort
 bool compare_width(field& left, field& right);
 
-manager::manager(const string& image_path_in, const string& config_folder_path){
-	image_path = image_path_in;
+manager::manager(const string& config_folder_name){
+	cout << "In manager constructor. Config folder:" << config_folder_name << endl;
 
-	init_regular_expressions(config_folder_path);
-	init_parameter_configurations(config_folder_path);
-	init_parameter_graphics(config_folder_path);
+	//relative to the asset_manager's asset root
+	image_path = "Images/";
+
+	configuration_folder_path = system_access->get_andiamo_root() + CONFIGURATION_PATH;
+	cout << "Config folder path:" << configuration_folder_path << endl;
+
+	configuration_folder_name = config_folder_name;
+
+	init_regular_expressions();
+	init_parameter_configurations();
+	init_parameter_graphics();
 }
 
+void manager::init_regular_expressions(){
+	cout << "Init regular expressions" << endl;
 
-void manager::init_regular_expressions(const string& config_folder_path){
+	string regular_expression_file_name = REGEX_FILE_NAME;
 
+	string regular_expression_file_path = configuration_folder_path + regular_expression_file_name; 
+	cout << "path to file:" << regular_expression_file_path << endl;
+
+	vector<string> file_lines;
+	system_access->get_file_as_lines(regular_expression_file_path, file_lines);
 }
 
-void manager::init_parameter_configurations(const string& config_folder_path){
+void manager::init_parameter_configurations(){
+	cout << "Init parameter default values" << endl;
 
+	string parameter_file_name = PARAMETER_FILE_NAME;
 }
 
-void manager::init_parameter_graphics(const string& config_folder_path){
+void manager::init_parameter_graphics(){
+	cout << "Init parameter graphics" << endl;
 
+	string hf_file_name = HF_FILE_NAME;
 }
 
 void manager::init(const string& graphical_config_file){
-	tile_input_p = system_access->get_home() + "/Andiamo/tile_Input/";
+	// configuration_file_path = system_access->get_home() + "/Andiamo/tile_Input/";
 
-	//ins will refer to the stream to the input file for tile information
-	fstream ins;
+	// //ins will refer to the stream to the input file for tile information
+	// fstream ins;
 	
-	//open the file
+	// //open the file
 
-	if(graphical_config_file.size() == 0){
-		ins.open((tile_input_p + "tiles.txt").c_str());
-	} else {
-		ins.open((tile_input_p + graphical_config_file));
-	}
+	// if(graphical_config_file.size() == 0){
+	// 	ins.open((configuration_file_path + "tiles.txt").c_str());
+	// } else {
+	// 	ins.open((configuration_file_path + graphical_config_file));
+	// }
 
-	//if something went wrong, print an error message to console
-	if(ins.fail()){
-		string err = "Fatal error: Failed to open tile input file: ";
-		err       += tile_input_p+"tiles.txt";
-		output_access->push_error(err);
-	}
+	// //if something went wrong, print an error message to console
+	// if(ins.fail()){
+	// 	string err = "Fatal error: Failed to open tile input file: ";
+	// 	err       += configuration_file_path + "tiles.txt";
+	// 	logger_access->push_error(err);
+	// }
 
-	//used to store unidentified line
-	string temp_string;
+	// //used to store unidentified line
+	// string temp_string;
 
-	//this line specifies an image name
-	regex img_pattern(RE_IMG);
+	// //this line specifies an image name
+	// regex img_pattern(RE_IMG);
 
-	//this recognizes lines that specify tile size lines should be of the
-	//form widthxheight EX:100x100
-	regex field_size_pattern(RE_FIELD_SIZE);
+	// //this recognizes lines that specify tile size lines should be of the
+	// //form widthxheight EX:100x100
+	// regex field_size_pattern(RE_FIELD_SIZE);
 
-	//this line specifies a tile name
-	regex name_pattern(RE_TILE_NAME);
+	// //this line specifies a tile name
+	// regex name_pattern(RE_TILE_NAME);
 
-	//used to tell if the name line is of the form ->HFvariable:EnglishVariable
-	regex semi_pattern(RE_SEMI);
+	// //used to tell if the name line is of the form ->HFvariable:EnglishVariable
+	// regex semi_pattern(RE_SEMI);
 
-	//describes a pattern for tile/input descriptors that starts with a 'c'
-	//and is followed by exactly one space,
-	//then contains any number of any characters
-	regex desc_pattern(RE_DESCRIPTION);
+	// //describes a pattern for tile/input descriptors that starts with a 'c'
+	// //and is followed by exactly one space,
+	// //then contains any number of any characters
+	// regex desc_pattern(RE_DESCRIPTION);
 
-	//this line recognizes the lines that separate
-	//the parameters into lines that correspond with the input manual,
-	//so they can be stored together
-	regex line_separator(RE_LINE_SEPARATOR);
-
-
-	getline(ins,temp_string);//priming read
-
-	//loop over the entire tile_Input/tiles.txt configuration file
-	while(!ins.eof() ){
-
-		//get out on potentially erroneous last run
-		if(ins.fail()) break;
-
-		//reset new line container each run of loop
-		map<string,field*> new_line;
-		vector<field*> params_vector;
-
-		string line_name;
-
-		//read until a line start indicator/separator is found
-		while( !ins.eof() && !regex_match(temp_string,line_separator) ){
-
-			if( ins.fail() || temp_string.empty() ){
-				//we may not necessarily find this case in error,
-				//as the very last group in the config file won't
-				//end with a line separator, because no line will come after it
-
-				//ran out of file, get out of this function
-				return;
-			}
-			getline(ins,temp_string);
-		}
-
-		strip_char(temp_string,'#');
-		//cout << "Found a line name:"+temp_string << endl;
-		output_access->push_msg("Found a line name:"+temp_string);
-		line_names_read_order.push_back(temp_string);
-
-		//save line name for later
-		line_name = temp_string;
-
-		//grab a new line
-		getline(ins,temp_string);
-
-		//outer loop runs over the # of grouped parameters (lines in HF input)
-		while( !regex_match(temp_string,line_separator) && !ins.eof()){
-
-			//these parameter should be re-declared for each field
-			//names for generalized tiles
-			string tile_name = "bad tile name";
-
-			//display name for tiles, may or may not be used
-			string display_name = "no display name";
-
-			//names for tile's picture file
-			string img_name = "bad image name";
-
-			//description for this input tile
-			string description;
-
-			//save all lines for description of tile
-			vector<string> temp_descriptions;
-
-			//dimensions of given image for tile, -1 is bad input
-			int tile_w = -1, tile_h = -1;
+	// //this line recognizes the lines that separate
+	// //the parameters into lines that correspond with the input manual,
+	// //so they can be stored together
+	// regex line_separator(RE_LINE_SEPARATOR);
 
 
-			//inner loop runs name -> andy as many times as needed, until a
-			//line separator is found
+	// getline(ins,temp_string);//priming read
 
-			//loop until separator 'andy' is found
-			while(temp_string != "andy" && !ins.fail()){
-				output_access->push_msg("LINE:"+temp_string+"|");
+	// //loop over the entire tile_Input/tiles.txt configuration file
+	// while(!ins.eof() ){
 
+	// 	//get out on potentially erroneous last run
+	// 	if(ins.fail()) break;
 
-				//if this line has '.png' in it,
-				if( regex_match(temp_string,img_pattern) ){
+	// 	//reset new line container each run of loop
+	// 	map<string,field*> new_line;
+	// 	vector<field*> params_vector;
 
-					//process it as an input picture name
-					output_access->push_msg("Found an image name!: "+temp_string);
-					img_name = temp_string;
+	// 	string line_name;
 
-				} else if( regex_match(temp_string,desc_pattern)){
+	// 	//read until a line start indicator/separator is found
+	// 	while( !ins.eof() && !regex_match(temp_string,line_separator) ){
 
-					output_access->push_msg("Found a description line.: "+
-										  temp_string);
+	// 		if( ins.fail() || temp_string.empty() ){
+	// 			//we may not necessarily find this case in error,
+	// 			//as the very last group in the config file won't
+	// 			//end with a line separator, because no line will come after it
 
-					//remove 'c ' at start of desc lines
-					description = temp_string.erase(0,2);
-					temp_descriptions.push_back(temp_string);
+	// 			//ran out of file, get out of this function
+	// 			return;
+	// 		}
+	// 		getline(ins,temp_string);
+	// 	}
 
+	// 	strip_char(temp_string,'#');
+	// 	//cout << "Found a line name:"+temp_string << endl;
+	// 	logger_access->push_msg("Found a line name:"+temp_string);
+	// 	line_names_read_order.push_back(temp_string);
 
-				} else if( regex_match(temp_string,field_size_pattern) ){
+	// 	//save line name for later
+	// 	line_name = temp_string;
 
-					output_access->push_msg("Found field size specification!: "+
-										  temp_string);
+	// 	//grab a new line
+	// 	getline(ins,temp_string);
 
-					//remove spaces
-					strip_char(temp_string,' ');
+	// 	//outer loop runs over the # of grouped parameters (lines in HF input)
+	// 	while( !regex_match(temp_string,line_separator) && !ins.eof()){
 
-					//split into a vector of strings
-					vector<string> dimensions = split(temp_string,'x');
-					try{
-					  //first number in the line is the width
-					  tile_w = stoi(dimensions[0]);
+	// 		//these parameter should be re-declared for each field
+	// 		//names for generalized tiles
+	// 		string tile_name = "bad tile name";
 
-					  //second number in the line is the width
-					  tile_h = stoi(dimensions[1]);
-					} catch (invalid_argument& error){
-						string err = "Error in manager::init(), tile given:";
-						err       +=    "illegal size parameters: ";
-						err       += dimensions[0]+"x"+dimensions[1];
-						output_access->push_error(err);
-					}
-				}  else if( regex_match(temp_string,name_pattern) ){
-					 output_access->push_msg("Found a tile name!: "+temp_string);
-					if( regex_search(temp_string,semi_pattern) ){
-						vector<string> tokens = split(temp_string,':');
-						tile_name = tokens[0];
-						display_name = tokens[1];
-					} else {
+	// 		//display name for tiles, may or may not be used
+	// 		string display_name = "no display name";
 
-						tile_name = temp_string;
-						display_name = temp_string;
-					}
-				} else {
+	// 		//names for tile's picture file
+	// 		string img_name = "bad image name";
 
-					string err = "Error! This line failed to hit a case in the";
-					err       += " regex checks:"+temp_string;
-					err       += "\nIt may be a missing 'Andy' separator";
-					err       += " in the tiles.txt config file.";
-					output_access->push_error(err);
+	// 		//description for this input tile
+	// 		string description;
 
-				}
+	// 		//save all lines for description of tile
+	// 		vector<string> temp_descriptions;
+
+	// 		//dimensions of given image for tile, -1 is bad input
+	// 		int tile_w = -1, tile_h = -1;
 
 
-				if( !ins.fail() ){
-					//read in again to update loop
-					getline(ins,temp_string);
-				} else {
-					return;
-				}
-			}
-			field* temp_field = NULL;
-			temp_field = new field(tile_name,display_name,img_name,tile_w,tile_h);
+	// 		//inner loop runs name -> andy as many times as needed, until a
+	// 		//line separator is found
 
-			//copy the saved description lines to the new field
-			//before it is placed in the map
-			for(uint c = 0; c < temp_descriptions.size();c++){
-				temp_field->descriptions.push_back(temp_descriptions[c]);
-			}
+	// 		//loop until separator 'andy' is found
+	// 		while(temp_string != "andy" && !ins.fail()){
+	// 			logger_access->push_msg("LINE:"+temp_string+"|");
 
-			output_access->push_msg("##########PUSHING FIELD###################");
-			temp_field->print();
-			//cout << temp_field->tile_name << endl;
-			output_access->push_msg("##########################################");
 
-			//push the field into the lookup map for that parameter's line
-			new_line.emplace(tile_name,temp_field);
+	// 			//if this line has '.png' in it,
+	// 			if( regex_match(temp_string,img_pattern) ){
 
-			//also push the field into the parameter vector
-			params_vector.push_back(temp_field);
+	// 				//process it as an input picture name
+	// 				logger_access->push_msg("Found an image name!: "+temp_string);
+	// 				img_name = temp_string;
 
-			if( !ins.fail() ){
-				//"andy" is the current line, so go ahead and read the next one
-				getline(ins,temp_string);
-			}
+	// 			} else if( regex_match(temp_string,desc_pattern)){
 
-			temp_field = NULL;
-		}
+	// 				logger_access->push_msg("Found a description line.: "+
+	// 									  temp_string);
 
-		//at this point, we have hit the separator for another
-		//group of parameters
+	// 				//remove 'c ' at start of desc lines
+	// 				description = temp_string.erase(0,2);
+	// 				temp_descriptions.push_back(temp_string);
 
-		//store the map of parameters in the map of lines, and
-		//give it the name we found earlier
-		fields.emplace(line_name,new_line);
-		fields_order.push_back(params_vector);
-	}
 
-	//close the file
-	ins.close();
+	// 			} else if( regex_match(temp_string,field_size_pattern) ){
 
-	output_access->push_msg("FIELD MAP AFTER MANAGER.init():");
-	print_all();
-	output_access->push_msg("##############################################");
+	// 				logger_access->push_msg("Found field size specification!: "+
+	// 									  temp_string);
+
+	// 				//remove spaces
+	// 				strip_char(temp_string,' ');
+
+	// 				//split into a vector of strings
+	// 				vector<string> dimensions = split(temp_string,'x');
+	// 				try{
+	// 				  //first number in the line is the width
+	// 				  tile_w = stoi(dimensions[0]);
+
+	// 				  //second number in the line is the width
+	// 				  tile_h = stoi(dimensions[1]);
+	// 				} catch (invalid_argument& error){
+	// 					string err = "Error in manager::init(), tile given:";
+	// 					err       +=    "illegal size parameters: ";
+	// 					err       += dimensions[0]+"x"+dimensions[1];
+	// 					logger_access->push_error(err);
+	// 				}
+	// 			}  else if( regex_match(temp_string,name_pattern) ){
+	// 				 logger_access->push_msg("Found a tile name!: "+temp_string);
+	// 				if( regex_search(temp_string,semi_pattern) ){
+	// 					vector<string> tokens = split(temp_string,':');
+	// 					tile_name = tokens[0];
+	// 					display_name = tokens[1];
+	// 				} else {
+
+	// 					tile_name = temp_string;
+	// 					display_name = temp_string;
+	// 				}
+	// 			} else {
+
+	// 				string err = "Error! This line failed to hit a case in the";
+	// 				err       += " regex checks:"+temp_string;
+	// 				err       += "\nIt may be a missing 'Andy' separator";
+	// 				err       += " in the tiles.txt config file.";
+	// 				logger_access->push_error(err);
+
+	// 			}
+
+
+	// 			if( !ins.fail() ){
+	// 				//read in again to update loop
+	// 				getline(ins,temp_string);
+	// 			} else {
+	// 				return;
+	// 			}
+	// 		}
+	// 		field* temp_field = NULL;
+	// 		temp_field = new field(tile_name,display_name,img_name,tile_w,tile_h);
+
+	// 		//copy the saved description lines to the new field
+	// 		//before it is placed in the map
+	// 		for(uint c = 0; c < temp_descriptions.size();c++){
+	// 			temp_field->descriptions.push_back(temp_descriptions[c]);
+	// 		}
+
+	// 		logger_access->push_msg("##########PUSHING FIELD###################");
+	// 		temp_field->print();
+	// 		//cout << temp_field->tile_name << endl;
+	// 		logger_access->push_msg("##########################################");
+
+	// 		//push the field into the lookup map for that parameter's line
+	// 		new_line.emplace(tile_name,temp_field);
+
+	// 		//also push the field into the parameter vector
+	// 		params_vector.push_back(temp_field);
+
+	// 		if( !ins.fail() ){
+	// 			//"andy" is the current line, so go ahead and read the next one
+	// 			getline(ins,temp_string);
+	// 		}
+
+	// 		temp_field = NULL;
+	// 	}
+
+	// 	//at this point, we have hit the separator for another
+	// 	//group of parameters
+
+	// 	//store the map of parameters in the map of lines, and
+	// 	//give it the name we found earlier
+	// 	fields.emplace(line_name,new_line);
+	// 	fields_order.push_back(params_vector);
+	// }
+
+	// //close the file
+	// ins.close();
+
+	// logger_access->push_msg("FIELD MAP AFTER MANAGER.init():");
+	// print_all();
+	// logger_access->push_msg("##############################################");
 }
 
 manager::~manager(){
@@ -297,23 +316,23 @@ int manager::get_widest_tile_width(){
 	return max_width;
 }
 
-void manager::init_fields_graphics(){
+// void manager::init_fields_graphics(){
 
-	for(uint line = 0; line < fields_order.size();line++){
+// 	for(uint line = 0; line < fields_order.size();line++){
 
-		for(uint param = 0; param < fields_order[line].size();param++){
+// 		for(uint param = 0; param < fields_order[line].size();param++){
 
-			if(fields_order[line][param] == NULL){
-				cout << "NULL POINTER IN TILE VECTOR."
-					 << "Line: " << line << " Param: " << param << endl;
-			} else {
-				fields_order[line][param]->graphics_init(image_path);
-			}
-		}
+// 			if(fields_order[line][param] == NULL){
+// 				cout << "NULL POINTER IN TILE VECTOR."
+// 					 << "Line: " << line << " Param: " << param << endl;
+// 			} else {
+// 				fields_order[line][param]->graphics_init(image_path);
+// 			}
+// 		}
 
-	}
+// 	}
 
-}
+// }
 
 void manager::draw(){
 	check_locks();
@@ -357,7 +376,7 @@ field* manager::get_param(const string& target_param){
 			return this_field;
 		}
 	}
-	output_access->push_error("Couldn't find param:"+target_param+" in the fields map.");
+	logger_access->push_error("Couldn't find param:"+target_param+" in the fields map.");
 	return NULL;
 }
 
@@ -401,10 +420,10 @@ void manager::unlock_line(map<string,field*>& target_line){
 
 void manager::print_all(){
 
-	output_access->push_msg("\n Printing parameters in order #################");
+	logger_access->push_msg("\n Printing parameters in order #################");
 
 	for(uint line = 0; line < fields_order.size();line++){
-		output_access->push_msg("LINE VECTOR INDEX: "+to_string(line));
+		logger_access->push_msg("LINE VECTOR INDEX: "+to_string(line));
 		uint num_params = fields_order[line].size();
 		for(uint param = 0; param < num_params; param++){
 
@@ -414,7 +433,7 @@ void manager::print_all(){
 
 	}
 
-	output_access->push_msg("\n End params order print #######################");
+	logger_access->push_msg("\n End params order print #######################");
 
 }
 
@@ -452,7 +471,7 @@ void manager::iench_locking(){
 		unlock_line(fields.at("line_4A"));
 	}
   } catch (out_of_range& map_error){
-	output_access->push_error("From: manager::iench_locking| Critical tiles associated with IENCH were not found,",
+	logger_access->push_error("From: manager::iench_locking| Critical tiles associated with IENCH were not found,",
 				"please check the tile and HF config files.");
   }
 
@@ -488,7 +507,7 @@ void manager::ilv1_locking(){
 	string err = "From: manager::iench_locking| One of the critical";
 	err       += " tiles associated with ILV1 were not found,";
 	err       += " please check the tile and HF config files.";
-	output_access->push_error(err);
+	logger_access->push_error(err);
   }
 }
 
@@ -527,7 +546,7 @@ void manager::icntrl4_locking(){
 	string err = "From: manager::icntrl4_locking| One of the critical";
 	err       += " tiles associated with ICNTRL4, were not found";
 	err       += ", please check that the tile and HF config files match.";
-	output_access->push_error(err);
+	logger_access->push_error(err);
   }
 }
 
@@ -582,16 +601,16 @@ void manager::ich4_nch4_locking(){
 	string msg = "From: manager::ich4_nch4_locking| One of the critical tiles";
 	msg       += "associated with ICH4/NCH4, were not found,";
 	msg       +=  " please check that the tile and HF config files match.";
-	output_access->push_msg(msg);
+	logger_access->push_msg(msg);
 
   } catch( invalid_argument& bad_arg){
 	string msg = "From manager::ich4_nch4_locking| NCH4 or ICH4 has a number";
 	msg       += " in an illegal range";
-	output_access->push_msg(msg);
+	logger_access->push_msg(msg);
 
 	msg = ". The acceptable range for NCH4 is 0<=x<=100. The acceptable";
 	msg = " range for ICH4 is 0 <= ICH4 <= 6.";
-	output_access->push_msg(msg);
+	logger_access->push_msg(msg);
   }
 }
 
@@ -635,11 +654,11 @@ void manager::icntrl8_locking(){
 	string err = "From: manager::icntrl8_locking()| ICNTRL8 was not found";
 	err       += " in the map of parameter tiles, please check that";
 	err       += "the tile and HF config files match.";
-	output_access->push_error(err);
+	logger_access->push_error(err);
 
   } catch (invalid_argument& stoi_error){
-	output_access->push_msg("ICNTRL8 has an illegal string argument, it must be an integer in the range");
-	output_access->push_msg(" 0 <= ICNTRL8 < 332");
+	logger_access->push_msg("ICNTRL8 has an illegal string argument, it must be an integer in the range");
+	logger_access->push_msg(" 0 <= ICNTRL8 < 332");
 	fields.at("line_6").at("ICNTRL8")->change_tile_background("purple_andy_tile.png");
 	fields.at("line_6").at("ICNTRL8")->am_I_locking = true;
   }
@@ -707,12 +726,12 @@ void manager::icntrl10_locking(){
 	}
 
   } catch (out_of_range& map_error){
-	output_access->push_error("From: manager::icntrl8_locking()| ICNTRL10 was not found in the tiles map,",
+	logger_access->push_error("From: manager::icntrl8_locking()| ICNTRL10 was not found in the tiles map,",
 				" please check that the tile and HF config files match");
 
   } catch (invalid_argument& stoi_error){
-	output_access->push_msg("ICNTRL10 has an illegal string argument, it must be an integer in the range");
-	output_access->push_msg(" 0 <= ICNTRL10");
+	logger_access->push_msg("ICNTRL10 has an illegal string argument, it must be an integer in the range");
+	logger_access->push_msg(" 0 <= ICNTRL10");
 	field * icntrl10_field = fields.at("line_6").at("ICNTRL10");
 	icntrl10_field->change_tile_background("purple_andy_tile.png");
 	icntrl10_field->am_I_locking = true;
@@ -747,12 +766,12 @@ void manager::ilv3_ilv5_locking(){
 	}
 
   } catch (out_of_range& map_error){
-	output_access->push_error("From: manager::ilv3_ilv5_locking()| ILV3 or ILV5was not found in the tiles map,",
+	logger_access->push_error("From: manager::ilv3_ilv5_locking()| ILV3 or ILV5was not found in the tiles map,",
 				 " ensure that the tile and HF config files match");
 
   } catch (invalid_argument& stoi_error){
-	output_access->push_msg("ILV3 or ILV5 has an illegal string argument, it must be an integer in the range");
-	output_access->push_msg(" 0 <= (ILV3 or ILV5)");
+	logger_access->push_msg("ILV3 or ILV5 has an illegal string argument, it must be an integer in the range");
+	logger_access->push_msg(" 0 <= (ILV3 or ILV5)");
 	field* ilv3_field = fields.at("line_5").at("ILV3");
 	field* ilv5_field = fields.at("line_5").at("ILV5");
 	ilv3_field->change_tile_background("purple_andy_tile.png");
@@ -766,7 +785,7 @@ void manager::ilv3_ilv5_locking(){
 void manager::ilv3_ilv5_locking_helper(field* this_field,const regex& unlock_condition){
 
 	if (this_field == NULL){
-		output_access->push_error("ILV3/ILV5 helper given NULL pointer");
+		logger_access->push_error("ILV3/ILV5 helper given NULL pointer");
 	}
 
 	//nab raw string from field parameter
@@ -850,7 +869,7 @@ void manager::icntrl6_locking(){
 	//######### block originally below the try/catch#################
 
   } catch (out_of_range& map_error){
-	output_access->push_error("From: manager::icntrl6_locking| One of the critical tiles associated with ICNTRL4",
+	logger_access->push_error("From: manager::icntrl6_locking| One of the critical tiles associated with ICNTRL4",
 				" were not found, please check that tile and HF config files match.");
   }
 
@@ -875,11 +894,11 @@ void manager::inm1_locking(){
 	}
 
   } catch (out_of_range& map_error){
-	output_access->push_error("From: manager: inm1_locking| INM1 was not found in the parameter map",
+	logger_access->push_error("From: manager: inm1_locking| INM1 was not found in the parameter map",
 				", please check that the tile and HF config files match");
   } catch (invalid_argument& stoi_error){
-	output_access->push_msg("INM1 has an illegal string argument, it must be an integer in the range ");
-	output_access->push_msg(" 0 <= INM1");
+	logger_access->push_msg("INM1 has an illegal string argument, it must be an integer in the range ");
+	logger_access->push_msg(" 0 <= INM1");
 	fields.at("line_10").at("INM1")->change_tile_background("purple_andy_tile.png");
 	fields.at("line_10").at("INM1")->am_I_locking = true;
   }
@@ -902,11 +921,11 @@ void manager::inm2_locking(){
 	}
 
   } catch (out_of_range& map_error){
-	output_access->push_error("From: manager: inm2_locking| INM2 was not found in the parameter map",
+	logger_access->push_error("From: manager: inm2_locking| INM2 was not found in the parameter map",
 				", please check that the tile and HF config files match");
   } catch (invalid_argument& stoi_error){
-	output_access->push_msg("INM2 has an illegal string argument, it must be an integer in the range ");
-	output_access->push_msg(" 0 <= INM2");
+	logger_access->push_msg("INM2 has an illegal string argument, it must be an integer in the range ");
+	logger_access->push_msg(" 0 <= INM2");
 	fields.at("line_10").at("INM2")->change_tile_background("purple_andy_tile.png");
 	fields.at("line_10").at("INM2")->am_I_locking = true;
   }
@@ -928,11 +947,11 @@ void manager::iter_locking(){
 	}
 
   } catch (out_of_range& map_error){
-	output_access->push_error("From: manager: iter_locking| ITER was not found in the parameter map",
+	logger_access->push_error("From: manager: iter_locking| ITER was not found in the parameter map",
 				", please check that the tile and HF config files match");
   } catch (invalid_argument& stoi_error){
-	output_access->push_msg("ITER has an illegal string argument, it must be an integer in the range ");
-	output_access->push_msg(" 0 <= ITER");
+	logger_access->push_msg("ITER has an illegal string argument, it must be an integer in the range ");
+	logger_access->push_msg(" 0 <= ITER");
 
 	fields.at("line_10").at("ITER")->change_tile_background("purple_andy_tile.png");
 	fields.at("line_10").at("ITER")->am_I_locking = true;

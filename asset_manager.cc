@@ -10,7 +10,7 @@ using namespace std;
 
 extern system_wrapper* system_access;
 
-extern logger* output_access;;
+extern logger* logger_access;;
 extern sdl_help* sdl_access;
 
 #define ASSET_FOLDER_NAME "Assets/"
@@ -52,7 +52,7 @@ asset_manager::~asset_manager(){
 
 // 			//regular files should not appear in top level of Assets tree
 // 			if( file_in_dir->d_type == DT_REG){
-// 				output_access->push_error("Not loading file in Assets folder.",
+// 				logger_access->push_error("Not loading file in Assets folder.",
 // 										" Files should be in subdirectories.");
 // 			//if it is another dir, call the helper on it
 // 			} else if(file_in_dir->d_type == DT_DIR){
@@ -74,7 +74,7 @@ asset_manager::~asset_manager(){
 // 		}
 
 // 	} else {
-// 		output_access->push_error("Couldn't open Assets folder from",
+// 		logger_access->push_error("Couldn't open Assets folder from",
 // 								" asset_manager::pull_assets().");
 // 	}
 
@@ -126,7 +126,7 @@ asset_manager::~asset_manager(){
 // 		}
 
 // 	} else {
-// 		output_access->push_error("From pull_helper, could not open: ",
+// 		logger_access->push_error("From pull_helper, could not open: ",
 // 								subroot_path);
 // 	}
 // }
@@ -191,7 +191,7 @@ SDL_Texture* asset_manager::make_texture_from_surface(SDL_Surface* surface,
 
 	if(surface == NULL){
 		string error = "NULL surface given to make_texture_from_surface";
-		output_access->push_error(error);
+		logger_access->push_error(error);
 		return NULL;
 	}
 

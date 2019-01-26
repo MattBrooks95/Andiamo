@@ -18,7 +18,7 @@
 #include "string+.h"
 
 #include "logger.h"
-extern logger* output_access;;
+extern logger* logger_access;;
 
 using std::string;
 using std::vector;
@@ -34,7 +34,7 @@ struct tile_size{
 
     //! this print member just prints out this tile's dimensions with no newline
     void print(){
-        output_access->push_msg("Tile width: "+std::to_string(width)+
+        logger_access->push_msg("Tile width: "+std::to_string(width)+
                                 " Tile height: "+std::to_string(height));
     }
     /*! \brief The width will be the width of an input section in the program

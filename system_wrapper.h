@@ -3,13 +3,19 @@
 
 #include <cstdlib>
 #include <iostream>
-#include <string.h>
+#include <fstream>
+#include <vector>
+#include <string>
+
+#include "logger.h"
 
 enum operating_system{
 	linux,
 	windows,
 	apple
 };
+
+#define ANDIAMO_FOLDER "/Andiamo/"
 
 #ifdef __linux__
 #define LINUX
@@ -19,12 +25,14 @@ enum operating_system{
 #define APPLE
 #endif
 
+extern logger* logger_access;
 
 class system_wrapper{
 
 	public:
 
 		std::string get_home();
+		std::string get_andiamo_root();
 
 		operating_system get_os();
 		std::string get_os_string(); 
@@ -36,6 +44,8 @@ class system_wrapper{
 			// ~system_wrapper();
 
 			void save_start_time();
+
+			void get_file_as_lines(const std::string& file_path, std::vector<std::string>& file_lines);
 
 			tm* get_local_startup_time();
 			std::string get_local_startup_time_string();

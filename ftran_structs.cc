@@ -2,7 +2,7 @@
 #include "ftran_structs.h"
 #include "logger.h"
 
-extern logger* output_access;;
+extern logger* logger_access;;
 
 using namespace std;
 
@@ -66,7 +66,7 @@ bool param_int4::operator ==(int other){
 }
 
 void param_int4::operator =(double other){
-	output_access->push_msg("Error! Fortran struct: "+this->name+" can not have a float value assigned to it.");
+	logger_access->push_msg("Error! Fortran struct: "+this->name+" can not have a float value assigned to it.");
 }
 //#############################################################################
 
@@ -119,7 +119,7 @@ bool param_real8::operator ==(double other){
 }
 
 void param_real8::operator =(int other){
-	output_access->push_msg("Error! Fortran struct: "+ this->name +
+	logger_access->push_msg("Error! Fortran struct: "+ this->name +
 						" can not have an integer assigned to it.");
 }
 //############################################################################

@@ -10,7 +10,7 @@
 #include "logger.h"
 #include "define.h"
 
-extern logger* output_access;;
+extern logger* logger_access;;
 
 using std::vector;
 using std::string;

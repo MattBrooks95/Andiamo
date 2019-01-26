@@ -24,12 +24,18 @@ using std::string;
 using std::regex;
 using std::map;
 
-extern logger* output_access;;
+extern logger* logger_access;;
 extern button_manager* button_access;
 extern system_wrapper* system_access;
 
-class button_manager;
+//relative to Andiamo's root path
+#define CONFIGURATION_PATH "config/parameter_config/"
 
+#define REGEX_FILE_NAME "parameter_regular_expressions.txt"
+#define HF_FILE_NAME "HF_config.txt"
+#define PARAMETER_FILE_NAME "tiles.txt"
+
+class button_manager;
 
 //! The manager handles an STL map and  vector that contains parameter's graphics
 class manager{
@@ -37,21 +43,25 @@ class manager{
 	//! this is the constructor for the manager class
 	/*! the manager constructor doesn't do anything right now, as set up
      * must occur after sdl_help's constructor */
-	manager(const string& image_p_in, const string& config_folder);
+	manager(const string& config_folder);
 
 	//! destructor deletes the objects that the map & vector of tiles point to
 	~manager();
 
+	//! helper for constructor, sets up regular expressions for parameters
+	void init_regular_expressions();
 
-	void init_regular_expressions(const string& config_folder_path);
-	void init_parameter_configurations(const string& config_folder_path);
-	void init_parameter_graphics(const string& config_folder_path);
+	//! helper for constructor, sets up the parameter default values
+	void init_parameter_configurations();
+
+	//! helper for constructor, sets up the parameter graphics, names and line placement
+	void init_parameter_graphics();
 
 	//! this function walks the map, and returns the width of the widest tile
 	int get_widest_tile_width();
 
 	//! sets the graphics for the main parameter fields, besides the text box
-	void init_fields_graphics();
+	// void init_fields_graphics();
 
 	//! this function draws the tiles
 	void draw();
@@ -187,7 +197,10 @@ class manager{
 	string image_path;
 
 	//! a path string to the tile input file folder
-	string tile_input_p;
+	string configuration_folder_path;
+
+	//! "default" unless set by --configfolder option
+	string configuration_folder_name;
 
 	//! keeps track of sdl window width
 	int win_w;

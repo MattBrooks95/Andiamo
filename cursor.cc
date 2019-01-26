@@ -31,7 +31,7 @@ void cursor::init(SDL_Rect* box_location_in){
 
 	my_texture = asset_access->get_texture(cursor_p);
 	if(my_texture == NULL){
-		output_access->push_error("Failure to find cursor texture");
+		logger_access->push_error("Failure to find cursor texture");
 	}
 
 	//set up pointer to containing box's info
@@ -45,7 +45,7 @@ int cursor::calc_location(TTF_Font* font,const string& text,
 	if(font == NULL || box_location == NULL){
 		string err_msg = "Could not calc cursor position, not given appropriate ";
 		err_msg += "pointer to font in calc_location or box_location in init";
-		output_access->push_error(err_msg);
+		logger_access->push_error(err_msg);
 	}
 
 	//no point is a dummy height argument for TTF_SizeText to fill in
@@ -88,7 +88,7 @@ int cursor::calc_location(TTF_Font* font,const string& text,
 void cursor::draw_me(){
 
 	if( SDL_RenderCopy(sdl_access->renderer,my_texture,NULL,&cursor_dest) != 0){
-		output_access->push_error(SDL_GetError());
+		logger_access->push_error(SDL_GetError());
 	}
 
 }
@@ -100,7 +100,7 @@ void cursor::draw_me(const int x_scroll, const int y_scroll){
 	mod_dest.y += y_scroll;
 
 	if( SDL_RenderCopy(sdl_access->renderer,my_texture,NULL,&mod_dest) != 0){
-		output_access->push_error(SDL_GetError());
+		logger_access->push_error(SDL_GetError());
 	}
 
 }

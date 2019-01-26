@@ -37,7 +37,7 @@ void scrolling_mini_loop(SDL_Event& big_event,char which_bar){
                 {string filt_err;
                 filt_err  = "Error, MOUSEBUTTONDOWN not properly filtered";
                 filt_err += "in scrolling_mini_loop.";
-				output_access->push_error(filt_err);}
+				logger_access->push_error(filt_err);}
 				break;
 
 			case SDL_MOUSEBUTTONUP:
@@ -99,7 +99,7 @@ void scrolling_mini_loop(SDL_Event& big_event,char which_bar){
 				break;
 
 			default:
-				output_access->push_error("Didn't hit a case in scrolling event.");
+				logger_access->push_error("Didn't hit a case in scrolling event.");
 				exit = true;
 		}//end daddy switch statement
 		SDL_Delay(30);
@@ -133,7 +133,7 @@ void handle_mouseb_down( SDL_Event& big_event){
 
 				//a return value of 1 means that the vertical scroll bar
                 //was clicked make sure vals line up
-				output_access->push_msg("Clicked on the vertical bar!");
+				logger_access->push_msg("Clicked on the vertical bar!");
 
 				if(sdl_access->get_v_bar().is_scrolling() == false){
 
@@ -146,14 +146,14 @@ void handle_mouseb_down( SDL_Event& big_event){
 
                     string err =
                         "V scroll bar already in scroll mode upon click!";
-					output_access->push_error(err);
+					logger_access->push_error(err);
 				}
 
 			} else if( which_bar == 2){
 
 				//a return value of 2 means that horizontal scroll bar
                 //was clicked make sure vals line up
-				output_access->push_msg("Clicked on the horizontal bar!");
+				logger_access->push_msg("Clicked on the horizontal bar!");
 
 				if(sdl_access->get_h_bar().is_scrolling() == false){
 
@@ -166,7 +166,7 @@ void handle_mouseb_down( SDL_Event& big_event){
 					//should likewise never hit this branch
                     string err =
                         "H scroll bar already in scroll mode upon click!";
-					output_access->push_error(err);
+					logger_access->push_error(err);
 				}
 
 			//no scroll bar was clicked, look at other things
@@ -183,7 +183,7 @@ void handle_mouseb_down( SDL_Event& big_event){
 			} else {
 
                 string err = "sdl_help::scroll_clicked has a bad value.";
-				output_access->push_error(err);
+				logger_access->push_error(err);
 			}
 			break;
 
@@ -192,7 +192,7 @@ void handle_mouseb_down( SDL_Event& big_event){
             {string msg = "\nRight clicked at location = "
                          +to_string(big_event.button.x) + ":"
                          +to_string(big_event.button.y);
-			output_access->push_msg(msg);}
+			logger_access->push_msg(msg);}
 			break;
 
 		//handle mousewheel clicks
@@ -200,7 +200,7 @@ void handle_mouseb_down( SDL_Event& big_event){
             string msg = "\nMousewheel clicked at location = "
                          + to_string(big_event.button.x)+ ": "
                          + to_string(big_event.button.y);
-			output_access->push_msg(msg);
+			logger_access->push_msg(msg);
         }
 
 		default:
@@ -264,7 +264,7 @@ void handle_key_down(const SDL_Event& big_event){
 		// 	exit(-1);
 		// 	break;
 		default:
-			output_access->push_msg("Unknown key pressed down.");
+			logger_access->push_msg("Unknown key pressed down.");
 			break;
 	}//end switch statement
 
@@ -286,7 +286,7 @@ void handle_key_up(const SDL_Event& big_event){
 		case SDLK_SPACE:
 			break;
 		default:
-			output_access->push_msg("Unknown key released. ");
+			logger_access->push_msg("Unknown key released. ");
 			break;
 	}//end switch statement
 	SDL_FlushEvent(SDL_MOUSEBUTTONUP);

@@ -80,7 +80,7 @@ card::card(const string& letter_in,const string& info_in,
 bool card::check(){
 
 	if(info.size() > 80){
-		output_access->push_error("Card too long! Exceeds 80 columns.");
+		logger_access->push_error("Card too long! Exceeds 80 columns.");
 		return false;
 	}
 

@@ -14,7 +14,7 @@ using namespace std;
 
 extern system_wrapper* system_access;
 extern regex_manager* regex_access;
-extern logger* output_access;
+extern logger* logger_access;
 
 //! prints the list of arguments that can be passed to Andiamo to the terminal
 void options_help(){
@@ -81,7 +81,7 @@ bool process_args(int argc, char* argv[],string& manager_config_folder,bool& lin
 			if(argument.compare("--verbose") == 0){
 
 				cout << "Verbose mode on" << endl;
-				output_access->verbose = true;
+				logger_access->verbose = true;
 
 			} else if(argument.compare("--help") == 0){
 
@@ -98,31 +98,30 @@ bool process_args(int argc, char* argv[],string& manager_config_folder,bool& lin
 					argument = argv[c+1];
 					cout << "Supplied file name: " << argument << endl; 
 
-					string config_path = home_path + "/Andiamo/config/configurations/" + argument;
-					std::ifstream test_open;
-					cout << "Attempting to open file:" << config_path << endl;
-					test_open.open(config_path.c_str());
+					// string config_path = home_path + "/Andiamo/config/configurations/" + argument;
+					// std::ifstream test_open;
+					// cout << "Attempting to open file:" << config_path << endl;
+					// test_open.open(config_path.c_str());
 
-					if(!test_open.fail()){
-						manager_config_folder = argument;
-						ignore_next_arg = true;
-					} else {
+					// if(!test_open.fail()){
+					manager_config_folder = argument;
+					// 	ignore_next_arg = true;
+					// } else {
 
-						cout << "File argument:" << argument;
-						cout << " Is seemingly not a proper config file.\n"
-							 << " Please ensure it's in [andiamo_root]/config/custom_configs/,\n"
-							 << "and that it ends in .txt"
-							 << endl;
-						ignore_next_arg = true;
+					// 	cout << "Folder argument:" << argument;
+					// 	cout << " Is seemingly not a proper config file.\n"
+					// 		 << " Please ensure it's in [andiamo_root]/config/parameter_config/,\n"
+					// 		 << "and that it ends in .txt" << endl;
+					ignore_next_arg = true;
 
-					}
-					test_open.close();
+					// }
+					// test_open.close();
 
 				} else {
 
 					cout << "Failure to provide a file name for a custom "
-						 << "default values file. Proper form is -configf some_file.txt."
-						 << " Note that the file must be in ~/Andiamo/config/custom_configs/." << endl;
+						 << "parameter configuration folder. Proper form is --configfolder some_file.txt."
+						 << " Note that the folder must be in ~/Andiamo/config/parameter_config/." << endl;
 
 				}
 

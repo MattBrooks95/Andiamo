@@ -20,8 +20,7 @@
 //std::sort, to sort a vector of file names
 #include<algorithm>
 
-#include "system_wrapper.h"
-
+class system_wrapper;
 extern system_wrapper* system_access;
 
 using std::string;

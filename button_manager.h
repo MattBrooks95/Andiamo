@@ -22,7 +22,7 @@ using std::string;
 using std::vector;
 using std::regex;
 
-extern logger* output_access;;
+extern logger* logger_access;;
 
 extern sdl_help* sdl_access;
 

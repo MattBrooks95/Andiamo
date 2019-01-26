@@ -10,7 +10,7 @@
 
 using std::string;
 
-extern logger* output_access;;
+extern logger* logger_access;;
 
 /*! \brief scroll_bar contains the internal bookkeeping necessary for creating scroll bars, and also 
  *references to the pertinent fields of the sdl_help object that contains these objects */

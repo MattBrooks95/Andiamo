@@ -15,7 +15,7 @@ extern asset_manager* asset_access;
 
 
 extern bool main_done;
-extern logger* output_access;;
+extern logger* logger_access;;
 extern system_wrapper* system_access;
 //################## EXIT BUTTON ###############################################
 

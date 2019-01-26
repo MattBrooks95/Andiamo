@@ -11,7 +11,7 @@
 
 
 #include "logger.h"
-extern logger* output_access;;
+extern logger* logger_access;;
 
 //! prevents the sdl event queue from pushing mouse location updates
 int filter_mouse_move(void* userdata, SDL_Event* event);

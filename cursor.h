@@ -12,7 +12,7 @@
 using std::string;
 using std::ostream;
 
-extern logger* output_access;;
+extern logger* logger_access;;
 extern sdl_help* sdl_access;
 
 //! \class cursor draws and keeps track of where the cursor is drawn

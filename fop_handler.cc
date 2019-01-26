@@ -260,11 +260,11 @@ double fop_handler::find_elab(){
 
 	} catch(out_of_range& map_error){
 
-		output_access->push_error("Couldn't find ELAB in fields map.");
+		logger_access->push_error("Couldn't find ELAB in fields map.");
 
 	} catch(invalid_argument& stod_error){
 
-		output_access->push_error("Couldn't convert ELAB string to double.");
+		logger_access->push_error("Couldn't convert ELAB string to double.");
 
 	}
 
@@ -285,11 +285,11 @@ int fop_handler::find_icm(){
 
 	} catch(out_of_range& map_error){
 
-		output_access->push_error("Couldn't find ICM in the fields map.");
+		logger_access->push_error("Couldn't find ICM in the fields map.");
 
 	} catch(invalid_argument& stoi_error){
 
-		output_access->push_error("Couldn't convert ICM string value to int.");
+		logger_access->push_error("Couldn't convert ICM string value to int.");
 	}
 
 	return icm_val;
@@ -318,9 +318,9 @@ void fop_handler::find_compound_A_Z(unsigned int& compound_A,
 		compound_Z = stoi(tile_access->fields.at("line_2").at("Z")->get_text());
 
 	} catch(out_of_range& map_error){
-		output_access->push_error("Couldn't find A or Z in field map.");
+		logger_access->push_error("Couldn't find A or Z in field map.");
 	} catch(invalid_argument& stoi_error){
-		output_access->push_error("Couldn't convert A or Z from string to int.");
+		logger_access->push_error("Couldn't convert A or Z from string to int.");
 	}
 
 	cout << "Compound A from user: " << compound_A << endl;
@@ -338,9 +338,9 @@ int fop_handler::find_IENCH(){
 		iench_str = tile_access->fields.at("line_2").at("IENCH")->get_text();
 		return_me = stoi(iench_str);
 	} catch(out_of_range& map_error){
-		output_access->push_error("Couldn't find IENCH in field map.");
+		logger_access->push_error("Couldn't find IENCH in field map.");
 	} catch(invalid_argument& stoi_error){
-		output_access->push_error("Couldn't convert IENCH from string to int.");
+		logger_access->push_error("Couldn't convert IENCH from string to int.");
 	}
 
 	cout << "IENCH value: " << return_me << endl;

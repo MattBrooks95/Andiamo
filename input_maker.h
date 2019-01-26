@@ -33,7 +33,7 @@ using std::map;
 using std::ostream;
 using std::regex;
 
-extern logger* output_access;;
+extern logger* logger_access;;
 extern system_wrapper* system_access;
 
 class button_manager;
@@ -46,8 +46,7 @@ class field;
 class input_maker{
   public:
     //! this constructor sets the config-file related strings
-    input_maker(string output_file_name_in = "output.txt",
-                    string config_file_name_in = "HF_config.txt");
+    input_maker(string output_file_name_in = "output.txt");
 
     //! sets up the parameter vectors to the specifications of the config file
     /*! It uses regular expressions, and the split functions in string+.h */
