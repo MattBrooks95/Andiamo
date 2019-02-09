@@ -33,7 +33,7 @@ extern system_wrapper* system_access;
 
 #define REGEX_FILE_NAME "parameter_regular_expressions.txt"
 #define HF_FILE_NAME "HF_config.txt"
-#define PARAMETER_FILE_NAME "tiles.txt"
+#define PARAMETER_GRAPHICS_FILE_NAME "tiles.txt"
 
 class button_manager;
 
@@ -173,6 +173,11 @@ class manager{
 	 *\param width_in is the desired new width
 	 *\param height_in is the desired new height */
 	void update_win(int width_in, int height_in);
+
+	//! uses configuration_folder_path and the passed file name to build an absolute path
+	string get_configuration_file_path(const string& file_name);
+
+	void fill_vector_with_configuration_lines_from_file(const string& file_name,vector<string>& file_lines);
 
 	//! store the line names in order
 	/*! this is used by sdl_help::calc_corners to create the

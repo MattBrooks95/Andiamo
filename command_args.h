@@ -25,7 +25,7 @@ void options_help(){
 		 << "  a bunch of additional debugging and non-critical\n"
 		 << "  run time messages to the error_logs/ file for this session."
 		 << "\n" << endl;
-	cout << "2) -configfolder some_folder_name\n\tsets the directory of "
+	cout << "2) --configfolder some_folder_name\n\tsets the directory of "
 		 << "initialization files used by Andiamo! The default folder is"
 		 << " Andimo/config/configurations/default. These directories need"
 		 << " to contain three files.\n"

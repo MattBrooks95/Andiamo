@@ -25,29 +25,42 @@ manager::manager(const string& config_folder_name){
 	init_parameter_graphics();
 }
 
+string manager::get_configuration_file_path(const string& file_name){
+	string configuration_total_path = configuration_folder_path + configuration_folder_name + '/';
+	return configuration_total_path + file_name;
+}
+
+void manager::fill_vector_with_configuration_lines_from_file(const string& file_name, vector<string>& file_lines){
+	string total_file_path = get_configuration_file_path(file_name); 
+	cout << "path to file:" << total_file_path << endl;
+
+	system_access->get_file_as_lines(total_file_path, file_lines);
+
+	for(uint c = 0; c < file_lines.size(); c++){
+		cout << file_lines[c] << endl;
+	}
+}
+
 void manager::init_regular_expressions(){
 	cout << "Init regular expressions" << endl;
 
-	string regular_expression_file_name = REGEX_FILE_NAME;
-
-	string configuration_total_path = configuration_folder_path + configuration_folder_name + '/';
-	string regular_expression_file_path = configuration_total_path + regular_expression_file_name; 
-	cout << "path to file:" << regular_expression_file_path << endl;
-
+	string file_name = REGEX_FILE_NAME;
 	vector<string> file_lines;
-	system_access->get_file_as_lines(regular_expression_file_path, file_lines);
+	fill_vector_with_configuration_lines_from_file(file_name,file_lines);
 }
 
 void manager::init_parameter_configurations(){
 	cout << "Init parameter default values" << endl;
 
-	string parameter_file_name = PARAMETER_FILE_NAME;
+	string file_name = HF_FILE_NAME;
+	vector<string> file_lines;
+	fill_vector_with_configuration_lines_from_file(file_name,file_lines);
 }
 
 void manager::init_parameter_graphics(){
 	cout << "Init parameter graphics" << endl;
 
-	string hf_file_name = HF_FILE_NAME;
+	string file_name = PARAMETER_GRAPHICS_FILE_NAME;
 }
 
 void manager::init(const string& graphical_config_file){

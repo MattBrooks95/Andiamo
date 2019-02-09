@@ -83,7 +83,6 @@ void system_wrapper::get_file_as_lines(const string& file_path,vector<string>& f
 	string line;
 
 	while(getline(file_input_stream,line)){
-		cout << "pushing:" << line << endl;
 		file_lines.push_back(line);
 	}
 
