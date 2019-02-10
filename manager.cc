@@ -1,9 +1,10 @@
 //! \file manager.cc implements the functions declared in manager.h
 #include "manager.h"
-#include "button_manager.h"
 
+#include "button_manager.h"
 #include "define.h"
 #include "regex_patterns.h"
+
 using namespace std;
 
 //prototype for sorting function passed to algorithm::sort
@@ -30,8 +31,8 @@ string manager::get_configuration_file_path(const string& file_name){
 	return configuration_total_path + file_name;
 }
 
-void manager::fill_vector_with_configuration_lines_from_file(const string& file_name, vector<string>& file_lines){
-	string total_file_path = get_configuration_file_path(file_name); 
+void manager::fill_vector_with_configuration_lines_from_file(const string& file_name,vector<string>& file_lines){
+	string total_file_path = get_configuration_file_path(file_name);
 	cout << "path to file:" << total_file_path << endl;
 
 	system_access->get_file_as_lines(total_file_path, file_lines);
@@ -47,6 +48,20 @@ void manager::init_regular_expressions(){
 	string file_name = REGEX_FILE_NAME;
 	vector<string> file_lines;
 	fill_vector_with_configuration_lines_from_file(file_name,file_lines);
+
+	for(uint c = 0; c < file_lines.size(); c++){
+		if(file_lines[c].empty() || file_lines[c] == "\n"){
+			continue;
+		}
+
+		vector<string> parts = split(file_lines[c],':');
+
+		string parameter_name = parts[0];
+		regex* regular_expression = regex_access->get_regular_expression(parts[1]);
+		cout << "inserting regexp for parameter:" << parameter_name << endl;
+		pair<string, regex*> parameter_regex(parameter_name,regular_expression);
+		parameter_regexps.insert(parameter_regex);
+	}
 }
 
 void manager::init_parameter_configurations(){
@@ -55,12 +70,42 @@ void manager::init_parameter_configurations(){
 	string file_name = HF_FILE_NAME;
 	vector<string> file_lines;
 	fill_vector_with_configuration_lines_from_file(file_name,file_lines);
+
+	regex* comment_line = regex_access->get_regular_expression(RE_COMMENT_LINE);
+	regex* default_value_line = regex_access->get_regular_expression(RE_INITIAL_VALUE);
+
+	for(uint c = 0; c < file_lines.size(); c++){
+		bool empty_line = file_lines[c].empty();
+		bool newline    = file_lines[c] == "\n";
+		bool comment = regex_match(file_lines[c],*comment_line);
+		if( empty_line || newline || comment){
+			continue;
+		}
+
+		smatch capture_groups;
+
+		regex_match(file_lines[c],capture_groups,*default_value_line);
+
+		if(capture_groups.size() != 2){
+			logger_access->push_error("invalid parameter default line", file_lines[c]);
+		}
+
+		string parameter_name           = capture_groups[0];
+		string parameter_default_string = capture_groups[1];
+		cout << "inserting pair" << parameter_name << " " << parameter_default_string << endl;
+
+		pair<string,string> line_info(parameter_name,parameter_default_string);
+		parameter_defaults.insert(line_info);
+	}
+
 }
 
 void manager::init_parameter_graphics(){
 	cout << "Init parameter graphics" << endl;
 
 	string file_name = PARAMETER_GRAPHICS_FILE_NAME;
+	vector<string> file_lines;
+	fill_vector_with_configuration_lines_from_file(file_name,file_lines);
 }
 
 void manager::init(const string& graphical_config_file){
@@ -68,7 +113,7 @@ void manager::init(const string& graphical_config_file){
 
 	// //ins will refer to the stream to the input file for tile information
 	// fstream ins;
-	
+
 	// //open the file
 
 	// if(graphical_config_file.size() == 0){
@@ -715,7 +760,7 @@ void manager::icntrl10_locking(){
 
 	//otherwise, if it is not locking, and it's conditions are not met,
 	//then have it start locking
-	} else if(!icntrl10_locking && !nnsig_field->is_locked && 
+	} else if(!icntrl10_locking && !nnsig_field->is_locked &&
 		   !(icntrl10_valid_input && icntrl10_val > 0)){
 
 		icntrl10_field->change_tile_background("purple_andy_tile.png");
@@ -922,7 +967,7 @@ void manager::inm1_locking(){
 void manager::inm2_locking(){
   try{
 
-  	field* inm2_field = fields.at("line_10").at("INM2"); 
+  	field* inm2_field = fields.at("line_10").at("INM2");
 	int inm2_val      = stoi(inm2_field->get_text());
 
 	if( inm2_field->am_I_locking && inm2_val > 0 ){

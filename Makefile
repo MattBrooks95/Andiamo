@@ -56,7 +56,7 @@ form_buttons.o: form_buttons.cc form_buttons.h button.o form.o logger.o c_tuples
 form.o: form.cc form.h button.o text_box.o c_tuples.h
 	g++ $(C_FLG) -c form.cc
 
-manager.o: manager.cc manager.h field.o input_maker.o logger.o
+manager.o: manager.cc manager.h field.o input_maker.o logger.o ftran_structs.o
 	g++ $(C_FLG) -c manager.cc
 
 ftran_structs.o: ftran_structs.cc ftran_structs.h

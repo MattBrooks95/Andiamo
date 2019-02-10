@@ -179,28 +179,28 @@ class input_maker{
 
     //! contains a variable number of in4 fortran-style variables
     /* its length and contents should be specified in the config file */
-    map<string,param_int4> int4_params;
+    // map<string,param_int4> int4_params;
 
     //! contains a variable number of real8 fortran-style variables
     /* its length and contents should be specified in the config file */
-    map<string,param_real8> real8_params;
+    // map<string,param_real8> real8_params;
 
     //! contains string parameters
-    map<string,param_string> string_params;
+    // map<string,param_string> string_params;
 
     //! this map contains the ftran_struct int4 array parameters
     /*! a specific one can be accessed by using map's at(name_string)
      *member function */
-    map<string,param_int4_array> int4_array_params;
+    // map<string,param_int4_array> int4_array_params;
 
     //! this map contains the ftran_struct e_params
-    map<string, param_r8_array> r8_array_params;
+    // map<string, param_r8_array> r8_array_params;
 
     //! store the ETAB numbers read in from the TC file
-    vector<param_real8> ETAB;
+    // vector<param_real8> ETAB;
 
     //! store the TTAB numbers read in from the TC file
-    vector<param_real8> TTAB;
+    // vector<param_real8> TTAB;
 
 };
 
@@ -224,13 +224,13 @@ void do_line2(ofstream& outs,const map<string,param_real8>& real8_params,
 /* NENT, LMAX and NGF control the loops, and TC_input_file button sets
  *this class's TC_input_file_name variable and the coefficients
  * are read in from there */
-void do_TC_coefficients(const map<string,param_real8>& real8_params,
-                        const map<string,param_int4_array>& array_map,
+void do_TC_coefficients(/*const map<string,param_real8>& real8_params,
+                        const map<string,param_int4_array>& array_map,*/
                         ofstream& outs);
 
 //! outputs the variables found in line 4 of the input description manual
-void do_line4(ofstream& outs,const map<string,param_real8>& real8_params,
-                const map<string,param_int4>& int4_params);
+void do_line4(ofstream& outs/*,const map<string,param_real8>& real8_params,
+                const map<string,param_int4>& int4_params*/);
 
 
 /* we can't handle IENCH = 7, Zach wants these disabled
@@ -243,39 +243,39 @@ void do_line4B(ofstream& outs,const map<string, param_r8_array>& e_params);
 */
 
 //! prints out line 5
-void do_line5(ofstream& outs,const map<string, param_int4>& int4_params);
+void do_line5(ofstream& outs/*,const map<string, param_int4>& int4_params*/);
 
 //! prints line 5A, should only be called if ILV1 is == 6
-void do_line5A(ofstream& outs, const map<string, param_real8>& real8_params);
+void do_line5A(ofstream& outs/*,const map<string, param_real8>& real8_params*/);
 
 //! outputs the values for the parameters in line 6
-void do_line6(ofstream& outs,const map<string,param_int4>& int4_params);
+void do_line6(ofstream& outs/*,const map<string,param_int4>& int4_params*/);
 
 //! outputs the values for the parameters in line 7
-void do_line7(ofstream& outs,const map<string,param_real8>& real8_params);
+void do_line7(ofstream& outs/*,const map<string,param_real8>& real8_params*/);
 
 //! outputs the variables in line 8, if ICNTRL4 != 0
-void do_line8(ofstream& outs,const map<string,param_int4>& int4_params);
+void do_line8(ofstream& outs/*,const map<string,param_int4>& int4_params*/);
 
 //! outputs the variables in line 9
-void do_line9(ofstream& outs,const map<string,param_int4>& int4_params,
-                const map<string,param_real8>& real8_params);
+void do_line9(ofstream& outs/*,const map<string,param_int4>& int4_params,
+                const map<string,param_real8>& real8_params*/);
 
 //! outputs the variables in line 10
-void do_line10(ofstream& outs,const map<string,param_int4>& int4_params);
+void do_line10(ofstream& outs/*,const map<string,param_int4>& int4_params*/);
 
 //! outputs the variables related to icntrl6
-void do_icntrl6(ofstream& outs, int icntrl6_value,
+void do_icntrl6(ofstream& outs/*, int icntrl6_value,
                 vector<string>& form_bad_inputs,
-                vector<index_value>& icntrl6_bad_inputs);
+                vector<index_value>& icntrl6_bad_inputs*/);
 
 //! outputs the variables related to icntrl8
-void do_icntrl8(ofstream& outs,
+void do_icntrl8(ofstream& outs/*,
                 vector<string>& form_bad_inputs,
-                vector<index_value>& icntrl8_bad_inputs);
+                vector<index_value>& icntrl8_bad_inputs*/);
 
 //! outputs the variables related to icntrl10
-void do_icntrl10(ofstream& outs,
+void do_icntrl10(ofstream& outs/*,
                 vector<string>& form_bad_inputs,
-                vector<index_value>& icntrl10_bad_inputs);
+                vector<index_value>& icntrl10_bad_inputs*/);
 //############################################################################

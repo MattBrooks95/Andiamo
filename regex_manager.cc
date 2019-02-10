@@ -6,17 +6,15 @@ using namespace std;
 // }
 
 regex_manager::~regex_manager(){
-
 	for(map<string,regex*>::iterator it = regular_expressions.begin();
 		it != regular_expressions.end();
 		++it){
 		delete(it->second);
 	}
-
 }
 
 regex* regex_manager::get_regular_expression(const string& regex_pattern){
-
+	cout << "making regex from pattern" << regex_pattern << endl;
 	try {
 		return regular_expressions.at(regex_pattern);
 	} catch(out_of_range& not_found){

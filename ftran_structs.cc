@@ -125,64 +125,64 @@ void param_real8::operator =(int other){
 //############################################################################
 
 //###################### INT4 ARRAY ##########################################
-param_int4_array::param_int4_array(string name_in,unsigned int size_in,bool satisfied_in){
-	name = name_in;
-	size = size_in;
-	satisfied = satisfied_in;
-}
+// param_int4_array::param_int4_array(string name_in,unsigned int size_in,bool satisfied_in){
+// 	name = name_in;
+// 	size = size_in;
+// 	satisfied = satisfied_in;
+// }
 
-bool param_int4_array::is_satisfied(){
-	return satisfied;
-}
-string param_int4_array::get_string(){
-	//declare a string
-	string return_me;
-	for(unsigned int c = 0; c < values.size();c++){
+// bool param_int4_array::is_satisfied(){
+// 	return satisfied;
+// }
+// string param_int4_array::get_string(){
+// 	//declare a string
+// 	string return_me;
+// 	for(unsigned int c = 0; c < values.size();c++){
 
-		//add a comma to the end of all values but the last
-		if(c != values.size()-1){
-			return_me = return_me + to_string(values[c]) + ",";
-		} else {
-			return_me = return_me + to_string(values[c]);
-		}
-	}
-	return return_me;
-}
+// 		//add a comma to the end of all values but the last
+// 		if(c != values.size()-1){
+// 			return_me = return_me + to_string(values[c]) + ",";
+// 		} else {
+// 			return_me = return_me + to_string(values[c]);
+// 		}
+// 	}
+// 	return return_me;
+// }
 //############################################################################
 
 //################## R8 ARRAY ################################################
-param_r8_array::param_r8_array(string name_in, unsigned int size_in, bool satisfied_in){
-	name = name_in;
-	satisfied = satisfied_in;
-	size = size_in;
+// param_r8_array::param_r8_array(string name_in, unsigned int size_in, bool satisfied_in){
+// 	name = name_in;
+// 	satisfied = satisfied_in;
+// 	size = size_in;
 
-}
-string param_r8_array::get_string(){
-	string return_me;
-	for(unsigned int c = 0; c < values.size();c++){
-		string number_bit =  to_string(values[c]);
+// }
+// string param_r8_array::get_string(){
+// 	string return_me;
+// 	for(unsigned int c = 0; c < values.size();c++){
+// 		string number_bit =  to_string(values[c]);
 
-		//index for formatting loop
-		unsigned int rear_index = 1;
+// 		//index for formatting loop
+// 		unsigned int rear_index = 1;
 
-		while( number_bit[number_bit.size()-rear_index]  == '0' &&
-			    number_bit[number_bit.size()-1-rear_index] != '.' ){
-			//remove extra zeros, but always leave one
-		    //after decimal
+// 		while( number_bit[number_bit.size()-rear_index]  == '0' &&
+// 			    number_bit[number_bit.size()-1-rear_index] != '.' ){
+// 			//remove extra zeros, but always leave one
+// 		    //after decimal
 
-			number_bit.pop_back();		}
+// 			number_bit.pop_back();		}
 
-		return_me = return_me + number_bit;
+// 		return_me = return_me + number_bit;
 
-		//add a comma to all values in the list but the last one
-		if(c != values.size()-1){
-			return_me = return_me + ",";
-		}
+// 		//add a comma to all values in the list but the last one
+// 		if(c != values.size()-1){
+// 			return_me = return_me + ",";
+// 		}
 
-	}
-	return return_me;
+// 	}
+// 	return return_me;
 
-}
+// }
 //################################################################################
 
 

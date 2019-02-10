@@ -31,9 +31,9 @@ using std::string;
 using std::vector;
 
 extern sdl_help* sdl_access;
-extern manager* tile_access;
 extern button_manager* button_access;
 extern input_maker* io_access;
+extern manager* tile_access;
 
 #define NUM_INPUT_CHANNELS 6
 
