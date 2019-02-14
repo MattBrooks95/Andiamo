@@ -82,17 +82,17 @@ void manager::init_parameter_configurations(){
 			continue;
 		}
 
+		//note that the first match group is the entire match
 		smatch capture_groups;
 
 		regex_match(file_lines[c],capture_groups,*default_value_line);
 
-		if(capture_groups.size() != 2){
+		if(capture_groups.size() != 3){
 			logger_access->push_error("invalid parameter default line", file_lines[c]);
 		}
 
-		string parameter_name           = capture_groups[0];
-		string parameter_default_string = capture_groups[1];
-		cout << "inserting pair" << parameter_name << " " << parameter_default_string << endl;
+		string parameter_name           = capture_groups[1];
+		string parameter_default_string = capture_groups[2];
 
 		pair<string,string> line_info(parameter_name,parameter_default_string);
 		parameter_defaults.insert(line_info);
@@ -106,6 +106,72 @@ void manager::init_parameter_graphics(){
 	string file_name = PARAMETER_GRAPHICS_FILE_NAME;
 	vector<string> file_lines;
 	fill_vector_with_configuration_lines_from_file(file_name,file_lines);
+
+
+	//this line specifies an image name
+	regex* img_pattern = regex_access->get_regular_expression(RE_IMG);
+
+	//this recognizes lines that specify tile size lines should be of the
+	//form widthxheight EX:100x100
+	regex* field_size_pattern = regex_access->get_regular_expression(RE_FIELD_SIZE);
+
+	//this line specifies a tile name
+	regex* name_pattern = regex_access->get_regular_expression(RE_TILE_NAME);
+
+	//used to tell if the name line is of the form ->HFvariable:EnglishVariable
+	regex* semi_pattern = regex_access->get_regular_expression(RE_SEMI);
+
+	//describes a pattern for tile/input descriptors that starts with a 'c'
+	//and is followed by exactly one space,
+	//then contains any number of any characters
+	regex* desc_pattern = regex_access->get_regular_expression(RE_DESCRIPTION);
+
+	//this line recognizes the lines that separate
+	//the parameters into lines that correspond with the input manual,
+	//so they can be stored together
+	regex* line_separator = regex_access->get_regular_expression(RE_LINE_SEPARATOR);
+
+	for(uint c = 0; c < file_lines.size(); c++){
+
+
+		//reset new line container each run of loop
+		map<string,field*> new_line;
+		vector<field*> params_vector;
+
+		string line_name;
+
+	// 	//read until a line start indicator/separator is found
+	// 	while( !ins.eof() && !regex_match(temp_string,line_separator) ){
+
+	// 		if( ins.fail() || temp_string.empty() ){
+	// 			//we may not necessarily find this case in error,
+	// 			//as the very last group in the config file won't
+	// 			//end with a line separator, because no line will come after it
+
+	// 			//ran out of file, get out of this function
+	// 			return;
+	// 		}
+	// 		getline(ins,temp_string);
+	// 	}
+
+	// 	strip_char(temp_string,'#');
+	// 	//cout << "Found a line name:"+temp_string << endl;
+	// 	logger_access->push_msg("Found a line name:"+temp_string);
+	// 	line_names_read_order.push_back(temp_string);
+
+
+
+		if(line_separator.match(file_lines[c])){
+
+		} else if(name_pattern.match(file_lines[c])){
+
+		} else if(img_pattern.match(file_lines[c])){
+
+		} else if(field_size_pattern.match(file_lines[c])){
+
+		}
+	}
+
 }
 
 void manager::init(const string& graphical_config_file){

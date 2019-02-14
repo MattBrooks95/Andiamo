@@ -4,7 +4,7 @@
 
 //######### used by the tile manager for finding defaults ################
 #define RE_COMMENT_LINE "\\s*?#.*"
-#define RE_INITIAL_VALUE "^\\s*(\\w*)\\s*=\\s*(.*)\\s*$"
+#define RE_INITIAL_VALUE "(\\S*)\\s*?=\\s*?(\\S*)$"
 //########################################################################
 
 //######## patterns used by the tile manager ###########
