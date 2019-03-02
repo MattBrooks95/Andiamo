@@ -191,50 +191,16 @@ void manager::init_parameter_graphics(){
 			cout << "parameter contents!" << *line_iterator << endl;
 
 			if (regex_match(*line_iterator, *desc_pattern)){
-				cout << "DESCRIPTION!" << endl;
-				string description = line_iterator->erase(0,2);
-				if (temp_descriptions == NULL){
-					temp_descriptions = new vector<string>();
-				}
-				temp_descriptions->push_back(description);
+				handle_description_line(temp_descriptions,*line_iterator);
 			// should use a regular expression to check the image type instead...
 			// also it makes sense to allow JPGS and GIFS as well
 			} else if(regex_match(*line_iterator,groups_from_line_match,*img_pattern)){
-				int expected_matches = 2;
-				if (groups_from_line_match.size() != expected_matches){
-					print_matching_message("tile image",expected_matches);
-				}
-				cout << "\n\nIMAGE MATCH" << endl;
-				image_name = groups_from_line_match[1];
-				cout << *line_iterator << ":" << tile_name << endl;
+				image_name = handle_image_name_line(groups_from_line_match);
 			} else if(regex_match(*line_iterator,groups_from_line_match,*field_size_pattern)){
-				cout << "\n\nFIELD SIZE MATCH" << endl;
-				cout << *line_iterator << " " << groups_from_line_match[1] << " " << groups_from_line_match[2] << endl;
-				width  = stoi(groups_from_line_match[1]);
-				height = stoi(groups_from_line_match[2]);
+				handle_field_size_match(groups_from_line_match,width,height);
 			// //used to tell if the name line is of the form ->HFvariable:EnglishVariable
 			} else if(regex_match(*line_iterator,groups_from_line_match,*name_pattern)){
-				// need to set the display name and the actual HF parameter name
-				uint matches_for_just_parameter_name = 2;
-				uint matches_for_parameter_and_display_names = 3;
-
-				uint match_group_size = groups_from_line_match.size();
-
-				if (match_group_size < matches_for_just_parameter_name){
-					print_matching_message("parameter_name",matches_for_just_parameter_name);
-					continue;
-				}
-
-				if (match_group_size == matches_for_just_parameter_name){
-					tile_name = groups_from_line_match[1];
-				}
-
-				if(match_group_size == matches_for_parameter_and_display_names){
-					display_name = groups_from_line_match[2];
-				}
-
-				cout << "\n\nNAME MATCH" << endl;
-				cout << *line_iterator << ":" << tile_name << " " << display_name << endl;
+				handle_name_line_match(groups_from_line_match,tile_name,display_name);
 			} else {
 				logger_access->push_msg("Parameter content line didn't match a regular expression!");
 			}
@@ -242,23 +208,107 @@ void manager::init_parameter_graphics(){
 		}
 	}
 
-	// 	strip_char(temp_string,'#');
-	// 	//cout << "Found a line name:"+temp_string << endl;
-	// 	logger_access->push_msg("Found a line name:"+temp_string);
-	// 	line_names_read_order.push_back(temp_string);
-
-	// 	if(line_separator.match(file_lines[c])){
-
-	// 	} else if(name_pattern.match(file_lines[c])){
-
-	// 	} else if(img_pattern.match(file_lines[c])){
-
-	// 	} else if(field_size_pattern.match(file_lines[c])){
-
-	// 	}
-	// }
-
 }
+
+void handle_description_line(vector<string>* temp_descriptions, string& description_line){
+				cout << "DESCRIPTION!" << endl;
+				description_line.erase(0,2);
+				if (temp_descriptions == NULL){
+					temp_descriptions = new vector<string>();
+				}
+				temp_descriptions->push_back(description_line);
+}
+
+string handle_image_name_line(const smatch& groups_from_line_match){
+	int expected_matches = 2;
+	if (groups_from_line_match.size() != expected_matches){
+		print_matching_message("tile image",expected_matches);
+	}
+	cout << "\n\nIMAGE MATCH" << endl;
+	string image_name = groups_from_line_match[1];
+	cout << image_name << endl;
+	return image_name;
+}
+
+void handle_field_size_match(const smatch& groups_from_line_match, int& width, int& height){
+	cout << "\n\nFIELD SIZE MATCH" << endl;
+	cout << groups_from_line_match[1] << " " << groups_from_line_match[2] << endl;
+	width  = stoi(groups_from_line_match[1]);
+	height = stoi(groups_from_line_match[2]);
+}
+
+void handle_name_line_match(const smatch& groups_from_line_match, string& tile_name, string& display_name){
+	// need to set the display name and the actual HF parameter name
+	uint matches_for_just_parameter_name = 2;
+	uint matches_for_parameter_and_display_names = 3;
+
+	uint match_group_size = groups_from_line_match.size();
+
+	if (match_group_size < matches_for_just_parameter_name
+		|| match_group_size > matches_for_parameter_and_display_names){
+		print_matching_message("parameter_name",matches_for_just_parameter_name);
+		return;
+	}
+
+	if (match_group_size == matches_for_just_parameter_name){
+		tile_name = groups_from_line_match[1];
+	}
+
+	if(match_group_size == matches_for_parameter_and_display_names){
+		display_name = groups_from_line_match[2];
+	}
+
+	cout << "\n\nNAME MATCH" << endl;
+	cout << tile_name << " " << display_name << endl;
+}
+
+			// cout << "parameter contents!" << *line_iterator << endl;
+
+			// if (regex_match(*line_iterator, *desc_pattern)){
+			// // should use a regular expression to check the image type instead...
+			// // also it makes sense to allow JPGS and GIFS as well
+			// } else if(regex_match(*line_iterator,groups_from_line_match,*img_pattern)){
+			// 	int expected_matches = 2;
+			// 	if (groups_from_line_match.size() != expected_matches){
+			// 		print_matching_message("tile image",expected_matches);
+			// 	}
+			// 	cout << "\n\nIMAGE MATCH" << endl;
+			// 	image_name = groups_from_line_match[1];
+			// 	cout << *line_iterator << ":" << tile_name << endl;
+			// } else if(regex_match(*line_iterator,groups_from_line_match,*field_size_pattern)){
+			// 	cout << "\n\nFIELD SIZE MATCH" << endl;
+			// 	cout << *line_iterator << " " << groups_from_line_match[1] << " " << groups_from_line_match[2] << endl;
+			// 	width  = stoi(groups_from_line_match[1]);
+			// 	height = stoi(groups_from_line_match[2]);
+			// // //used to tell if the name line is of the form ->HFvariable:EnglishVariable
+			// } else if(regex_match(*line_iterator,groups_from_line_match,*name_pattern)){
+			// 	// need to set the display name and the actual HF parameter name
+			// 	uint matches_for_just_parameter_name = 2;
+			// 	uint matches_for_parameter_and_display_names = 3;
+
+			// 	uint match_group_size = groups_from_line_match.size();
+
+			// 	if (match_group_size < matches_for_just_parameter_name){
+			// 		print_matching_message("parameter_name",matches_for_just_parameter_name);
+			// 		continue;
+			// 	}
+
+			// 	if (match_group_size == matches_for_just_parameter_name){
+			// 		tile_name = groups_from_line_match[1];
+			// 	}
+
+			// 	if(match_group_size == matches_for_parameter_and_display_names){
+			// 		display_name = groups_from_line_match[2];
+			// 	}
+
+			// 	cout << "\n\nNAME MATCH" << endl;
+			// 	cout << *line_iterator << ":" << tile_name << " " << display_name << endl;
+			// } else {
+			// 	logger_access->push_msg("Parameter content line didn't match a regular expression!");
+			// }
+
+
+
 
 void manager::init(const string& graphical_config_file){
 	// configuration_file_path = system_access->get_home() + "/Andiamo/tile_Input/";
