@@ -108,11 +108,9 @@ int main(int argc, char *argv[]){
 
 	manager tile_bag(manager_config_folder);
 	tile_access = &tile_bag;
-	// tile_access->init(manager_config_file);
-	// tile_access->init_fields_graphics();
 
 	sdl_access->calc_corners();
-	// return 0;
+
 	input_maker io_handler;
 	io_access = &io_handler;
 	// io_access->init(/*input_maker_config_file*/);
@@ -167,74 +165,75 @@ int main(int argc, char *argv[]){
 			//remove all events from event queue
 			SDL_FlushEvents(0,1000);
 
-		} else
+		} else {
 
-		//switch controlled by the 'type' of input given, like the mouse moving
-		//or key presses
-		switch(big_event.type){
+			//switch controlled by the 'type' of input given, like the mouse moving
+			//or key presses
+			switch(big_event.type){
 
-			case SDL_QUIT:
+				case SDL_QUIT:
 
-				//does a mini loop that implements exit_button's functionality
-				//where the user has to click yes or no for it to go away
-				if(io_access->output_was_made){
-					no_work_done_message(button_access->get_exit_dialogue());
-				}
-				button_access->get_exit_dialogue().handle_click(big_event);
-				break;
+					//does a mini loop that implements exit_button's functionality
+					//where the user has to click yes or no for it to go away
+					if(io_access->output_was_made){
+						no_work_done_message(button_access->get_exit_dialogue());
+					}
+					button_access->get_exit_dialogue().handle_click(big_event);
+					break;
 
-			case SDL_KEYDOWN:
+				case SDL_KEYDOWN:
 
-				handle_key_down(big_event);
+					handle_key_down(big_event);
 
-				//prevents queue flooding when key is held down
-				SDL_FlushEvent(SDL_KEYDOWN);
-				break;
+					//prevents queue flooding when key is held down
+					SDL_FlushEvent(SDL_KEYDOWN);
+					break;
 
-			case SDL_KEYUP:
+				case SDL_KEYUP:
 
-				handle_key_up(big_event);
-				SDL_FlushEvent(SDL_KEYUP);
-				break;
+					handle_key_up(big_event);
+					SDL_FlushEvent(SDL_KEYUP);
+					break;
 
-			case SDL_MOUSEBUTTONDOWN:
-				//this function handles left/right mouse button down clicks,
-				//and mousewheel clicks
-				handle_mouseb_down(big_event);
-				break;
+				case SDL_MOUSEBUTTONDOWN:
+					//this function handles left/right mouse button down clicks,
+					//and mousewheel clicks
+					handle_mouseb_down(big_event);
+					break;
 
-			case SDL_MOUSEBUTTONUP:
-				handle_mouseb_up(big_event);
-				break;
+				case SDL_MOUSEBUTTONUP:
+					handle_mouseb_up(big_event);
+					break;
 
-			case SDL_MOUSEWHEEL:
-				handle_mouse_wheel(big_event);
-				//make it not get flooded with scroll commands
-				SDL_FlushEvent(SDL_MOUSEWHEEL);
-				break;
+				case SDL_MOUSEWHEEL:
+					handle_mouse_wheel(big_event);
+					//make it not get flooded with scroll commands
+					SDL_FlushEvent(SDL_MOUSEWHEEL);
+					break;
 
-			case SDL_WINDOWEVENT:
+				case SDL_WINDOWEVENT:
 
-				if(big_event.window.event == SDL_WINDOWEVENT_SIZE_CHANGED){
+					if(big_event.window.event == SDL_WINDOWEVENT_SIZE_CHANGED){
 
-					logger_access->push_msg(to_string(big_event.window.data1)+":"+
-									to_string(big_event.window.data2));
-					sdl_access->window_update(big_event.window.data1,
-												big_event.window.data2);
-					button_access->location_update();
+						logger_access->push_msg(to_string(big_event.window.data1)+":"+
+										to_string(big_event.window.data2));
+						sdl_access->window_update(big_event.window.data1,
+													big_event.window.data2);
+						button_access->location_update();
 
-				}
+					}
 
-				break;
+					break;
 
-			//no new event this time, don't just keep repeating the last event
-			case 1776:
-				break;
+				//no new event this time, don't just keep repeating the last event
+				case 1776:
+					break;
 
-			default:
-				break;
+				default:
+					break;
 
-		}//event handling switch
+			}//event handling switch
+		}
 
 		sdl_access->draw();
 		sdl_access->present();
@@ -244,7 +243,7 @@ int main(int argc, char *argv[]){
 
 	}//end of while loop
 
-  return 0;//Exit success
+  return EXIT_SUCCESS;
 }
 
 void no_work_done_message(exit_button& exit_dialogue){

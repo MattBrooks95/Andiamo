@@ -12,9 +12,8 @@ extern asset_manager* asset_access;
 
 field::field(string tile_name_in,string display_name_in,string image_name_in,
              int width,int height,vector<string>* descriptions_in){
-    tile_name = tile_name_in;
+    tile_name    = tile_name_in;
     display_name = display_name_in;
-
 
     image_name = image_name_in;
 
@@ -108,10 +107,7 @@ SDL_Rect field::get_rect() const{
     return return_me;
 }
 
-void field::graphics_init(string image_path_in){
-
-    image_path = image_path_in;
-
+void field::graphics_init(){
     string assets_image_path = image_path + image_name;
 
     //load in tile background
@@ -127,7 +123,6 @@ void field::graphics_init(string image_path_in){
     if(lock_texture == NULL) logger_access->push_error(string(SDL_GetError()));
 
     text_init();
-    my_text_box.init(sdl_access->font,"",xloc,yloc+25,size.width,25);
 }
 
 void field::text_init(){
@@ -168,7 +163,7 @@ void field::text_init(){
     //##########################################################################
 
     //this part sets up this tile's help box####################################
-    if(descriptions->size() > 0){
+    if(descriptions != NULL && descriptions->size() > 0){
 
         //find widest description line
         unsigned int max_width = 0;
@@ -182,7 +177,7 @@ void field::text_init(){
         for(unsigned int c = 0; c < descriptions->size();c++){
             //if this string is the longest we've seen
             if(descriptions[c].size() > max_width){
-                max_width = descriptions[c].size(); //save its length
+                max_width   = descriptions[c].size(); //save its length
                 max_w_index = c; //save a reference to the winning string
             }
         }
@@ -210,8 +205,7 @@ void field::text_init(){
             alpha = 0xff000000;
         #endif
 
-        my_help_surf =
-            SDL_CreateRGBSurface(0,max_width,total_h,32,red,green,blue,alpha);
+        my_help_surf = SDL_CreateRGBSurface(0,max_width,total_h,32,red,green,blue,alpha);
 
         if(my_help_surf == NULL){
             string error = "Error making ";
@@ -222,8 +216,7 @@ void field::text_init(){
         }
         //color in the help background
         //OU green from colors.h
-        SDL_FillRect(my_help_surf,NULL,
-                                    SDL_MapRGBA(my_help_surf->format,OU_GREEN));
+        SDL_FillRect(my_help_surf,NULL,SDL_MapRGBA(my_help_surf->format,OU_GREEN));
 
 
         int new_row_height = 0;
@@ -232,8 +225,7 @@ void field::text_init(){
             //used to tell it where to draw each line
             SDL_Rect word_dest = {0,0,0,0};
 
-            SDL_Surface* temp_line =
-                    TTF_RenderUTF8_Blended(font,descriptions->at(c).c_str(),color);
+            SDL_Surface* temp_line = TTF_RenderUTF8_Blended(font,descriptions->at(c).c_str(),color);
 
             //account for height of previous lines
             word_dest.y = new_row_height + vert_offset;

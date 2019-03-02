@@ -87,8 +87,7 @@ text_box::text_box(const text_box& other){
 // text_box::~text_box(){
 // }
 
-void text_box::init(TTF_Font* font_in, string text_in, int xloc_in, int yloc_in,
-					int width_in, int height_in){
+void text_box::init(TTF_Font* font_in, string text_in, int xloc_in, int yloc_in,int width_in, int height_in){
 
 	font = font_in;
 	text = text_in;

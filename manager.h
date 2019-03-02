@@ -78,31 +78,11 @@ class manager{
 	    //! searches only a specific line of parameters
 	    field* get_param_from_line(const string& target_param,map<string,field*>& target_line);
 
-		//############# GIVE_FIELDS_DEFAULTS() HELPERS ########################################################//
-		// void give_int4_fields_defaults();
-
-		// void give_int4_array_fields_defaults();
-
-		// void give_real8_fields_defaults();
-
-		// void give_string_fields_defaults();
-
-		// void give_r8_array_fields_defaults();
-		//####################################################################################################//
-
 		//! updates input_maker's vectors with the field's new values (from user)
 		/*\return true means that there was no errors in string->data conversion
 		 *\return false means that an stoi/stod function failed,
 	     *and the file wasn't created */
 		// bool update_io_maker(vector<string>& bad_input_list);
-
-		//! loads in tiles from the tile input file using regular expressions and file i/o
-		/*! this init member uses fstream and regex to open and process a text file,
-	     *which for now defaults to tiles.txt, in the folder tile_Input,
-	     *so that information on what parameter tiles/cards need
-		 *can be loaded into the program, and new tiles can be loaded without
-	     *rebuilding */
-		void init(const string& graphical_config_file);
 
 		//! does the work of locking all the fields in the passed map
 		void update_locks_in_line(map<string,field*>& target_line, bool lock_value);

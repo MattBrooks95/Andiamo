@@ -107,7 +107,6 @@ void manager::init_parameter_graphics(){
 	vector<string> file_lines;
 	fill_vector_with_configuration_lines_from_file(file_name,file_lines);
 
-
 	//this line specifies an image name
 	regex* img_pattern = regex_access->get_regular_expression(RE_IMG);
 
@@ -135,7 +134,7 @@ void manager::init_parameter_graphics(){
 	string tile_name;
 	string display_name;
 	string image_name;
-	int width = 0;
+	int width  = 0;
 	int height = 0;
 
 	regex* regular_expression = NULL;
@@ -158,11 +157,16 @@ void manager::init_parameter_graphics(){
 		} else if(line_iterator->compare("andy") == 0){
 			cout << "found andy!:" << *line_iterator << endl;
 			//end current parameter, push into current line map
-			//save
 			field* new_field = new field(tile_name,display_name,image_name,width,height,temp_descriptions);
 
-			new_field->update_text(parameter_default);
 			new_field->set_regular_expression(regular_expression);
+			new_field->set_image_path(image_path);
+
+			//x and y coordinates calculated later, by calc_corners
+			new_field->get_text_box().init(sdl_access->font,parameter_default,0,0,new_field->get_size().width,25);
+			new_field->graphics_init();
+			// new_field->update_text(parameter_default);
+			new_field->text_init();
 
 			temp_descriptions = NULL;
 
@@ -202,7 +206,6 @@ void manager::init_parameter_graphics(){
 
 		}
 	}
-
 }
 
 void handle_description_line(vector<string>* temp_descriptions, string& description_line){
@@ -255,285 +258,6 @@ void handle_name_line_match(const smatch& groups_from_line_match, string& tile_n
 
 	cout << "\n\nNAME MATCH" << endl;
 	cout << tile_name << " " << display_name << endl;
-}
-
-			// cout << "parameter contents!" << *line_iterator << endl;
-
-			// if (regex_match(*line_iterator, *desc_pattern)){
-			// // should use a regular expression to check the image type instead...
-			// // also it makes sense to allow JPGS and GIFS as well
-			// } else if(regex_match(*line_iterator,groups_from_line_match,*img_pattern)){
-			// 	int expected_matches = 2;
-			// 	if (groups_from_line_match.size() != expected_matches){
-			// 		print_matching_message("tile image",expected_matches);
-			// 	}
-			// 	cout << "\n\nIMAGE MATCH" << endl;
-			// 	image_name = groups_from_line_match[1];
-			// 	cout << *line_iterator << ":" << tile_name << endl;
-			// } else if(regex_match(*line_iterator,groups_from_line_match,*field_size_pattern)){
-			// 	cout << "\n\nFIELD SIZE MATCH" << endl;
-			// 	cout << *line_iterator << " " << groups_from_line_match[1] << " " << groups_from_line_match[2] << endl;
-			// 	width  = stoi(groups_from_line_match[1]);
-			// 	height = stoi(groups_from_line_match[2]);
-			// // //used to tell if the name line is of the form ->HFvariable:EnglishVariable
-			// } else if(regex_match(*line_iterator,groups_from_line_match,*name_pattern)){
-			// 	// need to set the display name and the actual HF parameter name
-			// 	uint matches_for_just_parameter_name = 2;
-			// 	uint matches_for_parameter_and_display_names = 3;
-
-			// 	uint match_group_size = groups_from_line_match.size();
-
-			// 	if (match_group_size < matches_for_just_parameter_name){
-			// 		print_matching_message("parameter_name",matches_for_just_parameter_name);
-			// 		continue;
-			// 	}
-
-			// 	if (match_group_size == matches_for_just_parameter_name){
-			// 		tile_name = groups_from_line_match[1];
-			// 	}
-
-			// 	if(match_group_size == matches_for_parameter_and_display_names){
-			// 		display_name = groups_from_line_match[2];
-			// 	}
-
-			// 	cout << "\n\nNAME MATCH" << endl;
-			// 	cout << *line_iterator << ":" << tile_name << " " << display_name << endl;
-			// } else {
-			// 	logger_access->push_msg("Parameter content line didn't match a regular expression!");
-			// }
-
-
-
-
-void manager::init(const string& graphical_config_file){
-	// configuration_file_path = system_access->get_home() + "/Andiamo/tile_Input/";
-
-	// //ins will refer to the stream to the input file for tile information
-	// fstream ins;
-
-	// //open the file
-
-	// if(graphical_config_file.size() == 0){
-	// 	ins.open((configuration_file_path + "tiles.txt").c_str());
-	// } else {
-	// 	ins.open((configuration_file_path + graphical_config_file));
-	// }
-
-	// //if something went wrong, print an error message to console
-	// if(ins.fail()){
-	// 	string err = "Fatal error: Failed to open tile input file: ";
-	// 	err       += configuration_file_path + "tiles.txt";
-	// 	logger_access->push_error(err);
-	// }
-
-	// //used to store unidentified line
-	// string temp_string;
-
-	// //this line specifies an image name
-	// regex img_pattern(RE_IMG);
-
-	// //this recognizes lines that specify tile size lines should be of the
-	// //form widthxheight EX:100x100
-	// regex field_size_pattern(RE_FIELD_SIZE);
-
-	// //this line specifies a tile name
-	// regex name_pattern(RE_TILE_NAME);
-
-	// //used to tell if the name line is of the form ->HFvariable:EnglishVariable
-	// regex semi_pattern(RE_SEMI);
-
-	// //describes a pattern for tile/input descriptors that starts with a 'c'
-	// //and is followed by exactly one space,
-	// //then contains any number of any characters
-	// regex desc_pattern(RE_DESCRIPTION);
-
-	// //this line recognizes the lines that separate
-	// //the parameters into lines that correspond with the input manual,
-	// //so they can be stored together
-	// regex line_separator(RE_LINE_SEPARATOR);
-
-
-	// getline(ins,temp_string);//priming read
-
-	// //loop over the entire tile_Input/tiles.txt configuration file
-	// while(!ins.eof() ){
-
-	// 	//get out on potentially erroneous last run
-	// 	if(ins.fail()) break;
-
-	// 	//reset new line container each run of loop
-	// 	map<string,field*> new_line;
-	// 	vector<field*> params_vector;
-
-	// 	string line_name;
-
-	// 	//read until a line start indicator/separator is found
-	// 	while( !ins.eof() && !regex_match(temp_string,line_separator) ){
-
-	// 		if( ins.fail() || temp_string.empty() ){
-	// 			//we may not necessarily find this case in error,
-	// 			//as the very last group in the config file won't
-	// 			//end with a line separator, because no line will come after it
-
-	// 			//ran out of file, get out of this function
-	// 			return;
-	// 		}
-	// 		getline(ins,temp_string);
-	// 	}
-
-	// 	strip_char(temp_string,'#');
-	// 	//cout << "Found a line name:"+temp_string << endl;
-	// 	logger_access->push_msg("Found a line name:"+temp_string);
-	// 	line_names_read_order.push_back(temp_string);
-
-	// 	//save line name for later
-	// 	line_name = temp_string;
-
-	// 	//grab a new line
-	// 	getline(ins,temp_string);
-
-	// 	//outer loop runs over the # of grouped parameters (lines in HF input)
-	// 	while( !regex_match(temp_string,line_separator) && !ins.eof()){
-
-	// 		//these parameter should be re-declared for each field
-	// 		//names for generalized tiles
-	// 		string tile_name = "bad tile name";
-
-	// 		//display name for tiles, may or may not be used
-	// 		string display_name = "no display name";
-
-	// 		//names for tile's picture file
-	// 		string img_name = "bad image name";
-
-	// 		//description for this input tile
-	// 		string description;
-
-	// 		//save all lines for description of tile
-	// 		vector<string> temp_descriptions;
-
-	// 		//dimensions of given image for tile, -1 is bad input
-	// 		int tile_w = -1, tile_h = -1;
-
-
-	// 		//inner loop runs name -> andy as many times as needed, until a
-	// 		//line separator is found
-
-	// 		//loop until separator 'andy' is found
-	// 		while(temp_string != "andy" && !ins.fail()){
-	// 			logger_access->push_msg("LINE:"+temp_string+"|");
-
-
-	// 			//if this line has '.png' in it,
-	// 			if( regex_match(temp_string,img_pattern) ){
-
-	// 				//process it as an input picture name
-	// 				logger_access->push_msg("Found an image name!: "+temp_string);
-	// 				img_name = temp_string;
-
-	// 			} else if( regex_match(temp_string,desc_pattern)){
-
-	// 				logger_access->push_msg("Found a description line.: "+
-	// 									  temp_string);
-
-	// 				//remove 'c ' at start of desc lines
-	// 				description = temp_string.erase(0,2);
-	// 				temp_descriptions.push_back(temp_string);
-
-
-	// 			} else if( regex_match(temp_string,field_size_pattern) ){
-
-	// 				logger_access->push_msg("Found field size specification!: "+
-	// 									  temp_string);
-
-	// 				//remove spaces
-	// 				strip_char(temp_string,' ');
-
-	// 				//split into a vector of strings
-	// 				vector<string> dimensions = split(temp_string,'x');
-	// 				try{
-	// 				  //first number in the line is the width
-	// 				  tile_w = stoi(dimensions[0]);
-
-	// 				  //second number in the line is the width
-	// 				  tile_h = stoi(dimensions[1]);
-	// 				} catch (invalid_argument& error){
-	// 					string err = "Error in manager::init(), tile given:";
-	// 					err       +=    "illegal size parameters: ";
-	// 					err       += dimensions[0]+"x"+dimensions[1];
-	// 					logger_access->push_error(err);
-	// 				}
-	// 			}  else if( regex_match(temp_string,name_pattern) ){
-	// 				 logger_access->push_msg("Found a tile name!: "+temp_string);
-	// 				if( regex_search(temp_string,semi_pattern) ){
-	// 					vector<string> tokens = split(temp_string,':');
-	// 					tile_name = tokens[0];
-	// 					display_name = tokens[1];
-	// 				} else {
-
-	// 					tile_name = temp_string;
-	// 					display_name = temp_string;
-	// 				}
-	// 			} else {
-
-	// 				string err = "Error! This line failed to hit a case in the";
-	// 				err       += " regex checks:"+temp_string;
-	// 				err       += "\nIt may be a missing 'Andy' separator";
-	// 				err       += " in the tiles.txt config file.";
-	// 				logger_access->push_error(err);
-
-	// 			}
-
-
-	// 			if( !ins.fail() ){
-	// 				//read in again to update loop
-	// 				getline(ins,temp_string);
-	// 			} else {
-	// 				return;
-	// 			}
-	// 		}
-	// 		field* temp_field = NULL;
-	// 		temp_field = new field(tile_name,display_name,img_name,tile_w,tile_h);
-
-	// 		//copy the saved description lines to the new field
-	// 		//before it is placed in the map
-	// 		for(uint c = 0; c < temp_descriptions.size();c++){
-	// 			temp_field->descriptions.push_back(temp_descriptions[c]);
-	// 		}
-
-	// 		logger_access->push_msg("##########PUSHING FIELD###################");
-	// 		temp_field->print();
-	// 		//cout << temp_field->tile_name << endl;
-	// 		logger_access->push_msg("##########################################");
-
-	// 		//push the field into the lookup map for that parameter's line
-	// 		new_line.emplace(tile_name,temp_field);
-
-	// 		//also push the field into the parameter vector
-	// 		params_vector.push_back(temp_field);
-
-	// 		if( !ins.fail() ){
-	// 			//"andy" is the current line, so go ahead and read the next one
-	// 			getline(ins,temp_string);
-	// 		}
-
-	// 		temp_field = NULL;
-	// 	}
-
-	// 	//at this point, we have hit the separator for another
-	// 	//group of parameters
-
-	// 	//store the map of parameters in the map of lines, and
-	// 	//give it the name we found earlier
-	// 	fields.emplace(line_name,new_line);
-	// 	fields_order.push_back(params_vector);
-	// }
-
-	// //close the file
-	// ins.close();
-
-	// logger_access->push_msg("FIELD MAP AFTER MANAGER.init():");
-	// print_all();
-	// logger_access->push_msg("##############################################");
 }
 
 manager::~manager(){

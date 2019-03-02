@@ -40,8 +40,7 @@ class text_box{
 		//! sets up the location of the text box on the screen and the renderer
 		/* this information should be passed in from whatever tile or button
 		 *is instantiating the text box */
-		void init(TTF_Font* font_in,string text_in,int xloc_in,
-					int yloc_in,int width_in, int height_in);
+		void init(TTF_Font* font_in,string text_in,int xloc_in,int yloc_in,int width_in, int height_in);
 
 		//! set a pointer to a test pattern for this box's input
 		/*! this will enable live input checking */
@@ -77,7 +76,7 @@ class text_box{
 		//! update the text of this text box
 		/*! \param new_text is the test to be added
 		 *\param test is a pointer to the regex pattern to use.
-		 *NULL if not needed. */ 
+		 *NULL if not needed. */
 		void update_text(const string& new_text);
 
 		//! update the texture when the text is changed

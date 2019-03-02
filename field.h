@@ -75,7 +75,7 @@ class field{
     }
 
     //! fields should save their render information to save time
-    void graphics_init(string image_p_in);
+    void graphics_init();
 
     //! called from graphics_init(), this sets up the text's surface
     void text_init();
@@ -128,8 +128,10 @@ class field{
     //! getter for the private tile_size field
     tile_size get_size() { return size;}
 
-    //!< getter for private image name field
+    //! getter for private image name field
     string get_img_name(){ return image_name;}
+
+    void set_image_path(const string& image_path_in){ image_path = image_path_in;}
 
     //! the tile_name should be a parameter name for an HF_input file
     /*! this name should correspond to a parameter name in the HF_config file.
