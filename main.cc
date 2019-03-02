@@ -112,7 +112,7 @@ int main(int argc, char *argv[]){
 	// tile_access->init_fields_graphics();
 
 	sdl_access->calc_corners();
-	return 0;
+	// return 0;
 	input_maker io_handler;
 	io_access = &io_handler;
 	// io_access->init(/*input_maker_config_file*/);

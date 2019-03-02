@@ -70,6 +70,10 @@ class field{
     //! frees dynamic memory
     ~field();
 
+    void set_regular_expression(regex* regular_expression){
+        my_text_box.set_regular_expression(regular_expression);
+    }
+
     //! fields should save their render information to save time
     void graphics_init(string image_p_in);
 

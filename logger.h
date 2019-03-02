@@ -85,6 +85,14 @@ class logger{
 	//! returns a reference to the stream that the log messages will go to
 	ofstream& get_stream(){ return errors_out;}
 
+	vector<string>& get_errors_vector(){
+		return message_vector;
+	}
+
+	vector<string>& get_message_vector(){
+		return errors_vector;
+	}
+
   private:
 	//! keep track of the number of error messages pushed
 	int error_msg_num;

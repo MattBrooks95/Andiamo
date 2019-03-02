@@ -118,28 +118,15 @@ void manager::init_parameter_graphics(){
 	//this line specifies a tile name
 	regex* name_pattern = regex_access->get_regular_expression(RE_TILE_NAME);
 
-	//used to tell if the name line is of the form ->HFvariable:EnglishVariable
-	// regex* semi_pattern = regex_access->get_regular_expression(RE_SEMI);
-
-	//describes a pattern for tile/input descriptors that starts with a 'c'
-	//and is followed by exactly one space,
-	//then contains any number of any characters
+	/*describes a pattern for tile/input descriptors that starts with a 'c'
+	 *and is followed by exactly one space,
+	 *then contains any number of any characters */
 	regex* desc_pattern = regex_access->get_regular_expression(RE_DESCRIPTION);
 
-	//this line recognizes the lines that separate
-	//the parameters into lines that correspond with the input manual,
-	//so they can be stored together
+	/*this line recognizes the lines that separate
+	 *the parameters into lines that correspond with the input manual,
+	 *so they can be stored together*/
 	regex* line_separator = regex_access->get_regular_expression(RE_LINE_SEPARATOR);
-
-// filling:
-// map<string,map<string,field*>*> fields;
-
-// ELAB:Projectile Energy
-// c Variable name in HF: ELAB
-// c energy of projectile in MeV in the lab
-// andy_tile.png
-// 160x50
-// andy
 
 	map<string, field*>* line_map = NULL;
 	field* currently_processing_parameter = NULL;
@@ -151,12 +138,12 @@ void manager::init_parameter_graphics(){
 	int width = 0;
 	int height = 0;
 
-	//if I convert this to a pointer we can save copying
+	regex* regular_expression = NULL;
+	string parameter_default;
+
 	vector<string>* temp_descriptions = NULL;
 
 	smatch groups_from_line_match;
-    // field(string tile_name_in,string display_name_in,string image_name_in,
-    //         int width, int height);
 
 	for(vector<string>::iterator line_iterator = file_lines.begin();
 		line_iterator != file_lines.end();
@@ -164,10 +151,8 @@ void manager::init_parameter_graphics(){
 
 		if(regex_match(*line_iterator,*line_separator)){
 			cout << "found a line indicator!:" << *line_iterator << endl;
-			//push line map into vector, start over
 
 			fields.insert(std::pair<string,map<string,field*>*>(line_name,line_map));
-			line_map = NULL;
 
 			line_map = new map<string, field*>();
 		} else if(line_iterator->compare("andy") == 0){
@@ -175,6 +160,10 @@ void manager::init_parameter_graphics(){
 			//end current parameter, push into current line map
 			//save
 			field* new_field = new field(tile_name,display_name,image_name,width,height,temp_descriptions);
+
+			new_field->update_text(parameter_default);
+			new_field->set_regular_expression(regular_expression);
+
 			temp_descriptions = NULL;
 
 			cout << new_field->get_string() << endl;
@@ -192,15 +181,21 @@ void manager::init_parameter_graphics(){
 
 			if (regex_match(*line_iterator, *desc_pattern)){
 				handle_description_line(temp_descriptions,*line_iterator);
-			// should use a regular expression to check the image type instead...
-			// also it makes sense to allow JPGS and GIFS as well
+			//should use a regular expression to check the image type instead...
+			//also it makes sense to allow JPGS and GIFS as well
 			} else if(regex_match(*line_iterator,groups_from_line_match,*img_pattern)){
 				image_name = handle_image_name_line(groups_from_line_match);
 			} else if(regex_match(*line_iterator,groups_from_line_match,*field_size_pattern)){
 				handle_field_size_match(groups_from_line_match,width,height);
-			// //used to tell if the name line is of the form ->HFvariable:EnglishVariable
+			//used to tell if the name line is of the form ->HFvariable:EnglishVariable
 			} else if(regex_match(*line_iterator,groups_from_line_match,*name_pattern)){
+				//assigns to tile & display name strings
 				handle_name_line_match(groups_from_line_match,tile_name,display_name);
+
+				regular_expression = get_map_entry(parameter_regexps,tile_name,logger_access->get_message_vector());
+
+				parameter_default = get_map_entry(parameter_defaults,tile_name,logger_access->get_message_vector());
+
 			} else {
 				logger_access->push_msg("Parameter content line didn't match a regular expression!");
 			}
@@ -211,12 +206,12 @@ void manager::init_parameter_graphics(){
 }
 
 void handle_description_line(vector<string>* temp_descriptions, string& description_line){
-				cout << "DESCRIPTION!" << endl;
-				description_line.erase(0,2);
-				if (temp_descriptions == NULL){
-					temp_descriptions = new vector<string>();
-				}
-				temp_descriptions->push_back(description_line);
+	cout << "DESCRIPTION!" << endl;
+	description_line.erase(0,2);
+	if (temp_descriptions == NULL){
+		temp_descriptions = new vector<string>();
+	}
+	temp_descriptions->push_back(description_line);
 }
 
 string handle_image_name_line(const smatch& groups_from_line_match){

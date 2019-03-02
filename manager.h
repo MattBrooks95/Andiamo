@@ -15,6 +15,8 @@
 #include<SDL2/SDL_image.h>
 #include<regex>
 
+#include "std_helpers.h"
+
 #include "regex_manager.h"
 #include "field.h"
 #include "input_maker.h"
