@@ -8,8 +8,9 @@
 //########################################################################
 
 //######## patterns used by the tile manager ###########
-#define RE_IMG "\\s*?.*\\.png\\s*?"
-#define RE_FIELD_SIZE "\\s*?[0-9]+?\\s*?x\\s*?[0-9]+?\\s*?"
+#define RE_IMG "\\s*?(.*\\.png)\\s*?"
+#define RE_FIELD_SIZE "\\s*?([0-9]+?)\\s*?x\\s*?([0-9]+?)\\s*?"
+//see if you can make these identify the line AND set up the proper capture groups
 #define RE_TILE_NAME "\\s*?([a-z0-9_A-Z]+?):?(.*)?\\s*?"
 #define RE_SEMI ":"
 #define RE_DESCRIPTION "c .*"

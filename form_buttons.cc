@@ -96,7 +96,7 @@ void form_button::screen_size(){
 	int old_width = sdl_access->get_win_size()->width;
 	int old_height = sdl_access->get_win_size()->height;
 	if(old_width < 800){
-		old_width = 800; 
+		old_width = 800;
 		update = true;
 	}
 
@@ -167,7 +167,7 @@ void form_button::init_values_helper(){
 
 
 	//get reference to this form's pages
-	vector<page>& pages = my_form.get_pages();   
+	vector<page>& pages = my_form.get_pages();
 
 	//if default values exist, and the there is at least one page made
 	if(init_array != NULL && pages.size() != 0){
@@ -207,7 +207,7 @@ void form_button::init_values_helper(){
 void form_button::init_form_with_vec(form& fill_me,vector<string>& use_me){
 
 	//get reference to this form's pages
-	vector<page>& pages = fill_me.get_pages();    
+	vector<page>& pages = fill_me.get_pages();
 
 	//if default values exist, and the there is at least one page made
 	if(!use_me.empty() && pages.size() != 0){
@@ -243,7 +243,7 @@ void form_button::init_form_with_vec(form& fill_me,vector<string>& use_me){
 
 }
 
-void form_button::save_information(ofstream& context_out){ 
+void form_button::save_information(ofstream& context_out){
 
 	//get a reference to all of the pages in this form
 	vector<page>& pages_ref = my_form.get_pages();
@@ -280,11 +280,11 @@ void form_button::save_information(ofstream& context_out,form& this_form){
 		//information to the new config file
 		for(uint text_box = 0; text_box < tb_array.size(); text_box++){
 			context_out << tb_array[text_box].get_text();
-			if(text_box != tb_array.size()-1 || page != pages_ref.size() - 1) context_out << " ";     
+			if(text_box != tb_array.size()-1 || page != pages_ref.size() - 1) context_out << " ";
 		}
 
 	}
-	
+
 
 }
 //#############################################################################
@@ -312,8 +312,7 @@ void icntrl8_form_button::click_helper(SDL_Event& mouse_event){
 	logger_access->push_msg("Clicked icntrl8/cutoff nuclei button");
 
 	//grab the value for icntrl8 as it exists with the GUI right now
-	int curr_val =
-		stoi(tile_access->fields.at("line_6").at("ICNTRL8")->get_text());
+	int curr_val = stoi(tile_access->fields.at("line_6")->at("ICNTRL8")->get_text());
 
 	//don't consider doing anything if the form is locked
 	if(!is_locked){
@@ -360,7 +359,7 @@ void icntrl8_form_button::page_creation_helper(){
 	//grab val from parameter field, so the pages can be set up
 	try{
 
-	  icntrl8_val = stoi(tile_access->fields.at("line_6").at("ICNTRL8")->get_text());
+	  icntrl8_val = stoi(tile_access->fields.at("line_6")->at("ICNTRL8")->get_text());
 
 	} catch (out_of_range& range_error){
 
@@ -550,7 +549,7 @@ void icntrl6_form_button::click_helper(SDL_Event& mouse_event){
 		//draw the main context
 		sdl_access->draw();
 
-		//draw the form selection landing 
+		//draw the form selection landing
 		show_landing();
 
 		//have sdl_helper update the display
@@ -759,7 +758,7 @@ void icntrl6_form_button::search_spectra_page_creation(){
 	int current_INM1_val;
 	try{
 
-		current_INM1_val = stoi(tile_access->fields.at("line_10").at("INM1")->get_text()); 
+		current_INM1_val = stoi(tile_access->fields.at("line_10")->at("INM1")->get_text());
 	} catch(invalid_argument& arg_error){
 		logger_access->push_error("Error reading current INM1/#Search Spectra value for page creation",
 					" logics.");
@@ -792,7 +791,7 @@ void icntrl6_form_button::search_spectra_page_helper(){
 
 	try{
 
-	  INM1_val = stoi(tile_access->fields.at("line_10").at("INM1")->get_text());
+	  INM1_val = stoi(tile_access->fields.at("line_10")->at("INM1")->get_text());
 
 	} catch ( out_of_range& range_error ){
 	  logger_access->push_error("ICNTRL6-INM1 could not be found in the field map.",
@@ -883,7 +882,7 @@ void icntrl6_form_button::cross_sections_page_creation(){
 
 	int current_INM2_val;
 	try{
-		current_INM2_val = stoi(tile_access->fields.at("line_10").at("INM2")->get_text()); 
+		current_INM2_val = stoi(tile_access->fields.at("line_10")->at("INM2")->get_text());
 	} catch(invalid_argument& arg_error){
 		logger_access->push_error("Error reading current INM2/cross sections value for page creation",
 					" logics.");
@@ -914,7 +913,7 @@ void icntrl6_form_button::cross_sections_page_creation(){
 void icntrl6_form_button::cross_sections_helper(){
 
 	try{
-	  INM2_val = stoi(tile_access->fields.at("line_10").at("INM2")->get_text());
+	  INM2_val = stoi(tile_access->fields.at("line_10")->at("INM2")->get_text());
 
 	} catch ( out_of_range& range_error ){
 	  logger_access->push_error("ICNTRL6-INM2 could not be found in the field map.",
@@ -1044,7 +1043,7 @@ bool icntrl6_form_button::make_output(ofstream& outs,vector<index_value>& bad_in
 		logger_access->push_error("Icntrl6_form_button::make_output was not given a valid output file stream.",
 					"exiting.");
 		return false;
-	}   
+	}
 	outs << "ICNTRL6 OUTPUT" << endl;
 
 	if(!check_values(bad_input_list)){
@@ -1057,10 +1056,10 @@ bool icntrl6_form_button::make_output(ofstream& outs,vector<index_value>& bad_in
 	vector<page>& parity_ref = my_form.get_pages();
 	//handle for accessing search_spectra form's data
 	vector<page>& search_ref = search_spectra.get_pages();
-	//handle for accessing cross_section form's data   
+	//handle for accessing cross_section form's data
 	vector<page>& cross_ref  = cross_sections.get_pages();
 
-	
+
 
 	//INM1 is up first
 	if(search_ref.size() != 0){
@@ -1072,7 +1071,7 @@ bool icntrl6_form_button::make_output(ofstream& outs,vector<index_value>& bad_in
 			for(uint d = 0; d < search_ref.at(c).get_text_boxes().size(); d += columns){
 				outs I search_ref[c].get_text_boxes()[d].get_text();
 				outs << setprecision(4);
-				// make this a loop - Brooks    
+				// make this a loop - Brooks
 				outs F search_ref[c].get_text_boxes()[d+1].get_text() F search_ref[c].get_text_boxes()[d+2].get_text();
 				outs F search_ref[c].get_text_boxes()[d+3].get_text() F search_ref[c].get_text_boxes()[d+4].get_text();
 				outs F search_ref[c].get_text_boxes()[d+5].get_text() F search_ref[c].get_text_boxes()[d+6].get_text();
@@ -1159,7 +1158,7 @@ void icntrl6_form_button::save_information(ofstream& context_out){
 		form_button::save_information(context_out,cross_sections);
 		context_out << endl;
 	} else if(init_array != NULL){
-		
+
 		//###### print parity info data ########################
 		context_out << "FORM:ICNTRL6 ";
 		for(UINT c = 0; c < (*init_array).size();c++){
@@ -1246,7 +1245,7 @@ void icntrl10_button::init(){
 		blue  =	0x00ff0000;
 		alpha = 0xff000000;
 	#endif
-	over_surface = 
+	over_surface =
 		SDL_CreateRGBSurface(0,800,800,32,red,green,blue,alpha);
 
 
@@ -1260,7 +1259,7 @@ void icntrl10_button::init(){
 	int offset = 20;
 	SDL_Rect source = {20,0,offset,offset};
 	SDL_Rect destination = {750,26,20,20};
-	
+
 	//draw max page # in top right
 	SDL_BlitSurface(number_sprites,&source,over_surface,&destination);
 
@@ -1289,7 +1288,7 @@ void icntrl10_button::init(){
 	} catch(out_of_range& not_found){
 
 		init_array = NULL;
-	}   
+	}
 }
 
 void icntrl10_button::set_corner_loc(int x, int y){
@@ -1361,7 +1360,7 @@ void icntrl10_button::click_helper(SDL_Event& mouse_event){
 		active = true;
 
 		string NNSIG_str;
-		NNSIG_str = tile_access->fields.at("line_11").at("NNSIG")->get_text();
+		NNSIG_str = tile_access->fields.at("line_11")->at("NNSIG")->get_text();
 
 		unsigned int current_NNSIG;
 		current_NNSIG = stoi(NNSIG_str);
@@ -1428,7 +1427,7 @@ void icntrl10_button::event_loop(SDL_Event& big_event){
 				break;
 			case SDL_WINDOWEVENT:
 				break;
-		
+
 			//nop
 			case 1776:
 				break;
@@ -1459,7 +1458,7 @@ void icntrl10_button::event_loop_click(SDL_Event& mouse_event,bool& done,
 		//consider if the right arrow was clicked
 		} else if(right_arrow.clicked(mouse_event) ){
 			logger_access->push_msg("clicked the page right button");
-			page_right();      
+			page_right();
 			//current_context++;
 
 		//consider if the left arrow was clicked
@@ -1613,10 +1612,10 @@ void icntrl10_button::init_values_helper(){
 		  //into the text boxes
 		  vector<string> each_box = split(each_page[page_info],',');
 		  for(UINT box_line = 0; box_line < each_box.size();box_line++){
-		  
+
 			//insert this array of actual information into the array
 			//that will be used to fill in values later
-			text_box_info.push_back(each_box[box_line]);  
+			text_box_info.push_back(each_box[box_line]);
 
 		  }
 		}
@@ -1640,7 +1639,7 @@ void icntrl10_button::init_values_helper(){
 
 		}
 
-	} 
+	}
 
 }
 
@@ -1653,7 +1652,7 @@ void icntrl10_button::init_data(unsigned int num_contexts){
 	} catch(out_of_range& not_found){
 
 		init_array = NULL;
-	}   
+	}
 
 	//resize the vector to contain the correct number of input screens
 	data.resize(num_contexts);
@@ -1703,7 +1702,7 @@ void icntrl10_button::draw_help_msg(SDL_Event& big_event,SDL_Rect& destination){
 	sdl_access->present();
 
 	//spin until they hit a key, or click somewhere on the screen
-	while(SDL_PollEvent(&big_event) == 0 || big_event.type == SDL_MOUSEBUTTONUP);				
+	while(SDL_PollEvent(&big_event) == 0 || big_event.type == SDL_MOUSEBUTTONUP);
 
 }
 
@@ -1714,7 +1713,7 @@ bool icntrl10_button::make_output(ofstream& outs,vector<index_value>& icntrl10_e
 	//implemented yet
 	//if(my_form.get_pages().size() == 0) return true;
 	//else return false;
-	
+
 	bool return_value = true;
 
 	cout << "Hello from icntrl10::make_output" << endl;
@@ -1797,7 +1796,7 @@ void icntrl4_form_button::click_helper(SDL_Event& mouse_event){
 			my_form.form_event_loop(mouse_event);
 
 		//in this case the form has been previously created, but the icntrl8 value has not changed, so nothing needs to be done
-		} else if(my_form.prev_init_value == stoi(tile_access->fields.at("line_8").at("NCH4")->get_text()) ){
+		} else if(my_form.prev_init_value == stoi(tile_access->fields.at("line_8")->at("NCH4")->get_text()) ){
 		//let the form know that it is now active
 		my_form.toggle_active();
 		//enter the mini loop for form entry
@@ -1825,7 +1824,7 @@ void icntrl4_form_button::page_creation_helper(){
 
 	//grab val from parameter field, so the pages can be set up
 	try{
-	  nch4_val = stoi(tile_access->fields.at("line_8").at("NCH4")->get_text());
+	  nch4_val = stoi(tile_access->fields.at("line_8")->at("NCH4")->get_text());
 	} catch (out_of_range& range_error){
 	  logger_access->push_error("NCH4 could not be found in the field map",
 				  range_error.what());
@@ -1912,7 +1911,7 @@ bool icntrl4_form_button::make_output(ostream& outs,vector<index_value>& bad_inp
 		//note here that I'm using the string 'spaces' to
 		// approximate the fortran 5x formatting tag
 		outs << setprecision(2) F5 boxes->at(c).get_text() << spaces;
-		outs << setprecision(1) F5 boxes->at(c+1).get_text() << spaces I boxes->at(c+2).get_text() F5 boxes->at(c+3).get_text() << endl; 
+		outs << setprecision(1) F5 boxes->at(c+1).get_text() << spaces I boxes->at(c+2).get_text() F5 boxes->at(c+3).get_text() << endl;
 	}
 	return true;
 }
@@ -1962,8 +1961,8 @@ void ilv3_ilv5_form_button::click_helper(SDL_Event& mouse_event){
 
 	logger_access->push_msg("clicked the icntrl4/resolved levels info button ");
 
-		int curr_ilv3 = stoi(tile_access->fields.at("line_5").at("ILV3")->get_text());
-		int curr_ilv5 = stoi(tile_access->fields.at("line_5").at("ILV5")->get_text());
+		int curr_ilv3 = stoi(tile_access->fields.at("line_5")->at("ILV3")->get_text());
+		int curr_ilv5 = stoi(tile_access->fields.at("line_5")->at("ILV5")->get_text());
 
 	//don't consider doing anything if the form is locked
 	if(!is_locked){
@@ -2041,8 +2040,8 @@ void ilv3_ilv5_form_button::page_creation_helper(){
 	int ilv5_val;
 	try{
 
-		ilv3_val = stoi(tile_access->fields.at("line_5").at("ILV3")->get_text());
-		ilv5_val = stoi(tile_access->fields.at("line_5").at("ILV5")->get_text());
+		ilv3_val = stoi(tile_access->fields.at("line_5")->at("ILV3")->get_text());
+		ilv5_val = stoi(tile_access->fields.at("line_5")->at("ILV5")->get_text());
 
 	} catch(invalid_argument& bad_arg){
 		logger_access->push_error("Ilv3 or ilv5's value failed to conver to int in page_creation_helper.",
@@ -2078,7 +2077,7 @@ void ilv3_ilv5_form_button::page_creation_helper(){
 	}
 	//the fourth column label is the same for both cases
 	pass_column_titles.push_back("Delta for A, Z");
-	  
+
 	int rows_per_page = floor(725.0 / 35);
 
 	//calculate how many pages are needed

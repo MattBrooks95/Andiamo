@@ -11,7 +11,7 @@ extern sdl_help* sdl_access;
 extern asset_manager* asset_access;
 
 field::field(string tile_name_in,string display_name_in,string image_name_in,
-             int width, int height){
+             int width,int height,vector<string>* descriptions_in){
     tile_name = tile_name_in;
     display_name = display_name_in;
 
@@ -20,6 +20,8 @@ field::field(string tile_name_in,string display_name_in,string image_name_in,
 
     size.width = width;
     size.height = height;
+
+    descriptions = descriptions_in;
 
     //start off in normal mode
     help_mode = false;
@@ -47,8 +49,8 @@ field::field(const field& other){
     display_name = other.display_name;
 
     //copy over the description lines, if any
-    for(unsigned int c = 0; c < other.descriptions.size(); c++){
-        descriptions.push_back(other.descriptions[c]);
+    for(unsigned int c = 0; c < other.descriptions->size(); c++){
+        descriptions->push_back(other.descriptions->at(c));
     }
 
     my_text_box.set_text(other.my_text_box.get_text());
@@ -79,6 +81,8 @@ field::field(const field& other){
     my_tex       = NULL;
     my_help_tex  = NULL;
 
+    descriptions = NULL;
+
     size.width  = other.size.width;
     size.height = other.size.height;
 }
@@ -92,6 +96,9 @@ field::~field(){
         logger_access->push_error("Attempted double free in ~field!");
     }
 
+    if(descriptions != NULL){
+        delete(descriptions);
+    }
 }
 
 SDL_Rect field::get_rect() const{
@@ -161,7 +168,7 @@ void field::text_init(){
     //##########################################################################
 
     //this part sets up this tile's help box####################################
-    if(descriptions.size() > 0){
+    if(descriptions->size() > 0){
 
         //find widest description line
         unsigned int max_width = 0;
@@ -172,20 +179,20 @@ void field::text_init(){
         //# of pixels between each line of text
         int vert_offset = 1;
 
-        for(unsigned int c = 0; c < descriptions.size();c++){
+        for(unsigned int c = 0; c < descriptions->size();c++){
             //if this string is the longest we've seen
             if(descriptions[c].size() > max_width){
                 max_width = descriptions[c].size(); //save its length
                 max_w_index = c; //save a reference to the winning string
             }
         }
-        TTF_SizeText(font,descriptions[max_w_index].c_str(),&word_w,&word_h);
+        TTF_SizeText(font,descriptions->at(max_w_index).c_str(),&word_w,&word_h);
 
         //now have help box's width
         max_width = word_w;
 
         //now have help box's height
-        total_h = descriptions.size() * (word_h + vert_offset);
+        total_h = descriptions->size() * (word_h + vert_offset);
 
         //set up the surface's pixel masks. I don't fully understand this
         //but it's from the sdl documentation
@@ -220,13 +227,13 @@ void field::text_init(){
 
 
         int new_row_height = 0;
-        for(unsigned int c = 0; c < descriptions.size();c++){
+        for(unsigned int c = 0; c < descriptions->size();c++){
 
             //used to tell it where to draw each line
             SDL_Rect word_dest = {0,0,0,0};
 
             SDL_Surface* temp_line =
-                    TTF_RenderUTF8_Blended(font,descriptions[c].c_str(),color);
+                    TTF_RenderUTF8_Blended(font,descriptions->at(c).c_str(),color);
 
             //account for height of previous lines
             word_dest.y = new_row_height + vert_offset;
@@ -310,7 +317,7 @@ void field::draw_me(){
 void field::help_toggle(){
 
     //don't do anything if this tile doesn't have a help box
-    if(descriptions.size() == 0) return;
+    if(descriptions->size() == 0) return;
 
     //if it's true, make it false
     if(help_mode){
@@ -322,32 +329,34 @@ void field::help_toggle(){
     help_mode = true;
 
 }
+
+string field::get_string(){
+
+    ostringstream field_info_as_string;
+
+    field_info_as_string << "Tile name: "         << tile_name
+                         << " Tile Image Name: "  << image_name << "\n"
+                         << " CORNER x:y = "      << to_string(xloc)
+                         << ":"                   << to_string(yloc)
+                         << " font hook: "        << to_string(size_t(sdl_access->font));
+
+    if(descriptions == NULL){
+        logger_access->push_msg("get_string() called on field while description vector is still NULL");
+        return "";
+    }
+
+    for(unsigned int c = 0; c < descriptions->size(); c++){
+        field_info_as_string << descriptions->at(c) << "\n";
+    }
+
+    // return_string >> "Help mode?:" >> help_mode;
+
+    return field_info_as_string.str();
+}
+
 void field::print(){
-
-    logger_access->push_msg("Tile name: "+tile_name+
-                          " Tile Image Name: "+image_name);
-    logger_access->push_msg("CORNER x:y = "+to_string(xloc)+":"+to_string(yloc));
-
-    if(sdl_access != NULL){
-        logger_access->push_msg("SDL pointers texture:renderer = "+
-                                to_string(size_t(&my_tex))+":"+
-                                to_string(size_t(sdl_access->renderer)));
-    } else {
-        string msg = "Couldn't print texture or renderer pointers,";
-        msg       += " sdl_access is NULL.";
-        logger_access->push_msg(msg);
-    }
-    logger_access->push_msg("font hook: "+to_string(size_t(sdl_access->font)) );
-    logger_access->push_msg("Description lines:");
-
-    for(unsigned int c = 0; c < descriptions.size();c++){
-        logger_access->push_msg(descriptions[c]);
-    }
-    string yay_or_nay;
-    if(help_mode) yay_or_nay = "Yes";
-    else yay_or_nay = "No";
-    logger_access->push_msg("Help mode: "+yay_or_nay);
-    size.print();
+    string field_as_string = get_string();
+    logger_access->push_msg(field_as_string);
 }
 
 void field::clicked(SDL_Event& event, const int& click_x,const int& click_y){

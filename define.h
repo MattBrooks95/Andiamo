@@ -8,7 +8,7 @@
 #define C_PAIR std::pair<string,card*>
 
 //! shorter type declaration for a map of string:(string:field) pairs
-#define FIELDS_MAP map<string,map<string,field*>>
+#define FIELDS_MAP map<string,map<string,field*>*>
 
 //! shorter type declaration fo ra vector of field pointers (as in manager)
 #define FIELDS_VEC vector<vector<field*>>

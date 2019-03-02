@@ -71,7 +71,7 @@ void manager::init_parameter_configurations(){
 	vector<string> file_lines;
 	fill_vector_with_configuration_lines_from_file(file_name,file_lines);
 
-	regex* comment_line = regex_access->get_regular_expression(RE_COMMENT_LINE);
+	regex* comment_line       = regex_access->get_regular_expression(RE_COMMENT_LINE);
 	regex* default_value_line = regex_access->get_regular_expression(RE_INITIAL_VALUE);
 
 	for(uint c = 0; c < file_lines.size(); c++){
@@ -119,7 +119,7 @@ void manager::init_parameter_graphics(){
 	regex* name_pattern = regex_access->get_regular_expression(RE_TILE_NAME);
 
 	//used to tell if the name line is of the form ->HFvariable:EnglishVariable
-	regex* semi_pattern = regex_access->get_regular_expression(RE_SEMI);
+	// regex* semi_pattern = regex_access->get_regular_expression(RE_SEMI);
 
 	//describes a pattern for tile/input descriptors that starts with a 'c'
 	//and is followed by exactly one space,
@@ -131,46 +131,132 @@ void manager::init_parameter_graphics(){
 	//so they can be stored together
 	regex* line_separator = regex_access->get_regular_expression(RE_LINE_SEPARATOR);
 
-	for(uint c = 0; c < file_lines.size(); c++){
+// filling:
+// map<string,map<string,field*>*> fields;
 
+// ELAB:Projectile Energy
+// c Variable name in HF: ELAB
+// c energy of projectile in MeV in the lab
+// andy_tile.png
+// 160x50
+// andy
 
-		//reset new line container each run of loop
-		map<string,field*> new_line;
-		vector<field*> params_vector;
+	map<string, field*>* line_map = NULL;
+	field* currently_processing_parameter = NULL;
+	string line_name;
 
-		string line_name;
+	string tile_name;
+	string display_name;
+	string image_name;
+	int width = 0;
+	int height = 0;
 
-	// 	//read until a line start indicator/separator is found
-	// 	while( !ins.eof() && !regex_match(temp_string,line_separator) ){
+	//if I convert this to a pointer we can save copying
+	vector<string>* temp_descriptions = NULL;
 
-	// 		if( ins.fail() || temp_string.empty() ){
-	// 			//we may not necessarily find this case in error,
-	// 			//as the very last group in the config file won't
-	// 			//end with a line separator, because no line will come after it
+	smatch groups_from_line_match;
+    // field(string tile_name_in,string display_name_in,string image_name_in,
+    //         int width, int height);
 
-	// 			//ran out of file, get out of this function
-	// 			return;
-	// 		}
-	// 		getline(ins,temp_string);
-	// 	}
+	for(vector<string>::iterator line_iterator = file_lines.begin();
+		line_iterator != file_lines.end();
+		++line_iterator){
+
+		if(regex_match(*line_iterator,*line_separator)){
+			cout << "found a line indicator!:" << *line_iterator << endl;
+			//push line map into vector, start over
+
+			fields.insert(std::pair<string,map<string,field*>*>(line_name,line_map));
+			line_map = NULL;
+
+			line_map = new map<string, field*>();
+		} else if(line_iterator->compare("andy") == 0){
+			cout << "found andy!:" << *line_iterator << endl;
+			//end current parameter, push into current line map
+			//save
+			field* new_field = new field(tile_name,display_name,image_name,width,height,temp_descriptions);
+			temp_descriptions = NULL;
+
+			cout << new_field->get_string() << endl;
+			line_map->insert(std::pair<string,field*>(tile_name,new_field));
+
+			tile_name.clear();
+			display_name.clear();
+			image_name.clear();
+
+			width  = 0;
+			height = 0;
+
+		} else {
+			cout << "parameter contents!" << *line_iterator << endl;
+
+			if (regex_match(*line_iterator, *desc_pattern)){
+				cout << "DESCRIPTION!" << endl;
+				string description = line_iterator->erase(0,2);
+				if (temp_descriptions == NULL){
+					temp_descriptions = new vector<string>();
+				}
+				temp_descriptions->push_back(description);
+			// should use a regular expression to check the image type instead...
+			// also it makes sense to allow JPGS and GIFS as well
+			} else if(regex_match(*line_iterator,groups_from_line_match,*img_pattern)){
+				int expected_matches = 2;
+				if (groups_from_line_match.size() != expected_matches){
+					print_matching_message("tile image",expected_matches);
+				}
+				cout << "\n\nIMAGE MATCH" << endl;
+				image_name = groups_from_line_match[1];
+				cout << *line_iterator << ":" << tile_name << endl;
+			} else if(regex_match(*line_iterator,groups_from_line_match,*field_size_pattern)){
+				cout << "\n\nFIELD SIZE MATCH" << endl;
+				cout << *line_iterator << " " << groups_from_line_match[1] << " " << groups_from_line_match[2] << endl;
+				width  = stoi(groups_from_line_match[1]);
+				height = stoi(groups_from_line_match[2]);
+			// //used to tell if the name line is of the form ->HFvariable:EnglishVariable
+			} else if(regex_match(*line_iterator,groups_from_line_match,*name_pattern)){
+				// need to set the display name and the actual HF parameter name
+				uint matches_for_just_parameter_name = 2;
+				uint matches_for_parameter_and_display_names = 3;
+
+				uint match_group_size = groups_from_line_match.size();
+
+				if (match_group_size < matches_for_just_parameter_name){
+					print_matching_message("parameter_name",matches_for_just_parameter_name);
+					continue;
+				}
+
+				if (match_group_size == matches_for_just_parameter_name){
+					tile_name = groups_from_line_match[1];
+				}
+
+				if(match_group_size == matches_for_parameter_and_display_names){
+					display_name = groups_from_line_match[2];
+				}
+
+				cout << "\n\nNAME MATCH" << endl;
+				cout << *line_iterator << ":" << tile_name << " " << display_name << endl;
+			} else {
+				logger_access->push_msg("Parameter content line didn't match a regular expression!");
+			}
+
+		}
+	}
 
 	// 	strip_char(temp_string,'#');
 	// 	//cout << "Found a line name:"+temp_string << endl;
 	// 	logger_access->push_msg("Found a line name:"+temp_string);
 	// 	line_names_read_order.push_back(temp_string);
 
+	// 	if(line_separator.match(file_lines[c])){
 
+	// 	} else if(name_pattern.match(file_lines[c])){
 
-		if(line_separator.match(file_lines[c])){
+	// 	} else if(img_pattern.match(file_lines[c])){
 
-		} else if(name_pattern.match(file_lines[c])){
+	// 	} else if(field_size_pattern.match(file_lines[c])){
 
-		} else if(img_pattern.match(file_lines[c])){
-
-		} else if(field_size_pattern.match(file_lines[c])){
-
-		}
-	}
+	// 	}
+	// }
 
 }
 
@@ -494,7 +580,7 @@ field* manager::get_param(const string& target_param){
 
 	for(FIELDS_MAP::iterator line_it = fields.begin(); line_it != fields.end(); line_it++){
 
-		field* this_field = get_param_from_line(target_param,line_it->second);
+		field* this_field = get_param_from_line(target_param,*line_it->second);
 		if(this_field == NULL){
 			continue;
 		} else {
@@ -584,15 +670,15 @@ void manager::iench_locking(){
   try{
 	//do locking that pertains to IENCH
 	regex iench_good("\\s*7\\s*");
-	if(!regex_match(fields.at("line_2").at("IENCH").get_text(),iench_good)){
+	if(!regex_match(fields.at("line_2")->at("IENCH").get_text(),iench_good)){
 		//make IENCH's tile appear purple to indicate it is the reason
 		//some parameters are locked
-		fields.at("line_2").at("IENCH").change_tile_background("purple_andy_tile.png");
+		fields.at("line_2")->at("IENCH").change_tile_background("purple_andy_tile.png");
 		lock_line(fields.at("line_4A"));
 
 	} else {//do the unlocking
 		//switch the IENCH tile back to the default gray
-		fields.at("line_2").at("IENCH").change_tile_background("andy_tile.png");
+		fields.at("line_2")->at("IENCH").change_tile_background("andy_tile.png");
 		unlock_line(fields.at("line_4A"));
 	}
   } catch (out_of_range& map_error){
@@ -605,7 +691,7 @@ void manager::iench_locking(){
 
 void manager::ilv1_locking(){
 	try{
-		field* ilv1_field = fields.at("line_5").at("ILV1");
+		field* ilv1_field = fields.at("line_5")->at("ILV1");
 		string ilv1_text  = ilv1_field->get_text();
 		bool ilv1_locking = ilv1_field->am_I_locking;
 
@@ -617,7 +703,7 @@ void manager::ilv1_locking(){
 			ilv1_field->am_I_locking = true;
 
 			// need to loop over the map instead
-			lock_line(fields.at("line_5A"));
+			lock_line(*fields.at("line_5A"));
 
 		//do the unlocking
 		} else if(regex_match(ilv1_text,ilv1_good) && ilv1_locking){
@@ -625,7 +711,7 @@ void manager::ilv1_locking(){
 			ilv1_field->change_tile_background("andy_tile.png");
 			ilv1_field->am_I_locking = false;
 
-			unlock_line(fields.at("line_5A"));
+			unlock_line(*fields.at("line_5A"));
 		}
 
 	} catch (out_of_range& map_error){
@@ -640,7 +726,7 @@ void manager::icntrl4_locking(){
   try{
 	regex icntrl4_pattern(RE_ICNTRL4);
 
-	field* icntrl4_field    = fields.at("line_6").at("ICNTRL4");
+	field* icntrl4_field    = fields.at("line_6")->at("ICNTRL4");
 	bool icntrl4_is_locking = icntrl4_field->am_I_locking;
 
 	bool icntrl4_good = regex_match(icntrl4_field->get_text(),icntrl4_pattern);
@@ -650,7 +736,7 @@ void manager::icntrl4_locking(){
 		icntrl4_field->change_tile_background("purple_andy_tile.png");
 		icntrl4_field->am_I_locking = true;
 
-		lock_line(fields.at("line_8"));
+		lock_line(*fields.at("line_8"));
 
 		if( !(button_access->get_icntrl_4().get_is_locked()) ){
 			button_access->get_icntrl_4().toggle_lock();
@@ -662,7 +748,7 @@ void manager::icntrl4_locking(){
 		icntrl4_field->change_tile_background("andy_tile.png");
 		icntrl4_field->am_I_locking = false;
 
-		unlock_line(fields.at("line_8"));
+		unlock_line(*fields.at("line_8"));
 
 		ich4_nch4_locking();
 	}
@@ -683,7 +769,7 @@ void manager::ich4_nch4_locking(){
 	regex ich4_unlock(RE_ICH4_UNLOCK);
 	//if both of it's params are correctly set up
 
-	field* ich4_field = fields.at("line_8").at("ICH4");
+	field* ich4_field = fields.at("line_8")->at("ICH4");
 
 	string test_ich4 = ich4_field->get_text();
 	if(ich4_field->am_I_locking && regex_match(test_ich4,ich4_unlock)){
@@ -695,7 +781,7 @@ void manager::ich4_nch4_locking(){
 		ich4_field->am_I_locking = true;
 	}
 
-	field* nch4_field = fields.at("line_8").at("NCH4");
+	field* nch4_field = fields.at("line_8")->at("NCH4");
 
 	int test_nch4 = stoi(nch4_field->get_text());
 	if( nch4_field->am_I_locking && (test_nch4 > 0 && test_nch4 < 101 )){
@@ -743,7 +829,7 @@ void manager::icntrl8_locking(){
   try{
 	regex icntrl8_unlock(RE_ICNTRL8_UNLOCK);
 
-	field* icntrl8_field = fields.at("line_6").at("ICNTRL8");
+	field* icntrl8_field = fields.at("line_6")->at("ICNTRL8");
 
 	string icntrl8_str = icntrl8_field->get_text();
 	int icntrl8_val    = stoi(icntrl8_field->get_text());
@@ -784,8 +870,8 @@ void manager::icntrl8_locking(){
   } catch (invalid_argument& stoi_error){
 	logger_access->push_msg("ICNTRL8 has an illegal string argument, it must be an integer in the range");
 	logger_access->push_msg(" 0 <= ICNTRL8 < 332");
-	fields.at("line_6").at("ICNTRL8")->change_tile_background("purple_andy_tile.png");
-	fields.at("line_6").at("ICNTRL8")->am_I_locking = true;
+	fields.at("line_6")->at("ICNTRL8")->change_tile_background("purple_andy_tile.png");
+	fields.at("line_6")->at("ICNTRL8")->am_I_locking = true;
   }
 }
 
@@ -794,12 +880,12 @@ void manager::icntrl10_locking(){
 
 	regex icntrl10_unlock(RE_ICNTRL10_UNLOCK);
 
-	field * icntrl10_field = fields.at("line_6").at("ICNTRL10");
+	field * icntrl10_field = fields.at("line_6")->at("ICNTRL10");
 
 	int icntrl10_val    = stoi(icntrl10_field->get_text());
 	string icntrl10_str = icntrl10_field->get_text();
 
-	field* nnsig_field = fields.at("line_11").at("NNSIG");
+	field* nnsig_field = fields.at("line_11")->at("NNSIG");
 
 	int nnsig_val      = stoi(nnsig_field->get_text());
 	bool nnsig_locking = nnsig_field->am_I_locking;
@@ -857,7 +943,7 @@ void manager::icntrl10_locking(){
   } catch (invalid_argument& stoi_error){
 	logger_access->push_msg("ICNTRL10 has an illegal string argument, it must be an integer in the range");
 	logger_access->push_msg(" 0 <= ICNTRL10");
-	field * icntrl10_field = fields.at("line_6").at("ICNTRL10");
+	field * icntrl10_field = fields.at("line_6")->at("ICNTRL10");
 	icntrl10_field->change_tile_background("purple_andy_tile.png");
 	icntrl10_field->am_I_locking = true;
   }
@@ -868,8 +954,8 @@ void manager::ilv3_ilv5_locking(){
   try{
 	regex ilv3_ilv5_unlock(RE_ILV3_ILV5_UNLOCK);
 
-	field* ilv3_field = fields.at("line_5").at("ILV3");
-	field* ilv5_field = fields.at("line_5").at("ILV5");
+	field* ilv3_field = fields.at("line_5")->at("ILV3");
+	field* ilv5_field = fields.at("line_5")->at("ILV5");
 
 	//do checks for ILV3
 	ilv3_ilv5_locking_helper(ilv3_field,ilv3_ilv5_unlock);
@@ -897,8 +983,8 @@ void manager::ilv3_ilv5_locking(){
   } catch (invalid_argument& stoi_error){
 	logger_access->push_msg("ILV3 or ILV5 has an illegal string argument, it must be an integer in the range");
 	logger_access->push_msg(" 0 <= (ILV3 or ILV5)");
-	field* ilv3_field = fields.at("line_5").at("ILV3");
-	field* ilv5_field = fields.at("line_5").at("ILV5");
+	field* ilv3_field = fields.at("line_5")->at("ILV3");
+	field* ilv5_field = fields.at("line_5")->at("ILV5");
 	ilv3_field->change_tile_background("purple_andy_tile.png");
 	ilv3_field->am_I_locking = true;
 	ilv5_field->change_tile_background("purple_andy_tile.png");
@@ -941,9 +1027,9 @@ void manager::icntrl6_locking(){
   try{
 	regex icntrl6_unlock(RE_ICNTRL6_UNLOCK);
 
-	field* icntrl6_field = fields.at("line_6").at("ICNTRL6");
+	field* icntrl6_field = fields.at("line_6")->at("ICNTRL6");
 
-	bool icntrl6_locking = fields.at("line_6").at("ICNTRL6")->am_I_locking;
+	bool icntrl6_locking = fields.at("line_6")->at("ICNTRL6")->am_I_locking;
 
 	string icntrl6_str = icntrl6_field->get_text();
 
@@ -955,13 +1041,13 @@ void manager::icntrl6_locking(){
 		icntrl6_field->change_tile_background("andy_tile.png");
 		icntrl6_field->am_I_locking = false;
 
-		unlock_line(fields.at("line_10"));
+		unlock_line(*fields.at("line_10"));
 	} else if(!valid_input && !icntrl6_locking){
 		//elsewise, lock them
 		icntrl6_field->change_tile_background("purple_andy_tile.png");
 		icntrl6_field->am_I_locking = true;
 
-		lock_line(fields.at("line_10"));
+		lock_line(*fields.at("line_10"));
 	}
 
 	//######### block originally below the try/catch#################
@@ -975,9 +1061,9 @@ void manager::icntrl6_locking(){
 
 		//the sub states are saved to local variables here so it's not
 		//as long of a statement
-		bool inm1_lock_status = fields.at("line_10").at("INM1")->am_I_locking;
-		bool inm2_lock_status = fields.at("line_10").at("INM2")->am_I_locking;
-		bool iter_lock_status = fields.at("line_10").at("ITER")->am_I_locking;
+		bool inm1_lock_status = fields.at("line_10")->at("INM1")->am_I_locking;
+		bool inm2_lock_status = fields.at("line_10")->at("INM2")->am_I_locking;
+		bool iter_lock_status = fields.at("line_10")->at("ITER")->am_I_locking;
 		bool icntrl6_locked = button_access->get_icntrl_6().get_is_locked();
 
 		//the following assumes that ITER must be greater than 0, and atleast
@@ -1003,7 +1089,7 @@ void manager::icntrl6_locking(){
 void manager::inm1_locking(){
   try{
 
-	field* inm1_field = fields.at("line_10").at("INM1");
+	field* inm1_field = fields.at("line_10")->at("INM1");
 
 	int inm1_val    = stoi(inm1_field->get_text());
 	string inm1_str = inm1_field->get_text();
@@ -1024,8 +1110,8 @@ void manager::inm1_locking(){
   } catch (invalid_argument& stoi_error){
 	logger_access->push_msg("INM1 has an illegal string argument, it must be an integer in the range ");
 	logger_access->push_msg(" 0 <= INM1");
-	fields.at("line_10").at("INM1")->change_tile_background("purple_andy_tile.png");
-	fields.at("line_10").at("INM1")->am_I_locking = true;
+	fields.at("line_10")->at("INM1")->change_tile_background("purple_andy_tile.png");
+	fields.at("line_10")->at("INM1")->am_I_locking = true;
   }
 
 }
@@ -1033,7 +1119,7 @@ void manager::inm1_locking(){
 void manager::inm2_locking(){
   try{
 
-  	field* inm2_field = fields.at("line_10").at("INM2");
+  	field* inm2_field = fields.at("line_10")->at("INM2");
 	int inm2_val      = stoi(inm2_field->get_text());
 
 	if( inm2_field->am_I_locking && inm2_val > 0 ){
@@ -1051,15 +1137,15 @@ void manager::inm2_locking(){
   } catch (invalid_argument& stoi_error){
 	logger_access->push_msg("INM2 has an illegal string argument, it must be an integer in the range ");
 	logger_access->push_msg(" 0 <= INM2");
-	fields.at("line_10").at("INM2")->change_tile_background("purple_andy_tile.png");
-	fields.at("line_10").at("INM2")->am_I_locking = true;
+	fields.at("line_10")->at("INM2")->change_tile_background("purple_andy_tile.png");
+	fields.at("line_10")->at("INM2")->am_I_locking = true;
   }
 
 }
 
 void manager::iter_locking(){
   try{
-	field* iter_field = fields.at("line_10").at("ITER");
+	field* iter_field = fields.at("line_10")->at("ITER");
 	int iter_val      = stoi(iter_field->get_text());
 
 	if( iter_field->am_I_locking && iter_val > 0 ){
@@ -1078,7 +1164,17 @@ void manager::iter_locking(){
 	logger_access->push_msg("ITER has an illegal string argument, it must be an integer in the range ");
 	logger_access->push_msg(" 0 <= ITER");
 
-	fields.at("line_10").at("ITER")->change_tile_background("purple_andy_tile.png");
-	fields.at("line_10").at("ITER")->am_I_locking = true;
+	fields.at("line_10")->at("ITER")->change_tile_background("purple_andy_tile.png");
+	fields.at("line_10")->at("ITER")->am_I_locking = true;
   }
+}
+
+
+// non-member helpers
+void print_matching_message(const string& match_case, int expected_groups){
+	string logger_msg_base = "Potential parsing error! Incorrect number of regex matches for ";
+
+	string logger_msg = logger_msg_base + match_case + " " + to_string(expected_groups);
+
+	logger_access->push_msg(logger_msg);
 }

@@ -199,7 +199,7 @@ class manager{
 		/*! the first access should be the line name from the HF manual
 		 *in which the desired parameter resides, then the second access
 		 *should be the parameter name. */
-		map<string,map<string,field*>> fields;
+		map<string,map<string,field*>*> fields;
 
 		//! maps parameter names to their regular expression patters
 		map<string,regex*> parameter_regexps;
@@ -223,7 +223,5 @@ class manager{
 		int win_h;
 };
 
-
-
-
+void print_matching_message(const string& match_case, int expected_groups);
 

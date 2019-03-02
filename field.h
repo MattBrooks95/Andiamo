@@ -5,6 +5,7 @@
 #include<string>
 #include<vector>
 #include<iostream>
+#include<sstream>
 
 #include<SDL2/SDL.h>
 #include<SDL2/SDL_image.h>
@@ -61,7 +62,7 @@ class field{
      *\param width is the width of the tile
      *\param height is the height of the tile */
     field(string tile_name_in,string display_name_in,string image_name_in,
-            int width, int height);
+            int width,int height,vector<string>* descriptions_in);
 
     //! copy constructor ensures that memory is not lost or double free'd
     field(const field& other);
@@ -104,6 +105,9 @@ class field{
      *on the next frame that occurs */
     void update_texture();
 
+    //! gets this field's information as a string
+    string get_string();
+
     //! this void member prints the field's info to the error_logger
     void print();
 
@@ -132,7 +136,7 @@ class field{
     string display_name;
 
     //! input description lines
-    vector<string> descriptions;
+    vector<string>* descriptions;
 
     //! save the text entry location
     /*! this controls the cursor when the user is typing */

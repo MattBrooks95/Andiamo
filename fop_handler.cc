@@ -180,7 +180,7 @@ void fop_handler::calc_open_channels(int& A_proj, int& Z_proj,
 	if(ref_frame == 0){
 
 		cout << "Converting Elab value." << endl;
-		cout << "Given value: " << ecm_value << endl; 
+		cout << "Given value: " << ecm_value << endl;
 		//function converts lab energy to center of mass energy
 		lab_to_ecm(ecm_value,A_targ,A_proj);
 		cout << "Value after Elab -> Ecm conversion: " << ecm_value << endl;
@@ -233,7 +233,7 @@ void fop_handler::make_FOP_pair(const int& A_proj, const int& Z_proj,
 					 + "_fop_in" + ".txt";
 
 	cout << "Temp FOP input file name: " << in_temp_file_name << endl;
-    
+
 	string out_temp_file_name;
 
 	out_temp_file_name = to_string(A_proj)   + "_" + to_string(Z_proj)
@@ -255,7 +255,7 @@ double fop_handler::find_elab(){
 
 		//get ELAB string value from field, then convert to int
 		string elab_str;
-		elab_str = tile_access->fields.at("line_2").at("ELAB")->get_text();
+		elab_str = tile_access->fields.at("line_2")->at("ELAB")->get_text();
 		elab_val = stod(elab_str);
 
 	} catch(out_of_range& map_error){
@@ -280,7 +280,7 @@ int fop_handler::find_icm(){
 
 		//get icm string value, convert to int
 		string icm_str;
-		icm_str   = tile_access->fields.at("line_2").at("ICM")->get_text();
+		icm_str   = tile_access->fields.at("line_2")->at("ICM")->get_text();
 		icm_val = stoi(icm_str);
 
 	} catch(out_of_range& map_error){
@@ -314,8 +314,8 @@ void fop_handler::find_compound_A_Z(unsigned int& compound_A,
 
 	try{
 
-		compound_A = stoi(tile_access->fields.at("line_2").at("A")->get_text());
-		compound_Z = stoi(tile_access->fields.at("line_2").at("Z")->get_text());
+		compound_A = stoi(tile_access->fields.at("line_2")->at("A")->get_text());
+		compound_Z = stoi(tile_access->fields.at("line_2")->at("Z")->get_text());
 
 	} catch(out_of_range& map_error){
 		logger_access->push_error("Couldn't find A or Z in field map.");
@@ -335,7 +335,7 @@ int fop_handler::find_IENCH(){
 	string iench_str;
 
 	try{
-		iench_str = tile_access->fields.at("line_2").at("IENCH")->get_text();
+		iench_str = tile_access->fields.at("line_2")->at("IENCH")->get_text();
 		return_me = stoi(iench_str);
 	} catch(out_of_range& map_error){
 		logger_access->push_error("Couldn't find IENCH in field map.");
@@ -424,17 +424,17 @@ void fop_handler::prepare_deck(int A_proj,int Z_proj,int A_targ,int Z_targ,
     //start off assuming we'll use the default TC directory
     string transmission_dir = trans_path;
 
-    //if the user has specified an alternate directory, 
+    //if the user has specified an alternate directory,
     //use that instead. Note that a full path must be provided here.
     //The alternate directory must also have the same file structure
     //as the provided default one.
     string alt_tc_dir = button_access->get_tc_dir_button().my_text_box.get_text();
     if(alt_tc_dir.size() != 0){
-        cout << "using alternate TC dir:" + alt_tc_dir << endl; 
+        cout << "using alternate TC dir:" + alt_tc_dir << endl;
         transmission_dir = alt_tc_dir;
     }
 
-    
+
 
 	//cout << "Stand in for prepare_decks() work." << endl;
 
@@ -452,14 +452,14 @@ void fop_handler::prepare_deck(int A_proj,int Z_proj,int A_targ,int Z_targ,
      *         * ((ARecoil + AC)/(AR))
      * EStep = EMax / N, where we will set N to be 20
      * EMin = Emax - (N-1) * EStep  */
-    //double EMax = 
+    //double EMax =
 
     //##########################################################
 
     //d comes from andiamo input, projectile info
     string D_args(to_string(Z_proj));
     D_args += "," + to_string(Z_proj);
-    //this_deck->at("D")->info = 
+    //this_deck->at("D")->info =
 
     //e also comes from andiamo input, target info
     //f can be left alone, defaults to all 0's (no fitting)
