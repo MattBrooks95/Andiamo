@@ -4,7 +4,8 @@
 
 //######### used by the tile manager for finding defaults ################
 #define RE_COMMENT_LINE "\\s*?#.*"
-#define RE_INITIAL_VALUE "(\\S*)\\s*?=\\s*?(\\S*)$"
+// #define RE_INITIAL_VALUE "(\\S*)\\s*?=\\s*?(\\S*)$"
+#define RE_INITIAL_VALUE "(\\S*)\\s*?=\\s*?(.*)"
 //########################################################################
 
 //######## patterns used by the tile manager ###########
@@ -14,7 +15,7 @@
 #define RE_TILE_NAME "\\s*?([a-z0-9_A-Z]+?):?(.*)?\\s*?"
 #define RE_SEMI ":"
 #define RE_DESCRIPTION "c .*"
-#define RE_LINE_SEPARATOR "\\s*?line_[0-9]+?[A-Z]?.*"
+#define RE_LINE_SEPARATOR "\\s*?line_[0-9]+?[A-Z]?.*$"
 
 #define RE_ILV1 "\\s*6\\s*"
 #define RE_ICNTRL4 "\\s*1\\s*"

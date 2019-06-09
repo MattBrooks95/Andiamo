@@ -101,9 +101,12 @@ field::~field(){
 }
 
 SDL_Rect field::get_rect() const{
-    SDL_Rect return_me = {xloc+ sdl_access->get_xscroll(),
-                yloc+sdl_access->get_yscroll(),size.width,size.height};
 
+    int corner_x_location = xloc + sdl_access->get_xscroll();
+    int corner_y_location = yloc+sdl_access->get_yscroll();
+    int width             = size.width;
+    int height            = size.height;
+    SDL_Rect return_me = {corner_x_location, corner_y_location,width,height};
     return return_me;
 }
 
@@ -113,6 +116,8 @@ void field::graphics_init(){
     //load in tile background
     my_tex = asset_access->get_texture(assets_image_path);
     if(my_tex == NULL){
+        cout << "NO TEXTURE FOR FIELD BACKGROUND TILE NAME" << tile_name << endl;
+        cout << "PATH:" << image_path << endl;
         string error = "Error in field.cc's graphics init() function: ";
         error       +=  SDL_GetError();
         logger_access->push_error(error);

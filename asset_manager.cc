@@ -39,100 +39,7 @@ asset_manager::~asset_manager(){
 
 }
 
-// void asset_manager::pull_assets(){
-// 	struct dirent* file_in_dir;
-
-// 	DIR* assets_home;
-// 	assets_home = opendir(asset_home_path.c_str());
-
-// 	if(assets_home != NULL){
-
-// 		//readdir is kind of like a getline statement, read in info then act on it
-// 		while( (file_in_dir = readdir(assets_home)) ){
-
-// 			//regular files should not appear in top level of Assets tree
-// 			if( file_in_dir->d_type == DT_REG){
-// 				logger_access->push_error("Not loading file in Assets folder.",
-// 										" Files should be in subdirectories.");
-// 			//if it is another dir, call the helper on it
-// 			} else if(file_in_dir->d_type == DT_DIR){
-
-// 				//don't care about . and .. dirs
-// 				string ignore1 = ".";
-// 				string ignore2 = "..";
-// 				if(ignore1.compare(file_in_dir->d_name) != 0 &&
-// 				   ignore2.compare(file_in_dir->d_name) != 0){
-
-// 					//cout << "in dir file mode: " << file_in_dir->d_name << endl;
-// 					//build path to new subdirectories for the helper calls
-// 					string path_to_subdir = asset_home_path;
-// 					path_to_subdir += "/";
-// 					path_to_subdir += file_in_dir->d_name;
-// 					pull_helper(path_to_subdir);
-// 				}
-// 			}
-// 		}
-
-// 	} else {
-// 		logger_access->push_error("Couldn't open Assets folder from",
-// 								" asset_manager::pull_assets().");
-// 	}
-
-// 	closedir(assets_home);
-// }
-
-// void asset_manager::pull_helper(const string& subroot_path){
-
-// 	DIR* current_root;
-// 	current_root = opendir(subroot_path.c_str());
-// 	dirent* current_file = NULL;
-// 	if(current_root != NULL){
-
-// 		while( (current_file = readdir(current_root)) ){
-
-// 			//if it is a regular file, load it if it is a png file
-// 			if( current_file->d_type == DT_REG){
-// 				//cout << "in reg file mode: " << current_file->d_name << endl;
-
-// 				string texture_path = subroot_path;
-// 				texture_path += "/";
-// 				texture_path += current_file->d_name;
-// 				// don't check file extensions - Brooks
-// 				regex is_png = regex_access->get_regular_expression(".*?\\.png");
-// 				if(regex_match(texture_path,is_png)){
-// 					//cout << "Could open file: " << texture_path << endl;
-// 					get_texture(texture_path);
-// 				} else {
-// 					//cout << texture_path << " ain't a PNG file." << endl;
-// 				}
-
-// 			//if it is another dir, call the helper on it
-// 			} else if(current_file->d_type == DT_DIR){
-
-// 				//don't care about . and .. dirs
-// 				string ignore1 = ".";
-// 				string ignore2 = "..";
-// 				if(ignore1.compare(current_file->d_name) != 0 &&
-// 				   ignore2.compare(current_file->d_name) != 0){
-
-// 					//cout << "in dir file mode: " << current_file->d_name << endl;
-// 					//build path to new subdirectories for the helper calls
-// 					string path_to_subdir = subroot_path;
-// 					path_to_subdir += "/";
-// 					path_to_subdir += current_file->d_name;
-// 					pull_helper(path_to_subdir);
-// 				}
-// 			}
-// 		}
-
-// 	} else {
-// 		logger_access->push_error("From pull_helper, could not open: ",
-// 								subroot_path);
-// 	}
-// }
-
 SDL_Texture* asset_manager::get_texture(const string& target){
-
 	get_texture_calls++;
 
 	SDL_Texture* temp_texture = NULL;
@@ -147,7 +54,6 @@ SDL_Texture* asset_manager::get_texture(const string& target){
 		//if it wasn't found in the map, load it instead
 		return load_image_return_texture(target_path);
 	}
-
 }
 
 SDL_Surface* asset_manager::get_surface(const string& target){

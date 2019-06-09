@@ -411,9 +411,6 @@ bool sdl_help::in(int click_x, int click_y,const SDL_Rect& rect) const{
 	return false;
 }
 
-
-
-
 void sdl_help::calc_corners(){
 	logger_access->push_msg("######### IN CALC CORNERS ########################");
 	//this variable keeps track of where the next line should
@@ -453,9 +450,7 @@ void sdl_help::calc_corners(){
 
 }
 
-void sdl_help::calc_corners_helper(vector<field*>& line_in,
-								   uint& start_height,
-								   int row_limit){
+void sdl_help::calc_corners_helper(vector<field*>& line_in,uint& start_height,int row_limit){
 
 	//distance between two tiles horizontally
 	int x_buffer = HORIZ_TILE_PADDING;
@@ -514,8 +509,9 @@ void sdl_help::calc_corners_helper(vector<field*>& line_in,
 
 			//save it's leftmost edge + padding
 			//to be used to place the next tile
-			x_corner = line_in[c]->xloc +
-						line_in[c]->get_size().width + x_buffer;
+			x_corner  = line_in[c]->xloc;
+			x_corner += line_in[c]->get_size().width;
+			x_corner += x_buffer;
 
 			//place it just below the previous row
 			line_in[c]->yloc = lowest_point;

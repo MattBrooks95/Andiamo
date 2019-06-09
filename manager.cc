@@ -127,7 +127,8 @@ void manager::init_parameter_graphics(){
 	 *so they can be stored together*/
 	regex* line_separator = regex_access->get_regular_expression(RE_LINE_SEPARATOR);
 
-	map<string, field*>* line_map = NULL;
+	vector<field*> this_lines_parameters_in_order;
+	map<string, field*>* line_map         = NULL;
 	field* currently_processing_parameter = NULL;
 	string line_name;
 
@@ -151,10 +152,25 @@ void manager::init_parameter_graphics(){
 		if(regex_match(*line_iterator,*line_separator)){
 			cout << "found a line indicator!:" << *line_iterator << endl;
 
-			fields.insert(std::pair<string,map<string,field*>*>(line_name,line_map));
+			if (line_map == NULL || line_map->size() == 0){
+				line_map = new map<string, field*>();
+				continue;
+			}
 
-			line_map = new map<string, field*>();
+			cout << "Inserting line of params!" << endl;
+			fields.insert(std::pair<string,map<string,field*>*>(line_name,line_map));
+			line_map = NULL;
+
+			cout << "Pushing back line of params!" << endl;
+			fields_order.push_back(this_lines_parameters_in_order);
+			fields_order.clear();
 		} else if(line_iterator->compare("andy") == 0){
+
+			//if we haven't started a map for this line, start it
+			if(line_map == NULL){
+				line_map = new map<string,field*>();
+			}
+
 			cout << "found andy!:" << *line_iterator << endl;
 			//end current parameter, push into current line map
 			field* new_field = new field(tile_name,display_name,image_name,width,height,temp_descriptions);
@@ -168,14 +184,19 @@ void manager::init_parameter_graphics(){
 			// new_field->update_text(parameter_default);
 			new_field->text_init();
 
-			temp_descriptions = NULL;
-
 			cout << new_field->get_string() << endl;
+			cout << "PUSHING TO PARAM MAP" << endl;
 			line_map->insert(std::pair<string,field*>(tile_name,new_field));
+			this_lines_parameters_in_order.push_back(new_field);
+
+			temp_descriptions = NULL;
+			regular_expression = NULL;
 
 			tile_name.clear();
 			display_name.clear();
 			image_name.clear();
+			parameter_default.clear();
+
 
 			width  = 0;
 			height = 0;
@@ -197,8 +218,7 @@ void manager::init_parameter_graphics(){
 				handle_name_line_match(groups_from_line_match,tile_name,display_name);
 
 				regular_expression = get_map_entry(parameter_regexps,tile_name,logger_access->get_message_vector());
-
-				parameter_default = get_map_entry(parameter_defaults,tile_name,logger_access->get_message_vector());
+				parameter_default  = get_map_entry(parameter_defaults,tile_name,logger_access->get_message_vector());
 
 			} else {
 				logger_access->push_msg("Parameter content line didn't match a regular expression!");
@@ -336,9 +356,8 @@ void manager::draw(){
 		}
 	}
 
+	//now the help mode tiles can be drawn
 	for(uint c = 0; c < drawn_second.size();c++){
-
-		//now the help mode tiles can be drawn
 		drawn_second[c]->draw_me();
 	}
 
@@ -418,7 +437,6 @@ void manager::print_all(){
 }
 
 void manager::check_locks(){
-
 	//simple cases
 	//iench_locking();//can't handle iench = 7
 	ilv1_locking();
@@ -431,7 +449,6 @@ void manager::check_locks(){
 	//##### ICNTRL6 has a lot going on ##############
 	icntrl6_locking();
 	//###############################################
-
 }
 
 /* we can't do iench = 7
