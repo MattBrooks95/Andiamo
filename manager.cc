@@ -25,18 +25,6 @@ manager::manager(const string& config_folder_name){
 	init_parameter_configurations();
 	init_parameter_graphics();
 	cout << "array size: " << fields_order.size() << " map size: " << fields.size() << endl;
-	// cout << "array:" << endl;
-	// for(vector<vector<field*>>::iterator it = fields_order.begin();
-	// 	it != fields_order.end();
-	// 	++it){
-	// 	cout << it[0][0]->get_string() << endl;
-	// }
-	// cout << "map:" << endl;
-	// for (map<string,map<string,field*>*>::iterator it = fields.begin();
-	// 	it != fields.end();
-	// 	++it){
-	// 	cout << "line: " << it->first << endl;
-	// }
 }
 
 string manager::get_configuration_file_path(const string& file_name){
@@ -172,6 +160,7 @@ void manager::init_parameter_graphics(){
 		if(regex_match(*line_iterator,groups_from_line_match,*line_separator)){
 			cout << "found a line indicator!:" << *line_iterator << endl;
 			string new_line_name = groups_from_line_match[1];
+			line_names_read_order.push_back(new_line_name);
 			if (line_map == NULL){
 				line_map = new map<string, field*>();
 				this_lines_parameters_in_order.clear();
