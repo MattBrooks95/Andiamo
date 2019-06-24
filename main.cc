@@ -1,9 +1,9 @@
 //! \file main.cc
 //! \brief main.cc creates the major objects, and routes user activities to them
 
-#include<string>
-#include<vector>
-#include<iostream>
+#include <string>
+#include <vector>
+#include <iostream>
 
 #include "system_wrapper.h"
 #include "regex_manager.h"
