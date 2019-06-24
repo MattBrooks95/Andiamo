@@ -151,13 +151,17 @@ void manager::init_parameter_graphics(){
 	for(vector<string>::iterator line_iterator = file_lines.begin();
 		line_iterator != file_lines.end();
 		++line_iterator){
-
-		if(regex_match(*line_iterator,*line_separator)){
+		cout << "line: " << *line_iterator << endl;
+		if(regex_match(*line_iterator,groups_from_line_match,*line_separator)){
 			cout << "found a line indicator!:" << *line_iterator << endl;
-
+			line_name = groups_from_line_match[1];
+			if (line_map == NULL){
+				line_map = new map<string, field*>();
+				continue;
+			}
 			cout << "Inserting line of params! line name: " << line_name << endl;
 			fields.insert(std::pair<string,map<string,field*>*>(line_name,line_map));
-			cout << "Pushing back line of params!" << endl;
+			cout << "Pushing line of params into array!" << endl;
 			fields_order.push_back(this_lines_parameters_in_order);
 
 			line_map = new map<string, field*>();

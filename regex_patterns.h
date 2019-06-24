@@ -15,7 +15,7 @@
 #define RE_TILE_NAME "^([A-Za-z0-9]+):(.*)"
 #define RE_SEMI ":"
 #define RE_DESCRIPTION "c .*"
-#define RE_LINE_SEPARATOR "\\s*?line_[0-9]+?[A-Z]?.*$"
+#define RE_LINE_SEPARATOR "^(line_[0-9]+[A-Z]?)#*"
 
 #define RE_ILV1 "\\s*6\\s*"
 #define RE_ICNTRL4 "\\s*1\\s*"
