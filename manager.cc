@@ -25,6 +25,18 @@ manager::manager(const string& config_folder_name){
 	init_parameter_configurations();
 	init_parameter_graphics();
 	cout << "array size: " << fields_order.size() << " map size: " << fields.size() << endl;
+	// cout << "array:" << endl;
+	// for(vector<vector<field*>>::iterator it = fields_order.begin();
+	// 	it != fields_order.end();
+	// 	++it){
+	// 	cout << it[0][0]->get_string() << endl;
+	// }
+	// cout << "map:" << endl;
+	// for (map<string,map<string,field*>*>::iterator it = fields.begin();
+	// 	it != fields.end();
+	// 	++it){
+	// 	cout << "line: " << it->first << endl;
+	// }
 }
 
 string manager::get_configuration_file_path(const string& file_name){
@@ -38,9 +50,9 @@ void manager::fill_vector_with_configuration_lines_from_file(const string& file_
 
 	system_access->get_file_as_lines(total_file_path, file_lines);
 
-	for(uint c = 0; c < file_lines.size(); c++){
-		cout << file_lines[c] << endl;
-	}
+	// for(uint c = 0; c < file_lines.size(); c++){
+	// 	cout << file_lines[c] << endl;
+	// }
 }
 
 void manager::init_regular_expressions(){
@@ -101,9 +113,14 @@ void manager::init_parameter_configurations(){
 
 }
 
-void manager::init_parameter_graphics(){
-	cout << "Init parameter graphics" << endl;
+void manager::insert_line_pointer(const string& line_name, map<string, field*>* line_map, vector<field*>& this_lines_parameters_in_order){
+	cout << "Inserting line of params! line name: " << line_name << endl;
+	fields.insert(std::pair<string,map<string,field*>*>(line_name,line_map));
+	cout << "Pushing line of params into array!" << endl;
+	fields_order.push_back(this_lines_parameters_in_order);
+}
 
+void manager::init_parameter_graphics(){
 	string file_name = PARAMETER_GRAPHICS_FILE_NAME;
 	vector<string> file_lines;
 	fill_vector_with_configuration_lines_from_file(file_name,file_lines);
@@ -151,25 +168,24 @@ void manager::init_parameter_graphics(){
 	for(vector<string>::iterator line_iterator = file_lines.begin();
 		line_iterator != file_lines.end();
 		++line_iterator){
-		cout << "line: " << *line_iterator << endl;
+
 		if(regex_match(*line_iterator,groups_from_line_match,*line_separator)){
 			cout << "found a line indicator!:" << *line_iterator << endl;
-			line_name = groups_from_line_match[1];
+			string new_line_name = groups_from_line_match[1];
 			if (line_map == NULL){
 				line_map = new map<string, field*>();
+				this_lines_parameters_in_order.clear();
 				continue;
 			}
-			cout << "Inserting line of params! line name: " << line_name << endl;
-			fields.insert(std::pair<string,map<string,field*>*>(line_name,line_map));
-			cout << "Pushing line of params into array!" << endl;
-			fields_order.push_back(this_lines_parameters_in_order);
 
+			insert_line_pointer(line_name, line_map, this_lines_parameters_in_order);
+
+			line_name = new_line_name;
 			line_map = new map<string, field*>();
 			this_lines_parameters_in_order.clear();
 
 		} else if(line_iterator->compare("andy") == 0){
 
-			cout << "found andy!:" << *line_iterator << endl;
 			//end current parameter, push into current line map
 			field* new_field = new field(tile_name,display_name,image_name,width,height,temp_descriptions);
 
@@ -182,14 +198,18 @@ void manager::init_parameter_graphics(){
 			// new_field->update_text(parameter_default);
 			new_field->text_init();
 
-			cout << new_field->get_string() << endl;
-			cout << "PUSHING TO PARAM MAP, tile name: " << tile_name << endl;
 			if (line_map == NULL){
 				cout << "Found an andy separator, when the current line's map is NULL! line: " << *line_iterator << "\nline number: " << line_number << endl;
 				exit(-1);
 			}
 			line_map->insert(std::pair<string,field*>(tile_name,new_field));
 			this_lines_parameters_in_order.push_back(new_field);
+
+			vector<string>::iterator next_run = line_iterator + 1;
+			if(next_run == file_lines.end()){
+				cout << "this is the last run!" << endl;
+				insert_line_pointer(line_name, line_map, this_lines_parameters_in_order);
+			}
 
 			temp_descriptions  = NULL;
 			regular_expression = NULL;
@@ -203,10 +223,8 @@ void manager::init_parameter_graphics(){
 			height = 0;
 
 		} else {
-			cout << "parameter contents!" << *line_iterator << endl;
-
-			if (regex_match(*line_iterator, *desc_pattern)){
-				handle_description_line(temp_descriptions,*line_iterator);
+			if (regex_match(*line_iterator,groups_from_line_match, *desc_pattern)){
+				handle_description_line(temp_descriptions,groups_from_line_match);
 			//should use a regular expression to check the image type instead...
 			//also it makes sense to allow JPGS and GIFS as well
 			} else if(regex_match(*line_iterator,groups_from_line_match,*img_pattern)){
@@ -222,16 +240,18 @@ void manager::init_parameter_graphics(){
 				parameter_default  = get_map_entry(parameter_defaults,tile_name,logger_access->get_message_vector());
 
 			} else {
+
 				logger_access->push_msg("Parameter content line didn't match a regular expression!");
+
 			}
 		}
 		++line_number;
 	}
 }
 
-void handle_description_line(vector<string>* temp_descriptions, string& description_line){
-	cout << "DESCRIPTION!" << endl;
-	description_line.erase(0,2);
+void handle_description_line(vector<string>* temp_descriptions, const smatch& groups_from_line_match){
+	string description_line = groups_from_line_match[1];
+
 	if (temp_descriptions == NULL){
 		temp_descriptions = new vector<string>();
 	}
@@ -243,15 +263,13 @@ string handle_image_name_line(const smatch& groups_from_line_match){
 	if (groups_from_line_match.size() != expected_matches){
 		print_matching_message("tile image",expected_matches);
 	}
-	cout << "\n\nIMAGE MATCH" << endl;
+
 	string image_name = groups_from_line_match[1];
-	cout << image_name << endl;
+
 	return image_name;
 }
 
 void handle_field_size_match(const smatch& groups_from_line_match, int& width, int& height){
-	cout << "\n\nFIELD SIZE MATCH" << endl;
-	cout << groups_from_line_match[1] << " " << groups_from_line_match[2] << endl;
 	width  = stoi(groups_from_line_match[1]);
 	height = stoi(groups_from_line_match[2]);
 }
@@ -276,9 +294,6 @@ void handle_name_line_match(const smatch& groups_from_line_match, string& tile_n
 	if(match_group_size >= matches_for_parameter_and_display_names){
 		display_name = groups_from_line_match[2];
 	}
-
-	cout << "\n\nNAME MATCH" << endl;
-	cout << tile_name << " " << display_name << endl;
 }
 
 manager::~manager(){
@@ -345,7 +360,7 @@ void manager::draw(){
 		for(uint param = 0; param < fields_order[line].size();param++){
 
 			if(fields_order[line][param] == NULL){
-				cout << "NULL pointer in manager::draw()" << endl;
+				logger_access->push_error("NULL pointer in manager::draw()");
 				continue;
 			}
 			if(!fields_order[line][param]->is_help_mode()){

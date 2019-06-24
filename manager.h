@@ -189,6 +189,9 @@ class manager{
 		//! maps parameter names to their intial value as a string
 		map<string,string> parameter_defaults;
 	private:
+
+		void insert_line_pointer(const std::string& line_name, std::map<std::string, field*>* line_map, std::vector<field*>& this_lines_parameters_in_order);
+
 		//! path to the image directory for the tiles
 		string image_path;
 
@@ -209,7 +212,7 @@ void print_matching_message(const string& match_case, int expected_groups);
 
 //! helper for modifies description_line by reference, to cut off 'c ' part
 /*! initializes temp_descriptions to point to a new vector if it is NULL */
-void handle_description_line(vector<string>* temp_descriptions, string& description_line);
+void handle_description_line(vector<string>* temp_descriptions, const std::smatch& groups_from_line_match);
 
 //! helper for init parameter graphics, returns image name out of a regex match
 string handle_image_name_line(const std::smatch& groups_from_line_match);

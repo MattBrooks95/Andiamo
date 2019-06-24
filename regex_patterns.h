@@ -12,9 +12,10 @@
 #define RE_IMG "\\s*?(.*\\.png)\\s*?"
 #define RE_FIELD_SIZE "\\s*?([0-9]+?)\\s*?x\\s*?([0-9]+?)\\s*?"
 //see if you can make these identify the line AND set up the proper capture groups
-#define RE_TILE_NAME "^([A-Za-z0-9]+):(.*)"
+#define RE_TILE_NAME "^([A-Za-z0-9]+):?(.*)"
 #define RE_SEMI ":"
-#define RE_DESCRIPTION "c .*"
+// #define RE_DESCRIPTION "^c .*"
+#define RE_DESCRIPTION "^c (.*)"
 #define RE_LINE_SEPARATOR "^(line_[0-9]+[A-Z]?)#*"
 
 #define RE_ILV1 "\\s*6\\s*"

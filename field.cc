@@ -334,16 +334,12 @@ string field::get_string(){
     field_info_as_string << "Tile name: "         << tile_name
                          << " Tile Image Name: "  << image_name << "\n"
                          << " CORNER x:y = "      << to_string(xloc)
-                         << ":"                   << to_string(yloc)
-                         << " font hook: "        << to_string(size_t(sdl_access->font));
+                         << ":"                   << to_string(yloc);
 
-    if(descriptions == NULL){
-        logger_access->push_msg("get_string() called on field while description vector is still NULL");
-        return "";
-    }
-
-    for(unsigned int c = 0; c < descriptions->size(); c++){
-        field_info_as_string << descriptions->at(c) << "\n";
+    if(descriptions != NULL){
+        for(unsigned int c = 0; c < descriptions->size(); c++){
+            field_info_as_string << descriptions->at(c) << "\n";
+        }
     }
 
     // return_string >> "Help mode?:" >> help_mode;

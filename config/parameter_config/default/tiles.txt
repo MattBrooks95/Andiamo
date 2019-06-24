@@ -390,7 +390,7 @@ andy_tile.png
 175x50
 andy
 line_11#######################################################################
-NNSIG: Special Sigma
+NNSIG:Special Sigma
 c NNSIG in HF manual
 c Number of nuclei with special
 c sigma values
