@@ -41,7 +41,7 @@ scroll_bar.o: scroll_bar.cc scroll_bar.h logger.o
 field.o: field.cc field.h ftran_structs.o string+.o logger.o
 	g++ $(C_FLG) -c field.cc
 
-button_manager.o: button_manager.cc button_manager.h button.o derived_buttons.o form_buttons.o logger.o
+button_manager.o: button_manager.cc button_manager.h button.o derived_buttons.o form_buttons.o logger.o regex_patterns.h
 	g++ $(C_FLG) -c button_manager.cc
 
 button.o: button.cc button.h derived_buttons.o
@@ -50,19 +50,19 @@ button.o: button.cc button.h derived_buttons.o
 derived_buttons.o: derived_buttons.cc derived_buttons.h logger.o
 	g++ $(C_FLG) -c derived_buttons.cc
 
-form_buttons.o: form_buttons.cc form_buttons.h button.o form.o logger.o c_tuples.h
+form_buttons.o: form_buttons.cc form_buttons.h button.o form.o logger.o c_tuples.h regex_patterns.h
 	g++ $(C_FLG) -c form_buttons.cc
 
 form.o: form.cc form.h button.o text_box.o c_tuples.h
 	g++ $(C_FLG) -c form.cc
 
-manager.o: manager.cc manager.h field.o input_maker.o logger.o ftran_structs.o
+manager.o: manager.cc manager.h field.o input_maker.o logger.o ftran_structs.o regex_patterns.h
 	g++ $(C_FLG) -c manager.cc
 
 ftran_structs.o: ftran_structs.cc ftran_structs.h
 	g++ $(C_FLG) -c ftran_structs.cc
 
-input_maker.o: input_maker.cc input_maker.h string+.o ftran_structs.o string+.o button_manager.o helpers.o
+input_maker.o: input_maker.cc input_maker.h string+.o ftran_structs.o string+.o button_manager.o helpers.o  regex_patterns.h
 	g++ $(C_FLG) -c input_maker.cc
 
 fop_handler.o: fop_handler.cc fop_handler.h hf_qvalue deck.o

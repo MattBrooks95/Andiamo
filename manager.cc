@@ -278,10 +278,10 @@ void handle_name_line_match(const smatch& groups_from_line_match, string& tile_n
 
 	tile_name = groups_from_line_match[1];
 
-	if(match_group_size == matches_for_just_parameter_name){
-		display_name = tile_name;
-	} else if(match_group_size == matches_for_parameter_and_display_names){
+	if(groups_from_line_match[2].matched){
 		display_name = groups_from_line_match[2];
+	} else {
+		display_name = tile_name;
 	}
 }
 

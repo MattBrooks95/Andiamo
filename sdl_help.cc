@@ -102,7 +102,8 @@ sdl_help::sdl_help(string name_in,string HF_input_file_in,
 	//this call updates sdl_help and manager's  dimension window fields
 	window_update(temp_window_w,temp_window_h);
 
-	x_scroll = 0; y_scroll = 0;
+	x_scroll = 0;
+	y_scroll = 0;
 
     show_line_guides = true;
 }
