@@ -1,10 +1,10 @@
 //! \file sdl_help.cc implements the functions declared in sdl_help.h
 #include "sdl_help.h"
-#include<iostream>
-#include<string>
-#include<cmath>
-#include<algorithm>
-#include<queue>
+#include <iostream>
+#include <string>
+#include <cmath>
+#include <algorithm>
+#include <queue>
 
 //button manager is included here so that sdl_help can access button_manager::draw_buttons()
 //this include CAN'T be in the header file because it creates a circular dependency

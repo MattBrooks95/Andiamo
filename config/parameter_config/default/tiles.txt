@@ -339,7 +339,7 @@ c FMU is the fraction of strength in the upper
 c isospin states that is mixed into lower
 c states before decay
 andy_tile.png
-210x50
+220x50
 andy
 FCON_:Spin Cutoff Multiplier (duplicate?)
 c FCON is the multiplier on the spin cutoff parameter.
@@ -359,7 +359,7 @@ c 4 = triton
 c 5 = helium-3
 c 6 = alpha
 andy_tile.png
-290x50
+295x50
 andy
 NCH4:# of Resolved Levels
 c NCH4 = number of separate levels
