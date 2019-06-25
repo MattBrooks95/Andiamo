@@ -182,7 +182,7 @@ void manager::init_parameter_graphics(){
 			new_field->set_image_path(image_path);
 
 			//x and y coordinates calculated later, by calc_corners
-			new_field->get_text_box().init(sdl_access->font,parameter_default,0,0,new_field->get_size().width,25);
+			new_field->get_text_box().init(sdl_access->font,parameter_default,0,25,new_field->get_size().width,25);
 			new_field->graphics_init();
 			// new_field->update_text(parameter_default);
 			new_field->text_init();

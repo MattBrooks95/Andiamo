@@ -294,8 +294,7 @@ void field::draw_me(){
 	}
 
 	//this part draws the "help box" in its place
-	if( help_mode && my_help_surf != NULL && my_help_tex != NULL){
-
+	if(help_mode && my_help_surf != NULL && my_help_tex != NULL){
 		/*draw normal box boundaries - note that this is implemented
 		 *in both if cases here, because later we may want the help box to
 		 *have a different background color or image*/
