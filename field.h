@@ -2,14 +2,14 @@
     tile where users can enter parameters or use defaults */
 
 #pragma once
-#include<string>
-#include<vector>
-#include<iostream>
-#include<sstream>
+#include <string>
+#include <vector>
+#include <iostream>
+#include <sstream>
 
-#include<SDL2/SDL.h>
-#include<SDL2/SDL_image.h>
-#include<SDL2/SDL_ttf.h>
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_image.h>
+#include <SDL2/SDL_ttf.h>
 
 #include "text_box.h"
 
@@ -74,7 +74,7 @@ class field{
         my_text_box.set_regular_expression(regular_expression);
     }
 
-    //! fields should save their render information to save time
+    //! saves render information to save time
     void graphics_init();
 
     //! called from graphics_init(), this sets up the text's surface
@@ -164,6 +164,9 @@ class field{
     int yloc; //!< keeps track of the ycoordinate of its upper left corner
 
   private:
+
+    void set_up_description(TTF_Font* font,SDL_Renderer* renderer,const SDL_Color& color);
+    void set_up_tile_title(TTF_Font* font,SDL_Renderer* renderer,const SDL_Color& color);
 
     //! text box object for user info entry
     text_box my_text_box;

@@ -270,17 +270,17 @@ void handle_name_line_match(const smatch& groups_from_line_match, string& tile_n
 
 	uint match_group_size = groups_from_line_match.size();
 
-	if (match_group_size < matches_for_just_parameter_name
+	if(match_group_size < matches_for_just_parameter_name
 		|| match_group_size > matches_for_parameter_and_display_names){
 		print_matching_message("parameter_name",matches_for_just_parameter_name);
 		return;
 	}
 
-	if (match_group_size >= matches_for_just_parameter_name){
-		tile_name = groups_from_line_match[1];
-	}
+	tile_name = groups_from_line_match[1];
 
-	if(match_group_size >= matches_for_parameter_and_display_names){
+	if(match_group_size == matches_for_just_parameter_name){
+		display_name = tile_name;
+	} else if(match_group_size == matches_for_parameter_and_display_names){
 		display_name = groups_from_line_match[2];
 	}
 }
