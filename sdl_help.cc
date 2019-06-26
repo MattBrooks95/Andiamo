@@ -97,7 +97,7 @@ sdl_help::sdl_help(string name_in,string HF_input_file_in,
 	}
         logger_access->push_msg("Enacting tile_bag update with values: " +
 							  to_string(display.w / 2) + " " +
-                              to_string(display.h) );
+							  to_string(display.h) );
 
 	//this call updates sdl_help and manager's  dimension window fields
 	window_update(temp_window_w,temp_window_h);
@@ -168,7 +168,7 @@ void sdl_help::init(){
 void sdl_help::window_update(int width_in, int height_in){
 
 	//update sdl class's window size variables
-	window_s.width = width_in;
+	window_s.width  = width_in;
 	window_s.height = height_in;
 	vert_bar.handle_resize();
 	horiz_bar.handle_resize();
@@ -178,7 +178,6 @@ void sdl_help::window_update(int width_in, int height_in){
 }
 
 void sdl_help::draw(){
-
     //clear off the renderer, to prepare to re-draw
     SDL_RenderClear(renderer);
 
@@ -201,7 +200,6 @@ void sdl_help::draw(){
 
 //prints area window size and display
 void sdl_help::print_size_info(){
-
 	logger_access->push_msg("Printing window size: ");
 	window_s.print();
 	logger_access->push_msg("Printing display info: "+to_string(display.w)+"x"+to_string(display.h));

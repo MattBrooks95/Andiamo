@@ -127,7 +127,23 @@ void field::graphics_init(){
 	lock_texture       = asset_access->get_texture(lock_target);
 	if(lock_texture == NULL) logger_access->push_error(string(SDL_GetError()));
 
-	text_init();
+	//get a more shorthand reference to the SDL class's font pointer
+	TTF_Font* font = sdl_access->font;
+	if(font == NULL){
+		logger_access->push_msg("NULL font in text init()!");
+	}
+
+	SDL_Renderer* renderer = sdl_access->renderer;
+	if(renderer == NULL){
+		logger_access->push_msg("NULL renderer in text init()!");
+	}
+
+	SDL_Color color = {BLACK};
+
+	set_up_tile_title(font,renderer,color);
+
+	//this part sets up this tile's help box - if it has been provided
+	set_up_description(font, renderer, color);
 }
 
 void field::set_up_tile_title(TTF_Font* font, SDL_Renderer* renderer,const SDL_Color& color){
@@ -148,6 +164,11 @@ void field::set_up_tile_title(TTF_Font* font, SDL_Renderer* renderer,const SDL_C
 }
 
 void field::set_up_description(TTF_Font* font, SDL_Renderer* renderer, const SDL_Color& color){
+	//don't need to do anything if this parameter didn't have a description specified in the config file
+	if(descriptions == NULL || descriptions->size() == 0){
+		return;
+	}
+
 	//find widest description line
 	unsigned int max_width = 0;
 	int max_w_index;
@@ -195,7 +216,6 @@ void field::set_up_description(TTF_Font* font, SDL_Renderer* renderer, const SDL
 		error       += tile_name + "'s help box.";
 		error       += SDL_GetError();
 		logger_access->push_error(error);
-
 	}
 	//color in the help background
 	//OU green from colors.h
@@ -227,32 +247,6 @@ void field::set_up_description(TTF_Font* font, SDL_Renderer* renderer, const SDL
 		string error = "Error in creating help box texture. ";
 		error       += SDL_GetError();
 		logger_access->push_error(error);
-	}
-}
-
-void field::text_init(){
-	//thanks to
-	//http://headerphile.blogspot.com/2014/07/sdl2-part-10-text-rendering.html
-	//for the tutorial I used. Also thanks to
-	//http://gigi.nullneuron.net/gigilabs/displaying-text-in-sdl2-with-sdl_ttf/
-
-	//get a more shorthand reference to the SDL class's font pointer
-	TTF_Font* font = sdl_access->font;
-	if(font == NULL){
-		logger_access->push_msg("NULL font in text init()!");
-	}
-
-	SDL_Renderer* renderer = sdl_access->renderer;
-	if(renderer == NULL){
-		logger_access->push_msg("NULL renderer in text init()!");
-	}
-
-	SDL_Color color = {BLACK};
-	set_up_tile_title(font, renderer, color);
-
-	//this part sets up this tile's help box####################################
-	if(descriptions != NULL && descriptions->size() > 0){
-		set_up_description(font, renderer, color);
 	}
 }
 

@@ -74,11 +74,8 @@ class field{
         my_text_box.set_regular_expression(regular_expression);
     }
 
-    //! saves render information to save time
+    //! sets up the description box and the tile's display title
     void graphics_init();
-
-    //! called from graphics_init(), this sets up the text's surface
-    void text_init();
 
     //! this will draw this field object's texture to the screen
     /*! this works using its known corner values offset by the current scrolling

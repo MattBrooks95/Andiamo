@@ -174,7 +174,6 @@ void manager::init_parameter_graphics(){
 			this_lines_parameters_in_order.clear();
 
 		} else if(line_iterator->compare("andy") == 0){
-
 			//end current parameter, push into current line map
 			field* new_field = new field(tile_name,display_name,image_name,width,height,temp_descriptions);
 
@@ -185,7 +184,6 @@ void manager::init_parameter_graphics(){
 			new_field->get_text_box().init(sdl_access->font,parameter_default,0,25,new_field->get_size().width,25);
 			new_field->graphics_init();
 			// new_field->update_text(parameter_default);
-			new_field->text_init();
 
 			if (line_map == NULL){
 				cout << "Found an andy separator, when the current line's map is NULL! line: " << *line_iterator << "\nline number: " << line_number << endl;
@@ -288,11 +286,9 @@ void handle_name_line_match(const smatch& groups_from_line_match, string& tile_n
 manager::~manager(){
 	//clear out the objects that the vector points to
 	for(uint line = 0; line < fields_order.size();line++){
-
 		for(uint param = 0; param < fields_order[line].size();param++){
 			delete(fields_order[line][param]);
 		}
-
 	}
 
 	//because the map & the vector have pointers to the same objects,
