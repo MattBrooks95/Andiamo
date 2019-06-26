@@ -171,10 +171,10 @@ void field::set_up_description(TTF_Font* font, SDL_Renderer* renderer, const SDL
 
 	//find widest description line
 	unsigned int max_width = 0;
-	int max_w_index = 0;
-	int total_h     = 0;
-	int word_h      = 0;
-	int word_w      = 0;
+	int max_w_index        = 0;
+	int total_h            = 0;
+	int word_h             = 0;
+	int word_w             = 0;
 
 	//# of pixels between each line of text
 	int vert_offset = 1;
@@ -182,8 +182,8 @@ void field::set_up_description(TTF_Font* font, SDL_Renderer* renderer, const SDL
 	for(unsigned int c = 0; c < descriptions->size();c++){
 		//if this string is the longest we've seen
 		if(descriptions[c].size() > max_width){
-			max_width   = descriptions[c].size(); //save its length
-			max_w_index = c; //save a reference to the winning string
+			max_width   = descriptions[c].size();
+			max_w_index = c;
 		}
 	}
 	TTF_SizeText(font,descriptions->at(max_w_index).c_str(),&word_w,&word_h);

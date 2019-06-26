@@ -31,7 +31,7 @@ andy_tile.png
 240x50
 andy
 FNRMM1:M1 Strength Normalization
-c Variable name in HF:FNRMM1
+c Variable name in HF: FNRMM1
 c M1 strength functions for gamma ray decay
 andy_tile.png
 240x50
