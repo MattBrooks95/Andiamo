@@ -377,7 +377,7 @@ INM1:# of Search Spectra
 c HF variable name:INM1
 c number of spectra to fit (n,p, , etc)
 andy_tile.png
-170x50
+180x50
 andy
 INM2:# of Cross Sections
 c HF variable name:INM2
