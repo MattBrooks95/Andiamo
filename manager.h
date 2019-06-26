@@ -212,7 +212,7 @@ void print_matching_message(const string& match_case, int expected_groups);
 
 //! helper for modifies description_line by reference, to cut off 'c ' part
 /*! initializes temp_descriptions to point to a new vector if it is NULL */
-void handle_description_line(vector<string>* temp_descriptions, const std::smatch& groups_from_line_match);
+void handle_description_line(vector<string>*& temp_descriptions, const std::smatch& groups_from_line_match);
 
 //! helper for init parameter graphics, returns image name out of a regex match
 string handle_image_name_line(const std::smatch& groups_from_line_match);

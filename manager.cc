@@ -24,7 +24,6 @@ manager::manager(const string& config_folder_name){
 	init_regular_expressions();
 	init_parameter_configurations();
 	init_parameter_graphics();
-	cout << "array size: " << fields_order.size() << " map size: " << fields.size() << endl;
 }
 
 string manager::get_configuration_file_path(const string& file_name){
@@ -102,9 +101,7 @@ void manager::init_parameter_configurations(){
 }
 
 void manager::insert_line_pointer(const string& line_name, map<string, field*>* line_map, vector<field*>& this_lines_parameters_in_order){
-	cout << "Inserting line of params! line name: " << line_name << endl;
 	fields.insert(std::pair<string,map<string,field*>*>(line_name,line_map));
-	cout << "Pushing line of params into array!" << endl;
 	fields_order.push_back(this_lines_parameters_in_order);
 }
 
@@ -149,16 +146,15 @@ void manager::init_parameter_graphics(){
 
 	vector<string>* temp_descriptions = NULL;
 
-	smatch groups_from_line_match;
-
 	uint line_number = 1;
 
 	for(vector<string>::iterator line_iterator = file_lines.begin();
 		line_iterator != file_lines.end();
 		++line_iterator){
 
+		smatch groups_from_line_match;
+
 		if(regex_match(*line_iterator,groups_from_line_match,*line_separator)){
-			cout << "found a line indicator!:" << *line_iterator << endl;
 			string new_line_name = groups_from_line_match[1];
 			line_names_read_order.push_back(new_line_name);
 			if (line_map == NULL){
@@ -175,6 +171,7 @@ void manager::init_parameter_graphics(){
 
 		} else if(line_iterator->compare("andy") == 0){
 			//end current parameter, push into current line map
+			if (temp_descriptions != NULL) cout << "descriptions size at push:" << temp_descriptions->size() << endl;
 			field* new_field = new field(tile_name,display_name,image_name,width,height,temp_descriptions);
 
 			new_field->set_regular_expression(regular_expression);
@@ -183,10 +180,11 @@ void manager::init_parameter_graphics(){
 			//x and y coordinates calculated later, by calc_corners
 			new_field->get_text_box().init(sdl_access->font,parameter_default,0,25,new_field->get_size().width,25);
 			new_field->graphics_init();
-			// new_field->update_text(parameter_default);
 
 			if (line_map == NULL){
-				cout << "Found an andy separator, when the current line's map is NULL! line: " << *line_iterator << "\nline number: " << line_number << endl;
+				string null_map_error_message = "Found an andy separator, when the current line's map is NULL! line: " + *line_iterator;
+				string line_number_message    = "line number: " + line_number;
+				logger_access->push_error(null_map_error_message,line_number_message);
 				exit(-1);
 			}
 			line_map->insert(std::pair<string,field*>(tile_name,new_field));
@@ -198,7 +196,12 @@ void manager::init_parameter_graphics(){
 				insert_line_pointer(line_name, line_map, this_lines_parameters_in_order);
 			}
 
-			temp_descriptions  = NULL;
+			if(temp_descriptions != NULL){
+				cout << "deleting temp descriptions, setting to null" << endl;
+				delete(temp_descriptions);
+				temp_descriptions  = NULL;
+			}
+
 			regular_expression = NULL;
 
 			tile_name.clear();
@@ -236,12 +239,12 @@ void manager::init_parameter_graphics(){
 	}
 }
 
-void handle_description_line(vector<string>* temp_descriptions, const smatch& groups_from_line_match){
-	string description_line = groups_from_line_match[1];
-
-	if (temp_descriptions == NULL){
+void handle_description_line(vector<string>*& temp_descriptions, const smatch& groups_from_line_match){
+	if(temp_descriptions == NULL){
 		temp_descriptions = new vector<string>();
 	}
+
+	string description_line = groups_from_line_match[1].str();
 	temp_descriptions->push_back(description_line);
 }
 

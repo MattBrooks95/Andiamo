@@ -44,7 +44,7 @@ field::field(string tile_name_in,string display_name_in,string image_name_in,
 field::field(const field& other){
 	//cout << "Copy constructor for fields called!" << endl;
 
-	tile_name = other.tile_name;
+	tile_name    = other.tile_name;
 	display_name = other.display_name;
 
 	//copy over the description lines, if any
@@ -106,7 +106,7 @@ SDL_Rect field::get_rect() const{
 	int corner_y_location = yloc+sdl_access->get_yscroll();
 	int width             = size.width;
 	int height            = size.height;
-	SDL_Rect return_me = {corner_x_location, corner_y_location,width,height};
+	SDL_Rect return_me    = {corner_x_location, corner_y_location,width,height};
 	return return_me;
 }
 
@@ -171,9 +171,10 @@ void field::set_up_description(TTF_Font* font, SDL_Renderer* renderer, const SDL
 
 	//find widest description line
 	unsigned int max_width = 0;
-	int max_w_index;
-	int total_h = 0;
-	int word_h, word_w;
+	int max_w_index = 0;
+	int total_h     = 0;
+	int word_h      = 0;
+	int word_w      = 0;
 
 	//# of pixels between each line of text
 	int vert_offset = 1;
@@ -196,6 +197,8 @@ void field::set_up_description(TTF_Font* font, SDL_Renderer* renderer, const SDL
 	//set up the surface's pixel masks. I don't fully understand this
 	//but it's from the sdl documentation
 	//https://wiki.libsdl.org/SDL_CreateRGBSurface
+	//should do this in an object once and store it, then use it for everything
+	//instead of redoing this per tile
 	Uint32 red,green,blue,alpha;
 	#if SDL_BYTEORDER == SDL_BIG_ENDIAN
 		red   = 0xff000000;
@@ -305,7 +308,6 @@ void field::draw_me(){
 }
 
 void field::help_toggle(){
-
 	//don't do anything if this tile doesn't have a help box
 	if(descriptions == NULL || descriptions->size() == 0) return;
 
@@ -317,7 +319,6 @@ void field::help_toggle(){
 
 	//elsewise, it is false and needs to be made true
 	help_mode = true;
-
 }
 
 string field::get_string(){

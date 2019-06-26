@@ -363,7 +363,7 @@ void sdl_help::click_detection(SDL_Event& event,int click_x, int click_y){
 
             field* field_ptr = fields_order[line][param];
 
-            if( user_tabbed || in(click_x, click_y,field_ptr->get_rect())){
+            if(user_tabbed || in(click_x, click_y,field_ptr->get_rect())){
 
                 //if they clicked the text box, allow them to
                 //edit the parameter
