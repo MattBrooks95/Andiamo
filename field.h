@@ -164,6 +164,8 @@ class field{
 
     void set_up_description(TTF_Font* font,SDL_Renderer* renderer,const SDL_Color& color);
     void set_up_tile_title(TTF_Font* font,SDL_Renderer* renderer,const SDL_Color& color);
+    void get_help_box_max_width_and_line_height(TTF_Font* font,int& max_width,int& line_height);
+    int calculate_help_box_total_height(int line_height,int vertical_offset,uint number_of_lines);
 
     //! text box object for user info entry
     text_box my_text_box;

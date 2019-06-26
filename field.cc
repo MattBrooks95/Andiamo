@@ -5,6 +5,8 @@
 #include "sdl_help.h"
 #include "asset_manager.h"
 
+#define HELP_LINE_VERTICAL_PADDING 1
+
 using namespace std;
 
 extern sdl_help* sdl_access;
@@ -163,6 +165,35 @@ void field::set_up_tile_title(TTF_Font* font, SDL_Renderer* renderer,const SDL_C
 	}
 }
 
+void field::get_help_box_max_width_and_line_height(TTF_Font* font,int& max_width,int& line_height){
+	//# of pixels between each line of text
+	int current_max_width = 0;
+
+	int this_lines_height = 0;
+
+	for(uint c = 0; c < descriptions->size(); c++){
+		//if this string is the longest we've seen
+		int this_lines_width  = 0;
+
+		TTF_SizeText(font,descriptions->at(c).c_str(),&this_lines_width,&this_lines_height);
+
+		if(this_lines_width > current_max_width){
+			current_max_width = this_lines_width;
+		}
+	}
+
+	cout << "tile_name: " << tile_name << endl;
+	max_width = current_max_width;
+	cout << "max width: " << max_width << endl;
+	//I'm assuming this is the same per line
+	cout << "line height: " << this_lines_height;
+	line_height = this_lines_height;
+}
+
+int field::calculate_help_box_total_height(int line_height,int vertical_offset,uint number_of_lines){
+	return (line_height + vertical_offset) * number_of_lines;
+}
+
 void field::set_up_description(TTF_Font* font, SDL_Renderer* renderer, const SDL_Color& color){
 	//don't need to do anything if this parameter didn't have a description specified in the config file
 	if(descriptions == NULL || descriptions->size() == 0){
@@ -170,29 +201,10 @@ void field::set_up_description(TTF_Font* font, SDL_Renderer* renderer, const SDL
 	}
 
 	//find widest description line
-	unsigned int max_width = 0;
-	int max_w_index        = 0;
-	int total_h            = 0;
-	int word_h             = 0;
-	int word_w             = 0;
+	int max_width   = 0;
+	int line_height = 0;
 
-	//# of pixels between each line of text
-	int vert_offset = 1;
-
-	for(unsigned int c = 0; c < descriptions->size();c++){
-		//if this string is the longest we've seen
-		if(descriptions[c].size() > max_width){
-			max_width   = descriptions[c].size();
-			max_w_index = c;
-		}
-	}
-	TTF_SizeText(font,descriptions->at(max_w_index).c_str(),&word_w,&word_h);
-
-	//now have help box's width
-	max_width = word_w;
-
-	//now have help box's height
-	total_h = descriptions->size() * (word_h + vert_offset);
+	get_help_box_max_width_and_line_height(font,max_width,line_height);
 
 	//set up the surface's pixel masks. I don't fully understand this
 	//but it's from the sdl documentation
@@ -212,7 +224,13 @@ void field::set_up_description(TTF_Font* font, SDL_Renderer* renderer, const SDL
 		alpha = 0xff000000;
 	#endif
 
-	my_help_surf = SDL_CreateRGBSurface(0,max_width,total_h,32,red,green,blue,alpha);
+	uint number_of_lines = descriptions->size();
+
+	int vertical_offset = HELP_LINE_VERTICAL_PADDING;
+
+	int total_height = calculate_help_box_total_height(line_height,vertical_offset,number_of_lines);
+
+	my_help_surf = SDL_CreateRGBSurface(0,max_width,total_height,32,red,green,blue,alpha);
 
 	if(my_help_surf == NULL){
 		string error = "Error making ";
@@ -224,19 +242,19 @@ void field::set_up_description(TTF_Font* font, SDL_Renderer* renderer, const SDL
 	//OU green from colors.h
 	SDL_FillRect(my_help_surf,NULL,SDL_MapRGBA(my_help_surf->format,OU_GREEN));
 
-	int new_row_height = 0;
+	int new_row_y_start = 0;
 	for(unsigned int c = 0; c < descriptions->size();c++){
 		//used to tell it where to draw each line
-		SDL_Rect word_dest = {0,0,0,0};
+		SDL_Rect line_dest = {0,0,0,0};
 
 		SDL_Surface* temp_line = TTF_RenderUTF8_Blended(font,descriptions->at(c).c_str(),color);
 
 		//account for height of previous lines
-		word_dest.y    = new_row_height + vert_offset;
-		new_row_height = word_dest.y + word_h;
+		line_dest.y     = new_row_y_start + vertical_offset;
+		new_row_y_start = line_dest.y + line_height;
 
 		//draw words atop the help surface
-		if(SDL_BlitSurface(temp_line,NULL,my_help_surf,&word_dest) != 0){
+		if(SDL_BlitSurface(temp_line,NULL,my_help_surf,&line_dest) != 0){
 			string error = SDL_GetError();
 			logger_access->push_error("Error in help blit."+error);
 		}

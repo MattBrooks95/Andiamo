@@ -24,7 +24,7 @@ andy_tile.png
 200x50
 andy
 FNRME1:E1 Strength Normalization
-c Variable name in HF: FNRME1 
+c Variable name in HF: FNRME1
 c normalization factors for E1
 c gamma ray decay
 andy_tile.png
@@ -197,8 +197,8 @@ andy
 ILV5:Distinct Level Density Model
 c ILV5 = number of nuclei for which temperatures are read in
 c 0 = use Fermi gas
-c 1 <= use constant temperature model (no search can be done if
-c     ILV5 >= 0 
+c 1 <= use constant temperature model
+c     (no search can be done if ILV5 >= 0)
 c talk to Tom about this one, isn't present in example input
 andy_tile.png
 265x50
