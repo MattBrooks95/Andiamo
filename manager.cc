@@ -171,7 +171,6 @@ void manager::init_parameter_graphics(){
 
 		} else if(line_iterator->compare("andy") == 0){
 			//end current parameter, push into current line map
-			if (temp_descriptions != NULL) cout << "descriptions size at push:" << temp_descriptions->size() << endl;
 			field* new_field = new field(tile_name,display_name,image_name,width,height,temp_descriptions);
 
 			new_field->set_regular_expression(regular_expression);
@@ -196,11 +195,7 @@ void manager::init_parameter_graphics(){
 				insert_line_pointer(line_name, line_map, this_lines_parameters_in_order);
 			}
 
-			if(temp_descriptions != NULL){
-				cout << "deleting temp descriptions, setting to null" << endl;
-				delete(temp_descriptions);
-				temp_descriptions  = NULL;
-			}
+			temp_descriptions  = NULL;
 
 			regular_expression = NULL;
 
@@ -295,8 +290,7 @@ manager::~manager(){
 	}
 
 	//because the map & the vector have pointers to the same objects,
-	//calling delete on the pointers in the map will cause issues
-
+	//calling delete on the pointers in both containers will cause issues
 }
 
 int manager::get_widest_tile_width(){
