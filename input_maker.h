@@ -169,13 +169,17 @@ class input_maker{
 
   private:
     //! contains a string that provides the relative path to the config files
-    string config_p;
+    string config_path;
 
     //! path to the output folder
-    string output_p;
+    string output_path;
 
     //! set by the constructor to tell it which config file to use
     string file_name;
+
+    ofstream* get_output_stream(const std::string& stream_path);
+
+    void build_output_directory();
 
     //! contains a variable number of in4 fortran-style variables
     /* its length and contents should be specified in the config file */
@@ -201,7 +205,6 @@ class input_maker{
 
     //! store the TTAB numbers read in from the TC file
     // vector<param_real8> TTAB;
-
 };
 
 //#########################  NON MEMBER HELPERS  ##############################

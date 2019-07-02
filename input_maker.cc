@@ -23,8 +23,8 @@ input_maker::input_maker(string output_file_name_in){
 
 	string home_path = system_access->get_home();
 
-	config_p  = home_path + "/Andiamo/config/";
-	output_p  = home_path + "/Andiamo/output/";
+	config_path  = home_path + "/Andiamo/config/";
+	output_path  = home_path + "/Andiamo/output/";
 
 	output_file_name = output_file_name_in;
 	// file_name        = config_file_name_in;
@@ -250,7 +250,7 @@ input_maker::input_maker(string output_file_name_in){
 // 			if(size_match.ready()){
 
 // 				string first_match      = size_match[0].str();
-// 				uint match_length       = first_match.size(); 
+// 				uint match_length       = first_match.size();
 // 				string temp_size_string = first_match.substr(1,match_length-2);
 // 				try {
 // 				  array_size = stoi(temp_size_string);
@@ -544,28 +544,47 @@ input_maker::input_maker(string output_file_name_in){
 
 // // }
 
+void input_maker::build_output_directory(){
+		string output_folder_path = system_access->get_andiamo_root() + "output";
+		string command = "mkdir " + output_folder_path;
+		system(command.c_str());
+}
+
+ofstream* input_maker::get_output_stream(const string& stream_path){
+	ofstream* outs = new ofstream();
+
+	outs->open(stream_path.c_str(),std::fstream::trunc);
+	if(outs->fail()){
+		logger_access->push_error("Error! Can not open/create output file: |"+
+								stream_path+
+								"| Attempting output directory creation.");
+		build_output_directory();
+		outs->open(stream_path.c_str(),std::fstream::trunc);
+		if(outs->fail()){
+			logger_access->push_error("Opening output stream failed again.");
+			return NULL;
+		} else {
+			return outs;
+		}
+	}
+}
+
 bool input_maker::output(vector<string>& form_bad_inputs){
+	//set to true to more easily identify specific
+	//lines from the HF manual, false to actually make FOP inputs
+	bool console_test = true;
+	//note that this will not yet be properly formatted for HF input,
+	//mostly here for testing field input and this class's output logic
+	string stream_path = output_path + output_file_name;
+	ofstream* outs     = get_output_stream(stream_path);
 
-// 	// //set to true to more easily identify specific
-// 	// //lines from the HF manual, false to actually make FOP inputs
-// 	// bool console_test = true;
-// 	// //note that this will not yet be properly formatted for HF input,
-// 	// //mostly here for testing field input and this class's output logic
-// 	// ofstream outs;
-// 	// outs.open( (output_p+output_file_name).c_str(),std::fstream::trunc );
-// 	// if(outs.fail()) {
-// 	// 	logger_access->push_error("Error! Can not open/create output file: |"+
-// 	// 							output_p+output_file_name+
-// 	// 							"| Attempting output directory creation.");
-// 	// 	system("mkdir output");
-// 	// 	outs.open( (output_p+output_file_name).c_str(),std::fstream::trunc);
-// 	// 	if(outs.fail()){
-// 	// 		logger_access->push_error("Opening output stream failed again.");
-// 	// 		return false;
-// 	// 	}
+	if(outs == NULL){
+		logger_access->push_error("Couldn't create output file stream.");
+		return false;
+	}
 
-// 	// }
-
+	outs->close();
+	delete(outs);
 // 	// //note that in these functions, the variables that are being printed are
 // 	// //found in the order they are found in the HF_config/config.txt
 // 	// //file, based off of the input manual that I was given

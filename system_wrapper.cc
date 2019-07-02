@@ -55,7 +55,7 @@ void system_wrapper::print_os(){
 
 void system_wrapper::save_start_time(){
 	//unique_file_name will be comprised of a message and the date
-	//http://www.cplusplus.com/reference/ctime/localtime/ 
+	//http://www.cplusplus.com/reference/ctime/localtime/
 	time_t unix_time;
 	time(&unix_time);
 	local_time_at_startup = localtime(&unix_time);
@@ -88,4 +88,3 @@ void system_wrapper::get_file_as_lines(const string& file_path,vector<string>& f
 
 	file_input_stream.close();
 }
-

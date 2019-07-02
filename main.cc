@@ -113,10 +113,6 @@ int main(int argc, char *argv[]){
 
 	input_maker io_handler;
 	io_access = &io_handler;
-	// io_access->init(/*input_maker_config_file*/);
-
-	//give fields pointers to their val in input_maker
-	// io_access->initialize_fields();
 
 	//set up the manager for the functional buttons
 	button_manager b_manager;

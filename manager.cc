@@ -36,10 +36,6 @@ void manager::fill_vector_with_configuration_lines_from_file(const string& file_
 	cout << "path to file:" << total_file_path << endl;
 
 	system_access->get_file_as_lines(total_file_path, file_lines);
-
-	// for(uint c = 0; c < file_lines.size(); c++){
-	// 	cout << file_lines[c] << endl;
-	// }
 }
 
 void manager::init_regular_expressions(){
@@ -309,28 +305,8 @@ int manager::get_widest_tile_width(){
 
 	}
 
-	//cout << "Max width: " << max_width << endl;
-
 	return max_width;
 }
-
-// void manager::init_fields_graphics(){
-
-// 	for(uint line = 0; line < fields_order.size();line++){
-
-// 		for(uint param = 0; param < fields_order[line].size();param++){
-
-// 			if(fields_order[line][param] == NULL){
-// 				cout << "NULL POINTER IN TILE VECTOR."
-// 					 << "Line: " << line << " Param: " << param << endl;
-// 			} else {
-// 				fields_order[line][param]->graphics_init(image_path);
-// 			}
-// 		}
-
-// 	}
-
-// }
 
 void manager::draw(){
 	check_locks();

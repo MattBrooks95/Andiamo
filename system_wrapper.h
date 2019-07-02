@@ -28,16 +28,13 @@ enum operating_system{
 extern logger* logger_access;
 
 class system_wrapper{
-
 	public:
-
 		std::string get_home();
 		std::string get_andiamo_root();
 
 		operating_system get_os();
-		std::string get_os_string(); 
+		std::string get_os_string();
 		void print_os();
-
 
 		#ifdef LINUX
 			system_wrapper();
