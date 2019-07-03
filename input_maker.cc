@@ -35,70 +35,6 @@ input_maker::input_maker(string output_file_name_in){
 	output_was_made = false;
 }
 
-
-// // void input_maker::check_map(){
-// // 	logger_access->push_msg("####### INPUT MAKER INT4 PARAMS MAP ##############");
-// // 	for(INT4_MAP::iterator int_it = int4_params.begin();
-// // 		int_it != int4_params.end();
-// // 		++int_it){
-// // 		logger_access->push_msg_no_nl(int_it->second.get_string()+"  ");
-// // 	}
-// // 	logger_access->push_msg("\n######### INPUT MAKER R8 PARAMS MAP ##########\n");
-// // 	for(REAL8_MAP::iterator r8_it = real8_params.begin();
-// // 		r8_it != real8_params.end();
-// // 		++r8_it){
-// // 		logger_access->push_msg_no_nl(r8_it->second.get_string()+":");
-// // 	}
-// // 	logger_access->push_msg("\n######### INPUT MAKER STRING PARAMS MAP ######\n");
-// // 	for(STR_MAP::iterator string_it = string_params.begin();
-// // 		string_it != string_params.end();
-// // 		++string_it){
-// // 		string msg = string_it->first + ":" + string_it->second.value+"   ";
-// // 		logger_access->push_msg_no_nl(msg);
-// // 	}
-// // 	logger_access->push_msg("\n####### INPUT MAKER INT4 ARRAY MAP ###########\n");
-// // 	for(INT4_ARR_MAP::iterator int4_array_it = int4_array_params.begin();
-// // 		int4_array_it != int4_array_params.end();
-// // 		++int4_array_it){
-// // 		string msg = int4_array_it->first + ":"
-// // 					 + int4_array_it->second.get_string() + "  ";
-// // 		logger_access->push_msg_no_nl(msg);
-// // 	}
-// // 	logger_access->push_msg("\n####### INPUT MAKER R8_ARRAY MAP #############\n");
-// // 	for(R8_ARR_MAP::iterator r8_array_it = r8_array_params.begin();
-// // 		r8_array_it != r8_array_params.end();
-// // 		r8_array_it++){
-// // 		string msg = r8_array_it->first + ":"
-// // 					 + r8_array_it->second.get_string() + "  ";
-// // 		logger_access->push_msg_no_nl(msg);
-// // 	}
-
-// // }
-
-// void input_maker::init(const string& alternate_config){
-
-// 	logger_access->push_msg("############ INPUT_MAKER INIT ####################");
-
-// 	ifstream ins;
-// 	if(alternate_config.size() == 0){
-
-// 		ins.open( (config_p+file_name).c_str() );
-
-// 	} else {
-
-// 		ins.open( (config_p+"/custom_configs/"+alternate_config).c_str() );
-
-// 	}
-
-// 	if(ins.fail()){
-
-// 		string err;
-// 		err = "Error in input_maker::init(), couldn't find the input file!";
-// 		logger_access->push_error(err);
-// 		return;
-
-// 	}
-
 // 	//set up regex matches
 // 	regex* re_comment  = regex_access->get_regular_expression(RE_COMMENT_LINE);
 // 	regex* re_i4       = regex_access->get_regular_expression(RE_INT4_LINE);
@@ -1114,18 +1050,6 @@ void input_maker::do_line1(ofstream& outs){
 	field* label_parameter = tile_access->get_param("label");
 	output_string(outs,label_parameter->get_text());
 	cout << endl;
-	// if(string_params[0].name != "label" || string_params.size() == 0){
-	// 	try{
-	// 		uint size = string_params.at("label").size;
-	// 		string value = string_params.at("label").value;
-	// 		output_string(outs,size,value);
-	// 		outs << "\n";
-	// 	} catch( out_of_range& not_found ){
-	// 		string err = "Error in input_maker, 'label' parameter not found";
-	// 		err       += " in vector string_params as it should be.";
-	// 		logger_access->push_error(err);
-	// 	}
-	// }
 }
 
 // void do_line2(ofstream& outs,const REAL8_MAP& real8_params,
