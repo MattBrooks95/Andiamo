@@ -550,21 +550,18 @@ void input_maker::build_output_directory(){
 		system(command.c_str());
 }
 
-ofstream* input_maker::get_output_stream(const string& stream_path){
-	ofstream* outs = new ofstream();
+void input_maker::get_output_stream(const string& stream_path, ofstream& outs){
 
-	outs->open(stream_path.c_str(),std::fstream::trunc);
-	if(outs->fail()){
+	outs.open(stream_path.c_str(),std::fstream::trunc);
+	if(outs.fail()){
 		logger_access->push_error("Error! Can not open/create output file: |"+
 								stream_path+
 								"| Attempting output directory creation.");
 		build_output_directory();
-		outs->open(stream_path.c_str(),std::fstream::trunc);
-		if(outs->fail()){
+		outs.open(stream_path.c_str(),std::fstream::trunc);
+		if(outs.fail()){
 			logger_access->push_error("Opening output stream failed again.");
-			return NULL;
-		} else {
-			return outs;
+			return;
 		}
 	}
 }
@@ -576,15 +573,11 @@ bool input_maker::output(vector<string>& form_bad_inputs){
 	//note that this will not yet be properly formatted for HF input,
 	//mostly here for testing field input and this class's output logic
 	string stream_path = output_path + output_file_name;
-	ofstream* outs     = get_output_stream(stream_path);
 
-	if(outs == NULL){
-		logger_access->push_error("Couldn't create output file stream.");
-		return false;
-	}
+	ofstream outs;
+	get_output_stream(stream_path, outs);
 
-	outs->close();
-	delete(outs);
+	outs.close();
 // 	// //note that in these functions, the variables that are being printed are
 // 	// //found in the order they are found in the HF_config/config.txt
 // 	// //file, based off of the input manual that I was given

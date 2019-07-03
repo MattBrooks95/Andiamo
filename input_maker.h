@@ -177,7 +177,7 @@ class input_maker{
     //! set by the constructor to tell it which config file to use
     string file_name;
 
-    ofstream* get_output_stream(const std::string& stream_path);
+    void get_output_stream(const std::string& stream_path, std::ofstream& outs);
 
     void build_output_directory();
 
