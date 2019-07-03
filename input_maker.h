@@ -4,19 +4,19 @@
  *then makes decisions based on that config file */
 #pragma once
 
-#include<vector>
-#include<iostream>
-#include<fstream>
-#include<regex>
-#include<cstdlib>
+#include <vector>
+#include <iostream>
+#include <fstream>
+#include <regex>
+#include <cstdlib>
 
 //string stream allows reading from a string like it was an input stream
 //makes reading in form_button initializer lists easier
-#include<sstream>
+#include <sstream>
 
 //map is an associative array, like could be found in python or perl
 //items are accessed by name (key)
-#include<map>
+#include <map>
 
 #include "system_wrapper.h"
 #include "ftran_structs.h"
@@ -36,6 +36,7 @@ using std::regex;
 extern logger* logger_access;;
 extern system_wrapper* system_access;
 
+class manager;
 class button_manager;
 class field;
 //! input_maker makes the HF input and loads in the default values
@@ -181,6 +182,15 @@ class input_maker{
 
     void build_output_directory();
 
+    //! helper function for input_maker::output()
+    /*! prints a string to the output file in the right format
+     *\param outs is the fstream to print to (such as output/output.txt)
+     *\param size is the size read in by input_maker from the configuration file
+     *\param output_me is the ftran_struct string_param to print to the file */
+    void output_string(ofstream& outs,const string& output_string);
+
+    void do_line1(ofstream& outs);
+
     //! contains a variable number of in4 fortran-style variables
     /* its length and contents should be specified in the config file */
     // map<string,param_int4> int4_params;
@@ -208,16 +218,8 @@ class input_maker{
 };
 
 //#########################  NON MEMBER HELPERS  ##############################
-//! helper function for input_maker::output()
-/*! prints a string to the output file in the right format
- *\param outs is the fstream to print to (such as output/output.txt)
- *\param size is the size read in by input_maker from the configuration file
- *\param output_me is the ftran_struct string_param to print to the file */
-void output_string(ofstream& outs,const unsigned int& size,\
-                    const string& string_in);
-
 //! sets up line one of the HF input file
-void do_line1(ofstream& outs,const map<string,param_string>& string_params);
+
 
 //! sets up line two of the HF input file
 void do_line2(ofstream& outs,const map<string,param_real8>& real8_params,

@@ -93,6 +93,7 @@ class field{
 
     //! convenience wrapper around text_box::get_text
     string get_text(){ return my_text_box.get_text();}
+    // const string get_text(){ return my_text_box.get_text();}
 
     text_box& get_text_box(){ return my_text_box;}
 

@@ -1,19 +1,19 @@
 //! \file manager.h declares the manager class, which manipulates and stores tiles
 
 #pragma once
-#include<vector>
-#include<map>
+#include <vector>
+#include <map>
 
-#include<fstream>
-#include<iostream>
-#include<regex>
+#include <fstream>
+#include <iostream>
+#include <regex>
 
 //for sorting the tiles based on width
-#include<algorithm>
+#include <algorithm>
 
-#include<SDL2/SDL.h>
-#include<SDL2/SDL_image.h>
-#include<regex>
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_image.h>
+#include <regex>
 
 #include "std_helpers.h"
 

@@ -107,6 +107,7 @@ class text_box{
 		void back_space();
 
 		string get_text() const {return text;}
+
 		void set_text(const string& new_text){text = new_text;}
 
 		//! the horizontal coordinate of the upper left corner

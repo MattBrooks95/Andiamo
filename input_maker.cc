@@ -7,14 +7,16 @@
 #include "input_maker.h"
 #include "button_manager.h"
 #include "regex_patterns.h"
+#include "manager.h"
 
 // #define F << setw(8) <<
 // #define F10 << setw(10) <<
 // #define F5 << setw(5) <<
 // #define I << setw(5) <<
 // #define I10 << setw(10) <<
-
 using namespace std;
+
+extern manager* tile_access;
 
 // extern button_manager* button_access;
 // extern regex_manager* regex_access;
@@ -577,19 +579,15 @@ bool input_maker::output(vector<string>& form_bad_inputs){
 	ofstream outs;
 	get_output_stream(stream_path, outs);
 
-	outs.close();
+
 // 	// //note that in these functions, the variables that are being printed are
 // 	// //found in the order they are found in the HF_config/config.txt
 // 	// //file, based off of the input manual that I was given
-// 	// //so if a new line is inserted, care to adjust the indices.
-// 	// //Adding new lines to the end shouldn't change the lines above them, though
 
 
-// 	// //SET UP LINE 1#############################################################
-// 	// if(console_test) outs << "LINE_1###################################" << endl;
-// 	// do_line1(outs,string_params);
-// 	// if(console_test) outs << "#########################################" << endl;
-// 	// //##########################################################################
+	if(console_test) outs << "LINE_1###################################" << endl;
+	do_line1(outs);
+	if(console_test) outs << "#########################################" << endl;
 
 // 	// //SET UP LINE 2#############################################################
 // 	// if(console_test) outs << "LINE_2###################################" << endl;
@@ -753,6 +751,7 @@ bool input_maker::output(vector<string>& form_bad_inputs){
 // 	// 	check_map();
 // 	// 	return true;
 // 	// }
+	outs.close();
 }
 
 // //################# Initialzation of Fields ####################################
@@ -1096,43 +1095,38 @@ bool input_maker::output(vector<string>& form_bad_inputs){
 // //##############################################################################
 
 // //################# NON MEMBER HELPERS #########################################
-// void output_string(ofstream& outs,const unsigned int& size,
-// 					const string& string_in){
+void input_maker::output_string(ofstream& outs,const string& output_string){
+	uint size = output_string.size();
+	//set up output flags
+	outs << setw(size) << left;
+	//if string is in quotation marks, don't print them
+	if(output_string[0] == '\"' && output_string[size - 1] == '\"'){
+		//take out the "" that were used for the regular expression matching
+		string output_me = output_string.substr(1,size - 2);
+		//print to the file
+		outs << output_me;
+	} else {//elsewise, just print the string
+		outs << output_string;
+	}
+}
 
-// 	//set up output flags
-// 	outs << setw(size) << left;
-// 	//if string is in quotation marks, don't print them
-// 	if(string_in[0] == '\"' && string_in[string_in.size()-1] == '\"'){
-// 		//take out the "" that were used for the regular expression matching
-// 		string output_me = string_in.substr(1,string_in.size()-2);
-// 		//print to the file
-// 		outs << output_me;
-// 	} else {//elsewise, just print the string
-
-// 		outs << string_in;
-
-// 	}
-
-// }
-
-// void do_line1(ofstream& outs,const map<string,param_string>& string_params){
-
-// 	//if(string_params[0].name != "label" || string_params.size() == 0){
-// 	// try{
-// 	// 	uint size = string_params.at("label").size;
-// 	// 	string value = string_params.at("label").value;
-// 	// 	output_string(outs,size,value);
-// 	// 	outs << "\n";
-
-// 	// } catch( out_of_range& not_found ){
-
-
-// 	// 	string err = "Error in input_maker, 'label' parameter not found";
-// 	// 	err       += " in vector string_params as it should be.";
-// 	// 	logger_access->push_error(err);
-// 	// }
-
-// }
+void input_maker::do_line1(ofstream& outs){
+	field* label_parameter = tile_access->get_param("label");
+	output_string(outs,label_parameter->get_text());
+	cout << endl;
+	// if(string_params[0].name != "label" || string_params.size() == 0){
+	// 	try{
+	// 		uint size = string_params.at("label").size;
+	// 		string value = string_params.at("label").value;
+	// 		output_string(outs,size,value);
+	// 		outs << "\n";
+	// 	} catch( out_of_range& not_found ){
+	// 		string err = "Error in input_maker, 'label' parameter not found";
+	// 		err       += " in vector string_params as it should be.";
+	// 		logger_access->push_error(err);
+	// 	}
+	// }
+}
 
 // void do_line2(ofstream& outs,const REAL8_MAP& real8_params,
 // 			  const INT4_MAP& int4_params){
