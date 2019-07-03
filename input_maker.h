@@ -191,6 +191,8 @@ class input_maker{
 
     void do_line1(ofstream& outs);
 
+    void do_line2(ofstream& outs);
+
     //! contains a variable number of in4 fortran-style variables
     /* its length and contents should be specified in the config file */
     // map<string,param_int4> int4_params;
@@ -221,9 +223,7 @@ class input_maker{
 //! sets up line one of the HF input file
 
 
-//! sets up line two of the HF input file
-void do_line2(ofstream& outs,const map<string,param_real8>& real8_params,
-                const map<string,param_int4>& int4_params);
+
 
 //! implements the reading loop over the transmission coefficients
 /* NENT, LMAX and NGF control the loops, and TC_input_file button sets

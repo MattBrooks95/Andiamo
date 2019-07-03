@@ -9,10 +9,10 @@
 #include "regex_patterns.h"
 #include "manager.h"
 
-// #define F << setw(8) <<
+#define F << setw(8) <<
 // #define F10 << setw(10) <<
 // #define F5 << setw(5) <<
-// #define I << setw(5) <<
+#define I << setw(5) <<
 // #define I10 << setw(10) <<
 using namespace std;
 
@@ -525,11 +525,9 @@ bool input_maker::output(vector<string>& form_bad_inputs){
 	do_line1(outs);
 	if(console_test) outs << "#########################################" << endl;
 
-// 	// //SET UP LINE 2#############################################################
-// 	// if(console_test) outs << "LINE_2###################################" << endl;
-// 	// do_line2(outs,real8_params, int4_params);
-// 	// if(console_test) outs << "#########################################" << endl;
-// 	// //##########################################################################
+	if(console_test) outs << "LINE_2###################################" << endl;
+	do_line2(outs);
+	if(console_test) outs << "#########################################" << endl;
 
 // 	// //SET UP LINE 3#############################################################
 // 	// if(console_test) outs << "LINE_3###################################" << endl;
@@ -1052,40 +1050,45 @@ void input_maker::do_line1(ofstream& outs){
 	cout << endl;
 }
 
-// void do_line2(ofstream& outs,const REAL8_MAP& real8_params,
-// 			  const INT4_MAP& int4_params){
+void input_maker::do_line2(ofstream& outs){
+	//note, setw(something) needs to be called before every item is printed
+	//this is really annoying, so I have a macro up top
+	//where F = "<< setw(8) << " for printing the real 8 values
 
-// 	//note, setw(something) needs to be called before every item is printed
-// 	//this is really annoying, so I have a macro up top
-// 	//where F = "<< setw(8) << " for printing the real 8 values
+	outs << right;//right justify data in it's width field
 
-// 	outs << right;//right justify data in it's width field
+	//set up decimal place precision
+	outs << fixed << setprecision(1);
 
-// 	//set up decimal place precision
-// 	outs << fixed << setprecision(1);
+	field* elab   = tile_access->get_param("ELAB");
+	field* a      = tile_access->get_param("A");
+	field* z      = tile_access->get_param("Z");
+	field* fnrme1 = tile_access->get_param("FNRME1");
+	field* fnrmm1 = tile_access->get_param("FNRMM1");
 
-// 	try{
-// 		// ELAB A Z FNRME1 FNRMM1
-// 		outs F real8_params.at("ELAB").value F real8_params.at("A").value
-// 			 F real8_params.at("Z").value
-// 			 F real8_params.at("FNRME1").value
-// 			 F real8_params.at("FNRMM1").value;
+	// ELAB A Z FNRME1 FNRMM1
+	outs F elab->get_text() F a->get_text()
+		 F z->get_text()
+		 F fnrme1->get_text()
+		 F fnrmm1->get_text();
 
-// 		//I = "<< setw(5) <<" macro up top
-// 		//IENCH, ICM, NZ3, TCPR
-// 		outs I int4_params.at("IENCH").value I int4_params.at("ICM").value
-// 			 I int4_params.at("NZ3").value I int4_params.at("TCPR").value;
+	field* iench = tile_access->get_param("IENCH");
+	field* icm   = tile_access->get_param("ICM");
+	field* nz3   = tile_access->get_param("NZ3");
+	field* tcpr  = tile_access->get_param("TCPR");
+	//I = "<< setw(5) <<" macro up top
+	//IENCH, ICM, NZ3, TCPR
+	outs I iench->get_text() I icm->get_text()
+		 I nz3->get_text() I tcpr->get_text();
 
-// 		//make field width 8 again, FNRME2
-// 		outs F real8_params.at("FNRME2").value;
+	field* fnrme2 = tile_access->get_param("FNRME2");
+	//make field width 8 again, FNRME2
+	outs F fnrme2->get_text();
 
-// 		//put width back to 5 for NGF
-// 		outs I int4_params.at("NGF").value << endl;
-// 	} catch(out_of_range& not_found) {
-
-// 	}
-
-// }
+	field* ngf = tile_access->get_param("NGF");
+	//put width back to 5 for NGF
+	outs I ngf->get_text() << endl;
+}
 
 // void do_TC_coefficients(const map<string,param_real8>& real8_params,
 // 						const map<string,param_int4_array>& array_map,

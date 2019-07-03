@@ -338,8 +338,6 @@ void manager::draw(){
 }
 
 field* manager::get_param(const string& target_param){
-
-
 	for(FIELDS_MAP::iterator line_it = fields.begin(); line_it != fields.end(); ++line_it){
 		field* this_field = get_param_from_line(target_param,*line_it->second);
 		if(this_field == NULL){
