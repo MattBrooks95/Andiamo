@@ -1,5 +1,5 @@
 label:.*
-ELAB:.*
+ELAB:[0-9.]*
 A:.*
 Z:.*
 FNRME1:.*

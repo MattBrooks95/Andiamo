@@ -29,7 +29,10 @@ text_box::text_box(TTF_Font* font_in, string text_in, int xloc_in, int
 
 	input_test_regex = NULL;
 
-	bad_input = false;
+	// default to true, some text boxes may not be used with regular expression
+	// capability -> I should make that a derived class
+	input_satisfied = true;
+
 	editing_location = 0;
 	shown_area       = {0,0,0,0};
 
@@ -56,11 +59,11 @@ text_box::text_box(const text_box& other){
 	y_scroll = other.y_scroll;
 
 	text      = other.text;
-	bad_input = other.bad_input;
+
+	input_satisfied = other.input_satisfied;
 
 	text_dims  = other.text_dims;
 	shown_area = other.shown_area;
-
 
 	font = other.font;
 
@@ -71,16 +74,17 @@ text_box::text_box(const text_box& other){
 	//and may cause a seg fault
 	my_cursor.init(&my_rect);
 
-	string text_b_target = "Images/text_box.png";
+	string image_path_base = "Images/";
+
+	string text_b_target = image_path_base + "text_box.png";
 	text_box_texture     = asset_access->get_texture(text_b_target);
 
-	string bad_target = "Images/bad_tile.png";
+	string bad_target = image_path_base + "bad_tile.png";
 	bad_texture = asset_access->get_texture(bad_target);
 
 	if(sdl_access != NULL && font != NULL){
 		text_surface = TTF_RenderUTF8_Blended(font,text.c_str(),text_color);
-		text_texture = SDL_CreateTextureFromSurface(sdl_access->renderer,
-														text_surface);
+		text_texture = SDL_CreateTextureFromSurface(sdl_access->renderer,text_surface);
 	}
 }
 
@@ -172,6 +176,10 @@ void text_box::print_me(){
 	logger_access->push_msg("bad box texture " + to_string(size_t(bad_texture)));
 }
 
+void text_box::render_with_texture(SDL_Texture* texture, const SDL_Rect& render_rectangle){
+	SDL_RenderCopy(sdl_access->renderer,texture,NULL,&render_rectangle);
+}
+
 void text_box::draw_me(){
 
 	SDL_Rect modified_rect = my_rect;
@@ -182,15 +190,14 @@ void text_box::draw_me(){
 
 	//if the text box hasn't been given bad input, or this text box
 	//just "doesn't care" then draw the normal white box
-	if(!bad_input){
-
+	if(input_satisfied){
 		//render the white box
-		SDL_RenderCopy(sdl_access->renderer,text_box_texture,NULL,&modified_rect);
-
+		render_with_texture(text_box_texture,modified_rect);
+		// SDL_RenderCopy(sdl_access->renderer,text_box_texture,NULL,&modified_rect);
 	//elsewise, draw the text box as being red, to indicate that it has been given bad input
 	} else {
-
-		SDL_RenderCopy(sdl_access->renderer,bad_texture,NULL,&modified_rect);
+		render_with_texture(bad_texture,modified_rect);
+		// SDL_RenderCopy(sdl_access->renderer,bad_texture,NULL,&modified_rect);
 	}
 
 	if(text != " " && !text.empty() ){
@@ -296,23 +303,27 @@ void text_box::check_text(){
 	}
 
 	bool test_result = regex_match(text,*input_test_regex);
-	if(!bad_input){
-		if(text != " " && !test_result){
-			set_error_state();
+	if(test_result){
+		if(text != " " && test_result){
+			make_satisfied();
 		}
 	} else{
-		if(text == " " || test_result){
-			cancel_error_state();
+		if(text == " " || !test_result){
+			make_not_satisfied();
 		}
 	}
 }
 
-void text_box::set_error_state(){
-	bad_input = true;
+void text_box::set_is_satisfied(bool new_state){
+	input_satisfied = new_state;
 }
 
-void text_box::cancel_error_state(){
-	bad_input = false;
+void text_box::make_satisfied(){
+	set_is_satisfied(true);
+}
+
+void text_box::make_not_satisfied(){
+	set_is_satisfied(false);
 }
 
 void text_box::inc_cursor(bool& text_was_changed){
@@ -327,7 +338,6 @@ void text_box::dec_cursor(bool& text_was_changed){
 }
 
 void text_box::update_texture(){
-
 	if(text_surface != NULL){
 		SDL_FreeSurface(text_surface);
 	}
@@ -358,7 +368,6 @@ void text_box::update_texture(){
 }
 
 void text_box::back_space(){
-
 	if(editing_location == 0) return;
 
 	//erase from current editing location
@@ -372,6 +381,9 @@ void text_box::back_space(){
 	TTF_SizeText(font,text.c_str(),&text_dims.w,&text_dims.h);
 
 	update_texture();
+}
+
+void text_box::delete_character(){
 
 }
 

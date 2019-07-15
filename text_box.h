@@ -20,7 +20,7 @@ extern sdl_help* sdl_access;
 
 class field;
 
-//! implements variables and logic for text boxes used by forms & buttons
+//! represents a user-interactable text box with regular expression capability
 class text_box{
 	public:
 		//! constructor initializes the location of the text box
@@ -82,19 +82,24 @@ class text_box{
 		//! update the texture when the text is changed
 		void update_texture();
 
-		bool is_input_bad(){ return bad_input;}
+		bool is_satisfied(){ return input_satisfied; }
+		bool is_input_bad(){ return !is_satisfied(); }
 
 		/*! decides whether or not the input is bad,
 		 *and changes the color of the text box accordingly */
 		void check_text();
 
+		void set_is_satisfied(bool new_state);
+		void make_satisfied();
+		void make_not_satisfied();
+
 		//! is used to swap the box background texture to red
 		/*! this is enacted by the manager when this tile fails to convert the user's information
 		 *with stoi or stod. It serves as an error indicator for the fields that failed the test. */
-		void set_error_state();
+		// void set_error_state();
 
 		//! returns a tile to normal after it is given proper input and "Let's Go" has been clicked
-		void cancel_error_state();
+		// void cancel_error_state();
 
 		//! this function calls cursor's right member
 		void inc_cursor(bool& text_was_changed);
@@ -105,6 +110,9 @@ class text_box{
 		//! this version of back space tests the text string
 		/*! \param the regular expression which indicates good input */
 		void back_space();
+
+		//! delets the character under the cursor
+		void delete_character();
 
 		string get_text() const {return text;}
 
@@ -117,6 +125,8 @@ class text_box{
 		int yloc;
 
 	private:
+		void render_with_texture(SDL_Texture* texture, const SDL_Rect& render_rectangle);
+
 		//! location information stored in an SDL_Rect for rendering
 		SDL_Rect my_rect;
 
@@ -155,7 +165,7 @@ class text_box{
 		//! keep track of whether this box has been given bad input or not
 		/*! true: input is not properly formatted
 		 * false: input is properly formatted*/
-		bool bad_input;
+		bool input_satisfied;
 
 		//! pointer to the font in the sdl_help class
 		TTF_Font* font;
@@ -167,5 +177,4 @@ class text_box{
 
 		//! texture for text box to indicate bad input
 		SDL_Texture* bad_texture;
-
 };
