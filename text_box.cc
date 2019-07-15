@@ -391,7 +391,6 @@ void text_box::delete_character(){
 }
 
 bool text_box::was_clicked(SDL_Event& event){
-
 	int real_xloc = xloc;
 	int real_yloc = yloc;
 
@@ -415,21 +414,18 @@ bool text_box::was_clicked(SDL_Event& event){
 *http://lazyfoo.net/tutorials/SDL/32_text_input_and_clipboard_handling/index.php
 which was used as a reference */
 void text_box::edit_loop(SDL_Event& event,string& command){
-
 	//turn on the text input background functions
 	SDL_StartTextInput();
 
 	//used to control text entry loop
 	bool done = false;
 
-	//int c = 0;
 	bool text_was_changed = false;
 
 	//passable storage for event.text.text
 	string pass_me;
 
 	while(!done){
-
 		if( !SDL_PollEvent(&event) ){
 			//dummy event to stop it from printing default message every frame
 			//where no event happens
@@ -506,8 +502,7 @@ void text_box::edit_loop(SDL_Event& event,string& command){
 
 void text_box::edit_key_helper(SDL_Keysym& key,bool& text_was_changed,
 								string& command){
-
-	switch( key.sym ){
+	switch(key.sym){
 		case SDLK_BACKSPACE:
 			//delete last character, unless it's empty already than do nothing
 			if(text.size() > 0){
@@ -543,19 +538,3 @@ void text_box::edit_key_helper(SDL_Keysym& key,bool& text_was_changed,
 	}
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
