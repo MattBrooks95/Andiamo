@@ -110,7 +110,6 @@ class text_box{
 		//! this version of back space tests the text string
 		/*! \param the regular expression which indicates good input */
 		void back_space();
-
 		//! delets the character under the cursor
 		void delete_character();
 
@@ -126,6 +125,7 @@ class text_box{
 
 	private:
 		void render_with_texture(SDL_Texture* texture, const SDL_Rect& render_rectangle);
+		void resize_and_update_texture();
 
 		//! location information stored in an SDL_Rect for rendering
 		SDL_Rect my_rect;

@@ -334,7 +334,6 @@ void text_box::inc_cursor(bool& text_was_changed){
 void text_box::dec_cursor(bool& text_was_changed){
 	if(editing_location == 0) return;
 	my_cursor.left(text,editing_location,text_was_changed);
-
 }
 
 void text_box::update_texture(){
@@ -367,24 +366,28 @@ void text_box::update_texture(){
 
 }
 
+void text_box::resize_and_update_texture(){
+	TTF_SizeText(font,text.c_str(),&text_dims.w,&text_dims.h);
+	update_texture();
+}
+
 void text_box::back_space(){
 	if(editing_location == 0) return;
 
 	//erase from current editing location
 	text.erase(editing_location-1,1);
-	check_text();
 
 	//decrement editing location
 	editing_location--;
 
-	//update text size information
-	TTF_SizeText(font,text.c_str(),&text_dims.w,&text_dims.h);
-
-	update_texture();
+	resize_and_update_texture();
 }
 
 void text_box::delete_character(){
+	if (editing_location >= text.size()) return;
 
+	text.erase(editing_location,1);
+	resize_and_update_texture();
 }
 
 bool text_box::was_clicked(SDL_Event& event){
@@ -507,13 +510,18 @@ void text_box::edit_key_helper(SDL_Keysym& key,bool& text_was_changed,
 	switch( key.sym ){
 		case SDLK_BACKSPACE:
 			//delete last character, unless it's empty already than do nothing
-			if( text.size() > 0 ){
+			if(text.size() > 0){
 				//delete a character, update text's graphics
 				back_space();
 				text_was_changed = true;
 			}
 			break;
-
+		case SDLK_DELETE:
+			if(text.size() > 0){
+				delete_character();
+				text_was_changed = true;
+			}
+			break;
 		case SDLK_LEFT:
 			//if we are not already at the very left of the text,
 			//move the editing position one to the left
@@ -524,7 +532,6 @@ void text_box::edit_key_helper(SDL_Keysym& key,bool& text_was_changed,
 			//move the editing position one to the right
 			inc_cursor(text_was_changed);
 			break;
-
 		case SDLK_TAB:
 			//tell the loops calling this function that the user
 			//hit tab, so we can enter the text box loop for
