@@ -590,7 +590,7 @@ void icntrl6_form_button::click_helper(SDL_Event& mouse_event){
 				//enter the mini loop for form entry
 				my_form.form_event_loop(mouse_event);
 				did_something = true;
-			} else if( spectra_area.clicked(mouse_event) ){
+			} else if(spectra_area.clicked(mouse_event)){
 				SDL_RenderClear(sdl_access->renderer);
 
 				search_spectra_page_creation();
@@ -598,7 +598,7 @@ void icntrl6_form_button::click_helper(SDL_Event& mouse_event){
 
 				search_spectra.form_event_loop(mouse_event);
 				did_something = true;
-			} else if( xsections_area.clicked(mouse_event) ){
+			} else if(xsections_area.clicked(mouse_event)){
 				SDL_RenderClear(sdl_access->renderer);
 
 				cross_sections_page_creation();
@@ -618,8 +618,6 @@ void icntrl6_form_button::click_helper(SDL_Event& mouse_event){
 
 		//loop until the user clicks off the landing screen
 		} while(did_something || landing_was_clicked(mouse_event));
-
-
 	}
 }
 
@@ -629,7 +627,7 @@ bool icntrl6_form_button::landing_was_clicked(SDL_Event& mouse_event){
 	bool in_y = (mouse_event.button.y > landing_rect.y &&
 			mouse_event.button.y < landing_rect.y + landing_rect.h);
 
-	if( in_x && in_y ){
+	if(in_x && in_y){
 		return true;
 	}
 
@@ -639,7 +637,6 @@ bool icntrl6_form_button::landing_was_clicked(SDL_Event& mouse_event){
 
 
 void icntrl6_form_button::init_form(const vector<regex*>& pattern_tests){
-
 	//set up the image that lets the user switch between this
 	//button's different forms
 	setup_landing();
