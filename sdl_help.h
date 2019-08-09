@@ -1,16 +1,14 @@
 //! \file sdl_help.h declares the sdl_help class and the win_size struct
 
 #pragma once
-#include<string>
-#include<SDL2/SDL.h>
-#include<SDL2/SDL_image.h>
-#include<SDL2/SDL_ttf.h>
+#include <string>
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_image.h>
+#include <SDL2/SDL_ttf.h>
 
 //provides constants for the maximum and minimum values
 //c++ primitive data types for the current system & compiler
-#include<limits.h>
-
-
+#include <limits.h>
 
 #include "scroll_bar.h"
 #include "manager.h"
@@ -18,6 +16,8 @@
 #include "asset_manager.h"
 #include "system_wrapper.h"
 #include "logger.h"
+
+#include "command.h"
 
 using std::string;
 using std::vector;
@@ -101,7 +101,7 @@ class sdl_help{
 	void draw_guides();
 
 	//! This member enacts the draw members of vert_bar and horiz_bar
-	/* This should likely be called directly below every call to draw_tiles() */ 
+	/* This should likely be called directly below every call to draw_tiles() */
 	void draw_sbars();
 
 	//! presents the renderer and all of it's current textures to the screen
@@ -122,7 +122,7 @@ class sdl_help{
 	//! create the labels for the lines in the main parameter screen
 	/*! pushes the label into the line_titles vector */
 	void make_line_label(const string& label,unsigned int& start_height);
-	
+
 	//! called per calc_corners_helper run, to create parameter line backdrops
 	void make_line_guide(SDL_Rect backdrop_dims);
 
@@ -149,7 +149,7 @@ class sdl_help{
 	 *of the tile that is furthest to the left.
 	 *\param upmost when given -2048, is filled with the top edge
 	 *of the highest tile.
-	 *\param downmost when given 0, is filled with the the most bottom edge of 
+	 *\param downmost when given 0, is filled with the the most bottom edge of
 	 *the lowest tile */
 	void most(int& rightmost,int& leftmost,int& upmost,int& downmost);
 
@@ -240,7 +240,7 @@ class sdl_help{
 	//! A string that contains the window name, usually Andiamo."
 	string window_name;
 
-	//! a path string to the algorithm's input file folder 
+	//! a path string to the algorithm's input file folder
 	string hf_input_p;
 
 	//! a path string to the font folder
@@ -276,7 +276,7 @@ class sdl_help{
 
 	/**************************************************************************/
 
-	/*! a win_size struct that contains the window's current width and 
+	/*! a win_size struct that contains the window's current width and
 	 *height, this window limits what the user can see */
 	win_size window_s;
 

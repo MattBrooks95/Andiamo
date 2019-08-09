@@ -219,7 +219,7 @@ void button_manager::init_form_buttons(){
 	// vector<regex> ilv_2_patterns;
 	vector<regex*> icntrl_4_patterns;
 	vector<regex*> ilv3_ilv5_patterns;
-	fill_regex_vectors(icntrl_6_patterns,icntrl_8_patterns, 
+	fill_regex_vectors(icntrl_6_patterns,icntrl_8_patterns,
 						icntrl_4_patterns, ilv3_ilv5_patterns);
 
 	icntrl_6.init_form(icntrl_6_patterns);
@@ -379,26 +379,28 @@ bool button_manager::click_handling(SDL_Event& mouse_event){
 		if( fop_button.handle_click(mouse_event)){
 			done_something = true;
 		}
-
 	}
+
+	command user_command;
+
 	if(!done_something && output_fname.shown){
 
 		if(output_fname.my_text_box.was_clicked(mouse_event) ){
-			string command;
-			output_fname.my_text_box.edit_loop(mouse_event,command);
+			// string command;
+			output_fname.my_text_box.edit_loop(mouse_event,user_command);
 			done_something = true;
 		}
 
 	}
+
 	if(!done_something && tc_dir.shown){
-
 		if( tc_dir.my_text_box.was_clicked(mouse_event) ){
-			string command;
-			tc_dir.my_text_box.edit_loop(mouse_event,command);
+			// string command;
+			tc_dir.my_text_box.edit_loop(mouse_event,user_command);
 			done_something = true;
 		}
-
 	}
+
 	if(!done_something && lets_go.shown){
 		if( lets_go.handle_click(mouse_event) ){
 
@@ -423,8 +425,7 @@ bool button_manager::click_handling(SDL_Event& mouse_event){
 						//set up the texture to draw the error message
 						SDL_Texture* error_message = NULL;
 						SDL_Rect destination;
-						make_form_error_message(form_bad_inputs,
-												error_message,destination);
+						make_form_error_message(form_bad_inputs,error_message,destination);
 						if(error_message == NULL){
 							logger_access->push_error("Error message failure.");
 						} else {
@@ -439,12 +440,12 @@ bool button_manager::click_handling(SDL_Event& mouse_event){
 			done_something = true;
 		}
 	}
-	if(!done_something && save_context.shown){
 
+	if(!done_something && save_context.shown){
 		if(save_context.my_text_box.was_clicked(mouse_event)){
 
-			string command;
-			save_context.my_text_box.edit_loop(mouse_event,command);
+			// string command;
+			save_context.my_text_box.edit_loop(mouse_event,user_command);
 			done_something = true;
 
 		} else if(save_context.handle_click(mouse_event)){
@@ -452,7 +453,6 @@ bool button_manager::click_handling(SDL_Event& mouse_event){
 			//cout << "Clicked on the actual button, not the text box." << endl;
 			done_something = true;
 		}
-
 	}
 	/*if(!done_something && graphing_options.shown){
 		//needs text input handling and needs to do handle_click for check box

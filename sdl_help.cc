@@ -344,10 +344,9 @@ int sdl_help::scroll_clicked(int click_x, int click_y) const{
 //*****************************************************************************/
 
 void sdl_help::click_detection(SDL_Event& event,int click_x, int click_y){
-
     //allows the key_helper to return user key presses
     //that affect this loop
-    string command;
+    command user_command;
 
     //turned to true if command has value "TAB"
     //and isn't turned off until a suitable text box
@@ -370,9 +369,9 @@ void sdl_help::click_detection(SDL_Event& event,int click_x, int click_y){
                 if(user_tabbed || field_ptr->get_text_box().was_clicked(event)){
 
                     if(!field_ptr->is_locked){
-                        user_tabbed = false;
-                        command     = "";
-                        field_ptr->get_text_box().edit_loop(event,command);
+                        user_tabbed  = false;
+                        user_command = NONE;
+                        field_ptr->get_text_box().edit_loop(event,user_command);
                     } else if(user_tabbed){
                         continue;
                     }
@@ -385,7 +384,7 @@ void sdl_help::click_detection(SDL_Event& event,int click_x, int click_y){
 
                 }//end help dialogue click case
 
-                if(command.compare("TAB") == 0){
+                if(user_command == TAB){
                     user_tabbed = true;
                     continue;
                 }

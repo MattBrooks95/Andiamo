@@ -29,7 +29,7 @@ system_wrapper.o: system_wrapper.cc system_wrapper.h
 handlers.o: handlers.cc handlers.h sdl_help.h button_manager.h
 	g++ $(C_FLG) -c handlers.cc
 
-sdl_help.o: sdl_help.cc sdl_help.h scroll_bar.o manager.o input_maker.o button_manager.o logger.o
+sdl_help.o: sdl_help.cc sdl_help.h command.h scroll_bar.o manager.o input_maker.o button_manager.o logger.o
 	g++ $(C_FLG) -c sdl_help.cc
 
 asset_manager.o: asset_manager.h asset_manager.cc
@@ -50,10 +50,10 @@ button.o: button.cc button.h derived_buttons.o
 derived_buttons.o: derived_buttons.cc derived_buttons.h logger.o
 	g++ $(C_FLG) -c derived_buttons.cc
 
-form_buttons.o: form_buttons.cc form_buttons.h button.o form.o logger.o c_tuples.h regex_patterns.h
+form_buttons.o: form_buttons.cc form_buttons.h button.o form.o logger.o c_tuples.h regex_patterns.h command.h
 	g++ $(C_FLG) -c form_buttons.cc
 
-form.o: form.cc form.h button.o text_box.o c_tuples.h
+form.o: form.cc form.h button.o text_box.o c_tuples.h command.h
 	g++ $(C_FLG) -c form.cc
 
 manager.o: manager.cc manager.h field.o input_maker.o logger.o ftran_structs.o regex_patterns.h
@@ -77,7 +77,7 @@ hf_qvalue:
 deck.o: deck.h deck.cc
 	g++ $(C_FLG) -c deck.cc
 
-text_box.o: text_box.cc text_box.h sdl_help.h
+text_box.o: text_box.cc text_box.h sdl_help.h command.h
 	g++ $(C_FLG) -c text_box.cc
 
 cursor.o: cursor.cc cursor.h

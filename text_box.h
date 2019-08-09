@@ -1,17 +1,19 @@
 /*! \brief \file text_box.h this file describes a struct that
  *has the information necessary for text boxes */
 #pragma once
-#include<SDL2/SDL.h>
-#include<SDL2/SDL_image.h>
-#include<SDL2/SDL_ttf.h>
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_image.h>
+#include <SDL2/SDL_ttf.h>
 
-#include<iostream>
-#include<string>
-#include<regex>
+#include <iostream>
+#include <string>
+#include <regex>
 
 //#include "sdl_help.h"
 #include "cursor.h"
 #include "asset_manager.h"
+
+#include "command.h"
 
 using std::string;
 using std::regex;
@@ -56,10 +58,10 @@ class text_box{
 		//##########################################################################
 
 		//! loop that modifies the text box's contents based on user input
-		void edit_loop(SDL_Event& event,string& command);
+		void edit_loop(SDL_Event& event,command& user_command);
 
 		//! helper for edit_loop, processes keystrokes
-		void edit_key_helper(SDL_Keysym& key,bool& text_was_changed,string& command);
+		void edit_key_helper(SDL_Keysym& key,bool& text_was_changed,command& user_command);
 
 		//! prints all of this structs information, usually for debugging
 		void print_me();

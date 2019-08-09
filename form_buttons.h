@@ -5,11 +5,13 @@
  *specified in the input manual */
 
 #pragma once
-#include<fstream>
+#include <fstream>
 #include "button.h"
 #include "form.h"
 #include "c_tuples.h"
 #include "asset_manager.h"
+
+#include "command.h"
 
 using std::string;
 using std::vector;
@@ -45,7 +47,7 @@ class form_button : public button{
 		//! this function can be overloaded or used by derived classes
 		/*! overloading it allows a specific picture file to be used as the
 		 *help dialogue when the user clicks on the form while it is
-		 *still locked, and explains its purpose and unlocking conditions */ 
+		 *still locked, and explains its purpose and unlocking conditions */
 		virtual void setup_help_msg();
 
 		//! this function initializes this buttons form object
@@ -253,7 +255,7 @@ class icntrl6_form_button : public form_button{
 
 		/*! \brief store the vector<strings> of information for the icntrl6 forms
 		*in the following order: search spectra, cross sections.*/
-		/*! like the icntrl10 button, there is a special case in the 
+		/*! like the icntrl10 button, there is a special case in the
 		*input_makers parser for providing this form button with 2 vectors
 		*of initialization information. 'my_form' is filled out
 		*like normal, but the 2 extras are what needs the special attention */
@@ -365,7 +367,7 @@ class icntrl10_button : public button{
 	//!  outputs form info to the input_maker file stream
 	bool make_output(ofstream& outs,vector<index_value>& icntrl10_bad_inputs);
 
-	//! prepares the linear parameter entry 
+	//! prepares the linear parameter entry
 	void init_data(unsigned int num_contexts);
 
 	//! getter for locked status

@@ -92,7 +92,6 @@ text_box::text_box(const text_box& other){
 // }
 
 void text_box::init(TTF_Font* font_in, string text_in, int xloc_in, int yloc_in,int width_in, int height_in){
-
 	font = font_in;
 	text = text_in;
 
@@ -346,7 +345,6 @@ void text_box::update_texture(){
 	}
 
 	if(font != NULL){
-
 		text_surface = TTF_RenderUTF8_Blended(font,text.c_str(),text_color);
 
 		if(text_surface == NULL){
@@ -413,7 +411,7 @@ bool text_box::was_clicked(SDL_Event& event){
 /*thanks to
 *http://lazyfoo.net/tutorials/SDL/32_text_input_and_clipboard_handling/index.php
 which was used as a reference */
-void text_box::edit_loop(SDL_Event& event,string& command){
+void text_box::edit_loop(SDL_Event& event,command& command){
 	//turn on the text input background functions
 	SDL_StartTextInput();
 
@@ -434,8 +432,7 @@ void text_box::edit_loop(SDL_Event& event,string& command){
 
 		switch(event.type){
 			case SDL_MOUSEMOTION:
-			break;
-
+				break;
 			case SDL_MOUSEBUTTONDOWN:
 				//if the click was within the text box, move the cursor maybe
 				//if( current_tile->my_text_box.was_clicked(event) ){
@@ -452,39 +449,32 @@ void text_box::edit_loop(SDL_Event& event,string& command){
 					done = true;
 				}
 				break;
-
 			case SDL_TEXTINPUT:
 				pass_me = event.text.text;
 				update_text(pass_me);
 				text_was_changed = true;
 				//here event flooding is necessary, don't flush
 				break;
-
 			case SDL_KEYDOWN:
-
 				edit_key_helper(event.key.keysym,text_was_changed,command);
-
 				//prevent event flooding
 				SDL_FlushEvent(SDL_KEYDOWN);
 				break;
-
 			case SDL_QUIT:
 				//puts another sdl quit in the event queue, so program
 				//can be terminated while in "text entry" mode
 				SDL_PushEvent(&event);
 				done = true;
 			break;
-
 			//do nothing, event was not new
 			case 1776:
 			break;
-
 			default:
 			logger_access->push_msg("Error finding case in text entry mini-loop");
 			break;
 		}
 
-		if(command.compare("TAB") == 0){
+		if(command == TAB){
 			return;
 		}
 
@@ -500,8 +490,7 @@ void text_box::edit_loop(SDL_Event& event,string& command){
 
 }
 
-void text_box::edit_key_helper(SDL_Keysym& key,bool& text_was_changed,
-								string& command){
+void text_box::edit_key_helper(SDL_Keysym& key,bool& text_was_changed,command& user_command){
 	switch(key.sym){
 		case SDLK_BACKSPACE:
 			//delete last character, unless it's empty already than do nothing
@@ -531,7 +520,10 @@ void text_box::edit_key_helper(SDL_Keysym& key,bool& text_was_changed,
 			//tell the loops calling this function that the user
 			//hit tab, so we can enter the text box loop for
 			//the next parameter over
-			command = "TAB";
+			user_command = TAB;
+			break;
+		case SDLK_ESCAPE:
+			user_command = EXIT;
 			break;
 	  default:
 		break;

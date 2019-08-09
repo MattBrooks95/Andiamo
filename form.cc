@@ -308,21 +308,19 @@ void form::handle_click(SDL_Event& mouse_event,bool& done,bool& click_lock){
 			if(pages.size() != 0){
 
 				//filled by text_box_loop to tell this loop to do things
-				string command;
+				command user_command;
 
                 page& current = pages[current_page];
 
                 vector<text_box>& boxes = current.get_text_boxes();
 				for(uint c = 0; c < boxes.size() && !found; c++){
-
 					/*enter text box loop for the matching text box, where
                      *the current text box was either clicked, or our index,
                      *'c', was set for us by command being equal to "TAB" */
-					if(boxes[c].was_clicked(mouse_event) ||
-					   command == "TAB" ){
+					if(boxes[c].was_clicked(mouse_event) || user_command == TAB){
 
 						//reset command container if it was set
-						command = "";
+						user_command = NONE;
 
                         //the columns should line up with the supplied
                         //vector of regular expressions
@@ -335,11 +333,9 @@ void form::handle_click(SDL_Event& mouse_event,bool& done,bool& click_lock){
 							pattern_index  = c % (current.get_columns() - 1);
 						}
 
-						boxes[c].edit_loop(mouse_event,command);
-						/*boxes[c].edit_loop(mouse_event,command,
-											my_patterns[pattern_index]);*/
+						boxes[c].edit_loop(mouse_event,user_command);
 
-						if(command == "TAB" &&  c < boxes.size()){
+						if(user_command == TAB &&  c < boxes.size()){
 							//redo this step, but act on the next text box
 							continue;
 						} else {

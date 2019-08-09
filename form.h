@@ -3,19 +3,20 @@
 
 /*! \class form enables dynamic entry of parameters as a result of
  *other parameters enabling extra lines. Used by the form_buttons class */
-#include<SDL2/SDL.h>
-#include<SDL2/SDL_image.h>
-#include<SDL2/SDL_ttf.h>
-
-#include<ostream>
-#include<vector>
-#include<string>
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_image.h>
+#include <SDL2/SDL_ttf.h>
+#include <ostream>
+#include <vector>
+#include <string>
 
 #include "button.h"
 #include "text_box.h"
 #include "c_tuples.h"
 #include "asset_manager.h"
 #include "colors.h"
+
+#include "command.h"
 
 using std::string;
 using std::vector;
@@ -87,7 +88,7 @@ class form{
 		bool check_values(vector<index_value>& error_details);
 
 		//! getter for the vector that stores the pages of text boxes
-		vector<page>& get_pages() { return pages;} 
+		vector<page>& get_pages() { return pages;}
 
 		//! this funciton sets page_count to the passed value
 		void set_page_count(int page_count_in);
@@ -97,7 +98,7 @@ class form{
 		*left and right buttons */
 		void update_page_indicator();
 
-		/*! destroys the pages that were previously created, so that 
+		/*! destroys the pages that were previously created, so that
 		*they can be recreated */
 		void flush_pages();
 
@@ -146,7 +147,7 @@ class form{
 		//! stores the clickable location for the exit button in the top left
 		active_area exit;
 
-		//! stores the clickable location for the help arrow in the top left 
+		//! stores the clickable location for the help arrow in the top left
 		active_area help;
 
 		//! stores the clickable location for the page right arrow in the top right

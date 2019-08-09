@@ -1,7 +1,7 @@
 //! \file form_buttons.cc contains the implementations for the classes specified in form_buttons.h
 
 #include <cmath>
-#include<iomanip>//for setting precision and field width
+#include <iomanip>//for setting precision and field width
 #include "form_buttons.h"
 #include "button_manager.h"
 #include "define.h"
@@ -1475,7 +1475,7 @@ void icntrl10_button::event_loop_click(SDL_Event& mouse_event,bool& done,
 		if(!data.size() == 0){
 
 			//filled by text_box_loop to tell this loop to do things
-			string command;
+			command user_command;
 
 			icntrl10_data&  current = data[current_context];
 
@@ -1484,20 +1484,19 @@ void icntrl10_button::event_loop_click(SDL_Event& mouse_event,bool& done,
 				/*enter text box loop for the matching text box, where
 				 *the current text box was either clicked, or our index,
 				 *'c', was set for us by command being equal to "TAB" */
-				if(current.line_entries[c].was_clicked(mouse_event) ||
-				   command == "TAB" ){
+				if(current.line_entries[c].was_clicked(mouse_event) || user_command == TAB){
 
 						//reset command container if it was set
-						if(command == "TAB") command = "";
+						if(user_command == TAB) user_command = NONE;
 
-						current.line_entries[c].edit_loop(mouse_event,command);
-						// current.line_entries[c].edit_loop(mouse_event,command,
-						// 								   my_patterns[c]);
+						current.line_entries[c].edit_loop(mouse_event,user_command);
 
-						if(command == "TAB" &&  c < 3){
+						if(user_command == TAB &&  c < 3){
 							//redo this step, but act on the next text box
 							continue;
-						} else found = true;
+						} else {
+							found = true;
+						}
 					}
 				}
 			}
