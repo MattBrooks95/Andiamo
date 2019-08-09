@@ -568,9 +568,9 @@ void icntrl6_form_button::click_helper(SDL_Event& mouse_event){
 			did_something = false;
 
 			//read from queue until a click event happens
-			while( !(SDL_PollEvent(&mouse_event) == 1 &&
-			(mouse_event.type == SDL_MOUSEBUTTONDOWN ||
-			mouse_event.type == SDL_QUIT) ) );
+			while(!(SDL_PollEvent(&mouse_event) == 1 &&
+				(mouse_event.type == SDL_MOUSEBUTTONDOWN ||
+				mouse_event.type == SDL_QUIT)));
 
 			if(mouse_event.type == SDL_QUIT){
 				//putting the same event back in the queue
@@ -579,9 +579,7 @@ void icntrl6_form_button::click_helper(SDL_Event& mouse_event){
 				return;
 			}
 
-
 			if( parity_area.clicked(mouse_event) ){
-
 				SDL_RenderClear(sdl_access->renderer);
 
 				parity_page_creation();
@@ -592,9 +590,7 @@ void icntrl6_form_button::click_helper(SDL_Event& mouse_event){
 				//enter the mini loop for form entry
 				my_form.form_event_loop(mouse_event);
 				did_something = true;
-
 			} else if( spectra_area.clicked(mouse_event) ){
-
 				SDL_RenderClear(sdl_access->renderer);
 
 				search_spectra_page_creation();
@@ -602,7 +598,6 @@ void icntrl6_form_button::click_helper(SDL_Event& mouse_event){
 
 				search_spectra.form_event_loop(mouse_event);
 				did_something = true;
-
 			} else if( xsections_area.clicked(mouse_event) ){
 				SDL_RenderClear(sdl_access->renderer);
 
@@ -611,7 +606,6 @@ void icntrl6_form_button::click_helper(SDL_Event& mouse_event){
 
 				cross_sections.form_event_loop(mouse_event);
 				did_something = true;
-
 			}
 
 			//clear off the screen
@@ -623,26 +617,23 @@ void icntrl6_form_button::click_helper(SDL_Event& mouse_event){
 			sdl_access->present();
 
 		//loop until the user clicks off the landing screen
-		} while( did_something || landing_was_clicked(mouse_event) );
+		} while(did_something || landing_was_clicked(mouse_event));
 
 
 	}
 }
 
 bool icntrl6_form_button::landing_was_clicked(SDL_Event& mouse_event){
-
 	bool in_x = (mouse_event.button.x > landing_rect.x &&
 			mouse_event.button.x < landing_rect.x + landing_rect.w);
 	bool in_y = (mouse_event.button.y > landing_rect.y &&
 			mouse_event.button.y < landing_rect.y + landing_rect.h);
 
 	if( in_x && in_y ){
-
 		return true;
 	}
 
 	return false;
-
 }
 
 

@@ -297,7 +297,7 @@ void text_box::update_text(const string& new_text){
 }
 
 void text_box::check_text(){
-	if (input_test_regex == NULL){
+	if(input_test_regex == NULL){
 		return;
 	}
 

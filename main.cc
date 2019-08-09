@@ -199,19 +199,16 @@ int main(int argc, char *argv[]){
 				case SDL_WINDOWEVENT:
 
 					if(big_event.window.event == SDL_WINDOWEVENT_SIZE_CHANGED){
-
 						logger_access->push_msg(to_string(big_event.window.data1)+":"+
 										to_string(big_event.window.data2));
 						sdl_access->window_update(big_event.window.data1,
 													big_event.window.data2);
 						button_access->location_update();
-
 					}
 					break;
 				//no new event this time, don't just keep repeating the last event
 				case 1776:
 					break;
-
 				default:
 					break;
 
