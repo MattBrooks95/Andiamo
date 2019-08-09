@@ -8,8 +8,8 @@ vopt  = --log-file="memory_check.txt" --leak-check=full
 
 #object files
 F_OBJS       = ./q_val/cqvalue.o ./q_val/dqvalu.o ./q_val/dmass.o ./q_val/bamt16.o
-OBJECTS      = main.o system_wrapper.o regex_manager.o handlers.o manager.o ftran_structs.o field.o sdl_help.o scroll_bar.o input_maker.o string+.o button_manager.o button.o form_buttons.o form.o derived_buttons.o fop_handler.o deck.o text_box.o cursor.o logger.o asset_manager.o helpers.o
-MAIN_OBJECTS = system_wrapper.o regex_manager.o handlers.o manager.o ftran_structs.o field.o sdl_help.o scroll_bar.o input_maker.o string+.o button_manager.o button.o form_buttons.o form.o derived_buttons.o fop_handler.o deck.o text_box.o cursor.o logger.o asset_manager.o helpers.o
+OBJECTS      = main.o system_wrapper.o regex_manager.o handlers.o manager.o ftran_structs.o field.o sdl_help.o scroll_bar.o input_maker.o string+.o button_manager.o button.o form_buttons.o form.o page.o derived_buttons.o fop_handler.o deck.o text_box.o cursor.o logger.o asset_manager.o helpers.o
+MAIN_OBJECTS = system_wrapper.o regex_manager.o handlers.o manager.o ftran_structs.o field.o sdl_help.o scroll_bar.o input_maker.o string+.o button_manager.o button.o form_buttons.o form.o page.o derived_buttons.o fop_handler.o deck.o text_box.o cursor.o logger.o asset_manager.o helpers.o
 
 #executable name
 name = andiamo
@@ -53,8 +53,11 @@ derived_buttons.o: derived_buttons.cc derived_buttons.h logger.o
 form_buttons.o: form_buttons.cc form_buttons.h button.o form.o logger.o c_tuples.h regex_patterns.h command.h
 	g++ $(C_FLG) -c form_buttons.cc
 
-form.o: form.cc form.h button.o text_box.o c_tuples.h command.h
+form.o: c_tuples.h command.h form.h form.cc button.o text_box.o page.o 
 	g++ $(C_FLG) -c form.cc
+
+page.o: page.h page.cc
+	g++ $(C_FLG) -c page.cc
 
 manager.o: manager.cc manager.h field.o input_maker.o logger.o ftran_structs.o regex_patterns.h
 	g++ $(C_FLG) -c manager.cc

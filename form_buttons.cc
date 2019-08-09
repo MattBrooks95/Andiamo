@@ -737,7 +737,6 @@ void icntrl6_form_button::fill_parity_labels(vector<string>& row_labels,vector<s
 	column_labels.push_back("Al-Quraishi Parameter");
 	column_labels.push_back("value");
 	column_labels.push_back("Vary?");
-
 	//#########################################################################
 }
 
