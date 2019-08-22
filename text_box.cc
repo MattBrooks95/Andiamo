@@ -6,9 +6,12 @@ using namespace std;
 
 extern asset_manager* asset_access;
 
-text_box::text_box(TTF_Font* font_in, string text_in, int xloc_in, int
-					yloc_in,int width_in, int height_in){
-
+text_box::text_box(TTF_Font* font_in,
+					string text_in,
+					int xloc_in,
+					int yloc_in,
+					int width_in,
+					int height_in){
 	font = font_in;
 
 	//set up the text to be black
@@ -16,7 +19,6 @@ text_box::text_box(TTF_Font* font_in, string text_in, int xloc_in, int
 	text_color.g = 0;
 	text_color.b = 0;
 	text_color.a = 0;
-
 
 	xloc = xloc_in;
 	yloc = yloc_in;
@@ -58,9 +60,11 @@ text_box::text_box(const text_box& other){
 	x_scroll = other.x_scroll;
 	y_scroll = other.y_scroll;
 
-	text      = other.text;
+	text = other.text;
 
 	input_satisfied = other.input_satisfied;
+
+	input_test_regex = other.input_test_regex;
 
 	text_dims  = other.text_dims;
 	shown_area = other.shown_area;
@@ -138,20 +142,16 @@ void text_box::init(TTF_Font* font_in, string text_in, int xloc_in, int yloc_in,
 }
 
 void text_box::set_regular_expression(regex* test_regex){
-
 	if(test_regex == NULL){
 		logger_access->push_msg("Textbox set_regular_expression given a NULL pointer.");
 	}
 
 	input_test_regex = test_regex;
-
 }
 
 void text_box::set_scrolling(){
-
 	x_scroll = sdl_access->get_xscroll_ptr();
 	y_scroll = sdl_access->get_yscroll_ptr();
-
 }
 
 void text_box::print_me(){

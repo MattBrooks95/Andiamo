@@ -1,5 +1,5 @@
 #include "regex_manager.h"
-#include<iostream>
+#include <iostream>
 using namespace std;
 
 // regex_manager::regex_manager(){
@@ -28,5 +28,4 @@ regex* regex_manager::build_regular_expression(const string& regex_pattern){
 	regex* new_regex = new regex(regex_pattern);
 	regular_expressions.insert(pair<string,regex*>(regex_pattern,new_regex));
 	return new_regex;
-
 }

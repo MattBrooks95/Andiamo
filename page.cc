@@ -18,7 +18,6 @@ page::page(const page& other){
 
 
 page::~page(){
-
 	if(column_label_textures.size() == 0) return;
 
 	for(unsigned int c = (column_label_textures.size() - 1) ; c > 0;c--){
@@ -27,14 +26,12 @@ page::~page(){
 			column_label_textures.pop_back();
 		}
 	}
-
 }
 
 void page::page_init(unsigned int num_columns_in, unsigned int rows_needed,
 						const vector<string>& column_labels_in,
 						const vector<string>& row_labels_in,
 						const vector<int>& column_spacings){
-
 	//abstracts some of the assignments to save space here
 	init_local_var(num_columns_in, rows_needed, column_labels_in, row_labels_in);
 
@@ -63,8 +60,6 @@ void page::page_init(unsigned int num_columns_in, unsigned int rows_needed,
 	set_text_boxes(x_start_point,column_spacings,row_labels_exist);
 
 	init_column_labels(column_spacings,x_start_point,row_labels_exist);
-
-
 }
 
 void init_from_config(unsigned int num_columns_in, unsigned int rows_needed,
@@ -85,8 +80,6 @@ void page::init_local_var(uint num_columns_in, uint rows_needed,
 
 void page::set_row_labels(const vector<string>& row_labels_in,
 							int& x_start_point){
-
-
 	SDL_Color black = {0,0,0,0};
 	SDL_Surface* temp_surface = NULL;
 	SDL_Texture* temp_texture = NULL;
@@ -133,7 +126,8 @@ void page::set_row_labels(const vector<string>& row_labels_in,
 }
 
 void page::set_text_boxes(int& x_start_point,
-					const vector<int>& column_spacings,bool& row_labels_exist){
+							const vector<int>& column_spacings,
+							bool& row_labels_exist){
 
 	//give it some wiggle room
 	if(x_start_point != 0) x_start_point += 10;
@@ -151,11 +145,11 @@ void page::set_text_boxes(int& x_start_point,
 	int x_offset = 0;
 	for(unsigned int i = 0; i < num_rows; i++){
 		x_offset = 0;
-		for( ; j < num_columns; j++){
+		for( /*previously defined*/; j < num_columns; j++){
 			text_box new_text_box;
-			int x_val = x_start_point+x_offset+column_spacings[j];
+			int x_val = x_start_point + x_offset + column_spacings[j];
 			x_offset += column_spacings[j];
-			int y_val = 80+25*i+10*i;
+			int y_val = 80 + 25 * i + 10 * i;
 			new_text_box.init(sdl_access->font,"",x_val,y_val,60,25);
 			text_boxes.push_back(new_text_box);
 		}
@@ -167,7 +161,6 @@ void page::set_text_boxes(int& x_start_point,
 
 	//but, I think another solution could have been to tell the vector
 	//make 'x' text_boxes, and then init the copies that exist inside the vector
-
 }
 
 void page::init_column_labels(const vector<int>& column_spacings,

@@ -5,10 +5,8 @@ using namespace std;
 
 extern asset_manager* asset_access;
 
-
 //###################### BUTTON class ########################################
 button::button(){
-
     width  = 0;
     height = 0;
     xloc   = 0;
@@ -21,11 +19,9 @@ button::button(){
     image_path = "Need to run button::init() on this object";
 
     button_texture = NULL;
-
 }
 
 void button::init(const string& image_path_in){
-
     image_path = image_path_in;
 
     button_texture = asset_access->get_texture(image_path);
@@ -108,8 +104,3 @@ void button::click_helper(SDL_Event& mouse_event){
 //################# virtual click members ###############
 
 //#############################################################################
-
-
-
-
-

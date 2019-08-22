@@ -84,7 +84,6 @@ void button_manager::init_form_tray(){
 }
 
 void button_manager::redo_locks(){
-
 	icntrl_6.set_corner_loc(form_tray_rect.x + 315,form_tray_rect.y);
 	icntrl_8.set_corner_loc(form_tray_rect.x + 210,form_tray_rect.y);
 	icntrl_10.set_corner_loc(form_tray_rect.x+105,form_tray_rect.y);
@@ -182,7 +181,6 @@ void button_manager::init_buttons(){
 }
 
 void button_manager::init_form_buttons(){
-
 	icntrl_6.init();
 
 	icntrl_8.init();
@@ -192,9 +190,9 @@ void button_manager::init_form_buttons(){
 
 	icntrl_6.set_corner_loc(form_tray_rect.x + 315,form_tray_rect.y);
 	icntrl_8.set_corner_loc(form_tray_rect.x + 210,form_tray_rect.y);
-	icntrl_10.set_corner_loc(form_tray_rect.x+105,form_tray_rect.y);
-	icntrl_4.set_corner_loc(form_tray_rect.x+420,form_tray_rect.y);
-	ilv3_ilv5.set_corner_loc(form_tray_rect.x+525,form_tray_rect.y);
+	icntrl_10.set_corner_loc(form_tray_rect.x + 105,form_tray_rect.y);
+	icntrl_4.set_corner_loc(form_tray_rect.x + 420,form_tray_rect.y);
+	ilv3_ilv5.set_corner_loc(form_tray_rect.x + 525,form_tray_rect.y);
 
 	icntrl_6.make_rect();
 	icntrl_8.make_rect();
@@ -219,14 +217,12 @@ void button_manager::init_form_buttons(){
 	// vector<regex> ilv_2_patterns;
 	vector<regex*> icntrl_4_patterns;
 	vector<regex*> ilv3_ilv5_patterns;
-	fill_regex_vectors(icntrl_6_patterns,icntrl_8_patterns,
-						icntrl_4_patterns, ilv3_ilv5_patterns);
+	fill_regex_vectors(icntrl_6_patterns,icntrl_8_patterns,icntrl_4_patterns,ilv3_ilv5_patterns);
 
 	icntrl_6.init_form(icntrl_6_patterns);
 	icntrl_8.init_form(icntrl_8_patterns);
 	icntrl_4.init_form(icntrl_4_patterns);
 	ilv3_ilv5.init_form(ilv3_ilv5_patterns);
-
 }
 
 void button_manager::fill_regex_vectors(vector<regex*>& icntrl_6_patterns,
@@ -291,11 +287,9 @@ void button_manager::fill_regex_vectors(vector<regex*>& icntrl_6_patterns,
 	ilv3_ilv5_patterns.push_back(int5);
 	ilv3_ilv5_patterns.push_back(f7_3);
 	ilv3_ilv5_patterns.push_back(f7_3);
-
 }
 
 void button_manager::print_buttons(){
-
 	string print_msg;
 	print_msg = "#################### PRINTING BUTTONS #####################";
 	logger_access->push_msg(print_msg);
@@ -318,7 +312,6 @@ void button_manager::print_buttons(){
 }
 
 void button_manager::draw_all(){
-
 	draw_tray();
 	draw_form_tray();
 	draw_buttons();
@@ -332,7 +325,6 @@ void button_manager::draw_tray(){
 }
 
 void button_manager::draw_form_tray(){
-
 	//draw the tray first
 	SDL_RenderCopy(sdl_access->renderer,form_tray_texture,NULL,&form_tray_rect);
 
@@ -353,7 +345,6 @@ void button_manager::draw_form_buttons(){
 }
 
 void button_manager::draw_buttons(){
-
 	draw_tray();
 	draw_form_tray();
 	fop_button.draw_me();
@@ -545,7 +536,6 @@ bool button_manager::click_handling(SDL_Event& mouse_event){
 
 	//########################################################################
 
-
 	logger_access->push_msg("DONE HANDLING BUTTON CLICKS");
 	//let main know if it should check tiles or not
 	return done_something;
@@ -665,7 +655,6 @@ void button_manager::form_error_message_loop(SDL_Event& event,
 void button_manager::make_form_error_message(const vector<string>& form_bad_inputs,
 											 SDL_Texture*& drawing_info,
 											 SDL_Rect& destination){
-
 	if(form_bad_inputs.size() == 0){
 		string err = "make_form_error_message was called with an empty list.";
 		logger_access->push_error(err);
@@ -715,8 +704,6 @@ void button_manager::make_form_error_message(const vector<string>& form_bad_inpu
 		message_height = window_h;
 	}
 	destination = {0,0,max_message_width,message_height};
-
-
 
 	//create a surface w/o a source image that can be blittted to for making error messages
 	SDL_Surface* message_surf = SDL_CreateRGBSurface(0,max_message_width,message_height,32,red,green,blue,alpha);

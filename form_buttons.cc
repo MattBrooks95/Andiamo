@@ -71,7 +71,6 @@ void form_button::make_rect(int width_in,int height_in){
 }
 
 void form_button::setup_lock(){
-
 	lock_rect.x = my_rect.x+my_rect.w-15;
 	lock_rect.y = my_rect.y;
 	lock_rect.w = 15;
@@ -87,7 +86,6 @@ void form_button::setup_help_msg(){
 
 void form_button::init_form(const vector<regex*>& pattern_tests){
 	my_form.init("no title","default_form_help.png",0,0,pattern_tests);
-
 }
 
 void form_button::screen_size(){

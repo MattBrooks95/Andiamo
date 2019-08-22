@@ -57,9 +57,7 @@ form::~form(){
 	} else logger_access->push_error(FORM_ERROR);
 }
 
-void form::init(string form_title_in,string help_msg_image_name,int xloc_in,
-				 int yloc_in, const vector<regex*>& pattern_tests){
-
+void form::init(string form_title_in,string help_msg_image_name,int xloc_in, int yloc_in, const vector<regex*>& pattern_tests){
 	//set up state variables
 	form_title = form_title_in;
 
@@ -130,7 +128,6 @@ void form::init(string form_title_in,string help_msg_image_name,int xloc_in,
 
 	TTF_CloseFont(title_font);
 
-
 	form_texture = SDL_CreateTextureFromSurface(sdl_access->renderer,form_surface);
 
 	if(form_texture == NULL) logger_access->push_error(SDL_GetError());
@@ -141,7 +138,6 @@ void form::init(string form_title_in,string help_msg_image_name,int xloc_in,
 	help_texture       = asset_access->get_texture(help_target);
 	if(help_texture == NULL) logger_access->push_error(SDL_GetError());
 	//######################################################################
-
 
 	//query the texture to figure out its height and width dimensions
 	SDL_QueryTexture(form_texture,NULL,NULL,&form_area.w,&form_area.h);
@@ -500,7 +496,7 @@ void form::set_page_count(int page_count_in){
 
 void form::update_page_indicator(){
 
-	SDL_Rect source = {20+current_page*20,0,20,20};
+	SDL_Rect source = {20 + current_page * 20,0,20,20};
 	SDL_Rect destination = {725,0,20,20};
 
 	//write over old number, kind of like erasing just that part of the surface

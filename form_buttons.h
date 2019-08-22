@@ -306,7 +306,6 @@ class icntrl10_data{
 
 };
 
-
 //! opens the form "Spin Cutoff Info"
 class icntrl10_button : public button{
 	public:
@@ -476,7 +475,6 @@ class icntrl4_form_button : public form_button{
 
 		//! vector of regex pointers to initialize the form with
 		vector<regex*> pattern_tests;
-
 };
 
 //! opens the ILV3 or ILV5 form

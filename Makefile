@@ -116,7 +116,3 @@ doxy: doxyfile
 #remove compiled things, text editor saves, memory check output
 clean:
 	make clean -C ./q_val/ && rm *~ *.o *.h.gch andiamo debug memory_check.txt
-
-
-
-

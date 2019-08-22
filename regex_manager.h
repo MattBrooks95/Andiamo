@@ -2,9 +2,9 @@
 
 #pragma once
 
-#include<utility>
-#include<map>
-#include<regex>
+#include <utility>
+#include <map>
+#include <regex>
 
 class regex_manager{
 	public:
