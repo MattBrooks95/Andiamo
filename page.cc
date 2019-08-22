@@ -63,7 +63,20 @@ void page::page_init(unsigned int num_columns_in,
 	init_column_labels(column_spacings,x_start_point,row_labels_exist);
 }
 
-void init_from_config(unsigned int num_columns_in, unsigned int rows_needed,
+void page::init_text_box_regexs(const vector<regex*>& test_patterns){
+	uint test_patterns_index = 0;
+	for(vector<text_box>::iterator it = text_boxes.begin();
+		it != text_boxes.end();
+		++it){
+		it->set_regular_expression(test_patterns[test_patterns_index]);
+		++test_patterns_index;
+		if(test_patterns_index >= test_patterns.size()){
+			test_patterns_index = 0;
+		}
+	}
+}
+
+void page::init_from_config(unsigned int num_columns_in, unsigned int rows_needed,
 						const vector<string>& column_labels_in,
 						const vector<string>& row_labels_in,
 						const vector<int>& column_spacings,

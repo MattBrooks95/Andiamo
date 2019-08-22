@@ -291,7 +291,6 @@ void form_button::save_information(ofstream& context_out,form& this_form){
 //####################### ICNTRL8 BUTTON ######################################
 
 void icntrl8_form_button::setup_help_msg(){
-
 	string unlock_target = "Images/form_assets/icntrl8_form_locked_msg.png";
 	unlock_help_texture  = asset_access->get_texture(unlock_target);
 	if(unlock_help_texture == NULL) logger_access->push_error(SDL_GetError());
@@ -335,18 +334,16 @@ void icntrl8_form_button::page_creation_helper(){
 	try{
 		icntrl8_val = stoi(tile_access->fields.at("line_6")->at("ICNTRL8")->get_text());
 	} catch (out_of_range& range_error){
-
 		string literal_error = "ICNTRL8 could not be found in the field map";
 		string error_message = literal_error + range_error.what();
 		logger_access->push_error(error_message);
 		icntrl8_val = 0;
-
 	} catch (invalid_argument& arg_error){
 		logger_access->push_error("ICNTRL8 has been given an invalid (non-numerical?) argument.",arg_error.what());
 		icntrl8_val = 0;
 	}
 
-	logger_access->push_msg("ICNTRL8 val:" + to_string(icntrl8_val)+" when form opened");
+	logger_access->push_msg("ICNTRL8 val:" + to_string(icntrl8_val) + " when form opened");
 	vector<string> pass_column_titles,pass_row_titles;
 	//for icntrl 8, the labels shouldn't change
 	pass_column_titles.push_back("A to Drop");
@@ -364,6 +361,8 @@ void icntrl8_form_button::page_creation_helper(){
 	vector<page>& pages = my_form.get_pages();
 	pages.resize(vector_size);
 
+	const vector<regex*>& patterns = my_form.get_patterns();
+
 	vector<int> column_spaces;
 	column_spaces.push_back(0);
 	column_spaces.push_back(150);
@@ -371,8 +370,8 @@ void icntrl8_form_button::page_creation_helper(){
 
 	for(uint c = 0; c < pages.size();c++){
 		if(rows_per_page >= rows_needed){
-			pages[c].page_init(3,rows_needed,pass_column_titles,pass_row_titles,
-									  column_spaces);
+			pages[c].page_init(3,rows_needed,pass_column_titles,pass_row_titles,column_spaces);
+			pages[c].init_text_box_regexs(patterns);
 			rows_needed = 0;
 		} else {
 
@@ -405,13 +404,12 @@ void icntrl8_form_button::init_form(const vector<regex*>& pattern_tests){
 	try{
 		init_array = &io_access->form_init_arrays.at("ICNTRL8");
 	} catch(out_of_range& not_found){
-
 		init_array = NULL;
 	}
 }
 
 bool icntrl8_form_button::make_output(ofstream& outs,
-		vector<index_value>& bad_input_list){
+										vector<index_value>& bad_input_list){
 
 	if(outs.fail()){
 		logger_access->push_error("icntrl8_form_button::make_output was not given a ",
@@ -436,7 +434,6 @@ bool icntrl8_form_button::make_output(ofstream& outs,
 
 		//loop over each row
 		for(uint d = 0; d < pages_ptr->at(c).get_text_boxes().size() ;d += columns){
-
 			outs I pages_ptr->at(c).get_text_boxes().at(d).get_text()
 				 I pages_ptr->at(c).get_text_boxes().at(d+1).get_text();
 			outs << setw(10);
@@ -449,13 +446,10 @@ bool icntrl8_form_button::make_output(ofstream& outs,
 }
 
 bool icntrl8_form_button::check_values(vector<index_value>& error_details){
-
 	return my_form.check_values(error_details);
-
 }
 
 void icntrl8_form_button::save_information(ofstream& context_out){
-
 	//this is the case that the user has opened & interacted with
 	//the cutoff nuclei form, and should take precedence over the
 	//initialization values
@@ -1714,7 +1708,6 @@ void icntrl4_form_button::init_form(const vector<regex*>& pattern_tests){
 		init_array = &io_access->form_init_arrays.at("ICNTRL4");
 		cout << "Do stuff with ICNTRL4 init list" << endl;
 	} catch(out_of_range& not_found){
-
 		init_array = NULL;
 	}
 }
@@ -1738,44 +1731,22 @@ void icntrl4_form_button::click_helper(SDL_Event& mouse_event){
 
 		//in this case the form has not been previously created
 		if(!my_form.prev_initialized){
-
-
-			//most of this work is shared with the recreation case
-			//so it has been put into a helper function
 			page_creation_helper();
-
-			//let the form know that it is now active
-			my_form.toggle_active();
-			//enter the mini loop for form entry
-			my_form.form_event_loop(mouse_event);
-
 		//in this case the form has been previously created, but the icntrl8 value has not changed, so nothing needs to be done
-		} else if(my_form.prev_init_value == stoi(tile_access->fields.at("line_8")->at("NCH4")->get_text()) ){
+		} else if(my_form.prev_init_value != stoi(tile_access->fields.at("line_8")->at("NCH4")->get_text())){
+			//clear out previous info
+			my_form.flush_pages();
+			page_creation_helper();
+		}
+
 		//let the form know that it is now active
 		my_form.toggle_active();
 		//enter the mini loop for form entry
 		my_form.form_event_loop(mouse_event);
-
-		//in this case, the form has been previously created, but the icntrl8 value has been changed, so it must be recreated
-		} else {
-
-			//clear out previous info
-			my_form.flush_pages();
-
-			//most of this work is shared with the 1st time creation case
-			//so it has been put into a helper function
-			page_creation_helper();
-
-			//let the form know that it is now active
-			my_form.toggle_active();
-			//enter the mini loop for form entry
-			my_form.form_event_loop(mouse_event);
-		}
 	}
-
 }
-void icntrl4_form_button::page_creation_helper(){
 
+void icntrl4_form_button::page_creation_helper(){
 	//grab val from parameter field, so the pages can be set up
 	try{
 	  nch4_val = stoi(tile_access->fields.at("line_8")->at("NCH4")->get_text());
@@ -1788,8 +1759,6 @@ void icntrl4_form_button::page_creation_helper(){
 				  arg_error.what());
 	  nch4_val = 0;
 	}
-
-
 
 	logger_access->push_msg("NCH4 val:" + to_string(nch4_val)+" when form opened");
 	vector<string> pass_column_titles,pass_row_titles;

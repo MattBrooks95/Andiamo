@@ -42,6 +42,8 @@ class page{
 							const vector<string>& row_labels_in,
 							const vector<int>& column_spacings);
 
+		void init_text_box_regexs(const vector<regex*>& test_patterns);
+
 		/*! \brief sets up this page's variables and graphics, with info
 		*coming from a config file */
 		void init_from_config(unsigned int num_columns_in, unsigned int rows_needed,

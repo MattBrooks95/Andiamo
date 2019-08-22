@@ -57,7 +57,10 @@ form::~form(){
 	} else logger_access->push_error(FORM_ERROR);
 }
 
-void form::init(string form_title_in,string help_msg_image_name,int xloc_in, int yloc_in, const vector<regex*>& pattern_tests){
+void form::init(string form_title_in,
+					string help_msg_image_name,
+					int xloc_in, int yloc_in,
+					const vector<regex*>& pattern_tests){
 	//set up state variables
 	form_title = form_title_in;
 
@@ -116,14 +119,16 @@ void form::init(string form_title_in,string help_msg_image_name,int xloc_in, int
 		logger_access->push_error(SDL_GetError());
 	} else {
 		TTF_SizeText(title_font,form_title.c_str(),&source.w,&source.h);
-		source.x = 0; source.y = 0;
+		source.x = 0;
+		source.y = 0;
+
 		destination.w = source.w; destination.h = source.h;
 		destination.x = form_area.x + 400 - (source.w / 2);
 		destination.y = form_area.y + 25 - (source.h / 2);
+
 		if(SDL_BlitSurface(form_title_surface,&source,form_surface,&destination) != 0){
 			logger_access->push_error(SDL_GetError());
 		}
-
 	}
 
 	TTF_CloseFont(title_font);

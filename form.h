@@ -88,7 +88,9 @@ class form{
 		bool check_values(vector<index_value>& error_details);
 
 		//! getter for the vector that stores the pages of text boxes
-		vector<page>& get_pages() { return pages;}
+		vector<page>& get_pages() { return pages; }
+
+		const vector<regex*>& get_patterns(){ return my_patterns; }
 
 		//! this funciton sets page_count to the passed value
 		void set_page_count(int page_count_in);

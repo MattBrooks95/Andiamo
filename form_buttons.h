@@ -310,131 +310,131 @@ class icntrl10_data{
 class icntrl10_button : public button{
 	public:
 
-	icntrl10_button();
+		icntrl10_button();
 
-	//! does the same logic as the form_button::init
-	void init();
+		//! does the same logic as the form_button::init
+		void init();
 
-	//! set where this form button should be on the button tray
-	void set_corner_loc(int x, int y);
+		//! set where this form button should be on the button tray
+		void set_corner_loc(int x, int y);
 
-	//! sets up the sdl rect
-	void make_rect(int width_in = 100,int height_in = 70);
+		//! sets up the sdl rect
+		void make_rect(int width_in = 100,int height_in = 70);
 
-	//! set up the lock graphic for when icntrl10's data entry isn't active
-	void setup_lock();
+		//! set up the lock graphic for when icntrl10's data entry isn't active
+		void setup_lock();
 
-	//! draws the lock if icntrl10 isn't activated
-	void draw_lock();
+		//! draws the lock if icntrl10 isn't activated
+		void draw_lock();
 
-	//! changes the lock state of the icntrl10 button
-	void toggle_lock();
+		//! changes the lock state of the icntrl10 button
+		void toggle_lock();
 
-	//! explains why the data entry is locked, when the button is clicked
-	void draw_help_msg(SDL_Event& big_event,SDL_Rect& destination);
+		//! explains why the data entry is locked, when the button is clicked
+		void draw_help_msg(SDL_Event& big_event,SDL_Rect& destination);
 
-	//! impelements the special logic for this class
-	bool handle_click(SDL_Event& mouse_event);
+		//! impelements the special logic for this class
+		bool handle_click(SDL_Event& mouse_event);
 
-	//! this function opens the icntrl10 form on click
-	void click_helper(SDL_Event& mouse_event);
+		//! this function opens the icntrl10 form on click
+		void click_helper(SDL_Event& mouse_event);
 
-	//! event loop for entering in icntrl10 info
-	void event_loop(SDL_Event& mouse_event);
+		//! event loop for entering in icntrl10 info
+		void event_loop(SDL_Event& mouse_event);
 
-	//! figure out which text box the user clicked on, and allow editing
-	void event_loop_click(SDL_Event& mouse_event,bool& done,bool& click_lock);
+		//! figure out which text box the user clicked on, and allow editing
+		void event_loop_click(SDL_Event& mouse_event,bool& done,bool& click_lock);
 
-	//! change current context from n in NNSIG to n + 1
-	void page_right();
+		//! change current context from n in NNSIG to n + 1
+		void page_right();
 
-	//! change current context from n in NNSIG to n - 1
-	void page_left();
+		//! change current context from n in NNSIG to n - 1
+		void page_left();
 
-	//! changes the number for the current page in the top right
-	void update_page_indicator();
+		//! changes the number for the current page in the top right
+		void update_page_indicator();
 
-	//! presents the entry form to the user
-	void draw_me();
+		//! presents the entry form to the user
+		void draw_me();
 
-	//! save the information to a custom configuration file
-	void save_information(ofstream& context_out);
+		//! save the information to a custom configuration file
+		void save_information(ofstream& context_out);
 
-	//! load in the strings from a custom config file
-	void init_values_helper();
+		//! load in the strings from a custom config file
+		void init_values_helper();
 
-	//!  outputs form info to the input_maker file stream
-	bool make_output(ofstream& outs,vector<index_value>& icntrl10_bad_inputs);
+		//!  outputs form info to the input_maker file stream
+		bool make_output(ofstream& outs,vector<index_value>& icntrl10_bad_inputs);
 
-	//! prepares the linear parameter entry
-	void init_data(unsigned int num_contexts);
+		//! prepares the linear parameter entry
+		void init_data(unsigned int num_contexts);
 
-	//! getter for locked status
-	bool get_is_locked(){ return is_locked;}
+		//! getter for locked status
+		bool get_is_locked(){ return is_locked;}
 
-	//! activate or de-activate this entry method
-	void toggle_active(){ active = !active; }
+		//! activate or de-activate this entry method
+		void toggle_active(){ active = !active; }
 
-	//! save placement for the lock graphic
-	SDL_Rect lock_rect;
+		//! save placement for the lock graphic
+		SDL_Rect lock_rect;
 
-	//! stores the clickable location for the exit button in the top left
-	active_area exit;
+		//! stores the clickable location for the exit button in the top left
+		active_area exit;
 
-	//! stores the clickable location for the page right arrow in the top right
-	active_area right_arrow;
+		//! stores the clickable location for the page right arrow in the top right
+		active_area right_arrow;
 
-	//! stores the clickable location for the page left arrow in the top right
-	active_area left_arrow;
+		//! stores the clickable location for the page left arrow in the top right
+		active_area left_arrow;
 
-	//! template for the icntrl10 graphical entry
-	SDL_Texture* icntrl10_backdrop;
+		//! template for the icntrl10 graphical entry
+		SDL_Texture* icntrl10_backdrop;
 
-	//! surface that the page #s and text boxes should be blitted onto
-	SDL_Surface* over_surface;
+		//! surface that the page #s and text boxes should be blitted onto
+		SDL_Surface* over_surface;
 
-	//! for drawing overlay (page numbers, text box) to the screen
-	SDL_Texture* over_texture;
+		//! for drawing overlay (page numbers, text box) to the screen
+		SDL_Texture* over_texture;
 
-  private:
+	protected:
+		//! store the 3 patterns necesary for checking these lines
+		vector<regex*> my_patterns;
 
-	/*! sprite sheet with numbers 0-9 on it,
-	 * so parts can be used to show page numbers */
-	SDL_Surface* number_sprites;
+	private:
 
-	//! keep track of where to draw the backdrop
-	SDL_Rect bd_dest;
+		/*! sprite sheet with numbers 0-9 on it,
+		 * so parts can be used to show page numbers */
+		SDL_Surface* number_sprites;
 
-	//! store the graphical representation of the "lock"
-	SDL_Texture* lock_texture;
+		//! keep track of where to draw the backdrop
+		SDL_Rect bd_dest;
 
-	SDL_Texture* unlock_help_texture;
+		//! store the graphical representation of the "lock"
+		SDL_Texture* lock_texture;
 
-	//! boolean to store whether or not this data entry is accessible
-	bool is_locked;
+		SDL_Texture* unlock_help_texture;
 
-	//! store pointer to input_maker's initialization array for this form
-	/*! if this is NULL, forms will operate as normal.
-	 *if input_maker has an array for this form button, a ptr to it
-	 *will be stored here and used to set up the form */
-	vector<string>* init_array;
+		//! boolean to store whether or not this data entry is accessible
+		bool is_locked;
 
-	//! stores the objects for NNSIG lines of ICNTRL10 information
-	vector<icntrl10_data> data;
+		//! store pointer to input_maker's initialization array for this form
+		/*! if this is NULL, forms will operate as normal.
+		 *if input_maker has an array for this form button, a ptr to it
+		 *will be stored here and used to set up the form */
+		vector<string>* init_array;
 
-	//! keep track of the previous NNSIG value that started this form
-	unsigned int prev_NNSIG;
+		//! stores the objects for NNSIG lines of ICNTRL10 information
+		vector<icntrl10_data> data;
 
-	//! keep track of the index of icntrl10 info being modified
-	/*! the current one should be the only one shown on the screen */
-	int current_context;
+		//! keep track of the previous NNSIG value that started this form
+		unsigned int prev_NNSIG;
 
-	//! true when the user is interacting with this object, false elsewise
-	bool active;
+		//! keep track of the index of icntrl10 info being modified
+		/*! the current one should be the only one shown on the screen */
+		int current_context;
 
-	//! store the 3 patterns necesary for checking these lines
-	vector<regex*> my_patterns;
-
+		//! true when the user is interacting with this object, false elsewise
+		bool active;
 };
 
 //! opens the form "Resolved Levels"
@@ -481,7 +481,6 @@ class icntrl4_form_button : public form_button{
 /*! the form that is created depends on whether parameter ILV3 or
  *parameter ILV5 was used to unlock this button */
 class ilv3_ilv5_form_button : public form_button{
-
 	public:
 
 		//! sets up a form that suits the needs of icntrl4's logics
