@@ -312,14 +312,14 @@ void form::handle_click(SDL_Event& mouse_event,bool& done,bool& click_lock){
 
 						//the columns should line up with the supplied
 						//vector of regular expressions
-						int pattern_index = 0;
-						if(current.get_row_labels().size() == 0){
-							pattern_index =  c % current.get_columns();
+						// int pattern_index = 0;
+						// if(current.get_row_labels().size() == 0){
+						// 	pattern_index =  c % current.get_columns();
 						//if there is a column of row labels for this page,
 						//mod by the number of actual input columns
-						} else {
-							pattern_index  = c % (current.get_columns() - 1);
-						}
+						// } else {
+						// 	pattern_index  = c % (current.get_columns() - 1);
+						// }
 
 						boxes[c].edit_loop(mouse_event,user_command);
 
@@ -338,7 +338,6 @@ void form::handle_click(SDL_Event& mouse_event,bool& done,bool& click_lock){
 }
 
 void form::draw_me(){
-
 	if(active){
 		if(!help_shown){
 			SDL_RenderCopy(sdl_access->renderer,form_texture,NULL,&form_area);
@@ -366,7 +365,6 @@ void form::toggle_active(){
 		active = true;
 	}
 }
-
 
 void form::next_page(){
 	if(current_page < page_count){
@@ -426,17 +424,19 @@ bool form::check_values(vector<index_value>& error_details){
 
 		//go through and check each text box against the appropriate
 		//regular expression using the mod operator
+		//this needs reworked to just ask the text box if it's input has been satisfied
 		for(unsigned int d = 0; d < box_ref.size(); d++){
+			// string box_ref_text = box_ref[d].get_text();
 
-			string box_ref_text = box_ref[d].get_text();
-
-			if(!regex_match(box_ref_text,*my_patterns[d % num_columns]) ||
-				box_ref_text.compare(" ") || box_ref[d].get_text().length() == 0){
-				index_value temp_tuple(box_ref_text,d);
+			// if(!regex_match(box_ref_text,*my_patterns[d % num_columns]) ||
+				// box_ref_text.compare(" ") || box_ref[d].get_text().length() == 0){
+			const text_box& this_text_box = box_ref[d];
+			// if(box_ref[d].is_not_satisfied())
+			if(this_text_box.is_not_satisfied()){
+				index_value temp_tuple(this_text_box.get_text(),d);
 				error_details.push_back(temp_tuple);
 				return_me = false;
 			}
-
 		}
 
 	}
@@ -494,7 +494,6 @@ void form::set_page_count(int page_count_in){
 }
 
 void form::update_page_indicator(){
-
 	SDL_Rect source = {20 + current_page * 20,0,20,20};
 	SDL_Rect destination = {725,0,20,20};
 
