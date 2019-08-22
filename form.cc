@@ -383,7 +383,6 @@ void form::prev_page(){
 }
 
 bool form::check_values(vector<index_value>& error_details){
-
 	if(!prev_initialized){
 		string push_me = "Form: " + form_title;
 		push_me       += " has not been filled it at all: ";

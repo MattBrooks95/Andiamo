@@ -51,8 +51,10 @@ class page{
 								const vector<string>& init_values);
 
 		//! helper for page_init, does the mundane pass-through assignments
-		void init_local_var(uint num_columns_in, uint rows_needed,
-		const vector<string>& column_labels_in,const vector<string>& row_labels_in);
+		void init_local_var(uint num_columns_in,
+							uint rows_needed,
+							const vector<string>& column_labels_in,
+							const vector<string>& row_labels_in);
 
 		//! sets up the row labels, if they exist
 		void set_row_labels(const vector<string>& row_labels_in,

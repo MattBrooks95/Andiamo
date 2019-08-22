@@ -28,7 +28,8 @@ page::~page(){
 	}
 }
 
-void page::page_init(unsigned int num_columns_in, unsigned int rows_needed,
+void page::page_init(unsigned int num_columns_in,
+						unsigned int rows_needed,
 						const vector<string>& column_labels_in,
 						const vector<string>& row_labels_in,
 						const vector<int>& column_spacings){
@@ -128,7 +129,6 @@ void page::set_row_labels(const vector<string>& row_labels_in,
 void page::set_text_boxes(int& x_start_point,
 							const vector<int>& column_spacings,
 							bool& row_labels_exist){
-
 	//give it some wiggle room
 	if(x_start_point != 0) x_start_point += 10;
 
@@ -164,9 +164,8 @@ void page::set_text_boxes(int& x_start_point,
 }
 
 void page::init_column_labels(const vector<int>& column_spacings,
-						 int& x_start_point,bool& row_labels_exist){
-
-
+								int& x_start_point,
+								bool& row_labels_exist){
 	//shorter reference to font
 	TTF_Font* font = sdl_access->font;
 
