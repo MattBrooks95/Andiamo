@@ -1,6 +1,6 @@
 //! \file string+.cc \brief string+.cc implements the functions declared in string+.h
 #include "string+.h"
-#include<iostream>
+#include <iostream>
 using namespace std;
 
 vector<string> split(string split_me, char delim){
@@ -14,11 +14,11 @@ vector<string> split(string split_me, char delim){
 
 	string push_me;
 	//control logics in regards to ignoring delimiting characters within
-	// a constant string, like label = "this shouldn't be split"	
+	// a constant string, like label = "this shouldn't be split"
 	bool constant_string = false;
 
 	//go until end of string is reached
-	while( index < split_me.size() ){
+	while(index < split_me.size()){
 
 		//reset new word container
 		push_me = "";
@@ -66,7 +66,7 @@ void trim(std::string& base_string,unsigned int remove_num){
 	if(remove_num > base_string.length()){
 		return;
 	} else {
-		
+
 		base_string.erase(base_string.length() - remove_num, remove_num);
 
 	}

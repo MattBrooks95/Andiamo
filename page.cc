@@ -64,15 +64,15 @@ void page::page_init(unsigned int num_columns_in,
 }
 
 void init_from_config(unsigned int num_columns_in, unsigned int rows_needed,
-					  const vector<string>& column_labels_in,
-					  const vector<string>& row_labels_in,
-					  const vector<int>& column_spacings,
-					  const vector<string>& init_values){
+						const vector<string>& column_labels_in,
+						const vector<string>& row_labels_in,
+						const vector<int>& column_spacings,
+						const vector<string>& init_values){
 }
 
 void page::init_local_var(uint num_columns_in, uint rows_needed,
-						const vector<string>& column_labels_in,
-						const vector<string>& row_labels_in){
+							const vector<string>& column_labels_in,
+							const vector<string>& row_labels_in){
 	num_columns   = num_columns_in;
 	num_rows      = rows_needed;
 	column_labels = column_labels_in;
@@ -151,6 +151,7 @@ void page::set_text_boxes(int& x_start_point,
 			x_offset += column_spacings[j];
 			int y_val = 80 + 25 * i + 10 * i;
 			new_text_box.init(sdl_access->font,"",x_val,y_val,60,25);
+			// new_text_box.set_regular_expression();
 			text_boxes.push_back(new_text_box);
 		}
 		//reset the j variable, because the for loop will no longer do it

@@ -84,8 +84,8 @@ class text_box{
 		//! update the texture when the text is changed
 		void update_texture();
 
-		bool is_satisfied(){ return input_satisfied; }
-		bool is_input_bad(){ return !is_satisfied(); }
+		bool is_satisfied() const { return input_satisfied; }
+		bool is_not_satisfied() const { return !is_satisfied(); }
 
 		/*! decides whether or not the input is bad,
 		 *and changes the color of the text box accordingly */

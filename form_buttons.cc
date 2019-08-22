@@ -318,47 +318,22 @@ void icntrl8_form_button::click_helper(SDL_Event& mouse_event){
 
 		//in this case the form has not been previously created
 		if(!my_form.prev_initialized){
-
-
 			//make the blank form
 			page_creation_helper();
-
-			my_form.toggle_active();//let the form know that it is now active
-			//enter the mini loop for form entry
-			my_form.form_event_loop(mouse_event);
-
-		} else if( my_form.prev_init_value == curr_val ){
-
-			//let the form know that it is now active
-			my_form.toggle_active();
-
-			//enter the mini loop for form entry
-			my_form.form_event_loop(mouse_event);
-
-		//in this case, the form has been previously created, but
-		//the icntrl8 value has been changed, so it must be recreated
-		} else {
+		} else if(my_form.prev_init_value != curr_val){
 			my_form.flush_pages();//clear out previous info
-
-			//most of this work is shared with the 1st time creation case
-			//so it has been put into a helper function
 			page_creation_helper();
-
-			//let the form know that it is now active
-			my_form.toggle_active();
-			//enter the mini loop for form entry
-			my_form.form_event_loop(mouse_event);
 		}
+		my_form.toggle_active();//let the form know that it is now active
+		//enter the mini loop for form entry
+		my_form.form_event_loop(mouse_event);
 	}
 }
 
 void icntrl8_form_button::page_creation_helper(){
-
 	//grab val from parameter field, so the pages can be set up
 	try{
-
-	  icntrl8_val = stoi(tile_access->fields.at("line_6")->at("ICNTRL8")->get_text());
-
+		icntrl8_val = stoi(tile_access->fields.at("line_6")->at("ICNTRL8")->get_text());
 	} catch (out_of_range& range_error){
 
 		string literal_error = "ICNTRL8 could not be found in the field map";
@@ -367,10 +342,8 @@ void icntrl8_form_button::page_creation_helper(){
 		icntrl8_val = 0;
 
 	} catch (invalid_argument& arg_error){
-
-	  logger_access->push_error("ICNTRL8 has been given an invalid (non-numerical?) argument.",
-				  arg_error.what());
-	  icntrl8_val = 0;
+		logger_access->push_error("ICNTRL8 has been given an invalid (non-numerical?) argument.",arg_error.what());
+		icntrl8_val = 0;
 	}
 
 	logger_access->push_msg("ICNTRL8 val:" + to_string(icntrl8_val)+" when form opened");
@@ -395,7 +368,6 @@ void icntrl8_form_button::page_creation_helper(){
 	column_spaces.push_back(0);
 	column_spaces.push_back(150);
 	column_spaces.push_back(150);
-
 
 	for(uint c = 0; c < pages.size();c++){
 		if(rows_per_page >= rows_needed){
@@ -1692,7 +1664,6 @@ void icntrl10_button::draw_help_msg(SDL_Event& big_event,SDL_Rect& destination){
 
 
 bool icntrl10_button::make_output(ofstream& outs,vector<index_value>& icntrl10_errors){
-
 	//code stub just to make this thing seem satisfied, icntrl10 isn't actually
 	//implemented yet
 	//if(my_form.get_pages().size() == 0) return true;
@@ -1702,9 +1673,9 @@ bool icntrl10_button::make_output(ofstream& outs,vector<index_value>& icntrl10_e
 
 	cout << "Hello from icntrl10::make_output" << endl;
 	for(unsigned int c = 0; c < data.size();c++){
-
 		for(unsigned int d = 0; d < 3;d++){
-			if(data[c].line_entries[d].is_input_bad()){
+			// if(data[c].line_entries[d].is_input_bad()){
+			if(data[c].line_entries[d].is_not_satisfied()){
 
 				index_value temp_bag(data[c].line_entries[d].get_text(),c*3 + d);
 				icntrl10_errors.push_back(temp_bag);
@@ -1715,7 +1686,6 @@ bool icntrl10_button::make_output(ofstream& outs,vector<index_value>& icntrl10_e
 
 			}
 		}
-
 	}
 
 	return return_value;
